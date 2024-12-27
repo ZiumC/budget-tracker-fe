@@ -8,16 +8,12 @@ import { Router } from '@angular/router';
   templateUrl: './header.component.html',
   styleUrl: './header.component.css'
 })
-export class HeaderComponent implements OnInit, OnDestroy {
+export class HeaderComponent implements OnDestroy {
   private subscriptions: Subscription[] = [];
   protected isMenuCollapsed: boolean = true;
   protected loggedIn: boolean = false;
 
   constructor(private router: Router) { }
-
-  ngOnInit(): void {
-    //throw new Error('Method not implemented.');
-  }
 
   ngOnDestroy(): void {
     SubscriptionUtils.unsubscribeAll(this.subscriptions);
@@ -25,5 +21,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   navigateToHome(): void {
     this.router.navigate(['/']);
+  }
+
+  navigateToLogin(): void {
+    this.router.navigate(['/login']);
   }
 }

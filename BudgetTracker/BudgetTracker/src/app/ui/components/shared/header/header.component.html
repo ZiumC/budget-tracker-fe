@@ -1,6 +1,8 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-secondary">
   <div class="container-fluid">
-    <button (click)="navigateToHome()" class="btn btn-secondary" type="button">
+    <button (click)="navigateToHome()"
+            class="btn btn-secondary"
+            type="button">
       BudgetTracker
     </button>
 
@@ -14,16 +16,18 @@
     <div [ngbCollapse]="isMenuCollapsed" class="collapse navbar-collapse">
       <label class="divider-block-xs"></label>
       <ul class="navbar-nav">
-        <div *ngIf="loggedIn; else elseBlock">
-          <button type="button" class="btn btn-secondary">
+        <ng-template [ngIf]="loggedIn" [ngIfElse]="elseBlock">
+          <li type="button"
+              class="btn btn-secondary">
             Log out <i class="bi bi-box-arrow-left"></i>
-          </button>
-        </div>
+          </li>
+        </ng-template>
         <ng-template #elseBlock>
-          <button class="btn btn-light text-center"
-                  type="button">
+          <li (click)="navigateToLogin()"
+              class="btn btn-light text-center"
+              type="button">
             Login <i class="bi bi-box-arrow-in-right"></i>
-          </button>
+          </li>
         </ng-template>
       </ul>
       <label class="divider-block-xs"></label>
