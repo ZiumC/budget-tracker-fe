@@ -7,4 +7,9 @@
     <!-- Folder where production build objects will be placed -->
     <BuildOutputFolder>$(MSBuildProjectDirectory)\dist\BudgetTracker\browser\</BuildOutputFolder>
   </PropertyGroup>
+  <ItemGroup>
+    <Folder Include="src\app\ui\components\" />
+    <Folder Include="src\app\ui\pages\" />
+    <Folder Include="src\app\ui\components\shared\" />
+  </ItemGroup>
 </Project>
