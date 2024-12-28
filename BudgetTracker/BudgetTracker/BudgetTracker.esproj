@@ -9,7 +9,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="src\app\ui\components\" />
-    <Folder Include="src\app\ui\pages\" />
     <Folder Include="src\app\ui\components\shared\" />
   </ItemGroup>
 </Project>

@@ -1,10 +1,44 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ErrorModel } from '../../../models/ErrorModel';
+import { Budget } from '../../../models/Budget';
+import { HttpService } from '../../../services/http/httpService';
+import { Subscription } from 'rxjs';
+import { HttpResponse } from '@angular/common/http';
+import { SubscriptionUtils } from '../../../util/subscription.utils';
 
 @Component({
   selector: 'app-index',
   templateUrl: './index.component.html',
   styleUrl: './index.component.css'
 })
-export class IndexComponent {
+export class IndexComponent implements OnInit, OnDestroy {
+  protected errorModel: ErrorModel;
+  protected budgetsDto: Budget[] | null = [];
+  protected subscriptions: Subscription[] = [];
 
+  constructor(private httpService: HttpService) { }
+
+  ngOnInit(): void {
+    this.errorModel = new ErrorModel();
+    this.subscriptions.push(
+      this.httpService.getBudgets(1, 12).subscribe({
+        next: (response: HttpResponse<Budget[]>): void => {
+          this.budgetsDto = response.body;
+          this.errorModel.responseStatusCode = response.status
+        },
+        error: (err) => {
+          this.errorModel.responseErrorMessage = err
+        }
+      })
+    )
+
+  }
+
+  public test() {
+    console.log(this.budgetsDto);
+  }
+
+  ngOnDestroy(): void {
+    SubscriptionUtils.unsubscribeAll(this.subscriptions);
+  }
 }
