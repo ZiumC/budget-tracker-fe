@@ -7,6 +7,7 @@ import {HttpResponse} from '@angular/common/http';
 import {SubscriptionUtils} from '../../../util/subscription.utils';
 import {DateUtils} from "../../../util/date.utils";
 import {RequestModel} from "../../../models/RequestModel";
+import {SpinnerSize} from "../../components/shared/spinner/spinner.component";
 
 @Component({
   selector: 'app-index',
@@ -56,4 +57,5 @@ export class IndexComponent implements OnInit, OnDestroy {
   }
 
   protected readonly DateUtils = DateUtils;
+  protected readonly SpinnerSize = SpinnerSize;
 }
