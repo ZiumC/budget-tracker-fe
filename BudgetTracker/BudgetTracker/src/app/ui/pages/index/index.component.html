@@ -1,20 +1,51 @@
 <div class="height-wrapper width-wrapper">
   <div class="component-wrapper component-bg">
     <ng-template [ngIf]="errorModel.responseStatusCode == 200" [ngIfElse]="errorBlock">
-
-      @for(budget of budgetsDto; track budget.id) {
-      <div class="card border-dark mb-3" style="max-width: 18rem;">
-        <div class="card-header">{{budget.name}}</div>
-        <div class="card-body text-dark">
-          <h5 class="card-title">Dark card title</h5>
-          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-        </div>
+      <div class="budget-card-container">
+        @for (budget of budgets?.reverse(); track budget.id; ) {
+          <div class="card border-dark my-3 budget-card">
+            <div class="card-header">{{ budget.name }}</div>
+            <div class="card-body text-dark">
+              <table>
+                <tr>
+                  <td style="width: 40%">Date start:</td>
+                  <td>
+                    <input type="text"
+                           class="form-control"
+                           value="{{DateUtils.format(budget.dateStart)}}"
+                           disabled>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Date end:</td>
+                  <td>
+                    <input type="text"
+                           class="form-control"
+                           value="{{DateUtils.format(budget.dateEnd)}}"
+                           disabled>
+                  </td>
+                </tr>
+              </table>
+              <!--              <label for="date-start" class="">Date start:</label>-->
+              <!--              <input type="text"-->
+              <!--                     id="date-start"-->
+              <!--                     class="form-control"-->
+              <!--                     value="{{DateUtils.format(budget.dateStart)}}"-->
+              <!--                     disabled>-->
+              <!--              <label for="date-end">Date end:</label>-->
+              <!--              <input type="text"-->
+              <!--                     id="date-end"-->
+              <!--                     class="form-control"-->
+              <!--                     value="{{DateUtils.format(budget.dateEnd)}}"-->
+              <!--                     disabled>-->
+            </div>
+          </div>
+        }
       </div>
-      }
     </ng-template>
     <ng-template #errorBlock>
       error :(
-      <p>{{errorModel.responseStatusCode}}</p>
+      <p>{{ errorModel.responseStatusCode }}</p>
     </ng-template>
   </div>
 </div>

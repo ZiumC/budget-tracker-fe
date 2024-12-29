@@ -1,0 +1,27 @@
+.budget-card {
+  max-width: 40ex;
+  min-width: 30ex;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.budget-card-body {
+  width: 100%;
+  box-sizing: border-box;
+  display: grid;
+  gap: 1ex;
+  grid-template-columns: auto auto;
+  grid-template-rows: auto auto;
+  grid-auto-flow: row;
+}
+
+.budget-card-container {
+  width: 100%;
+  box-sizing: border-box;
+  display: grid;
+  gap: 1ex;
+  grid-template-columns: auto auto auto;
+  grid-template-rows: auto auto;
+  grid-auto-flow: row;
+}
+
