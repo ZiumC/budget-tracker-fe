@@ -48,14 +48,15 @@ export class IndexComponent implements OnInit, OnDestroy {
           this.isLoaded = true;
         },
         error: (err) => {
-          this.errorModel.responseErrorMessage = err
+          this.errorModel.traceId = err.headers.get('X-Trace-Id');
+          this.errorModel.responseStatusCode = err.status;
+          this.errorModel.responseErrorModel = err.error;
           this.isLoaded = true;
         }
       })
     )
 
   }
-
 
   ngOnDestroy(): void {
     SubscriptionUtils.unsubscribeAll(this.subscriptions);
