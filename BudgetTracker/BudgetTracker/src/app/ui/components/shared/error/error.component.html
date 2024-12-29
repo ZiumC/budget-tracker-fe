@@ -1,29 +1,38 @@
 <div class="error-container">
   <div class="text-center mb-5">
-    <h1 class="error-icon">
-      <i class="bi bi-database-exclamation"></i>
-    </h1>
-    <h2>Server error</h2>
+    @if (errorModel.responseStatusCode != 0){
+      <h1 class="text-warning">
+        <i class="bi bi-database-fill-exclamation"></i>
+      </h1>
+      <h2>Request error</h2>
+    } @else {
+      <h1 class="text-danger">
+        <i class="bi bi-database-fill-x"></i>
+      </h1>
+      <h2>Unable connect to server</h2>
+    }
   </div>
-  <ul>
-    <li>
-      Status code:
-      <span class="text-danger">
+  @if (errorModel.responseStatusCode != 0){
+    <ul>
+      <li>
+        Status code:
+        <span class="text-danger">
       {{ errorModel.responseStatusCode }} {{ errorModel.responseErrorModel['Title'] }}
     </span>
-    </li>
-    <li>
-      Trace id:
-      <span class="text-danger"> {{ errorModel.traceId }} </span>
-    </li>
-    <li>
-      Message:
-      <span class="text-secondary"> {{ errorModel.responseErrorModel['Message'] }} </span>
-    </li>
-    <li>
-      Type:
-      <span class="text-secondary"> <a
-        href="{{ errorModel.responseErrorModel['Type'] }}">{{ errorModel.responseErrorModel['Type'] }}</a> </span>
-    </li>
-  </ul>
+      </li>
+      <li>
+        Trace id:
+        <span class="text-danger"> {{ errorModel.traceId }} </span>
+      </li>
+      <li>
+        Message:
+        <span class="text-secondary"> {{ errorModel.responseErrorModel['Message'] }} </span>
+      </li>
+      <li>
+        Type:
+        <span class="text-secondary"> <a
+          href="{{ errorModel.responseErrorModel['Type'] }}">{{ errorModel.responseErrorModel['Type'] }}</a> </span>
+      </li>
+    </ul>
+  }
 </div>
