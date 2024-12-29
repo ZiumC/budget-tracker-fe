@@ -1,15 +1,17 @@
+import {RequestModel} from "../../models/RequestModel";
+
 enum UrlApiPart {
   API_HOST = 'https://localhost:7139/api',
   BUDGET = "/Budgets"
 }
 
 export class UrlApi {
-  static getBudgets(
-    page: number,
-    pageSize: number,
-    fromDate?: Date,
-    toDate?: Date,
-    orderBy?: string) {
+  static getBudgets(requestModel: RequestModel) {
+     const page = requestModel.page;
+     const pageSize = requestModel.pageSize;
+     const fromDate = requestModel.fromDate;
+     const toDate = requestModel.toDate;
+     const orderBy = requestModel.orderBy;
 
     let urlResult = UrlApiPart.API_HOST + UrlApiPart.BUDGET +
       "?page=" + page + "&pageSize=" + pageSize;

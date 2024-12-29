@@ -1,14 +1,19 @@
 <div class="height-wrapper width-wrapper">
   <div class="component-wrapper component-bg">
-    <ng-template [ngIf]="errorModel.responseStatusCode == 200" [ngIfElse]="errorBlock">
+    <ng-template [ngIf]="errorModel.responseStatusCode == requiredStatusCode" [ngIfElse]="errorBlock">
+      <div class="text-center">
+        <h4>Budgets from {{ requestParams.fromDate }} to {{ requestParams.toDate }}</h4>
+      </div>
       <div class="budget-card-container">
-        @for (budget of budgets?.reverse(); track budget.id; ) {
+        @for (budget of budgets; track budget.id; ) {
           <div class="card border-dark my-3 budget-card">
-            <div class="card-header">{{ budget.name }}</div>
+            <div class="card-header">
+              <h5>{{ budget.name }}</h5>
+            </div>
             <div class="card-body text-dark">
               <table>
                 <tr>
-                  <td style="width: 40%">Date start:</td>
+                  <td>Date start:</td>
                   <td>
                     <input type="text"
                            class="form-control"
@@ -26,18 +31,17 @@
                   </td>
                 </tr>
               </table>
-              <!--              <label for="date-start" class="">Date start:</label>-->
-              <!--              <input type="text"-->
-              <!--                     id="date-start"-->
-              <!--                     class="form-control"-->
-              <!--                     value="{{DateUtils.format(budget.dateStart)}}"-->
-              <!--                     disabled>-->
-              <!--              <label for="date-end">Date end:</label>-->
-              <!--              <input type="text"-->
-              <!--                     id="date-end"-->
-              <!--                     class="form-control"-->
-              <!--                     value="{{DateUtils.format(budget.dateEnd)}}"-->
-              <!--                     disabled>-->
+              <div class="budget-buttons mt-3 mb-1">
+                <button type="button" class="btn btn-secondary">
+                  <i class="bi bi-clipboard-data-fill"></i>
+                </button>
+                <button type="button" class="btn btn-warning">
+                  <i class="bi bi-pencil-square"></i>
+                </button>
+                <button type="button" class="btn btn-danger">
+                  <i class="bi bi-trash3-fill"></i>
+                </button>
+              </div>
             </div>
           </div>
         }

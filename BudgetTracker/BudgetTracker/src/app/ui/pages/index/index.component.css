@@ -5,16 +5,6 @@
   margin-right: auto;
 }
 
-.budget-card-body {
-  width: 100%;
-  box-sizing: border-box;
-  display: grid;
-  gap: 1ex;
-  grid-template-columns: auto auto;
-  grid-template-rows: auto auto;
-  grid-auto-flow: row;
-}
-
 .budget-card-container {
   width: 100%;
   box-sizing: border-box;
@@ -25,3 +15,26 @@
   grid-auto-flow: row;
 }
 
+.budget-buttons {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  gap: 3ex;
+  grid-auto-flow: row;
+}
+
+table tr td:first-child {
+  width: 38%;
+}
+
+
+@media only screen and (max-width: 1015px) {
+  .budget-card-container {
+    grid-template-columns: auto auto;
+  }
+}
+
+@media only screen and (max-width: 710px) {
+  .budget-card-container {
+    grid-template-columns: auto;
+  }
+}
