@@ -52,8 +52,7 @@
         </div>
       </ng-template>
       <ng-template #errorBlock>
-        error :(
-        <p>{{ errorModel.responseStatusCode }}</p>
+        <app-error [errorModel]="errorModel"></app-error>
       </ng-template>
     </ng-template>
   </div>

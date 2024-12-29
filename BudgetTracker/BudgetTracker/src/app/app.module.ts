@@ -10,6 +10,7 @@ import { CommonModule } from '@angular/common';
 import { IndexComponent } from './ui/pages/index/index.component';
 import { FooterComponent } from './ui/components/shared/footer/footer.component';
 import { SpinnerComponent } from './ui/components/shared/spinner/spinner.component';
+import { ErrorComponent } from './ui/components/shared/error/error.component';
 
 @NgModule({
   declarations: [
@@ -17,7 +18,8 @@ import { SpinnerComponent } from './ui/components/shared/spinner/spinner.compone
     HeaderComponent,
     IndexComponent,
     FooterComponent,
-    SpinnerComponent
+    SpinnerComponent,
+    ErrorComponent
   ],
   imports: [
     BrowserModule,
