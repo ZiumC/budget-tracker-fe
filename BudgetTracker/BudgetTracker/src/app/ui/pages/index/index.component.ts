@@ -7,6 +7,7 @@ import {HttpResponse} from '@angular/common/http';
 import {SubscriptionUtils} from '../../../util/subscription.utils';
 import {DateUtils} from "../../../util/date.utils";
 import {RequestModel} from "../../../models/RequestModel";
+import {SpinnerSize} from "../../components/shared/spinner/spinner.component";
 
 @Component({
   selector: 'app-index',
@@ -18,32 +19,37 @@ export class IndexComponent implements OnInit, OnDestroy {
   protected errorModel: ErrorModel;
   protected budgets: Budget[] | null;
   protected subscriptions: Subscription[];
-  protected requestParams: RequestModel;
-  protected currentYear: number = new Date().getFullYear();
+  protected requestModel: RequestModel;
+  protected readonly DateUtils = DateUtils;
+  protected readonly SpinnerSize = SpinnerSize;
+  protected isLoaded: boolean = false;
 
   constructor(private httpService: HttpService) {
   }
 
   ngOnInit(): void {
-    this.requestParams = new RequestModel();
-    this.requestParams.page = 1;
-    this.requestParams.pageSize = 12;
-    this.requestParams.fromDate = DateUtils
-      .format(new Date(this.currentYear, 0, 1));
-    this.requestParams.toDate = DateUtils
-      .format(new Date(this.currentYear, 11, 31));
+    const currentYear = new Date().getFullYear();
+    this.requestModel = new RequestModel();
+    this.requestModel.page = 1;
+    this.requestModel.pageSize = 12;
+    this.requestModel.fromDate = DateUtils
+      .format(new Date(currentYear, 0, 1));
+    this.requestModel.toDate = DateUtils
+      .format(new Date(currentYear, 11, 31));
     this.budgets = [];
     this.subscriptions = [];
     this.errorModel = new ErrorModel();
 
     this.subscriptions.push(
-      this.httpService.getBudgets(this.requestParams).subscribe({
+      this.httpService.getBudgets(this.requestModel).subscribe({
         next: (response: HttpResponse<Budget[]>): void => {
           this.budgets = response.body;
           this.errorModel.responseStatusCode = response.status
+          this.isLoaded = true;
         },
         error: (err) => {
           this.errorModel.responseErrorMessage = err
+          this.isLoaded = true;
         }
       })
     )
@@ -54,6 +60,4 @@ export class IndexComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     SubscriptionUtils.unsubscribeAll(this.subscriptions);
   }
-
-  protected readonly DateUtils = DateUtils;
 }

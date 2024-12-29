@@ -1,0 +1,17 @@
+.spinner-m {
+  width: 5rem;
+  height: 5rem;
+}
+
+.spinner-l {
+  width: 8rem;
+  height: 8rem;
+}
+
+.spinner-container {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}

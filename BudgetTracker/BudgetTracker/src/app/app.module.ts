@@ -9,13 +9,15 @@ import { HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { IndexComponent } from './ui/pages/index/index.component';
 import { FooterComponent } from './ui/components/shared/footer/footer.component';
+import { SpinnerComponent } from './ui/components/shared/spinner/spinner.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HeaderComponent,
     IndexComponent,
-    FooterComponent
+    FooterComponent,
+    SpinnerComponent
   ],
   imports: [
     BrowserModule,
