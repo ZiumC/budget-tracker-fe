@@ -1,14 +1,13 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ErrorModel} from '../../../models/ErrorModel';
-import {Budget} from '../../../models/Budget';
+import {Budget} from '../../../models/RequestModels';
 import {HttpService} from '../../../services/http/httpService';
 import {Subscription} from 'rxjs';
 import {HttpResponse} from '@angular/common/http';
 import {SubscriptionUtils} from '../../../util/subscription.utils';
 import {DateUtils} from "../../../util/date.utils";
-import {RequestModel} from "../../../models/RequestModel";
+import {RequestParamModel} from "../../../models/RequestParamModel";
 import {SpinnerSize} from "../../components/shared/spinner/spinner.component";
-import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-index',
@@ -20,7 +19,7 @@ export class IndexComponent implements OnInit, OnDestroy {
   protected errorModel: ErrorModel;
   protected budgets: Budget[] | null;
   protected subscriptions: Subscription[];
-  protected requestModel: RequestModel;
+  protected requestModel: RequestParamModel;
   protected readonly DateUtils = DateUtils;
   protected readonly SpinnerSize = SpinnerSize;
   protected isLoaded: boolean = false;
@@ -30,7 +29,7 @@ export class IndexComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     const currentYear = new Date().getFullYear();
-    this.requestModel = new RequestModel();
+    this.requestModel = new RequestParamModel();
     this.requestModel.page = 1;
     this.requestModel.pageSize = 12;
     this.requestModel.fromDate = DateUtils

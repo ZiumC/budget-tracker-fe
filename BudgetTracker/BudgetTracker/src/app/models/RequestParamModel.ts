@@ -1,4 +1,4 @@
-export class RequestModel {
+export class RequestParamModel {
   page: number;
   pageSize: number;
   fromDate: string | null;

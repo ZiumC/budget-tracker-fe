@@ -1,4 +1,4 @@
-import {RequestModel} from "../../models/RequestModel";
+import {RequestParamModel} from "../../models/RequestParamModel";
 
 enum UrlApiPart {
   API_HOST = 'https://localhost:7139/api',
@@ -6,7 +6,7 @@ enum UrlApiPart {
 }
 
 export class UrlApi {
-  static getBudgets(requestModel: RequestModel) {
+  static getBudgets(requestModel: RequestParamModel) {
      const page = requestModel.page;
      const pageSize = requestModel.pageSize;
      const fromDate = requestModel.fromDate;
