@@ -8,26 +8,25 @@
         <div ngbAccordionItem>
           <h2 ngbAccordionHeader>
             <button ngbAccordionButton
-                    class="light-gray-bg">
+                    class="light-gray-bg accordion-button-header">
               <table>
                 <tr class="table-header">
                   <th>Name</th>
-                  <th>Income</th>
+                  <th>Income (PLN)</th>
                   <th>Appropriation</th>
                   <th>Date created</th>
                 </tr>
                 <tr>
                   <th>aaaa</th>
-                  <th>aaaa</th>
-                  <th>aaaa</th>
-                  <th>aaaa</th>
+                  <th>#2137.00</th>
+                  <th>#Savings</th>
+                  <th>#12.12.2024</th>
                 </tr>
               </table>
             </button>
           </h2>
           <div ngbAccordionCollapse>
-            <div ngbAccordionBody>
-              <ng-template>
+            <div ngbAccordionBody class="text-center">
                 <div class="row">
                   <label
                     for="income-actions"
@@ -35,7 +34,7 @@
                   </label>
                   <div
                     id="income-actions"
-                    class="mb-3 center-screen">
+                    class="center-screen">
                     <button
                       type="button"
                       class="btn btn-outline-warning"
@@ -46,7 +45,6 @@
                     </button>
                   </div>
                 </div>
-              </ng-template>
             </div>
           </div>
         </div>
