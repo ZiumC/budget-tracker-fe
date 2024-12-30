@@ -1,1 +1,56 @@
-<p>budget works!</p>
+<div class="height-wrapper width-wrapper">
+  <div class="component-wrapper component-bg">
+    <ng-template [ngIf]="!isLoaded" [ngIfElse]="loadedBlock">
+      <app-spinner [size]="SpinnerSize.BIG"></app-spinner>
+    </ng-template>
+    <ng-template #loadedBlock>
+      <div ngbAccordion>
+        <div ngbAccordionItem>
+          <h2 ngbAccordionHeader>
+            <button ngbAccordionButton
+                    class="light-gray-bg">
+              <table>
+                <tr class="table-header">
+                  <th>Name</th>
+                  <th>Income</th>
+                  <th>Appropriation</th>
+                  <th>Date created</th>
+                </tr>
+                <tr>
+                  <th>aaaa</th>
+                  <th>aaaa</th>
+                  <th>aaaa</th>
+                  <th>aaaa</th>
+                </tr>
+              </table>
+            </button>
+          </h2>
+          <div ngbAccordionCollapse>
+            <div ngbAccordionBody>
+              <ng-template>
+                <div class="row">
+                  <label
+                    for="income-actions"
+                    class="form-label group-label center-screen">Actions
+                  </label>
+                  <div
+                    id="income-actions"
+                    class="mb-3 center-screen">
+                    <button
+                      type="button"
+                      class="btn btn-outline-warning"
+                      data-bs-toggle="tooltip"
+                      data-bs-placement="bottom"
+                      title="Edit">
+                      <i class="bi bi-pencil-square"></i>
+                    </button>
+                  </div>
+                </div>
+              </ng-template>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+  </div>
+</div>
