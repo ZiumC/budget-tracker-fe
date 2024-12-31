@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ErrorModel} from '../../../models/ErrorModel';
-import {Budget} from '../../../models/RequestModels';
+import {BudgetModel} from '../../../models/RequestModels';
 import {HttpService} from '../../../services/http/httpService';
 import {Subscription} from 'rxjs';
 import {HttpResponse} from '@angular/common/http';
@@ -17,7 +17,7 @@ import {SpinnerSize} from "../../components/shared/spinner/spinner.component";
 export class IndexComponent implements OnInit, OnDestroy {
   protected requiredStatusCode: number = 200;
   protected errorModel: ErrorModel;
-  protected budgets: Budget[] | null;
+  protected budgets: BudgetModel[] | null;
   protected subscriptions: Subscription[];
   protected requestModel: RequestParamModel;
   protected readonly DateUtils = DateUtils;
@@ -42,7 +42,7 @@ export class IndexComponent implements OnInit, OnDestroy {
 
     this.subscriptions.push(
       this.httpService.getBudgets(this.requestModel).subscribe({
-        next: (response: HttpResponse<Budget[]>): void => {
+        next: (response: HttpResponse<BudgetModel[]>): void => {
           this.budgets = response.body;
           this.errorModel.responseStatusCode = response.status
           this.isLoaded = true;

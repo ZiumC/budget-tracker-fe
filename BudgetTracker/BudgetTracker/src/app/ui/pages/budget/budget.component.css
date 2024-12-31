@@ -1,0 +1,13 @@
+.surplus-border {
+  border: 0.2ex solid #3d8bfd;
+  border-radius: 0.5ex;
+}
+
+.surplus-container {
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+.surplus-container p {
+  margin: 0;
+}

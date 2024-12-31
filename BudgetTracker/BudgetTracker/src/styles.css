@@ -46,7 +46,13 @@ table tr th {
 
 table tr th:first-child {
   width: 40%;
+  min-width: 40%;
 }
+
+table tr th {
+  min-width: 20%;
+}
+
 
 .table-header {
   font-size: 1.4ex;
@@ -54,6 +60,10 @@ table tr th:first-child {
 
 .accordion-button-header {
   padding: 1.5ex 1.5ex 1.5ex 1.5ex;
+}
+
+.accordion {
+  margin-bottom: 1.2ex;
 }
 
 .accordion-body {
