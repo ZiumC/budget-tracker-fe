@@ -7,4 +7,11 @@ export class DateUtils {
     }
     return '---';
   }
+
+  static formatWithTime(date: Date | null | undefined) {
+    if (date) {
+      return formatDate(date, 'dd/MM/yyyy HH:mm', 'pl-PL');
+    }
+    return '---';
+  }
 }

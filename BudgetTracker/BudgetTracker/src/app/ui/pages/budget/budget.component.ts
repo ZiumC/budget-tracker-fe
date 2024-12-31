@@ -10,6 +10,7 @@ import {ActivatedRoute, Params} from "@angular/router";
 import {HttpResponse} from "@angular/common/http";
 import {SubscriptionUtils} from "../../../util/subscription.utils";
 import {NumberUtils} from "../../../util/number.utils";
+import BigNumber from "bignumber.js";
 
 @Component({
   selector: 'app-budget',
@@ -24,9 +25,9 @@ export class BudgetComponent implements OnInit, OnDestroy {
   protected budget: BudgetModel | null;
   protected payments: PaymentModel[] | null;
   protected subscriptions: Subscription[] = [];
-  protected requestParamModel: RequestParamModel;
 
   protected selectedIncome: IncomeModel;
+  protected selectedPayment: PaymentModel;
   protected pageLoader: any;
   protected requiredStatusCode: any;
   protected errorModels: any;
@@ -56,7 +57,8 @@ export class BudgetComponent implements OnInit, OnDestroy {
       payments: new ErrorModel()
     };
 
-    const requestParamIncome = new RequestParamModel({
+    const requestParam = new RequestParamModel({
+      page: 1,
       pageSize: 15
     })
 
@@ -82,7 +84,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
 
     this.subscriptions.push(
       this.httpService.getBudgetIncomes(
-        requestParamIncome,
+        requestParam,
         this.idBudget).subscribe({
         next: (response: HttpResponse<IncomeModel[]>): void => {
           this.incomes = response.body;
@@ -100,7 +102,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
 
     this.subscriptions.push(
       this.httpService.getBudgetPayments(
-        this.requestParamModel,
+        requestParam,
         this.idBudget).subscribe({
         next: (response: HttpResponse<PaymentModel[]>): void => {
           this.payments = response.body;
@@ -115,6 +117,11 @@ export class BudgetComponent implements OnInit, OnDestroy {
         }
       })
     )
+  }
+
+  protected displayReal(num1: BigNumber, num2: BigNumber) {
+    const result = new BigNumber(num1).minus(new BigNumber(num2));
+    return NumberUtils.format(new BigNumber(result));
   }
 
   ngOnDestroy(): void {
