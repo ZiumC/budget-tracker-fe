@@ -21,6 +21,14 @@ export class HttpService {
     );
   }
 
+  public getBudget(idBudget: string):
+    Observable<HttpResponse<BudgetModel>> {
+    return this.httpClient.get<BudgetModel>(
+      UrlApi.getBudget(idBudget),
+      {observe: 'response'}
+    );
+  }
+
   public getBudgetIncomes(requestModel: RequestParamModel, idBudget: string):
     Observable<HttpResponse<IncomeModel[]>> {
     return this.httpClient.get<IncomeModel[]>(

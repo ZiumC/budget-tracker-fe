@@ -42,6 +42,10 @@ export class UrlApi {
     return urlResult;
   }
 
+  static getBudget(idBudget: string): string {
+    return this.HOST + this.CONTOLLERS.BUDGET + "/" + idBudget;
+  }
+
   static getBudgetIncomes(
     requestParamModel: RequestParamModel,
     idBudget: string): string {

@@ -1,10 +1,10 @@
 <div class="height-wrapper width-wrapper">
   <div class="component-wrapper component-bg">
-    <ng-template [ngIf]="!isLoaded" [ngIfElse]="loadedBlock">
+    <ng-template [ngIf]="!pageLoader.incomes" [ngIfElse]="loadedBlock">
       <app-spinner [size]="SpinnerSize.BIG"></app-spinner>
     </ng-template>
     <ng-template #loadedBlock>
-      <ng-template [ngIf]="errorModel.responseStatusCode == 200" [ngIfElse]="errorBlock">
+      <ng-template [ngIf]="errorModels.incomes.responseStatusCode == requiredStatusCode.incomes" [ngIfElse]="errorBlock">
         @for (income of incomes; track income) {
           <div ngbAccordion>
             <div ngbAccordionItem
@@ -23,7 +23,7 @@
                     </tr>
                     <tr>
                       <th>{{ income.name }}</th>
-                      <th>{{ income.wage }}</th>
+                      <th>{{ NumberUtils.format(income.wage) }}</th>
                       <th>#Category</th>
                       <th>{{ DateUtils.format(income.dateUpdated) }}</th>
                     </tr>
@@ -63,7 +63,7 @@
         }
       </ng-template>
       <ng-template #errorBlock>
-        <app-error [errorModel]="errorModel"></app-error>
+        <app-error [errorModel]="errorModels.incomes"></app-error>
       </ng-template>
     </ng-template>
   </div>
