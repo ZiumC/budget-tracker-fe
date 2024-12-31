@@ -11,3 +11,11 @@
 .surplus-container p {
   margin: 0;
 }
+
+.budget-buttons {
+  justify-items: center;
+}
+
+.budget-buttons button {
+  max-width: 60%;
+}
