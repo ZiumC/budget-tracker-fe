@@ -14,3 +14,13 @@ export class IncomeModel {
   isSurplus: boolean;
   dateUpdated: Date;
 }
+
+export class PaymentModel {
+  id: string;
+  name: string;
+  price: BigNumber;
+  refund: BigNumber;
+  isPaid: boolean;
+  comment: string;
+  dateUpdated: Date;
+}

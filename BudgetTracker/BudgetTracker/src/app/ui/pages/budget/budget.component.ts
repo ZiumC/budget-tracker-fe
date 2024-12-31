@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {SpinnerSize} from "../../components/shared/spinner/spinner.component";
-import {BudgetModel, IncomeModel} from "../../../models/RequestModels";
+import {BudgetModel, IncomeModel, PaymentModel} from "../../../models/RequestModels";
 import {Subscription} from "rxjs";
 import {ErrorModel} from "../../../models/ErrorModel";
 import {RequestParamModel} from "../../../models/RequestParamModel";
@@ -18,9 +18,11 @@ import {NumberUtils} from "../../../util/number.utils";
 })
 export class BudgetComponent implements OnInit, OnDestroy {
   protected readonly DateUtils = DateUtils;
+  protected readonly NumberUtils = NumberUtils;
   protected readonly SpinnerSize = SpinnerSize;
   protected incomes: IncomeModel[] | null;
   protected budget: BudgetModel | null;
+  protected payments: PaymentModel[] | null;
   protected subscriptions: Subscription[] = [];
   protected requestParamModel: RequestParamModel;
 
@@ -41,23 +43,22 @@ export class BudgetComponent implements OnInit, OnDestroy {
       incomes: 200,
       payments: 200
     };
+
     this.pageLoader = {
       budget: false,
       incomes: false,
       payments: false
     };
+
     this.errorModels = {
       budget: new ErrorModel(),
       incomes: new ErrorModel(),
       payments: new ErrorModel()
     };
-    let currentYear = new Date().getFullYear();
-    this.requestParamModel = new RequestParamModel({
-      pageSize: 15,
-      fromDate: DateUtils.format(new Date(currentYear, 0, 1)),
-      toDate: DateUtils.format(new Date(currentYear, 11, 31))
+
+    const requestParamIncome = new RequestParamModel({
+      pageSize: 15
     })
-    this.incomes = [];
 
     this.activatedRoute.queryParams.subscribe((params: Params) => {
       this.idBudget = params['id'];
@@ -81,7 +82,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
 
     this.subscriptions.push(
       this.httpService.getBudgetIncomes(
-        this.requestParamModel,
+        requestParamIncome,
         this.idBudget).subscribe({
         next: (response: HttpResponse<IncomeModel[]>): void => {
           this.incomes = response.body;
@@ -96,11 +97,27 @@ export class BudgetComponent implements OnInit, OnDestroy {
         }
       })
     )
+
+    this.subscriptions.push(
+      this.httpService.getBudgetPayments(
+        this.requestParamModel,
+        this.idBudget).subscribe({
+        next: (response: HttpResponse<PaymentModel[]>): void => {
+          this.payments = response.body;
+          this.errorModels.payments.responseStatusCode = response.status
+          this.pageLoader.payments = true;
+        },
+        error: (err) => {
+          this.errorModels.payments.traceId = err.headers.get('X-Trace-Id');
+          this.errorModels.payments.responseStatusCode = err.status;
+          this.errorModels.payments.responseErrorModel = err.error;
+          this.pageLoader.payments = true;
+        }
+      })
+    )
   }
 
   ngOnDestroy(): void {
     SubscriptionUtils.unsubscribeAll(this.subscriptions);
   }
-
-  protected readonly NumberUtils = NumberUtils;
 }

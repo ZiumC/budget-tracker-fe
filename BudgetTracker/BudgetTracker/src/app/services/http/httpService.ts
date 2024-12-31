@@ -1,5 +1,5 @@
 import {HttpClient, HttpResponse} from "@angular/common/http";
-import {BudgetModel, IncomeModel} from "../../models/RequestModels";
+import {BudgetModel, IncomeModel, PaymentModel} from "../../models/RequestModels";
 import {Observable} from "rxjs";
 import {UrlApi} from "./http";
 import {Injectable} from "@angular/core";
@@ -35,5 +35,13 @@ export class HttpService {
       UrlApi.getBudgetIncomes(requestModel, idBudget),
       {observe: 'response'}
     );
+  }
+
+  public getBudgetPayments(requestModel: RequestParamModel, idBudget: string):
+    Observable<HttpResponse<PaymentModel[]>> {
+    return this.httpClient.get<PaymentModel[]>(
+      UrlApi.getBudgetPayments(requestModel, idBudget),
+      {observe: 'response'}
+    )
   }
 }
