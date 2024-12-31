@@ -3,7 +3,7 @@
   border-radius: 0.5ex;
 }
 
-.payment-border{
+.payment-border {
   border: 0.2ex solid #479f76;
   border-radius: 0.5ex;
 }
@@ -37,7 +37,11 @@
 .payment-buttons {
   display: grid;
   justify-items: center;
-  grid-template-columns: auto auto;
+  grid-template-columns: auto auto auto;
   gap: 3ex;
   grid-auto-flow: row;
+}
+
+label {
+  display: table-row;
 }

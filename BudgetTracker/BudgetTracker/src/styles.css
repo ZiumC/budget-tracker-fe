@@ -76,7 +76,3 @@ table tr th {
   gap: 3ex;
   grid-auto-flow: row;
 }
-
-.w-40 {
-  width: 40%
-}

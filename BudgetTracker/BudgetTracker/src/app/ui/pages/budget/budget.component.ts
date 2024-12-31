@@ -11,6 +11,7 @@ import {HttpResponse} from "@angular/common/http";
 import {SubscriptionUtils} from "../../../util/subscription.utils";
 import {NumberUtils} from "../../../util/number.utils";
 import BigNumber from "bignumber.js";
+import {Sort} from "../../../util/model.utils";
 
 @Component({
   selector: 'app-budget',
@@ -87,7 +88,8 @@ export class BudgetComponent implements OnInit, OnDestroy {
         requestParam,
         this.idBudget).subscribe({
         next: (response: HttpResponse<IncomeModel[]>): void => {
-          this.incomes = response.body;
+          debugger
+          this.incomes = Sort.incomeSurplusFirst(response.body);
           this.errorModels.incomes.responseStatusCode = response.status
           this.pageLoader.incomes = true;
         },
@@ -105,7 +107,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
         requestParam,
         this.idBudget).subscribe({
         next: (response: HttpResponse<PaymentModel[]>): void => {
-          this.payments = response.body;
+          this.payments = Sort.incomePaidFirst(response.body);
           this.errorModels.payments.responseStatusCode = response.status
           this.pageLoader.payments = true;
         },
