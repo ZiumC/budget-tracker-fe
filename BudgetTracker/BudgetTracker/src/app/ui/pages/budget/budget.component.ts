@@ -32,6 +32,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
   protected pageLoader: any;
   protected requiredStatusCode: any;
   protected errorModels: any;
+  protected commentRows: number;
   private idBudget: string;
 
   constructor(
@@ -57,6 +58,8 @@ export class BudgetComponent implements OnInit, OnDestroy {
       incomes: new ErrorModel(),
       payments: new ErrorModel()
     };
+
+    this.commentRows = 1;
 
     const requestParam = new RequestParamModel({
       page: 1,
@@ -88,7 +91,6 @@ export class BudgetComponent implements OnInit, OnDestroy {
         requestParam,
         this.idBudget).subscribe({
         next: (response: HttpResponse<IncomeModel[]>): void => {
-          debugger
           this.incomes = Sort.incomeSurplusFirst(response.body);
           this.errorModels.incomes.responseStatusCode = response.status
           this.pageLoader.incomes = true;
@@ -124,6 +126,36 @@ export class BudgetComponent implements OnInit, OnDestroy {
   protected displayReal(num1: BigNumber, num2: BigNumber) {
     const result = new BigNumber(num1).minus(new BigNumber(num2));
     return NumberUtils.format(new BigNumber(result));
+  }
+
+  protected displayComment(comment: string) {
+    if (comment) {
+      const length = comment.length;
+      if (length == 0) {
+        return "No comment"
+      } else {
+        switch (length) {
+          case 100:
+            this.commentRows = 2;
+            break;
+          case 200:
+            this.commentRows = 3;
+            break;
+          case 300:
+            this.commentRows = 4;
+            break;
+          case 400:
+            this.commentRows = 5;
+            break;
+          case 500:
+            this.commentRows = 6;
+            break;
+        }
+      }
+      return comment;
+    } else {
+      return "No comment"
+    }
   }
 
   ngOnDestroy(): void {

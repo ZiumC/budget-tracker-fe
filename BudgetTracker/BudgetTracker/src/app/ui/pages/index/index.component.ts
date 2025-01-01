@@ -28,7 +28,7 @@ export class IndexComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    const currentYear = new Date().getFullYear();
+    const currentYear = new Date().getFullYear()-1;
     this.requestModel = new RequestParamModel();
     this.requestModel.page = 1;
     this.requestModel.pageSize = 12;

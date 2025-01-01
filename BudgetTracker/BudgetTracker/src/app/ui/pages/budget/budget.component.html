@@ -182,8 +182,8 @@
                             <textarea type="text"
                                       id="payment-comment"
                                       class="form-control"
-                                      value="{{payment.comment}}"
-                                      rows="1"
+                                      value="{{ displayComment(payment.comment) }}"
+                                      rows="{{commentRows}}"
                                       disabled>
                                 </textarea>
                           </div>
