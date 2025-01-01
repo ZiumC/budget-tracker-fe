@@ -52,11 +52,37 @@ label {
     min-width: 60%;
   }
 
-  .table-header{
+  .table-header {
     font-size: 1.3ex;
   }
 
   tr td {
+    font-size: 1.75ex;
+  }
+}
+
+@media only screen and (max-width: 475px) {
+  .budget-buttons {
+    gap: 0;
+  }
+
+  .payment-buttons {
+    gap: 0;
+  }
+
+  .income-buttons {
+    gap: 0;
+  }
+
+  .budget-buttons button {
+    font-size: 1.75ex;
+  }
+
+  .payment-buttons button {
+    font-size: 1.75ex;
+  }
+
+  .income-buttons button {
     font-size: 1.75ex;
   }
 }

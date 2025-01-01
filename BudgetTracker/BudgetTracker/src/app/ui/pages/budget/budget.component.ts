@@ -127,9 +127,11 @@ export class BudgetComponent implements OnInit, OnDestroy {
     )
   }
 
-  protected displayReal(num1: BigNumber, num2: BigNumber) {
-    const result = new BigNumber(num1).minus(new BigNumber(num2));
-    return NumberUtils.format(new BigNumber(result));
+  protected computeRealCost(payment: PaymentModel): BigNumber {
+    const price = payment.price;
+    const refund = payment.refund;
+    const result = new BigNumber(price).minus(new BigNumber(refund));
+    return new BigNumber(result);
   }
 
   protected displayComment(comment: string) {
@@ -165,7 +167,6 @@ export class BudgetComponent implements OnInit, OnDestroy {
   @HostListener('window:resize', ['$event'])
   onResize() {
     this.innerWidth = window.innerWidth;
-    console.log(this.innerWidth);
   }
 
   ngOnDestroy(): void {

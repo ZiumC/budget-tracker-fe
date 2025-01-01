@@ -176,15 +176,23 @@
                       <table>
                         <tr class="table-header">
                           <th>Name</th>
-                          <th>Price (PLN)</th>
-                          <th>Refund (PLN)</th>
+                          <th [style.display]="innerWidth > mobileWidth ? '' : 'none'">
+                            Price (PLN)
+                          </th>
+                          <th [style.display]="innerWidth > mobileWidth ? '' : 'none'">
+                            Refund (PLN)
+                          </th>
                           <th>Real (PLN)</th>
                         </tr>
                         <tr>
                           <td>{{ payment.name }}</td>
-                          <td>{{ NumberUtils.format(payment.price) }}</td>
-                          <td>{{ NumberUtils.format(payment.refund) }}</td>
-                          <td>{{ displayReal(payment.price, payment.refund) }}</td>
+                          <td [style.display]="innerWidth > mobileWidth ? '' : 'none'">
+                            {{ NumberUtils.format(payment.price) }}
+                          </td>
+                          <td [style.display]="innerWidth > mobileWidth ? '' : 'none'">
+                            {{ NumberUtils.format(payment.refund) }}
+                          </td>
+                          <td>{{ NumberUtils.format(computeRealCost(payment)) }}</td>
                         </tr>
                       </table>
                     </button>
@@ -194,25 +202,51 @@
                       <div class="row">
                         <div class="col-lg-6">
                           <div [style.display]="payment.isPaid ? 'block' : 'none'"
-                               class="condition-container text-center">
+                               class="mb-2 condition-container text-center">
                             <h6>Payment is paid</h6>
                           </div>
-                          <div class="form-group">
-                            <label for="payment-date-updated">Date updated
-                            </label>
-                            <input type="text"
-                                   id="payment-date-updated"
-                                   class="form-control mb-2"
-                                   value="{{DateUtils.formatWithTime(payment.dateUpdated)}}"
-                                   disabled>
-                            <label for="payment-comment">Comment</label>
-                            <textarea type="text"
-                                      id="payment-comment"
-                                      class="form-control"
-                                      value="{{ displayComment(payment.comment) }}"
-                                      rows="{{commentRows}}"
-                                      disabled>
+                          <div class="mb-3 condition-container">
+                            <div class="form-group">
+                              <div [style.display]="innerWidth > mobileWidth ? 'none' : ''">
+
+                                <label for="payment-price">Price (PLN)
+                                </label>
+                                <input type="text"
+                                       id="payment-price"
+                                       class="form-control mb-2"
+                                       value="{{ NumberUtils.format(payment.price) }}"
+                                       disabled>
+                                <label for="payment-refund">Refund (PLN)
+                                </label>
+                                <input type="text"
+                                       id="payment-refund"
+                                       class="form-control mb-2"
+                                       value="{{ NumberUtils.format(payment.refund) }}"
+                                       disabled>
+                              </div>
+                              <label for="payment-date-updated">Category
+                              </label>
+                              <input type="text"
+                                     id="payment-category"
+                                     class="form-control mb-2"
+                                     value="#category"
+                                     disabled>
+                              <label for="payment-date-updated">Date updated
+                              </label>
+                              <input type="text"
+                                     id="payment-date-updated"
+                                     class="form-control mb-2"
+                                     value="{{DateUtils.formatWithTime(payment.dateUpdated)}}"
+                                     disabled>
+                              <label for="payment-comment">Comment</label>
+                              <textarea type="text"
+                                        id="payment-comment"
+                                        class="form-control"
+                                        value="{{ displayComment(payment.comment) }}"
+                                        rows="{{commentRows}}"
+                                        disabled>
                                 </textarea>
+                            </div>
                           </div>
                         </div>
                         <div class="col-lg-6 buttons-container">
