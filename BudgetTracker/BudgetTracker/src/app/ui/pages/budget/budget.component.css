@@ -45,3 +45,18 @@
 label {
   display: table-row;
 }
+
+@media only screen and (max-width: 770px) {
+  table tr th:first-child {
+    width: 60%;
+    min-width: 60%;
+  }
+
+  .table-header{
+    font-size: 1.3ex;
+  }
+
+  tr td {
+    font-size: 1.75ex;
+  }
+}

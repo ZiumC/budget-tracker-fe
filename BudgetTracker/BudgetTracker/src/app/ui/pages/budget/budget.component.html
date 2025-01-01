@@ -60,7 +60,7 @@
       </ng-template>
       <ng-template [ngIf]="errorModels.incomes.responseStatusCode == requiredStatusCode.incomes"
                    [ngIfElse]="errorIncomeBlock">
-        <div class="card text-center mb-lg-3">
+        <div class="card text-center mb-3">
           <div class="card-header">
             Incomes
           </div>
@@ -78,14 +78,22 @@
                         <tr class="table-header">
                           <th>Name</th>
                           <th>Income (PLN)</th>
-                          <th>Appropriation</th>
-                          <th>Date created</th>
+                          <th [style.display]="innerWidth > mobileWidth ? '' : 'none'">
+                            Appropriation
+                          </th>
+                          <th [style.display]="innerWidth > mobileWidth ? '' : 'none'">
+                            Date created
+                          </th>
                         </tr>
                         <tr>
-                          <th>{{ income.name }}</th>
-                          <th>{{ NumberUtils.format(income.wage) }}</th>
-                          <th>#Category</th>
-                          <th>{{ DateUtils.format(income.dateUpdated) }}</th>
+                          <td>{{ income.name }}</td>
+                          <td>{{ NumberUtils.format(income.wage) }}</td>
+                          <td [style.display]="innerWidth > mobileWidth ? '' : 'none'">
+                            #Category
+                          </td>
+                          <td [style.display]="innerWidth > mobileWidth ? '' : 'none'">
+                            {{ DateUtils.format(income.dateUpdated) }}
+                          </td>
                         </tr>
                       </table>
                     </button>
@@ -94,8 +102,27 @@
                     <div ngbAccordionBody class="text-center">
                       <div class="row">
                         <div [style.display]="income.isSurplus ? 'block' : 'none'"
-                             class="col-lg-6 condition-container">
+                             class="col-lg-6 mb-2 condition-container">
                           <p>Income is surplus</p>
+                        </div>
+                        <div [style.display]="innerWidth > mobileWidth ? 'none' : ''"
+                             class="mb-3 condition-container">
+                          <div class="form-group">
+                            <label for="payment-date-updated">Category
+                            </label>
+                            <input type="text"
+                                   id="income-category"
+                                   class="form-control mb-2"
+                                   value="#category"
+                                   disabled>
+                            <label for="payment-date-updated">Date updated
+                            </label>
+                            <input type="text"
+                                   id="income-date-updated"
+                                   class="form-control mb-2"
+                                   value="{{DateUtils.formatWithTime(income.dateUpdated)}}"
+                                   disabled>
+                          </div>
                         </div>
                         <div [class.col-lg-6]="income.isSurplus"
                              class="buttons-container">

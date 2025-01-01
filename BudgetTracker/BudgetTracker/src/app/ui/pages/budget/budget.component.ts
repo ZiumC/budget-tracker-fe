@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, HostListener, OnDestroy, OnInit} from '@angular/core';
 import {SpinnerSize} from "../../components/shared/spinner/spinner.component";
 import {BudgetModel, IncomeModel, PaymentModel} from "../../../models/RequestModels";
 import {Subscription} from "rxjs";
@@ -19,21 +19,24 @@ import {Sort} from "../../../util/model.utils";
   styleUrl: './budget.component.css'
 })
 export class BudgetComponent implements OnInit, OnDestroy {
+  public readonly mobileWidth: number = 770;
   protected readonly DateUtils = DateUtils;
   protected readonly NumberUtils = NumberUtils;
   protected readonly SpinnerSize = SpinnerSize;
   protected incomes: IncomeModel[] | null;
   protected budget: BudgetModel | null;
   protected payments: PaymentModel[] | null;
-  protected subscriptions: Subscription[] = [];
 
+  protected subscriptions: Subscription[] = [];
   protected selectedIncome: IncomeModel;
   protected selectedPayment: PaymentModel;
   protected pageLoader: any;
   protected requiredStatusCode: any;
   protected errorModels: any;
   protected commentRows: number;
+
   private idBudget: string;
+  public innerWidth: any;
 
   constructor(
     private httpService: HttpService,
@@ -60,6 +63,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
     };
 
     this.commentRows = 1;
+    this.innerWidth = window.innerWidth;
 
     const requestParam = new RequestParamModel({
       page: 1,
@@ -156,6 +160,12 @@ export class BudgetComponent implements OnInit, OnDestroy {
     } else {
       return "No comment"
     }
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize() {
+    this.innerWidth = window.innerWidth;
+    console.log(this.innerWidth);
   }
 
   ngOnDestroy(): void {
