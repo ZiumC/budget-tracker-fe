@@ -11,6 +11,7 @@ import { IndexComponent } from './ui/pages/index/index.component';
 import { FooterComponent } from './ui/components/shared/footer/footer.component';
 import { SpinnerComponent } from './ui/components/shared/spinner/spinner.component';
 import { ErrorComponent } from './ui/components/shared/error/error.component';
+import { BudgetComponent } from './ui/pages/budget/budget.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { ErrorComponent } from './ui/components/shared/error/error.component';
     IndexComponent,
     FooterComponent,
     SpinnerComponent,
-    ErrorComponent
+    ErrorComponent,
+    BudgetComponent
   ],
   imports: [
     BrowserModule,

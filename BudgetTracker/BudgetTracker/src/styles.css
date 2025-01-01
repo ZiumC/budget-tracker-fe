@@ -9,7 +9,6 @@ body {
 body {
   margin: 0;
   font-family: Roboto, 'Helvetica Neue', sans-serif;
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
   background-color: #ebebeb;
@@ -32,7 +31,56 @@ body {
   max-width: 180ex;
   width: 100%;
   height: 100%;
-  margin:auto;
+  margin: auto;
   padding: 3ex;
 }
 
+table {
+  width: 100%;
+}
+
+table tr th {
+  font-weight: normal;
+}
+
+table tr th:first-child {
+  width: 40%;
+  min-width: 40%;
+}
+
+table tr th {
+  min-width: 20%;
+}
+
+
+.table-header {
+  font-size: 1.4ex;
+}
+
+.accordion-button-header {
+  padding: 1.5ex 1.5ex 1.5ex 1.5ex;
+}
+
+.accordion {
+  margin-bottom: 1.2ex;
+}
+
+.accordion-body {
+  padding: 2ex 2ex 2ex 2ex;
+}
+
+.budget-buttons {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  gap: 3ex;
+  grid-auto-flow: row;
+}
+
+@media only screen and (max-width: 770px){
+  .width-wrapper{
+    width: 92%;
+  }
+  .component-wrapper{
+    padding: 2ex;
+  }
+}

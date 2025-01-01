@@ -1,6 +1,6 @@
 .budget-card {
   max-width: 40ex;
-  min-width: 30ex;
+  min-width: 29ex;
   margin-left: auto;
   margin-right: auto;
 }
@@ -12,13 +12,6 @@
   gap: 1ex;
   grid-template-columns: auto auto auto;
   grid-template-rows: auto auto;
-  grid-auto-flow: row;
-}
-
-.budget-buttons {
-  display: grid;
-  grid-template-columns: auto auto auto;
-  gap: 3ex;
   grid-auto-flow: row;
 }
 

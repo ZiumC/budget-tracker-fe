@@ -1,6 +1,6 @@
 <div class="error-container">
   <div class="text-center mb-5">
-    @if (errorModel.responseStatusCode != 0){
+    @if (errorModel.responseStatusCode > 0 && errorModel.responseStatusCode != 200){
       <h1 class="text-warning">
         <i class="bi bi-database-fill-exclamation"></i>
       </h1>
@@ -12,7 +12,7 @@
       <h2>Unable connect to server</h2>
     }
   </div>
-  @if (errorModel.responseStatusCode != 0){
+  @if (errorModel.responseStatusCode > 0 && errorModel.responseStatusCode != 200){
     <ul>
       <li>
         Status code:

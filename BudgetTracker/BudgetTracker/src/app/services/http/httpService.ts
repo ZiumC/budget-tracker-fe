@@ -1,21 +1,47 @@
 import {HttpClient, HttpResponse} from "@angular/common/http";
-import {Budget} from "../../models/Budget";
+import {BudgetModel, IncomeModel, PaymentModel} from "../../models/RequestModels";
 import {Observable} from "rxjs";
 import {UrlApi} from "./http";
 import {Injectable} from "@angular/core";
-import {RequestModel} from "../../models/RequestModel";
+import {RequestParamModel} from "../../models/RequestParamModel";
 
 @Injectable({
   providedIn: 'root',
 })
 export class HttpService {
+
   constructor(private httpClient: HttpClient) {
   }
 
-  public getBudgets(requestModel: RequestModel): Observable<HttpResponse<Budget[]>> {
-    return this.httpClient.get<Budget[]>(
+  public getBudgets(requestModel: RequestParamModel):
+    Observable<HttpResponse<BudgetModel[]>> {
+    return this.httpClient.get<BudgetModel[]>(
       UrlApi.getBudgets(requestModel),
       {observe: 'response'}
     );
+  }
+
+  public getBudget(idBudget: string):
+    Observable<HttpResponse<BudgetModel>> {
+    return this.httpClient.get<BudgetModel>(
+      UrlApi.getBudget(idBudget),
+      {observe: 'response'}
+    );
+  }
+
+  public getBudgetIncomes(requestModel: RequestParamModel, idBudget: string):
+    Observable<HttpResponse<IncomeModel[]>> {
+    return this.httpClient.get<IncomeModel[]>(
+      UrlApi.getBudgetIncomes(requestModel, idBudget),
+      {observe: 'response'}
+    );
+  }
+
+  public getBudgetPayments(requestModel: RequestParamModel, idBudget: string):
+    Observable<HttpResponse<PaymentModel[]>> {
+    return this.httpClient.get<PaymentModel[]>(
+      UrlApi.getBudgetPayments(requestModel, idBudget),
+      {observe: 'response'}
+    )
   }
 }
