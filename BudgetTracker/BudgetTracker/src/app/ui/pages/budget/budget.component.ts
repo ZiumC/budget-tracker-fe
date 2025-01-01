@@ -26,11 +26,12 @@ export class BudgetComponent implements OnInit, OnDestroy {
   protected incomes: IncomeModel[] | null;
   protected budget: BudgetModel | null;
   protected payments: PaymentModel[] | null;
-
   protected subscriptions: Subscription[] = [];
   protected selectedIncome: IncomeModel;
   protected selectedPayment: PaymentModel;
-  protected pageLoader: any;
+
+  protected pageLoaded: boolean = false;
+  protected requestLoaded: any;
   protected requiredStatusCode: any;
   protected errorModels: any;
   protected commentRows: number;
@@ -50,7 +51,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
       payments: 200
     };
 
-    this.pageLoader = {
+    this.requestLoaded = {
       budget: false,
       incomes: false,
       payments: false
@@ -79,13 +80,13 @@ export class BudgetComponent implements OnInit, OnDestroy {
         next: (response: HttpResponse<BudgetModel>): void => {
           this.budget = response.body;
           this.errorModels.budget.responseStatusCode = response.status
-          this.pageLoader.budget = true;
+          this.requestLoaded.budget = true;
         },
         error: (err) => {
           this.errorModels.budget.traceId = err.headers.get('X-Trace-Id');
           this.errorModels.budget.responseStatusCode = err.status;
           this.errorModels.budget.responseErrorModel = err.error;
-          this.pageLoader.budget = true;
+          this.requestLoaded.budget = true;
         }
       })
     )
@@ -97,13 +98,13 @@ export class BudgetComponent implements OnInit, OnDestroy {
         next: (response: HttpResponse<IncomeModel[]>): void => {
           this.incomes = Sort.incomeSurplusFirst(response.body);
           this.errorModels.incomes.responseStatusCode = response.status
-          this.pageLoader.incomes = true;
+          this.requestLoaded.incomes = true;
         },
         error: (err) => {
           this.errorModels.incomes.traceId = err.headers.get('X-Trace-Id');
           this.errorModels.incomes.responseStatusCode = err.status;
           this.errorModels.incomes.responseErrorModel = err.error;
-          this.pageLoader.incomes = true;
+          this.requestLoaded.incomes = true;
         }
       })
     )
@@ -115,17 +116,31 @@ export class BudgetComponent implements OnInit, OnDestroy {
         next: (response: HttpResponse<PaymentModel[]>): void => {
           this.payments = Sort.incomePaidFirst(response.body);
           this.errorModels.payments.responseStatusCode = response.status
-          this.pageLoader.payments = true;
+          this.requestLoaded.payments = true;
         },
         error: (err) => {
           this.errorModels.payments.traceId = err.headers.get('X-Trace-Id');
           this.errorModels.payments.responseStatusCode = err.status;
           this.errorModels.payments.responseErrorModel = err.error;
-          this.pageLoader.payments = true;
+          this.requestLoaded.payments = true;
         }
       })
     )
+
+    let retryCount = 0;
+    setTimeout(() => {
+      while (!this.pageLoaded) {
+        if ((this.requestLoaded.incomes &&
+          this.requestLoaded.budget &&
+          this.requestLoaded.payments) ||
+        retryCount == 5) {
+          this.pageLoaded = true;
+        }
+        retryCount++;
+      }
+    }, 1500);
   }
+
 
   protected computeRealCost(payment: PaymentModel): BigNumber {
     const price = payment.price;
