@@ -36,7 +36,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
   protected errorModels: any;
   protected commentRows: number;
 
-  private idBudget: string;
+  protected idBudget: string;
   public innerWidth: any;
 
   constructor(

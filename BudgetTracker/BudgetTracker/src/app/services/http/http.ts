@@ -4,14 +4,16 @@ export class UrlApi {
   private static HOST: string = "https://localhost:7139/api"
   private static CONTOLLERS = {
     BUDGET: "/Budgets",
-    PAYMENTS: "/Payments"
+    PAYMENTS: "/Payments",
+    INCOMES: "/Incomes"
   }
   private static ACTIONS = {
     PAYMENTS: "/payments",
-    INCOMES: "/incomes"
+    INCOMES: "/incomes",
+    INCOME: "/income"
   }
 
-  static getBudgets(requestParamModel: RequestParamModel): string {
+  static budgets(requestParamModel: RequestParamModel): string {
     const page = requestParamModel.page;
     const pageSize = requestParamModel.pageSize;
     const fromDate = requestParamModel.fromDate;
@@ -36,38 +38,41 @@ export class UrlApi {
     return urlResult;
   }
 
-  static getBudget(idBudget: string): string {
+  static budget(idBudget: string): string {
     return this.HOST + this.CONTOLLERS.BUDGET + "/" + idBudget;
   }
 
-  static getBudgetIncomes(
-    requestParamModel: RequestParamModel,
+  static budgetIncomes(
+    requestParamModel: RequestParamModel | null,
     idBudget: string): string {
-    const page = requestParamModel.page;
-    const pageSize = requestParamModel.pageSize;
-    const fromDate = requestParamModel.fromDate;
-    const toDate = requestParamModel.toDate;
-    const orderBy = requestParamModel.orderBy;
 
-    let urlResult = this.HOST + this.CONTOLLERS.BUDGET + "/" + idBudget + this.ACTIONS.INCOMES +
-      "?page=" + page + "&pageSize=" + pageSize;
+    let baseUrl = this.HOST + this.CONTOLLERS.BUDGET + "/" + idBudget + this.ACTIONS.INCOMES;
 
-    if (fromDate) {
-      urlResult = urlResult + "&fromDate=" + fromDate;
+    if (requestParamModel){
+      const page = requestParamModel.page;
+      const pageSize = requestParamModel.pageSize;
+      const fromDate = requestParamModel.fromDate;
+      const toDate = requestParamModel.toDate;
+      const orderBy = requestParamModel.orderBy;
+
+      baseUrl = baseUrl + "?page=" + page + "&pageSize=" + pageSize;
+
+      if (fromDate) {
+        baseUrl = baseUrl + "&fromDate=" + fromDate;
+      }
+
+      if (toDate) {
+        baseUrl = baseUrl + "&toDate=" + toDate;
+      }
+
+      if (orderBy) {
+        baseUrl = baseUrl + "&orderBy=" + orderBy;
+      }
     }
-
-    if (toDate) {
-      urlResult = urlResult + "&toDate=" + toDate;
-    }
-
-    if (orderBy) {
-      urlResult = urlResult + "&orderBy=" + orderBy;
-    }
-
-    return urlResult;
+    return baseUrl;
   }
 
-  static getBudgetPayments(
+  static budgetPayments(
     requestParamModel: RequestParamModel,
     idBudget: string): string {
     const page = requestParamModel.page;
@@ -92,5 +97,9 @@ export class UrlApi {
     }
 
     return urlResult;
+  }
+
+  static income(idIncome: string): string {
+    return this.HOST + this.CONTOLLERS.INCOMES + "/" + idIncome;
   }
 }
