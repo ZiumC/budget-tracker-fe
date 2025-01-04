@@ -1,6 +1,6 @@
 <div class="height-wrapper width-wrapper">
   <div class="component-wrapper component-bg">
-    <ng-template [ngIf]="!pageLoader.incomes" [ngIfElse]="loadedBlock">
+    <ng-template [ngIf]="!pageLoaded" [ngIfElse]="loadedBlock">
       <app-spinner [size]="SpinnerSize.BIG"></app-spinner>
     </ng-template>
     <ng-template #loadedBlock>
@@ -41,7 +41,8 @@
                       class="btn btn-success"
                       data-bs-toggle="tooltip"
                       data-bs-placement="bottom"
-                      title="Add income">
+                      title="Add income"
+                      (click)="incomeModal.open()">
                 <i class="bi bi-cash-coin"></i> Income
               </button>
               <button type="button"
@@ -132,7 +133,8 @@
                               class="btn btn-warning"
                               data-bs-toggle="tooltip"
                               data-bs-placement="bottom"
-                              title="Edit income">
+                              title="Edit income"
+                              (click)="incomeModal.open(income)">
                               <i class="bi bi-pencil-square"></i> Edit
                             </button>
                             <button
@@ -296,6 +298,11 @@
           </div>
         </div>
       </ng-template>
+      <app-income #incomeModal
+                  [idBudget]="idBudget"
+                  (refreshIncomeEvent)="onRefreshIncome($event)">
+
+      </app-income>
       <ng-template #errorPaymentsBlock>
         <app-error [errorModel]="errorModels.payments"></app-error>
       </ng-template>

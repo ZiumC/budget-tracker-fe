@@ -4,6 +4,7 @@ import {Observable} from "rxjs";
 import {UrlApi} from "./http";
 import {Injectable} from "@angular/core";
 import {RequestParamModel} from "../../models/RequestParamModel";
+import {IncomeForm} from "../../models/FormModels";
 
 @Injectable({
   providedIn: 'root',
@@ -16,7 +17,7 @@ export class HttpService {
   public getBudgets(requestModel: RequestParamModel):
     Observable<HttpResponse<BudgetModel[]>> {
     return this.httpClient.get<BudgetModel[]>(
-      UrlApi.getBudgets(requestModel),
+      UrlApi.budgets(requestModel),
       {observe: 'response'}
     );
   }
@@ -24,7 +25,7 @@ export class HttpService {
   public getBudget(idBudget: string):
     Observable<HttpResponse<BudgetModel>> {
     return this.httpClient.get<BudgetModel>(
-      UrlApi.getBudget(idBudget),
+      UrlApi.budget(idBudget),
       {observe: 'response'}
     );
   }
@@ -32,7 +33,7 @@ export class HttpService {
   public getBudgetIncomes(requestModel: RequestParamModel, idBudget: string):
     Observable<HttpResponse<IncomeModel[]>> {
     return this.httpClient.get<IncomeModel[]>(
-      UrlApi.getBudgetIncomes(requestModel, idBudget),
+      UrlApi.budgetIncomes(requestModel, idBudget),
       {observe: 'response'}
     );
   }
@@ -40,7 +41,25 @@ export class HttpService {
   public getBudgetPayments(requestModel: RequestParamModel, idBudget: string):
     Observable<HttpResponse<PaymentModel[]>> {
     return this.httpClient.get<PaymentModel[]>(
-      UrlApi.getBudgetPayments(requestModel, idBudget),
+      UrlApi.budgetPayments(requestModel, idBudget),
+      {observe: 'response'}
+    )
+  }
+
+  public createBudgetIncome(incomeForm: IncomeForm, idBudget: string):
+    Observable<HttpResponse<{}>> {
+    return this.httpClient.post(
+      UrlApi.budgetIncome(idBudget),
+      incomeForm,
+      {observe: 'response'}
+    )
+  }
+
+  public updateIncome(incomeForm: IncomeForm, idIncome: string):
+    Observable<HttpResponse<{}>> {
+    return this.httpClient.put(
+      UrlApi.income(idIncome),
+      incomeForm,
       {observe: 'response'}
     )
   }

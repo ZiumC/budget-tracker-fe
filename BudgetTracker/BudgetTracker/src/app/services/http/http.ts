@@ -4,14 +4,16 @@ export class UrlApi {
   private static HOST: string = "https://localhost:7139/api"
   private static CONTOLLERS = {
     BUDGET: "/Budgets",
-    PAYMENTS: "/Payments"
+    PAYMENTS: "/Payments",
+    INCOMES: "/Incomes"
   }
   private static ACTIONS = {
     PAYMENTS: "/payments",
-    INCOMES: "/incomes"
+    INCOMES: "/incomes",
+    INCOME: "/income"
   }
 
-  static getBudgets(requestParamModel: RequestParamModel): string {
+  static budgets(requestParamModel: RequestParamModel): string {
     const page = requestParamModel.page;
     const pageSize = requestParamModel.pageSize;
     const fromDate = requestParamModel.fromDate;
@@ -36,38 +38,40 @@ export class UrlApi {
     return urlResult;
   }
 
-  static getBudget(idBudget: string): string {
+  static budget(idBudget: string): string {
     return this.HOST + this.CONTOLLERS.BUDGET + "/" + idBudget;
   }
 
-  static getBudgetIncomes(
+  static budgetIncomes(
     requestParamModel: RequestParamModel,
     idBudget: string): string {
+
+    let baseUrl = this.HOST + this.CONTOLLERS.BUDGET + "/" + idBudget + this.ACTIONS.INCOMES;
+
     const page = requestParamModel.page;
     const pageSize = requestParamModel.pageSize;
     const fromDate = requestParamModel.fromDate;
     const toDate = requestParamModel.toDate;
     const orderBy = requestParamModel.orderBy;
 
-    let urlResult = this.HOST + this.CONTOLLERS.BUDGET + "/" + idBudget + this.ACTIONS.INCOMES +
-      "?page=" + page + "&pageSize=" + pageSize;
+    baseUrl = baseUrl + "?page=" + page + "&pageSize=" + pageSize;
 
     if (fromDate) {
-      urlResult = urlResult + "&fromDate=" + fromDate;
+      baseUrl = baseUrl + "&fromDate=" + fromDate;
     }
 
     if (toDate) {
-      urlResult = urlResult + "&toDate=" + toDate;
+      baseUrl = baseUrl + "&toDate=" + toDate;
     }
 
     if (orderBy) {
-      urlResult = urlResult + "&orderBy=" + orderBy;
+      baseUrl = baseUrl + "&orderBy=" + orderBy;
     }
 
-    return urlResult;
+    return baseUrl;
   }
 
-  static getBudgetPayments(
+  static budgetPayments(
     requestParamModel: RequestParamModel,
     idBudget: string): string {
     const page = requestParamModel.page;
@@ -92,5 +96,13 @@ export class UrlApi {
     }
 
     return urlResult;
+  }
+
+  static budgetIncome(idBudget: string): string {
+    return this.HOST + this.CONTOLLERS.BUDGET + "/" + idBudget + this.ACTIONS.INCOME;
+  }
+
+  static income(idIncome: string): string {
+    return this.HOST + this.CONTOLLERS.INCOMES + "/" + idIncome;
   }
 }

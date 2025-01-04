@@ -12,6 +12,8 @@ import { FooterComponent } from './ui/components/shared/footer/footer.component'
 import { SpinnerComponent } from './ui/components/shared/spinner/spinner.component';
 import { ErrorComponent } from './ui/components/shared/error/error.component';
 import { BudgetComponent } from './ui/pages/budget/budget.component';
+import { IncomeComponent } from './ui/components/modals/income/income.component';
+import {FormsModule} from "@angular/forms";
 
 @NgModule({
   declarations: [
@@ -21,14 +23,16 @@ import { BudgetComponent } from './ui/pages/budget/budget.component';
     FooterComponent,
     SpinnerComponent,
     ErrorComponent,
-    BudgetComponent
+    BudgetComponent,
+    IncomeComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     NgbModule,
     HttpClientModule,
-    CommonModule
+    CommonModule,
+    FormsModule
   ],
   providers: [],
   bootstrap: [AppComponent],
