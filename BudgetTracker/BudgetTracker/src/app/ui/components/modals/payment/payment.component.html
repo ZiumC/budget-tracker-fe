@@ -1,7 +1,11 @@
 <ng-template #paymentModal let-modal>
   <div class="modal-header">
     <h4 class="modal-title" id="modal-basic-title">
-      Add payment
+      @if (isEditing) {
+        Edit payment
+      } @else {
+        Add payment
+      }
     </h4>
     <button
       type="button"
@@ -12,8 +16,209 @@
   </div>
   <div class="modal-body">
     <form ngbAutofocus #form="ngForm">
-      <div class="col-mx">
-        <div class="mb-2">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="mb-2">
+            <label for="payment-name">Name</label>
+            <span class="text-danger">*</span>
+            <input
+              type="text"
+              id="payment-name"
+              name="payment-name"
+              class="form-control"
+              [(ngModel)]="paymentForm.name"
+              required
+              minlength="3"
+              maxlength="150"
+              #paymentNameInput="ngModel"
+              [ngClass]="{
+            'is-invalid':
+              paymentNameInput.invalid &&
+              (paymentNameInput.dirty || paymentNameInput.touched),
+            'is-valid': paymentNameInput.valid }"/>
+            @if (paymentNameInput.invalid &&
+            (paymentNameInput.dirty || paymentNameInput.touched)) {
+              <div class="invalid-feedback">
+                <label *ngIf="paymentNameInput.errors?.['required']">
+                  Field is required.
+                </label>
+                <label *ngIf="paymentNameInput.errors?.['minlength']">
+                  Minimum length are 3 characters.
+                </label>
+                <label *ngIf="paymentNameInput.errors?.['maxlength']">
+                  Maximum length are 150 characters.
+                </label>
+              </div>
+            } @else if (paymentNameInput.valid) {
+              <div class="valid-feedback pb-3">
+              </div>
+            } @else {
+              <div class="pb-4"></div>
+            }
+          </div>
+          <div class="mb-2">
+            <label for="payment-price">Price</label>
+            <span class="text-danger">*</span>
+            <div class="input-group">
+              <input
+                type="number"
+                id="payment-price"
+                name="payment-price"
+                class="form-control"
+                [(ngModel)]="paymentForm.price"
+                required
+                min="0"
+                #paymentPriceInput="ngModel"
+                [ngClass]="{
+            'is-invalid':
+              paymentPriceInput.invalid &&
+              (paymentPriceInput.dirty || paymentPriceInput.touched),
+            'is-valid': paymentPriceInput.valid }"/>
+              <div class="input-group-append">
+                <span class="input-group-text">PLN</span>
+              </div>
+              @if (paymentPriceInput.invalid &&
+              (paymentPriceInput.dirty || paymentPriceInput.touched)) {
+                <div class="invalid-feedback">
+                  <label *ngIf="paymentPriceInput.errors?.['required']">
+                    Field is required.
+                  </label>
+                  <label *ngIf="paymentPriceInput.errors?.['min']">
+                    Minimum value is 0
+                  </label>
+                </div>
+              } @else if (paymentPriceInput.valid) {
+                <div class="valid-feedback pb-3">
+                </div>
+              } @else {
+                <div class="pb-4"></div>
+              }
+            </div>
+          </div>
+          <div class="mb-2">
+            <label for="payment-refund">Refund</label>
+            <span class="text-danger">*</span>
+            <div class="input-group">
+              <input
+                type="number"
+                id="payment-refund"
+                name="payment-refund"
+                class="form-control"
+                [(ngModel)]="paymentForm.refund"
+                required
+                min="0"
+                #paymentRefundInput="ngModel"
+                [ngClass]="{
+            'is-invalid':
+              paymentRefundInput.invalid &&
+              (paymentRefundInput.dirty || paymentRefundInput.touched),
+            'is-valid': paymentRefundInput.valid }"/>
+              <div class="input-group-append">
+                <span class="input-group-text">PLN</span>
+              </div>
+              @if (paymentRefundInput.invalid &&
+              (paymentRefundInput.dirty || paymentRefundInput.touched)) {
+                <div class="invalid-feedback">
+                  <label *ngIf="paymentRefundInput.errors?.['required']">
+                    Field is required.
+                  </label>
+                  <label *ngIf="paymentRefundInput.errors?.['min']">
+                    Minimum value is 0
+                  </label>
+                </div>
+              } @else if (paymentRefundInput.valid) {
+                <div class="valid-feedback pb-3">
+                </div>
+              } @else {
+                <div class="pb-4"></div>
+              }
+            </div>
+          </div>
+          <label for="payment-refund">Real</label>
+          <div class="input-group">
+            <input
+              type="number"
+              name="payment-refund"
+              class="form-control"
+              disabled
+              value="{{
+              NumberUtils.format(NumberUtils.subtract(
+              paymentForm.price,
+              paymentForm.refund)) }}"/>
+            <div class="input-group-append">
+              <span class="input-group-text">PLN</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="mb-2">
+            <label for="payment-paid">Status</label>
+            <span class="text-danger">*</span>
+            <select
+              id="payment-paid"
+              name="payment-paid"
+              class="form-control"
+              [(ngModel)]="paymentForm.isPaid"
+              required
+              #paymentPaidSelect="ngModel"
+              [ngClass]="{
+            'is-invalid':
+              paymentPaidSelect.invalid &&
+              (paymentPaidSelect.dirty || paymentPaidSelect.touched),
+            'is-valid': paymentPaidSelect.valid,
+            }">
+              <option value=false>Payment not paid</option>
+              <option value=true>Payment paid</option>
+            </select>
+            @if (paymentPaidSelect.invalid &&
+            (paymentPaidSelect.dirty || paymentPaidSelect.touched)) {
+              <div class="invalid-feedback">
+                <label *ngIf="paymentPaidSelect.errors?.['required']">
+                  This field is required.
+                </label>
+              </div>
+            } @else if (paymentPaidSelect.valid) {
+              <div class="valid-feedback pb-3">
+              </div>
+            } @else {
+              <div class="valid-feedback">
+              </div>
+            }
+          </div>
+          <label for="payment-comment">Comment</label>
+          <textarea
+            id="payment-comment"
+            class="form-control"
+            name="payment-comment"
+            rows="8"
+            minlength="3"
+            maxlength="512"
+            #paymentCommentInput="ngModel"
+            [(ngModel)]="paymentForm.comment"
+            [ngClass]="{
+            'is-invalid':
+              paymentCommentInput.invalid &&
+              (paymentCommentInput.dirty || paymentCommentInput.touched),
+            'is-valid': paymentCommentInput.valid,
+            }">
+          </textarea>
+          @if (paymentCommentInput.invalid &&
+          (paymentCommentInput.dirty || paymentCommentInput.touched)) {
+            <div class="invalid-feedback">
+              <label *ngIf="paymentCommentInput.errors?.['minlength']">
+                Minimum length are 3 characters.
+              </label>
+              <label *ngIf="paymentCommentInput.errors?.['maxlength']">
+                Maximum length are 512 characters.
+              </label>
+            </div>
+          } @else if (paymentCommentInput.valid) {
+            <div class="valid-feedback pb-3">
+            </div>
+          } @else {
+            <div class="valid-feedback">
+            </div>
+          }
         </div>
       </div>
     </form>

@@ -195,7 +195,7 @@
                           <td [style.display]="innerWidth > mobileWidth ? '' : 'none'">
                             {{ NumberUtils.format(payment.refund) }}
                           </td>
-                          <td>{{ NumberUtils.format(computeRealCost(payment)) }}</td>
+                          <td>{{ NumberUtils.format(NumberUtils.subtract(payment.price, payment.refund)) }}</td>
                         </tr>
                       </table>
                     </button>

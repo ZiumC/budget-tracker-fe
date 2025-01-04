@@ -81,6 +81,11 @@ table tr th {
   border-bottom-left-radius: 0;
 }
 
+.input-group-append span {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
 @media only screen and (max-width: 770px) {
   .width-wrapper {
     width: 92%;

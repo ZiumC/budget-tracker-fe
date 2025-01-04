@@ -3,10 +3,11 @@ import {Subscription} from "rxjs";
 import {SubscriptionUtils} from "../../../../util/subscription.utils";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {PaymentModel} from "../../../../models/RequestModels";
-import {ModalOptions} from "../../../../util/modal.utils";
+import {ModalOptions, ModalSize} from "../../../../util/modal.utils";
 import {PaymentForm} from "../../../../models/FormModels";
 import {ErrorModel} from "../../../../models/ErrorModel";
 import BigNumber from "bignumber.js";
+import {NumberUtils} from "../../../../util/number.utils";
 
 @Component({
   selector: 'app-payment',
@@ -41,7 +42,7 @@ export class PaymentComponent implements OnInit, OnDestroy {
     this.setDefaultIncomeForm();
     this.isEditing = paymentData != null;
 
-    this.modalService.open(this.paymentModal, ModalOptions.default());
+    this.modalService.open(this.paymentModal, ModalOptions.default(ModalSize.BIG));
   }
 
   private setDefaultIncomeForm(): void {
@@ -53,4 +54,6 @@ export class PaymentComponent implements OnInit, OnDestroy {
       comment: ""
     } as PaymentForm;
   }
+
+  protected readonly NumberUtils = NumberUtils;
 }

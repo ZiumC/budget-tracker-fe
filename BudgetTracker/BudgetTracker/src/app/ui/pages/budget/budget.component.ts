@@ -130,14 +130,6 @@ export class BudgetComponent implements OnInit, OnDestroy {
     }, 1500);
   }
 
-
-  protected computeRealCost(payment: PaymentModel): BigNumber {
-    const price = payment.price;
-    const refund = payment.refund;
-    const result = new BigNumber(price).minus(new BigNumber(refund));
-    return new BigNumber(result);
-  }
-
   protected displayComment(comment: string): string {
     if (comment) {
       const length = comment.length;
