@@ -1,33 +1,35 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
-import {IncomeForm} from "../../../../models/FormModels";
-import {IncomeModel} from "../../../../models/RequestModels";
-import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
-import {ModalOptions} from "../../../../util/modal.utils";
-import BigNumber from "bignumber.js";
 import {Subscription} from "rxjs";
-import {HttpService} from "../../../../services/http/httpService";
-import {ErrorModel} from "../../../../models/ErrorModel";
 import {SubscriptionUtils} from "../../../../util/subscription.utils";
+import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
+import {PaymentModel} from "../../../../models/RequestModels";
+import {ModalOptions, ModalSize} from "../../../../util/modal.utils";
+import {PaymentForm} from "../../../../models/FormModels";
+import {ErrorModel} from "../../../../models/ErrorModel";
+import BigNumber from "bignumber.js";
+import {NumberUtils} from "../../../../util/number.utils";
 import {SpinnerSize} from "../../shared/spinner/spinner.component";
 import {HttpResponse} from "@angular/common/http";
+import {HttpService} from "../../../../services/http/httpService";
 
 @Component({
-  selector: 'app-income',
-  templateUrl: './income.component.html',
-  styleUrl: './income.component.css'
+  selector: 'app-payment',
+  templateUrl: './payment.component.html',
+  styleUrl: './payment.component.css'
 })
-export class IncomeComponent implements OnInit, OnDestroy {
-  @ViewChild('incomeModal') incomeModal: any;
+export class PaymentComponent implements OnInit, OnDestroy {
+  @ViewChild('paymentModal') paymentModal: any;
   @Input() idBudget: string;
-  @Output() refreshIncomeEvent = new EventEmitter<boolean>();
+  @Output() refreshPaymentEvent = new EventEmitter<boolean>();
   protected readonly SpinnerSize = SpinnerSize;
+  protected readonly NumberUtils = NumberUtils;
   protected subscriptions: Subscription[];
   protected errorModel: ErrorModel;
-  protected incomeForm: IncomeForm;
-  protected idIncome: string;
+  protected paymentForm: PaymentForm;
+  protected idPayment: string;
+  protected isEditing: boolean;
   protected displayLoader: boolean;
   protected displayError: boolean;
-  protected isEditing: boolean;
   protected buttonCopyName: string;
 
   constructor(
@@ -35,46 +37,47 @@ export class IncomeComponent implements OnInit, OnDestroy {
     private httpService: HttpService) {
   }
 
-  ngOnDestroy(): void {
-    SubscriptionUtils.unsubscribeAll(this.subscriptions);
-  }
-
   ngOnInit(): void {
-    this.setDefaultIncomeForm();
-    this.errorModel = new ErrorModel();
     this.subscriptions = [];
+    this.errorModel = new ErrorModel();
     this.displayLoader = false;
     this.displayError = false;
     this.isEditing = false;
     this.buttonCopyName = "Copy";
   }
 
-  open(incomeData?: IncomeModel): void {
-    this.setDefaultIncomeForm();
-    this.displayError = false;
-    this.isEditing = incomeData != null;
-
-    if (incomeData) {
-      this.idIncome = incomeData.id;
-      this.incomeForm.name = incomeData.name;
-      this.incomeForm.wage = incomeData.wage;
-      this.incomeForm.isSurplus = incomeData.isSurplus;
-    }
-
-    this.modalService.open(this.incomeModal, ModalOptions.default());
+  ngOnDestroy(): void {
+    SubscriptionUtils.unsubscribeAll(this.subscriptions);
   }
 
-  protected saveIncome(): void {
+  open(paymentData?: PaymentModel): void {
+    this.setDefaultPaymentForm();
+    this.displayError = false;
+    this.isEditing = paymentData != null;
+
+    if (paymentData) {
+      this.idPayment = paymentData.id;
+      this.paymentForm.name = paymentData.name;
+      this.paymentForm.price = paymentData.price;
+      this.paymentForm.refund = paymentData.refund;
+      this.paymentForm.isPaid = paymentData.isPaid;
+      this.paymentForm.comment = paymentData.comment;
+    }
+
+    this.modalService.open(this.paymentModal, ModalOptions.default(ModalSize.BIG));
+  }
+
+  protected savePayment(): void {
     this.displayLoader = true;
 
-    const surplus = String(this.incomeForm.isSurplus);
-    this.incomeForm.isSurplus = JSON.parse(surplus)
+    const isPaid = String(this.paymentForm.isPaid);
+    this.paymentForm.isPaid = JSON.parse(isPaid)
 
     setTimeout((): void => {
       if (this.isEditing) {
-        this.updateIncome()
+        this.updatePayment();
       } else {
-        this.createIncome();
+        this.createBudgetPayment();
       }
     }, 500);
   }
@@ -91,11 +94,11 @@ export class IncomeComponent implements OnInit, OnDestroy {
     }, 2500)
   }
 
-  private updateIncome(): void {
+  private updatePayment(): void {
     this.subscriptions.push(
-      this.httpService.updateIncome(
-        this.incomeForm,
-        this.idIncome).subscribe({
+      this.httpService.updatePayment(
+        this.paymentForm,
+        this.idPayment).subscribe({
         next: (response: HttpResponse<any>): void => {
           this.onRequestSuccess(response);
         },
@@ -106,10 +109,10 @@ export class IncomeComponent implements OnInit, OnDestroy {
     )
   }
 
-  private createIncome(): void {
+  private createBudgetPayment(): void {
     this.subscriptions.push(
-      this.httpService.createBudgetIncome(
-        this.incomeForm,
+      this.httpService.createBudgetPayment(
+        this.paymentForm,
         this.idBudget).subscribe({
         next: (response: HttpResponse<any>): void => {
           this.onRequestSuccess(response);
@@ -122,7 +125,7 @@ export class IncomeComponent implements OnInit, OnDestroy {
   }
 
   private onRequestSuccess(response: HttpResponse<any>): void {
-    this.refreshIncomeEvent.emit(true);
+    this.refreshPaymentEvent.emit(true);
     this.errorModel.responseStatusCode = response.status;
     this.modalService.dismissAll();
     setTimeout((): void => {
@@ -138,12 +141,13 @@ export class IncomeComponent implements OnInit, OnDestroy {
     this.displayError = true;
   }
 
-  private setDefaultIncomeForm(): void {
-    this.displayError = false;
-    this.incomeForm = {
+  private setDefaultPaymentForm(): void {
+    this.paymentForm = {
       name: "",
-      wage: new BigNumber(0.00),
-      isSurplus: false
-    } as IncomeModel;
+      price: BigNumber(0.00),
+      refund: BigNumber(0.00),
+      isPaid: false,
+      comment: ""
+    } as PaymentForm;
   }
 }

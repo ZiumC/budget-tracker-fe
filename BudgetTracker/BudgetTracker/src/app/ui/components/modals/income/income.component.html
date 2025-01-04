@@ -94,7 +94,7 @@
                   Minimum value is 0
                 </label>
               </div>
-            } @else if (incomeNameInput.valid) {
+            } @else if (incomeWageInput.valid) {
               <div class="valid-feedback pb-3">
               </div>
             } @else {
@@ -102,7 +102,7 @@
             }
           </div>
           <div class="mb-2">
-            <label for="income-surplus">Surplus</label>
+            <label for="income-surplus">Status</label>
             <span class="text-danger">*</span>
             <select
               id="income-surplus"
@@ -144,19 +144,22 @@
             Status code: <span class="text-danger">{{ errorModel.responseStatusCode }}</span>
           </li>
         </ul>
-        <div class="input-group mb-3">
-          <input #traceInput
-                 type="text"
-                 class="form-control text-danger"
-                 value="{{ errorModel.traceId }}">
-          <div class="input-group-append">
-            <button class="btn btn-outline-secondary"
-                    type="button"
-                    (click)="copy(traceInput)">
-              {{ buttonCopyName }}
-            </button>
+        @if (errorModel.traceId) {
+          <div class="input-group mb-3">
+            <input #traceInput
+                   type="text"
+                   class="form-control text-danger"
+                   readonly="readonly"
+                   value="{{ errorModel.traceId }}">
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary"
+                      type="button"
+                      (click)="copy(traceInput)">
+                {{ buttonCopyName }}
+              </button>
+            </div>
           </div>
-        </div>
+        }
       </ng-template>
     </div>
     <div class="modal-footer">

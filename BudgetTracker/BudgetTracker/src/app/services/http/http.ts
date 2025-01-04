@@ -2,13 +2,14 @@ import {RequestParamModel} from "../../models/RequestParamModel";
 
 export class UrlApi {
   private static HOST: string = "https://localhost:7139/api"
-  private static CONTOLLERS = {
+  private static CONTROLLERS = {
     BUDGET: "/Budgets",
     PAYMENTS: "/Payments",
     INCOMES: "/Incomes"
   }
   private static ACTIONS = {
     PAYMENTS: "/payments",
+    PAYMENT: "/payment",
     INCOMES: "/incomes",
     INCOME: "/income"
   }
@@ -20,7 +21,7 @@ export class UrlApi {
     const toDate = requestParamModel.toDate;
     const orderBy = requestParamModel.orderBy;
 
-    let urlResult = this.HOST + this.CONTOLLERS.BUDGET +
+    let urlResult = this.HOST + this.CONTROLLERS.BUDGET +
       "?page=" + page + "&pageSize=" + pageSize;
 
     if (fromDate) {
@@ -39,14 +40,14 @@ export class UrlApi {
   }
 
   static budget(idBudget: string): string {
-    return this.HOST + this.CONTOLLERS.BUDGET + "/" + idBudget;
+    return this.HOST + this.CONTROLLERS.BUDGET + "/" + idBudget;
   }
 
   static budgetIncomes(
     requestParamModel: RequestParamModel,
     idBudget: string): string {
 
-    let baseUrl = this.HOST + this.CONTOLLERS.BUDGET + "/" + idBudget + this.ACTIONS.INCOMES;
+    let baseUrl = this.HOST + this.CONTROLLERS.BUDGET + "/" + idBudget + this.ACTIONS.INCOMES;
 
     const page = requestParamModel.page;
     const pageSize = requestParamModel.pageSize;
@@ -80,7 +81,7 @@ export class UrlApi {
     const toDate = requestParamModel.toDate;
     const orderBy = requestParamModel.orderBy;
 
-    let urlResult = this.HOST + this.CONTOLLERS.BUDGET + "/" + idBudget + this.ACTIONS.PAYMENTS +
+    let urlResult = this.HOST + this.CONTROLLERS.BUDGET + "/" + idBudget + this.ACTIONS.PAYMENTS +
       "?page=" + page + "&pageSize=" + pageSize;
 
     if (fromDate) {
@@ -99,10 +100,18 @@ export class UrlApi {
   }
 
   static budgetIncome(idBudget: string): string {
-    return this.HOST + this.CONTOLLERS.BUDGET + "/" + idBudget + this.ACTIONS.INCOME;
+    return this.HOST + this.CONTROLLERS.BUDGET + "/" + idBudget + this.ACTIONS.INCOME;
   }
 
   static income(idIncome: string): string {
-    return this.HOST + this.CONTOLLERS.INCOMES + "/" + idIncome;
+    return this.HOST + this.CONTROLLERS.INCOMES + "/" + idIncome;
+  }
+
+  static budgetPayment(idBudget: string): string {
+    return this.HOST + this.CONTROLLERS.BUDGET + "/" + idBudget + this.ACTIONS.PAYMENT;
+  }
+
+  static payment(idPayment: string): string {
+    return this.HOST + this.CONTROLLERS.PAYMENTS + "/" + idPayment;
   }
 }
