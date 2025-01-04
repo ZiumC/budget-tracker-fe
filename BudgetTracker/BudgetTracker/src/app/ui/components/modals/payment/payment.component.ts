@@ -9,6 +9,8 @@ import {ErrorModel} from "../../../../models/ErrorModel";
 import BigNumber from "bignumber.js";
 import {NumberUtils} from "../../../../util/number.utils";
 import {SpinnerSize} from "../../shared/spinner/spinner.component";
+import {HttpResponse} from "@angular/common/http";
+import {HttpService} from "../../../../services/http/httpService";
 
 @Component({
   selector: 'app-payment',
@@ -29,7 +31,8 @@ export class PaymentComponent implements OnInit, OnDestroy {
   protected displayError: boolean;
 
   constructor(
-    private modalService: NgbModal) {
+    private modalService: NgbModal,
+    private httpService: HttpService) {
   }
 
   ngOnInit(): void {
@@ -46,6 +49,7 @@ export class PaymentComponent implements OnInit, OnDestroy {
 
   open(paymentData?: PaymentModel): void {
     this.setDefaultIncomeForm();
+    this.displayError = false;
     this.isEditing = paymentData != null;
 
     if (paymentData) {
@@ -67,8 +71,42 @@ export class PaymentComponent implements OnInit, OnDestroy {
     this.paymentForm.isPaid = JSON.parse(isPaid)
 
     setTimeout((): void => {
-      this.displayLoader = false;
+      if (this.isEditing) {
+        this.updatePayment()
+      }
     }, 500);
+  }
+
+  private updatePayment(): void {
+    this.subscriptions.push(
+      this.httpService.updatePayment(
+        this.paymentForm,
+        this.idPayment).subscribe({
+        next: (response: HttpResponse<any>): void => {
+          this.onRequestSuccess(response);
+        },
+        error: (err): void => {
+          this.onRequestFailed(err);
+        }
+      })
+    )
+  }
+
+  private onRequestSuccess(response: HttpResponse<any>): void {
+    this.refreshPaymentEvent.emit(true);
+    this.errorModel.responseStatusCode = response.status;
+    this.modalService.dismissAll();
+    setTimeout((): void => {
+      this.displayLoader = false;
+    }, 500)
+  }
+
+  private onRequestFailed(err: any): void {
+    this.errorModel.traceId = err.headers.get('X-Trace-Id');
+    this.errorModel.responseStatusCode = err.status;
+    this.errorModel.responseErrorModel = err.error;
+    this.displayLoader = false;
+    this.displayError = true;
   }
 
   private setDefaultIncomeForm(): void {

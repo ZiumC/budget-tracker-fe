@@ -105,4 +105,8 @@ export class UrlApi {
   static income(idIncome: string): string {
     return this.HOST + this.CONTOLLERS.INCOMES + "/" + idIncome;
   }
+
+  static payment(idPayment: string): string {
+    return this.HOST + this.CONTOLLERS.PAYMENTS + "/" + idPayment;
+  }
 }
