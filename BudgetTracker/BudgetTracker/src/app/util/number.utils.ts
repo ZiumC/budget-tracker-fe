@@ -19,9 +19,11 @@ export class NumberUtils {
 
   static subtract(num1: BigNumber, num2: BigNumber): BigNumber {
     let result = new BigNumber(0);
+    let bigNum1 = new BigNumber(num1);
+    let bigNum2 = new BigNumber(num2);
 
-    if (num1 && num2) {
-      result = new BigNumber(num1).minus(new BigNumber(num2));
+    if (bigNum1.gte(0) && bigNum2.gte(0)) {
+      result = bigNum1.minus(bigNum2);
     }
 
     return new BigNumber(result);

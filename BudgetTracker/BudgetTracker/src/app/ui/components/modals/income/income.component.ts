@@ -44,8 +44,8 @@ export class IncomeComponent implements OnInit, OnDestroy {
     this.errorModel = new ErrorModel();
     this.subscriptions = [];
     this.displayLoader = false;
-    this.isEditing = false;
     this.displayError = false;
+    this.isEditing = false;
     this.buttonCopyName = "Copy";
   }
 

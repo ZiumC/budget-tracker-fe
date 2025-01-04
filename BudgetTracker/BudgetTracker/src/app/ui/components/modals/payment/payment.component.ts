@@ -8,6 +8,7 @@ import {PaymentForm} from "../../../../models/FormModels";
 import {ErrorModel} from "../../../../models/ErrorModel";
 import BigNumber from "bignumber.js";
 import {NumberUtils} from "../../../../util/number.utils";
+import {SpinnerSize} from "../../shared/spinner/spinner.component";
 
 @Component({
   selector: 'app-payment',
@@ -18,19 +19,24 @@ export class PaymentComponent implements OnInit, OnDestroy {
   @ViewChild('paymentModal') paymentModal: any;
   @Input() idBudget: string;
   @Output() refreshPaymentEvent = new EventEmitter<boolean>();
+  protected readonly NumberUtils = NumberUtils;
   protected subscriptions: Subscription[];
   protected errorModel: ErrorModel;
   protected paymentForm: PaymentForm;
+  protected idPayment: string;
   protected isEditing: boolean;
+  protected displayLoader: boolean;
+  protected displayError: boolean;
 
   constructor(
     private modalService: NgbModal) {
   }
 
-
   ngOnInit(): void {
     this.subscriptions = [];
     this.errorModel = new ErrorModel();
+    this.displayLoader = false;
+    this.displayError = false;
     this.isEditing = false;
   }
 
@@ -42,7 +48,27 @@ export class PaymentComponent implements OnInit, OnDestroy {
     this.setDefaultIncomeForm();
     this.isEditing = paymentData != null;
 
+    if (paymentData) {
+      this.idPayment = paymentData.id;
+      this.paymentForm.name = paymentData.name;
+      this.paymentForm.price = paymentData.price;
+      this.paymentForm.refund = paymentData.refund;
+      this.paymentForm.isPaid = paymentData.isPaid;
+      this.paymentForm.comment = paymentData.comment;
+    }
+
     this.modalService.open(this.paymentModal, ModalOptions.default(ModalSize.BIG));
+  }
+
+  protected savePayment(): void {
+    this.displayLoader = true;
+
+    const isPaid = String(this.paymentForm.isPaid);
+    this.paymentForm.isPaid = JSON.parse(isPaid)
+
+    setTimeout((): void => {
+      this.displayLoader = false;
+    }, 500);
   }
 
   private setDefaultIncomeForm(): void {
@@ -55,5 +81,5 @@ export class PaymentComponent implements OnInit, OnDestroy {
     } as PaymentForm;
   }
 
-  protected readonly NumberUtils = NumberUtils;
+  protected readonly SpinnerSize = SpinnerSize;
 }
