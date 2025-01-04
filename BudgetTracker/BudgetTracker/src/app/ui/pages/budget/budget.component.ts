@@ -98,23 +98,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
     )
 
     this.getBudgetIncomes();
-
-    this.subscriptions.push(
-      this.httpService.getBudgetPayments(
-        this.requestParam,
-        this.idBudget).subscribe({
-        next: (response: HttpResponse<PaymentModel[]>): void => {
-          this.payments = Sort.incomePaidFirst(response.body);
-          this.errorModels.payments.responseStatusCode = response.status;
-        },
-        error: (err): void => {
-          this.onRequestFailed(this.errorModels.payments, err);
-        },
-        complete: (): void => {
-          this.requestLoaded.payments = true;
-        }
-      })
-    )
+    this.getBudgetPayments();
 
     let retryCount = 0;
     setTimeout((): void => {
@@ -174,7 +158,11 @@ export class BudgetComponent implements OnInit, OnDestroy {
   }
 
   protected onRefreshPayment(refresh: boolean): void {
-
+    if (refresh) {
+      this.requestLoaded.payments = false;
+      this.errorModels.payments = new ErrorModel();
+      this.getBudgetPayments();
+    }
   }
 
   private onRequestFailed(errorModel: ErrorModel, err: any): void {
@@ -197,6 +185,25 @@ export class BudgetComponent implements OnInit, OnDestroy {
         },
         complete: (): void => {
           this.requestLoaded.incomes = true;
+        }
+      })
+    )
+  }
+
+  private getBudgetPayments(): void {
+    this.subscriptions.push(
+      this.httpService.getBudgetPayments(
+        this.requestParam,
+        this.idBudget).subscribe({
+        next: (response: HttpResponse<PaymentModel[]>): void => {
+          this.payments = Sort.incomePaidFirst(response.body);
+          this.errorModels.payments.responseStatusCode = response.status;
+        },
+        error: (err): void => {
+          this.onRequestFailed(this.errorModels.payments, err);
+        },
+        complete: (): void => {
+          this.requestLoaded.payments = true;
         }
       })
     )
