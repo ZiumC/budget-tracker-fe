@@ -181,6 +181,10 @@ export class BudgetComponent implements OnInit, OnDestroy {
     }
   }
 
+  protected onRefreshPayment(refresh: boolean): void {
+
+  }
+
   private onRequestFailed(errorModel: ErrorModel, err: any): void {
     errorModel.traceId = err.headers.get('X-Trace-Id');
     errorModel.responseStatusCode = err.status;

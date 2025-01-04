@@ -34,7 +34,8 @@
                       class="btn btn-success"
                       data-bs-toggle="tooltip"
                       data-bs-placement="bottom"
-                      title="Add payment">
+                      title="Add payment"
+                      (click)="paymentModal.open()">
                 <i class="bi bi-coin"></i> Payment
               </button>
               <button type="button"
@@ -276,7 +277,8 @@
                               class="btn btn-warning"
                               data-bs-toggle="tooltip"
                               data-bs-placement="bottom"
-                              title="Edit payment">
+                              title="Edit payment"
+                              (click)="paymentModal.open(payment)">
                               <i class="bi bi-pencil-square"></i> Edit
                             </button>
                             <button
@@ -303,6 +305,11 @@
                   (refreshIncomeEvent)="onRefreshIncome($event)">
 
       </app-income>
+      <app-payment #paymentModal
+                   [idBudget]="idBudget"
+                   (refreshPaymentEvent)="onRefreshPayment($event)">
+
+      </app-payment>
       <ng-template #errorPaymentsBlock>
         <app-error [errorModel]="errorModels.payments"></app-error>
       </ng-template>

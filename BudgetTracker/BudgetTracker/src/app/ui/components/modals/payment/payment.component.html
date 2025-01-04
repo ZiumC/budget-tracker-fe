@@ -1,0 +1,30 @@
+<ng-template #paymentModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">
+      Add payment
+    </h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="modal.close()">
+    </button>
+  </div>
+  <div class="modal-body">
+    <form ngbAutofocus #form="ngForm">
+      <div class="col-mx">
+        <div class="mb-2">
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button
+      [disabled]="form.invalid"
+      type="button"
+      class="btn btn-outline-secondary"
+      (click)="modal.close()">
+      Save
+    </button>
+  </div>
+</ng-template>
