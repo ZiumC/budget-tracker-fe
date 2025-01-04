@@ -64,6 +64,15 @@ export class HttpService {
     )
   }
 
+  public createBudgetPayment(paymentForm: PaymentForm, idBudget: string):
+    Observable<HttpResponse<{}>> {
+    return this.httpClient.post(
+      UrlApi.budgetPayment(idBudget),
+      paymentForm,
+      {observe: 'response'}
+    )
+  }
+
   public updatePayment(paymentForm: PaymentForm, idIncome: string):
     Observable<HttpResponse<{}>> {
     return this.httpClient.put(

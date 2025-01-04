@@ -21,6 +21,7 @@ export class PaymentComponent implements OnInit, OnDestroy {
   @ViewChild('paymentModal') paymentModal: any;
   @Input() idBudget: string;
   @Output() refreshPaymentEvent = new EventEmitter<boolean>();
+  protected readonly SpinnerSize = SpinnerSize;
   protected readonly NumberUtils = NumberUtils;
   protected subscriptions: Subscription[];
   protected errorModel: ErrorModel;
@@ -29,6 +30,7 @@ export class PaymentComponent implements OnInit, OnDestroy {
   protected isEditing: boolean;
   protected displayLoader: boolean;
   protected displayError: boolean;
+  protected buttonCopyName: string;
 
   constructor(
     private modalService: NgbModal,
@@ -41,6 +43,7 @@ export class PaymentComponent implements OnInit, OnDestroy {
     this.displayLoader = false;
     this.displayError = false;
     this.isEditing = false;
+    this.buttonCopyName = "Copy";
   }
 
   ngOnDestroy(): void {
@@ -48,7 +51,7 @@ export class PaymentComponent implements OnInit, OnDestroy {
   }
 
   open(paymentData?: PaymentModel): void {
-    this.setDefaultIncomeForm();
+    this.setDefaultPaymentForm();
     this.displayError = false;
     this.isEditing = paymentData != null;
 
@@ -72,9 +75,23 @@ export class PaymentComponent implements OnInit, OnDestroy {
 
     setTimeout((): void => {
       if (this.isEditing) {
-        this.updatePayment()
+        this.updatePayment();
+      } else {
+        this.createBudgetPayment();
       }
     }, 500);
+  }
+
+  protected copy(inputElement: any): any {
+    this.buttonCopyName = "Copied";
+    inputElement.select();
+    //this is so far deprecated but
+    //there is no any best alternatives for now
+    document.execCommand('copy');
+    inputElement.setSelectionRange(0, 0);
+    setTimeout((): void => {
+      this.buttonCopyName = "Copy";
+    }, 2500)
   }
 
   private updatePayment(): void {
@@ -82,6 +99,21 @@ export class PaymentComponent implements OnInit, OnDestroy {
       this.httpService.updatePayment(
         this.paymentForm,
         this.idPayment).subscribe({
+        next: (response: HttpResponse<any>): void => {
+          this.onRequestSuccess(response);
+        },
+        error: (err): void => {
+          this.onRequestFailed(err);
+        }
+      })
+    )
+  }
+
+  private createBudgetPayment(): void {
+    this.subscriptions.push(
+      this.httpService.createBudgetPayment(
+        this.paymentForm,
+        this.idBudget).subscribe({
         next: (response: HttpResponse<any>): void => {
           this.onRequestSuccess(response);
         },
@@ -109,7 +141,7 @@ export class PaymentComponent implements OnInit, OnDestroy {
     this.displayError = true;
   }
 
-  private setDefaultIncomeForm(): void {
+  private setDefaultPaymentForm(): void {
     this.paymentForm = {
       name: "",
       price: BigNumber(0.00),
@@ -118,6 +150,4 @@ export class PaymentComponent implements OnInit, OnDestroy {
       comment: ""
     } as PaymentForm;
   }
-
-  protected readonly SpinnerSize = SpinnerSize;
 }

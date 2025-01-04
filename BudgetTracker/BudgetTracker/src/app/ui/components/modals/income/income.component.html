@@ -144,20 +144,22 @@
             Status code: <span class="text-danger">{{ errorModel.responseStatusCode }}</span>
           </li>
         </ul>
-        <div class="input-group mb-3">
-          <input #traceInput
-                 type="text"
-                 class="form-control text-danger"
-                 readonly="readonly"
-                 value="{{ errorModel.traceId }}">
-          <div class="input-group-append">
-            <button class="btn btn-outline-secondary"
-                    type="button"
-                    (click)="copy(traceInput)">
-              {{ buttonCopyName }}
-            </button>
+        @if (errorModel.traceId) {
+          <div class="input-group mb-3">
+            <input #traceInput
+                   type="text"
+                   class="form-control text-danger"
+                   readonly="readonly"
+                   value="{{ errorModel.traceId }}">
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary"
+                      type="button"
+                      (click)="copy(traceInput)">
+                {{ buttonCopyName }}
+              </button>
+            </div>
           </div>
-        </div>
+        }
       </ng-template>
     </div>
     <div class="modal-footer">

@@ -51,6 +51,7 @@ export class IncomeComponent implements OnInit, OnDestroy {
 
   open(incomeData?: IncomeModel): void {
     this.setDefaultIncomeForm();
+    this.displayError = false;
     this.isEditing = incomeData != null;
 
     if (incomeData) {
