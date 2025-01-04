@@ -1,5 +1,5 @@
 <ng-template #incomeModal let-modal>
-  @if (!displayModalLoader) {
+  @if (!displayLoader) {
     <div class="modal-header">
       <h4 class="modal-title" id="modal-basic-title">
         @if (isEditing) {
@@ -16,7 +16,7 @@
       </button>
     </div>
   }
-  <ng-template [ngIf]="displayModalLoader"
+  <ng-template [ngIf]="displayLoader"
                [ngIfElse]="modalBody">
     <div class="my-5"></div>
     <app-spinner [size]="SpinnerSize.MEDIUM"></app-spinner>
@@ -27,7 +27,7 @@
   </ng-template>
   <ng-template #modalBody>
     <div class="modal-body">
-      <form ngbAutofocus #incomeForm="ngForm">
+      <form ngbAutofocus #form="ngForm">
         <div class="col-mx">
           <div class="mb-2">
             <label for="income-name">Name</label>
@@ -37,7 +37,7 @@
               id="income-name"
               name="income-name"
               class="form-control"
-              [(ngModel)]="incomeData.name"
+              [(ngModel)]="incomeForm.name"
               required
               minlength="3"
               maxlength="150"
@@ -75,7 +75,7 @@
               id="income-wage"
               name="income-wage"
               class="form-control"
-              [(ngModel)]="incomeData.wage"
+              [(ngModel)]="incomeForm.wage"
               required
               min="0"
               #incomeWageInput="ngModel"
@@ -108,7 +108,7 @@
               id="income-surplus"
               name="income-surplus"
               class="form-control"
-              [(ngModel)]="incomeData.isSurplus"
+              [(ngModel)]="incomeForm.isSurplus"
               required
               #incomeSurplusSelect="ngModel"
               [ngClass]="{
@@ -137,7 +137,7 @@
     </div>
     <div class="modal-footer">
       <button
-        [disabled]="incomeForm.invalid"
+        [disabled]="form.invalid"
         type="button"
         class="btn btn-outline-secondary"
         (click)="saveIncome()">

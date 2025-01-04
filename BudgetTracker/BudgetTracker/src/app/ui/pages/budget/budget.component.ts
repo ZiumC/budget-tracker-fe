@@ -29,6 +29,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
   protected subscriptions: Subscription[];
   protected selectedIncome: IncomeModel;
   protected selectedPayment: PaymentModel;
+  protected requestParam: RequestParamModel;
 
   protected pageLoaded: boolean;
   protected requestLoaded: any;
@@ -42,6 +43,10 @@ export class BudgetComponent implements OnInit, OnDestroy {
   constructor(
     private httpService: HttpService,
     private activatedRoute: ActivatedRoute) {
+  }
+
+  ngOnDestroy(): void {
+    SubscriptionUtils.unsubscribeAll(this.subscriptions);
   }
 
   ngOnInit(): void {
@@ -68,12 +73,12 @@ export class BudgetComponent implements OnInit, OnDestroy {
     this.subscriptions = [];
     this.pageLoaded = false;
 
-    const requestParam = new RequestParamModel({
+    this.requestParam = new RequestParamModel({
       page: 1,
       pageSize: 15
     })
 
-    this.activatedRoute.queryParams.subscribe((params: Params) => {
+    this.activatedRoute.queryParams.subscribe((params: Params): void => {
       this.idBudget = params['id'];
     });
 
@@ -81,56 +86,38 @@ export class BudgetComponent implements OnInit, OnDestroy {
       this.httpService.getBudget(this.idBudget).subscribe({
         next: (response: HttpResponse<BudgetModel>): void => {
           this.budget = response.body;
-          this.errorModels.budget.responseStatusCode = response.status
-          this.requestLoaded.budget = true;
+          this.errorModels.budget.responseStatusCode = response.status;
         },
-        error: (err) => {
-          this.errorModels.budget.traceId = err.headers.get('X-Trace-Id');
-          this.errorModels.budget.responseStatusCode = err.status;
-          this.errorModels.budget.responseErrorModel = err.error;
+        error: (err): void => {
+          this.onRequestFailed(this.errorModels.budget, err);
+        },
+        complete: (): void => {
           this.requestLoaded.budget = true;
         }
       })
     )
 
-    this.subscriptions.push(
-      this.httpService.getBudgetIncomes(
-        requestParam,
-        this.idBudget).subscribe({
-        next: (response: HttpResponse<IncomeModel[]>): void => {
-          this.incomes = Sort.incomeSurplusFirst(response.body);
-          this.errorModels.incomes.responseStatusCode = response.status
-          this.requestLoaded.incomes = true;
-        },
-        error: (err) => {
-          this.errorModels.incomes.traceId = err.headers.get('X-Trace-Id');
-          this.errorModels.incomes.responseStatusCode = err.status;
-          this.errorModels.incomes.responseErrorModel = err.error;
-          this.requestLoaded.incomes = true;
-        }
-      })
-    )
+    this.getBudgetIncomes();
 
     this.subscriptions.push(
       this.httpService.getBudgetPayments(
-        requestParam,
+        this.requestParam,
         this.idBudget).subscribe({
         next: (response: HttpResponse<PaymentModel[]>): void => {
           this.payments = Sort.incomePaidFirst(response.body);
-          this.errorModels.payments.responseStatusCode = response.status
-          this.requestLoaded.payments = true;
+          this.errorModels.payments.responseStatusCode = response.status;
         },
-        error: (err) => {
-          this.errorModels.payments.traceId = err.headers.get('X-Trace-Id');
-          this.errorModels.payments.responseStatusCode = err.status;
-          this.errorModels.payments.responseErrorModel = err.error;
+        error: (err): void => {
+          this.onRequestFailed(this.errorModels.payments, err);
+        },
+        complete: (): void => {
           this.requestLoaded.payments = true;
         }
       })
     )
 
     let retryCount = 0;
-    setTimeout(() => {
+    setTimeout((): void => {
       while (!this.pageLoaded) {
         if ((this.requestLoaded.incomes &&
             this.requestLoaded.budget &&
@@ -151,7 +138,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
     return new BigNumber(result);
   }
 
-  protected displayComment(comment: string) {
+  protected displayComment(comment: string): string {
     if (comment) {
       const length = comment.length;
       if (length == 0) {
@@ -182,41 +169,40 @@ export class BudgetComponent implements OnInit, OnDestroy {
   }
 
   @HostListener('window:resize', ['$event'])
-  onResize() {
+  onResize(): void {
     this.innerWidth = window.innerWidth;
   }
 
-  onRefreshIncome(refresh: boolean){
-    if (refresh){
+  protected onRefreshIncome(refresh: boolean): void {
+    if (refresh) {
       this.requestLoaded.incomes = false;
       this.errorModels.incomes = new ErrorModel();
-
-      const requestParam = new RequestParamModel({
-        page: 1,
-        pageSize: 15
-      })
-
-      this.subscriptions.push(
-        this.httpService.getBudgetIncomes(
-          requestParam,
-          this.idBudget).subscribe({
-          next: (response: HttpResponse<IncomeModel[]>): void => {
-            this.incomes = Sort.incomeSurplusFirst(response.body);
-            this.errorModels.incomes.responseStatusCode = response.status
-            this.requestLoaded.incomes = true;
-          },
-          error: (err) => {
-            this.errorModels.incomes.traceId = err.headers.get('X-Trace-Id');
-            this.errorModels.incomes.responseStatusCode = err.status;
-            this.errorModels.incomes.responseErrorModel = err.error;
-            this.requestLoaded.incomes = true;
-          }
-        })
-      )
+      this.getBudgetIncomes();
     }
   }
 
-  ngOnDestroy(): void {
-    SubscriptionUtils.unsubscribeAll(this.subscriptions);
+  private onRequestFailed(errorModel: ErrorModel, err: any): void {
+    errorModel.traceId = err.headers.get('X-Trace-Id');
+    errorModel.responseStatusCode = err.status;
+    errorModel.responseErrorModel = err.error;
+  }
+
+  private getBudgetIncomes(): void {
+    this.subscriptions.push(
+      this.httpService.getBudgetIncomes(
+        this.requestParam,
+        this.idBudget).subscribe({
+        next: (response: HttpResponse<IncomeModel[]>): void => {
+          this.incomes = Sort.incomeSurplusFirst(response.body);
+          this.errorModels.incomes.responseStatusCode = response.status;
+        },
+        error: (err): void => {
+          this.onRequestFailed(this.errorModels.incomes, err);
+        },
+        complete: (): void => {
+          this.requestLoaded.incomes = true;
+        }
+      })
+    )
   }
 }

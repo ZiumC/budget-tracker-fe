@@ -55,7 +55,7 @@ export class HttpService {
     )
   }
 
-  public updateBudgetIncome(incomeForm: IncomeForm, idIncome: string):
+  public updateIncome(incomeForm: IncomeForm, idIncome: string):
     Observable<HttpResponse<{}>> {
     return this.httpClient.put(
       UrlApi.income(idIncome),
