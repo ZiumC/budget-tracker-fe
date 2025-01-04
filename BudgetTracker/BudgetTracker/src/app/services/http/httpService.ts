@@ -47,16 +47,16 @@ export class HttpService {
   }
 
   public createBudgetIncome(incomeForm: IncomeForm, idBudget: string):
-    Observable<HttpResponse<any>> {
+    Observable<HttpResponse<{}>> {
     return this.httpClient.post(
-      UrlApi.budgetIncomes(null, idBudget),
+      UrlApi.budgetIncome(idBudget),
       incomeForm,
       {observe: 'response'}
     )
   }
 
   public updateBudgetIncome(incomeForm: IncomeForm, idIncome: string):
-    Observable<HttpResponse<any>> {
+    Observable<HttpResponse<{}>> {
     return this.httpClient.put(
       UrlApi.income(idIncome),
       incomeForm,

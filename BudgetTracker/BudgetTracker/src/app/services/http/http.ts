@@ -43,32 +43,31 @@ export class UrlApi {
   }
 
   static budgetIncomes(
-    requestParamModel: RequestParamModel | null,
+    requestParamModel: RequestParamModel,
     idBudget: string): string {
 
     let baseUrl = this.HOST + this.CONTOLLERS.BUDGET + "/" + idBudget + this.ACTIONS.INCOMES;
 
-    if (requestParamModel){
-      const page = requestParamModel.page;
-      const pageSize = requestParamModel.pageSize;
-      const fromDate = requestParamModel.fromDate;
-      const toDate = requestParamModel.toDate;
-      const orderBy = requestParamModel.orderBy;
+    const page = requestParamModel.page;
+    const pageSize = requestParamModel.pageSize;
+    const fromDate = requestParamModel.fromDate;
+    const toDate = requestParamModel.toDate;
+    const orderBy = requestParamModel.orderBy;
 
-      baseUrl = baseUrl + "?page=" + page + "&pageSize=" + pageSize;
+    baseUrl = baseUrl + "?page=" + page + "&pageSize=" + pageSize;
 
-      if (fromDate) {
-        baseUrl = baseUrl + "&fromDate=" + fromDate;
-      }
-
-      if (toDate) {
-        baseUrl = baseUrl + "&toDate=" + toDate;
-      }
-
-      if (orderBy) {
-        baseUrl = baseUrl + "&orderBy=" + orderBy;
-      }
+    if (fromDate) {
+      baseUrl = baseUrl + "&fromDate=" + fromDate;
     }
+
+    if (toDate) {
+      baseUrl = baseUrl + "&toDate=" + toDate;
+    }
+
+    if (orderBy) {
+      baseUrl = baseUrl + "&orderBy=" + orderBy;
+    }
+
     return baseUrl;
   }
 
@@ -97,6 +96,10 @@ export class UrlApi {
     }
 
     return urlResult;
+  }
+
+  static budgetIncome(idBudget: string): string {
+    return this.HOST + this.CONTOLLERS.BUDGET + "/" + idBudget + this.ACTIONS.INCOME;
   }
 
   static income(idIncome: string): string {

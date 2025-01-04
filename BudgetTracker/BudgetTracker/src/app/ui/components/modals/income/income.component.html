@@ -1,135 +1,148 @@
 <ng-template #incomeModal let-modal>
-  <div class="modal-header">
-    <h4 class="modal-title" id="modal-basic-title">
-      @if (isEditing) {
-        Edit income
-      } @else {
-        Add income
-      }
-    </h4>
-    <button
-      type="button"
-      class="btn-close"
-      aria-label="Close"
-      (click)="modal.close('Cross')">
-    </button>
-  </div>
-  <div class="modal-body">
-    <form ngbAutofocus #incomeForm="ngForm">
-      <div class="col-mx">
-        <div class="mb-2">
-          <label for="income-name">Name</label>
-          <span class="text-danger">*</span>
-          <input
-            type="text"
-            id="income-name"
-            name="income-name"
-            class="form-control"
-            [(ngModel)]="incomeFormModel.name"
-            required
-            minlength="3"
-            maxlength="150"
-            #incomeNameInput="ngModel"
-            [ngClass]="{
+  @if (!displayModalLoader) {
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">
+        @if (isEditing) {
+          Edit income
+        } @else {
+          Add income
+        }
+      </h4>
+      <button
+        type="button"
+        class="btn-close"
+        aria-label="Close"
+        (click)="modal.close()">
+      </button>
+    </div>
+  }
+  <ng-template [ngIf]="displayModalLoader"
+               [ngIfElse]="modalBody">
+    <div class="my-5"></div>
+    <app-spinner [size]="SpinnerSize.MEDIUM"></app-spinner>
+    <div class="mt-5 text-center">
+      <p>Income is saving...</p>
+    </div>
+    <div class="mb-3"></div>
+  </ng-template>
+  <ng-template #modalBody>
+    <div class="modal-body">
+      <form ngbAutofocus #incomeForm="ngForm">
+        <div class="col-mx">
+          <div class="mb-2">
+            <label for="income-name">Name</label>
+            <span class="text-danger">*</span>
+            <input
+              type="text"
+              id="income-name"
+              name="income-name"
+              class="form-control"
+              [(ngModel)]="incomeData.name"
+              required
+              minlength="3"
+              maxlength="150"
+              #incomeNameInput="ngModel"
+              [ngClass]="{
             'is-invalid':
               incomeNameInput.invalid &&
               (incomeNameInput.dirty || incomeNameInput.touched),
             'is-valid': incomeNameInput.valid }"/>
-          @if (incomeNameInput.invalid &&
-          (incomeNameInput.dirty || incomeNameInput.touched)) {
-            <div class="invalid-feedback">
-              <label *ngIf="incomeNameInput.errors?.['required']">
-                Field is required.
-              </label>
-              <label *ngIf="incomeNameInput.errors?.['minlength']">
-                Minimum length are 3 characters.
-              </label>
-              <label *ngIf="incomeNameInput.errors?.['maxlength']">
-                Maximum length are 150 characters.
-              </label>
-            </div>
-          } @else if (incomeNameInput.valid) {
-            <div class="valid-feedback pb-3">
-            </div>
-          } @else {
-            <div class="pb-4"></div>
-          }
-        </div>
-        <div class="mb-2">
-          <label for="income-wage">Wage</label>
-          <span class="text-danger">*</span>
-          <input
-            type="number"
-            id="income-wage"
-            name="income-wage"
-            class="form-control"
-            [(ngModel)]="incomeFormModel.wage"
-            required
-            min="0"
-            #incomeWageInput="ngModel"
-            [ngClass]="{
+            @if (incomeNameInput.invalid &&
+            (incomeNameInput.dirty || incomeNameInput.touched)) {
+              <div class="invalid-feedback">
+                <label *ngIf="incomeNameInput.errors?.['required']">
+                  Field is required.
+                </label>
+                <label *ngIf="incomeNameInput.errors?.['minlength']">
+                  Minimum length are 3 characters.
+                </label>
+                <label *ngIf="incomeNameInput.errors?.['maxlength']">
+                  Maximum length are 150 characters.
+                </label>
+              </div>
+            } @else if (incomeNameInput.valid) {
+              <div class="valid-feedback pb-3">
+              </div>
+            } @else {
+              <div class="pb-4"></div>
+            }
+          </div>
+          <div class="mb-2">
+            <label for="income-wage">Wage</label>
+            <span class="text-danger">*</span>
+            <input
+              type="number"
+              id="income-wage"
+              name="income-wage"
+              class="form-control"
+              [(ngModel)]="incomeData.wage"
+              required
+              min="0"
+              #incomeWageInput="ngModel"
+              [ngClass]="{
             'is-invalid':
               incomeWageInput.invalid &&
               (incomeWageInput.dirty || incomeWageInput.touched),
             'is-valid': incomeWageInput.valid }"/>
-          @if (incomeWageInput.invalid &&
-          (incomeWageInput.dirty || incomeWageInput.touched)) {
-            <div class="invalid-feedback">
-              <label *ngIf="incomeWageInput.errors?.['required']">
-                Field is required.
-              </label>
-              <label *ngIf="incomeWageInput.errors?.['min']">
-                Minimum value is 0
-              </label>
-            </div>
-          } @else if (incomeNameInput.valid) {
-            <div class="valid-feedback pb-3">
-            </div>
-          } @else {
-            <div class="pb-4"></div>
-          }
-        </div>
-        <div class="mb-2">
-          <label for="income-surplus">Surplus</label>
-          <span class="text-danger">*</span>
-          <select
-            id="income-surplus"
-            name="income-surplus"
-            class="form-control"
-            [(ngModel)]="incomeFormModel.isSurplus"
-            required
-            #incomeSurplusSelect="ngModel"
-            [ngClass]="{
+            @if (incomeWageInput.invalid &&
+            (incomeWageInput.dirty || incomeWageInput.touched)) {
+              <div class="invalid-feedback">
+                <label *ngIf="incomeWageInput.errors?.['required']">
+                  Field is required.
+                </label>
+                <label *ngIf="incomeWageInput.errors?.['min']">
+                  Minimum value is 0
+                </label>
+              </div>
+            } @else if (incomeNameInput.valid) {
+              <div class="valid-feedback pb-3">
+              </div>
+            } @else {
+              <div class="pb-4"></div>
+            }
+          </div>
+          <div class="mb-2">
+            <label for="income-surplus">Surplus</label>
+            <span class="text-danger">*</span>
+            <select
+              id="income-surplus"
+              name="income-surplus"
+              class="form-control"
+              [(ngModel)]="incomeData.isSurplus"
+              required
+              #incomeSurplusSelect="ngModel"
+              [ngClass]="{
             'is-invalid':
               incomeSurplusSelect.invalid &&
               (incomeSurplusSelect.dirty || incomeSurplusSelect.touched),
             'is-valid': incomeSurplusSelect.valid,
             }">
-            <option value="false">Income isn't surplus</option>
-            <option value="true">Income is surplus</option>
-          </select>
-          @if (incomeSurplusSelect.invalid &&
-          (incomeSurplusSelect.dirty || incomeSurplusSelect.touched)) {
-            <div class="invalid-feedback">
-              <label *ngIf="incomeSurplusSelect.errors?.['required']">
-                This field is required.
-              </label>
-            </div>
-          } @else {
-            <div class="valid-feedback">
-            </div>
-          }
+              <option value=false>Income isn't surplus</option>
+              <option value=true>Income is surplus</option>
+            </select>
+            @if (incomeSurplusSelect.invalid &&
+            (incomeSurplusSelect.dirty || incomeSurplusSelect.touched)) {
+              <div class="invalid-feedback">
+                <label *ngIf="incomeSurplusSelect.errors?.['required']">
+                  This field is required.
+                </label>
+              </div>
+            } @else {
+              <div class="valid-feedback">
+              </div>
+            }
+          </div>
         </div>
-      </div>
-    </form>
-  </div>
-  <div class="modal-footer">
-    <button
-      [disabled]="incomeForm.invalid"
-      type="button"
-      class="btn btn-outline-secondary"
-      (click)="modal.close('Save')">
-      Save
-    </button>
-  </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button
+        [disabled]="incomeForm.invalid"
+        type="button"
+        class="btn btn-outline-secondary"
+        (click)="saveIncome()">
+        Save
+      </button>
+    </div>
+  </ng-template>
 </ng-template>
