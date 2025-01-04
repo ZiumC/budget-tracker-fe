@@ -76,11 +76,17 @@ table tr th {
   grid-auto-flow: row;
 }
 
-@media only screen and (max-width: 770px){
-  .width-wrapper{
+.input-group-append button {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+@media only screen and (max-width: 770px) {
+  .width-wrapper {
     width: 92%;
   }
-  .component-wrapper{
+
+  .component-wrapper {
     padding: 2ex;
   }
 }

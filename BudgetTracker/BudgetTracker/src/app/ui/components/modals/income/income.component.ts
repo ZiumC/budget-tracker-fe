@@ -17,7 +17,7 @@ import {HttpResponse} from "@angular/common/http";
   styleUrl: './income.component.css'
 })
 export class IncomeComponent implements OnInit, OnDestroy {
-  @ViewChild('incomeModal') content: any;
+  @ViewChild('incomeModal') incomeModal: any;
   @Input() idBudget: string;
   @Output() refreshIncomeEvent = new EventEmitter<boolean>();
   protected readonly SpinnerSize = SpinnerSize;
@@ -26,8 +26,9 @@ export class IncomeComponent implements OnInit, OnDestroy {
   protected incomeForm: IncomeForm;
   protected idIncome: string;
   protected displayLoader: boolean;
+  protected displayError: boolean;
   protected isEditing: boolean;
-
+  protected buttonCopyName: string;
 
   constructor(
     private modalService: NgbModal,
@@ -44,6 +45,8 @@ export class IncomeComponent implements OnInit, OnDestroy {
     this.subscriptions = [];
     this.displayLoader = false;
     this.isEditing = false;
+    this.displayError = false;
+    this.buttonCopyName = "Copy";
   }
 
   open(incomeData?: IncomeModel): void {
@@ -57,7 +60,7 @@ export class IncomeComponent implements OnInit, OnDestroy {
       this.incomeForm.isSurplus = incomeData.isSurplus;
     }
 
-    this.modalService.open(this.content, ModalOptions.default());
+    this.modalService.open(this.incomeModal, ModalOptions.default());
   }
 
   protected saveIncome(): void {
@@ -66,11 +69,25 @@ export class IncomeComponent implements OnInit, OnDestroy {
     const surplus = String(this.incomeForm.isSurplus);
     this.incomeForm.isSurplus = JSON.parse(surplus)
 
-    if (this.isEditing) {
-      this.updateIncome()
-    } else {
-      this.createIncome();
-    }
+    setTimeout((): void => {
+      if (this.isEditing) {
+        this.updateIncome()
+      } else {
+        this.createIncome();
+      }
+    }, 500);
+  }
+
+  protected copy(inputElement: any): any {
+    this.buttonCopyName = "Copied";
+    inputElement.select();
+    //this is so far deprecated but
+    //there is no any best alternatives for now
+    document.execCommand('copy');
+    inputElement.setSelectionRange(0, 0);
+    setTimeout((): void => {
+      this.buttonCopyName = "Copy";
+    }, 2500)
   }
 
   private updateIncome(): void {
@@ -106,10 +123,10 @@ export class IncomeComponent implements OnInit, OnDestroy {
   private onRequestSuccess(response: HttpResponse<any>): void {
     this.refreshIncomeEvent.emit(true);
     this.errorModel.responseStatusCode = response.status;
-    setTimeout(() => {
+    this.modalService.dismissAll();
+    setTimeout((): void => {
       this.displayLoader = false;
-      this.modalService.dismissAll();
-    }, 400)
+    }, 500)
   }
 
   private onRequestFailed(err: any): void {
@@ -117,9 +134,11 @@ export class IncomeComponent implements OnInit, OnDestroy {
     this.errorModel.responseStatusCode = err.status;
     this.errorModel.responseErrorModel = err.error;
     this.displayLoader = false;
+    this.displayError = true;
   }
 
   private setDefaultIncomeForm(): void {
+    this.displayError = false;
     this.incomeForm = {
       name: "",
       wage: new BigNumber(0.00),

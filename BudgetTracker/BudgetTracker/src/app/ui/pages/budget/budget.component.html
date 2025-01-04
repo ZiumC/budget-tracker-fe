@@ -298,7 +298,11 @@
           </div>
         </div>
       </ng-template>
-      <app-income #incomeModal [idBudget]="idBudget" (refreshIncomeEvent)="onRefreshIncome($event)"></app-income>
+      <app-income #incomeModal
+                  [idBudget]="idBudget"
+                  (refreshIncomeEvent)="onRefreshIncome($event)">
+
+      </app-income>
       <ng-template #errorPaymentsBlock>
         <app-error [errorModel]="errorModels.payments"></app-error>
       </ng-template>

@@ -17,7 +17,7 @@
     </div>
   }
   <ng-template [ngIf]="displayLoader"
-               [ngIfElse]="modalBody">
+               [ngIfElse]="loadedBody">
     <div class="my-5"></div>
     <app-spinner [size]="SpinnerSize.MEDIUM"></app-spinner>
     <div class="mt-5 text-center">
@@ -25,7 +25,7 @@
     </div>
     <div class="mb-3"></div>
   </ng-template>
-  <ng-template #modalBody>
+  <ng-template #loadedBody>
     <div class="modal-body">
       <form ngbAutofocus #form="ngForm">
         <div class="col-mx">
@@ -134,6 +134,30 @@
           </div>
         </div>
       </form>
+      <ng-template [ngIf]="displayError">
+        <div class="my-3 mt-4">
+          <hr>
+        </div>
+        <p>Unable process request due to errors.</p>
+        <ul>
+          <li>
+            Status code: <span class="text-danger">{{ errorModel.responseStatusCode }}</span>
+          </li>
+        </ul>
+        <div class="input-group mb-3">
+          <input #traceInput
+                 type="text"
+                 class="form-control text-danger"
+                 value="{{ errorModel.traceId }}">
+          <div class="input-group-append">
+            <button class="btn btn-outline-secondary"
+                    type="button"
+                    (click)="copy(traceInput)">
+              {{ buttonCopyName }}
+            </button>
+          </div>
+        </div>
+      </ng-template>
     </div>
     <div class="modal-footer">
       <button
