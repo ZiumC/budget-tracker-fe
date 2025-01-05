@@ -300,16 +300,16 @@
           </div>
         </div>
       </ng-template>
-      <app-income #incomeModal
+      <app-income-modal #incomeModal
                   [idBudget]="idBudget"
                   (refreshIncomeEvent)="onRefreshIncome($event)">
 
-      </app-income>
-      <app-payment #paymentModal
+      </app-income-modal>
+      <app-payment-modal #paymentModal
                    [idBudget]="idBudget"
                    (refreshPaymentEvent)="onRefreshPayment($event)">
 
-      </app-payment>
+      </app-payment-modal>
       <ng-template #errorPaymentsBlock>
         <app-error [errorModel]="errorModels.payments"></app-error>
       </ng-template>

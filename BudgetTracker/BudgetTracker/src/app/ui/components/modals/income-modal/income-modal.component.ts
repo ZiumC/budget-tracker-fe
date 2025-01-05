@@ -12,7 +12,7 @@ import {SpinnerSize} from "../../shared/spinner/spinner.component";
 import {HttpResponse} from "@angular/common/http";
 
 @Component({
-  selector: 'app-income',
+  selector: 'app-income-modal',
   templateUrl: './income-modal.component.html',
   styleUrl: './income-modal.component.css'
 })

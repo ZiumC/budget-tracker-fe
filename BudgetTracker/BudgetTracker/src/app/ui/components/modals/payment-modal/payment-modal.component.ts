@@ -13,7 +13,7 @@ import {HttpResponse} from "@angular/common/http";
 import {HttpService} from "../../../../services/http/httpService";
 
 @Component({
-  selector: 'app-payment',
+  selector: 'app-payment-modal',
   templateUrl: './payment-modal.component.html',
   styleUrl: './payment-modal.component.css'
 })

@@ -16,6 +16,7 @@ import { IncomeModalComponent } from './ui/components/modals/income-modal/income
 import {FormsModule} from "@angular/forms";
 import { PaymentModalComponent } from './ui/components/modals/payment-modal/payment-modal.component';
 import { ModalErrorComponent } from './ui/components/shared/modal-error/modal-error.component';
+import { BudgetModalComponent } from './ui/components/modals/budget-modal/budget-modal.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { ModalErrorComponent } from './ui/components/shared/modal-error/modal-er
     BudgetComponent,
     IncomeModalComponent,
     PaymentModalComponent,
-    ModalErrorComponent
+    ModalErrorComponent,
+    BudgetModalComponent
   ],
   imports: [
     BrowserModule,
