@@ -62,30 +62,32 @@
               class="form-control"
               [(ngModel)]="budgetForm.dateStart"
               required
-              #budgetDateStartInput="ngModel"
+              #dateStartInput="ngModel"
+              (ngModelChange)="checkDates(dateStartInput, dateEndInput)"
               container="body"
               placement="bottom-end"
               ngbDatepicker
               #dateStart="ngbDatepicker"
               [ngClass]="{
             'is-invalid':
-              budgetDateStartInput.invalid &&
-              (budgetDateStartInput.dirty || budgetDateStartInput.touched),
-            'is-valid': budgetDateStartInput.valid }"/>
+              dateStartInput.invalid,
+            'is-valid': dateStartInput.valid }"/>
             <div class="input-group-append">
               <button class="btn btn-outline-secondary bi bi-calendar3"
                       (click)="dateStart.toggle()"
                       type="button">
               </button>
             </div>
-            @if (budgetDateStartInput.invalid &&
-            (budgetDateStartInput.dirty || budgetDateStartInput.touched)) {
+            @if (dateStartInput.invalid) {
               <div class="invalid-feedback">
-                <label *ngIf="budgetDateStartInput.errors?.['required']">
+                <label *ngIf="dateStartInput.errors?.['required']">
                   Field is required.
                 </label>
+                <label *ngIf="dateStartInput.errors?.['invalidDate']">
+                  Months in both dates should be equal.
+                </label>
               </div>
-            } @else if (budgetDateStartInput.valid) {
+            } @else if (dateStartInput.valid) {
               <div class="valid-feedback pb-3">
               </div>
             } @else {
@@ -105,28 +107,30 @@
               container="body"
               placement="bottom-end"
               required
-              #budgetDateEndInput="ngModel"
+              #dateEndInput="ngModel"
+              (ngModelChange)="checkDates(dateStartInput, dateEndInput)"
               ngbDatepicker
               #dateEnd="ngbDatepicker"
               [ngClass]="{
             'is-invalid':
-              budgetDateEndInput.invalid &&
-              (budgetDateEndInput.dirty || budgetDateEndInput.touched),
-            'is-valid': budgetDateEndInput.valid }"/>
+              dateEndInput.invalid,
+            'is-valid': dateEndInput.valid }"/>
             <div class="input-group-append">
               <button class="btn btn-outline-secondary bi bi-calendar3"
                       (click)="dateEnd.toggle()"
                       type="button">
               </button>
             </div>
-            @if (budgetDateEndInput.invalid &&
-            (budgetDateEndInput.dirty || budgetDateEndInput.touched)) {
+            @if (dateEndInput.invalid) {
               <div class="invalid-feedback">
-                <label *ngIf="budgetDateEndInput.errors?.['required']">
+                <label *ngIf="dateEndInput.errors?.['required']">
                   Field is required.
                 </label>
+                <label *ngIf="dateEndInput.errors?.['invalidDate']">
+                  Months in both dates should be equal.
+                </label>
               </div>
-            } @else if (budgetDateEndInput.valid) {
+            } @else if (dateEndInput.valid) {
               <div class="valid-feedback pb-3">
               </div>
             } @else {

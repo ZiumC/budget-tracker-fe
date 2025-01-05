@@ -53,6 +53,18 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
     this.modalService.open(this.budgetModal, ModalOptions.default());
   }
 
+  protected checkDates(inputModel1: any, inputModel2: any): void {
+    const dateStartMonth = this.budgetForm.dateStart.month;
+    const dateEndMonth = this.budgetForm.dateEnd.month;
+    if (dateStartMonth != dateEndMonth) {
+      inputModel1.control.setErrors({invalidDate: 'Invalid date end'});
+      inputModel2.control.setErrors({invalidDate: 'Invalid date end'});
+    } else {
+      inputModel1.control.setErrors(null);
+      inputModel2.control.setErrors(null);
+    }
+  }
+
   private setDefaultBudgetForm(): void {
     const now = new Date();
     const firsDay = new Date(now.getFullYear(), now.getMonth(), 1);
