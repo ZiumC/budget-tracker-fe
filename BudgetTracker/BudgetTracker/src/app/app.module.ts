@@ -4,7 +4,7 @@ import '@angular/common/locales/global/pl';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './ui/components/shared/header/header.component';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import {NgbDateParserFormatter, NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import { HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { IndexComponent } from './ui/pages/index/index.component';
@@ -16,7 +16,9 @@ import { IncomeModalComponent } from './ui/components/modals/income-modal/income
 import {FormsModule} from "@angular/forms";
 import { PaymentModalComponent } from './ui/components/modals/payment-modal/payment-modal.component';
 import { ModalErrorComponent } from './ui/components/shared/modal-error/modal-error.component';
-import { BudgetModalComponent } from './ui/components/modals/budget-modal/budget-modal.component';
+import {DatepickerFormatter} from "./util/datepicker.utils";
+import {BudgetModalComponent} from "./ui/components/modals/budget-modal/budget-modal.component";
+
 
 @NgModule({
   declarations: [
@@ -30,7 +32,7 @@ import { BudgetModalComponent } from './ui/components/modals/budget-modal/budget
     IncomeModalComponent,
     PaymentModalComponent,
     ModalErrorComponent,
-    BudgetModalComponent
+    BudgetModalComponent,
   ],
   imports: [
     BrowserModule,
@@ -38,9 +40,9 @@ import { BudgetModalComponent } from './ui/components/modals/budget-modal/budget
     NgbModule,
     HttpClientModule,
     CommonModule,
-    FormsModule
+    FormsModule,
   ],
-  providers: [],
+  providers: [ { provide: NgbDateParserFormatter, useClass: DatepickerFormatter },],
   bootstrap: [AppComponent],
 })
 export class AppModule { }

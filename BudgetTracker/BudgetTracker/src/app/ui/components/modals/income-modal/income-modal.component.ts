@@ -24,11 +24,11 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
   protected subscriptions: Subscription[];
   protected errorModel: ErrorModel;
   protected incomeForm: IncomeForm;
-  protected idIncome: string;
   protected displayLoader: boolean;
   protected displayError: boolean;
   protected isEditing: boolean;
   protected buttonCopyName: string;
+  private idIncome: string;
 
   constructor(
     private modalService: NgbModal,

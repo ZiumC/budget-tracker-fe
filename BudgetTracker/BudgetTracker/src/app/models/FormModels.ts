@@ -13,3 +13,9 @@ export class PaymentForm {
   isPaid: boolean;
   comment?: string;
 }
+
+export class BudgetForm {
+  name: string;
+  dateStart: Date;
+  dateEnd: Date;
+}
