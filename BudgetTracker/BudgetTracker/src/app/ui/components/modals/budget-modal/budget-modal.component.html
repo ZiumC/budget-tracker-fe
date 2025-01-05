@@ -54,32 +54,44 @@
         <div class="mb-2">
           <label for="budget-date-start">Date start</label>
           <span class="text-danger">*</span>
-          <input
-            type="text"
-            id="budget-date-start"
-            name="budget-date-start"
-            class="form-control"
-            [(ngModel)]="budgetForm.dateStart"
-            required
-            #budgetDateStartInput="ngModel"
-            [ngClass]="{
+          <div class="input-group">
+            <input
+              type="text"
+              id="budget-date-start"
+              name="budget-date-start"
+              class="form-control"
+              [(ngModel)]="budgetForm.dateStart"
+              required
+              #budgetDateStartInput="ngModel"
+              container="body"
+              placement="bottom-end"
+              ngbDatepicker
+              #dateStart="ngbDatepicker"
+              [ngClass]="{
             'is-invalid':
               budgetDateStartInput.invalid &&
               (budgetDateStartInput.dirty || budgetDateStartInput.touched),
             'is-valid': budgetDateStartInput.valid }"/>
-          @if (budgetDateStartInput.invalid &&
-          (budgetDateStartInput.dirty || budgetDateStartInput.touched)) {
-            <div class="invalid-feedback">
-              <label *ngIf="budgetDateStartInput.errors?.['required']">
-                Field is required.
-              </label>
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary bi bi-calendar3"
+                      (click)="dateStart.toggle()"
+                      type="button">
+              </button>
             </div>
-          } @else if (budgetDateStartInput.valid) {
-            <div class="valid-feedback pb-3">
-            </div>
-          } @else {
-            <div class="pb-4"></div>
-          }
+            @if (budgetDateStartInput.invalid &&
+            (budgetDateStartInput.dirty || budgetDateStartInput.touched)) {
+              <div class="invalid-feedback">
+                <label *ngIf="budgetDateStartInput.errors?.['required']">
+                  Field is required.
+                </label>
+              </div>
+            } @else if (budgetDateStartInput.valid) {
+              <div class="valid-feedback pb-3">
+              </div>
+            } @else {
+              <div class="pb-4"></div>
+            }
+          </div>
         </div>
         <div class="mb-2">
           <label for="budget-date-end">Date end</label>
@@ -89,33 +101,38 @@
               id="budget-date-end"
               name="budget-date-end"
               class="form-control"
-              [(ngModel)]="dateEndModel"
+              [(ngModel)]="budgetForm.dateEnd"
+              container="body"
+              placement="bottom-end"
               required
               #budgetDateEndInput="ngModel"
-              ngbDatepicker #d="ngbDatepicker"
+              ngbDatepicker
+              #dateEnd="ngbDatepicker"
               [ngClass]="{
             'is-invalid':
               budgetDateEndInput.invalid &&
               (budgetDateEndInput.dirty || budgetDateEndInput.touched),
             'is-valid': budgetDateEndInput.valid }"/>
-            <button class="btn btn-outline-secondary bi bi-calendar3"
-                    (click)="d.toggle()"
-                    type="button">
-            </button>
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary bi bi-calendar3"
+                      (click)="dateEnd.toggle()"
+                      type="button">
+              </button>
+            </div>
+            @if (budgetDateEndInput.invalid &&
+            (budgetDateEndInput.dirty || budgetDateEndInput.touched)) {
+              <div class="invalid-feedback">
+                <label *ngIf="budgetDateEndInput.errors?.['required']">
+                  Field is required.
+                </label>
+              </div>
+            } @else if (budgetDateEndInput.valid) {
+              <div class="valid-feedback pb-3">
+              </div>
+            } @else {
+              <div class="pb-4"></div>
+            }
           </div>
-          @if (budgetDateEndInput.invalid &&
-          (budgetDateEndInput.dirty || budgetDateEndInput.touched)) {
-            <div class="invalid-feedback">
-              <label *ngIf="budgetDateEndInput.errors?.['required']">
-                Field is required.
-              </label>
-            </div>
-          } @else if (budgetDateEndInput.valid) {
-            <div class="valid-feedback pb-3">
-            </div>
-          } @else {
-            <div class="pb-4"></div>
-          }
         </div>
       </div>
     </form>

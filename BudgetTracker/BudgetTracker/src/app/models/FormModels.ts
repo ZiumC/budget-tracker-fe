@@ -16,6 +16,12 @@ export class PaymentForm {
 
 export class BudgetForm {
   name: string;
-  dateStart: Date;
-  dateEnd: Date;
+  dateStart: DatePickerModel;
+  dateEnd: DatePickerModel;
+}
+
+export class DatePickerModel {
+  year: number;
+  month: number;
+  day: number;
 }

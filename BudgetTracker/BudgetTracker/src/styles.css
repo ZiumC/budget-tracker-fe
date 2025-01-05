@@ -86,6 +86,14 @@ table tr th {
   border-bottom-left-radius: 0;
 }
 
+div.ngb-dp-weekday {
+  color: #495057;
+}
+
+.ngb-dp-arrow-btn {
+  color: #6c757d;
+}
+
 @media only screen and (max-width: 770px) {
   .width-wrapper {
     width: 92%;
