@@ -234,31 +234,8 @@
         </div>
       </form>
       <ng-template [ngIf]="displayError">
-        <div class="my-3 mt-4">
-          <hr>
-        </div>
-        <p>Unable process request due to errors.</p>
-        <ul>
-          <li>
-            Status code: <span class="text-danger">{{ errorModel.responseStatusCode }}</span>
-          </li>
-        </ul>
-        @if (errorModel.traceId){
-          <div class="input-group mb-3">
-            <input #traceInput
-                   type="text"
-                   class="form-control text-danger"
-                   readonly="readonly"
-                   value="{{ errorModel.traceId }}">
-            <div class="input-group-append">
-              <button class="btn btn-outline-secondary"
-                      type="button"
-                      (click)="copy(traceInput)">
-                {{ buttonCopyName }}
-              </button>
-            </div>
-          </div>
-        }
+        <app-modal-error [errorModel]="errorModel">
+        </app-modal-error>
       </ng-template>
     </div>
     <div class="modal-footer">

@@ -82,18 +82,6 @@ export class PaymentComponent implements OnInit, OnDestroy {
     }, 500);
   }
 
-  protected copy(inputElement: any): any {
-    this.buttonCopyName = "Copied";
-    inputElement.select();
-    //this is so far deprecated but
-    //there is no any best alternatives for now
-    document.execCommand('copy');
-    inputElement.setSelectionRange(0, 0);
-    setTimeout((): void => {
-      this.buttonCopyName = "Copy";
-    }, 2500)
-  }
-
   private updatePayment(): void {
     this.subscriptions.push(
       this.httpService.updatePayment(
