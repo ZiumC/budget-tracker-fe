@@ -12,9 +12,9 @@ import { FooterComponent } from './ui/components/shared/footer/footer.component'
 import { SpinnerComponent } from './ui/components/shared/spinner/spinner.component';
 import { ErrorComponent } from './ui/components/shared/error/error.component';
 import { BudgetComponent } from './ui/pages/budget/budget.component';
-import { IncomeComponent } from './ui/components/modals/income/income.component';
+import { IncomeModalComponent } from './ui/components/modals/income-modal/income-modal.component';
 import {FormsModule} from "@angular/forms";
-import { PaymentComponent } from './ui/components/modals/payment/payment.component';
+import { PaymentModalComponent } from './ui/components/modals/payment-modal/payment-modal.component';
 import { ModalErrorComponent } from './ui/components/shared/modal-error/modal-error.component';
 
 @NgModule({
@@ -26,8 +26,8 @@ import { ModalErrorComponent } from './ui/components/shared/modal-error/modal-er
     SpinnerComponent,
     ErrorComponent,
     BudgetComponent,
-    IncomeComponent,
-    PaymentComponent,
+    IncomeModalComponent,
+    PaymentModalComponent,
     ModalErrorComponent
   ],
   imports: [

@@ -14,10 +14,10 @@ import {HttpService} from "../../../../services/http/httpService";
 
 @Component({
   selector: 'app-payment',
-  templateUrl: './payment.component.html',
-  styleUrl: './payment.component.css'
+  templateUrl: './payment-modal.component.html',
+  styleUrl: './payment-modal.component.css'
 })
-export class PaymentComponent implements OnInit, OnDestroy {
+export class PaymentModalComponent implements OnInit, OnDestroy {
   @ViewChild('paymentModal') paymentModal: any;
   @Input() idBudget: string;
   @Output() refreshPaymentEvent = new EventEmitter<boolean>();

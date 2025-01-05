@@ -13,10 +13,10 @@ import {HttpResponse} from "@angular/common/http";
 
 @Component({
   selector: 'app-income',
-  templateUrl: './income.component.html',
-  styleUrl: './income.component.css'
+  templateUrl: './income-modal.component.html',
+  styleUrl: './income-modal.component.css'
 })
-export class IncomeComponent implements OnInit, OnDestroy {
+export class IncomeModalComponent implements OnInit, OnDestroy {
   @ViewChild('incomeModal') incomeModal: any;
   @Input() idBudget: string;
   @Output() refreshIncomeEvent = new EventEmitter<boolean>();
