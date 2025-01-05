@@ -63,7 +63,7 @@
               [(ngModel)]="budgetForm.dateStart"
               required
               #dateStartInput="ngModel"
-              (ngModelChange)="checkDates(dateStartInput, dateEndInput)"
+              (ngModelChange)="checkMonths(dateStartInput, dateEndInput)"
               container="body"
               placement="bottom-end"
               ngbDatepicker
@@ -83,8 +83,11 @@
                 <label *ngIf="dateStartInput.errors?.['required']">
                   Field is required.
                 </label>
-                <label *ngIf="dateStartInput.errors?.['invalidDate']">
+                <label *ngIf="dateStartInput.errors?.['invalidMonth']">
                   Months in both dates should be equal.
+                </label>
+                <label *ngIf="dateEndInput.errors?.['invalidYear']">
+                  Years in both dates should be equal.
                 </label>
               </div>
             } @else if (dateStartInput.valid) {
@@ -108,7 +111,7 @@
               placement="bottom-end"
               required
               #dateEndInput="ngModel"
-              (ngModelChange)="checkDates(dateStartInput, dateEndInput)"
+              (ngModelChange)="checkMonths(dateStartInput, dateEndInput)"
               ngbDatepicker
               #dateEnd="ngbDatepicker"
               [ngClass]="{
@@ -126,8 +129,11 @@
                 <label *ngIf="dateEndInput.errors?.['required']">
                   Field is required.
                 </label>
-                <label *ngIf="dateEndInput.errors?.['invalidDate']">
+                <label *ngIf="dateEndInput.errors?.['invalidMonth']">
                   Months in both dates should be equal.
+                </label>
+                <label *ngIf="dateEndInput.errors?.['invalidYear']">
+                  Years in both dates should be equal.
                 </label>
               </div>
             } @else if (dateEndInput.valid) {

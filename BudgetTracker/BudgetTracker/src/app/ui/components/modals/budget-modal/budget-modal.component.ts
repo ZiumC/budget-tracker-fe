@@ -53,12 +53,16 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
     this.modalService.open(this.budgetModal, ModalOptions.default());
   }
 
-  protected checkDates(inputModel1: any, inputModel2: any): void {
-    const dateStartMonth = this.budgetForm.dateStart.month;
-    const dateEndMonth = this.budgetForm.dateEnd.month;
-    if (dateStartMonth != dateEndMonth) {
-      inputModel1.control.setErrors({invalidDate: 'Invalid date end'});
-      inputModel2.control.setErrors({invalidDate: 'Invalid date end'});
+  protected checkMonths(inputModel1: any, inputModel2: any): void {
+    const dateStart = this.budgetForm.dateStart;
+    const dateEnd = this.budgetForm.dateEnd;
+
+    if (dateStart.month != dateEnd.month) {
+      inputModel1.control.setErrors({invalidMonth: 'Invalid month'});
+      inputModel2.control.setErrors({invalidMonth: 'Invalid month'});
+    } else if (dateStart.year != dateEnd.year) {
+      inputModel1.control.setErrors({invalidYear: 'Invalid year'});
+      inputModel2.control.setErrors({invalidYear: 'Invalid year'});
     } else {
       inputModel1.control.setErrors(null);
       inputModel2.control.setErrors(null);
