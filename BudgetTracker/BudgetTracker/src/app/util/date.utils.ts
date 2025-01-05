@@ -25,4 +25,8 @@ export class DateUtils {
       day: +splitDate[0],
     } as DatePickerModel;
   }
+
+  static convertToDate(date: DatePickerModel): Date {
+    return new Date(date.year, date.month - 1, date.day + 1);
+  }
 }

@@ -4,7 +4,7 @@ import {Observable} from "rxjs";
 import {UrlApi} from "./http";
 import {Injectable} from "@angular/core";
 import {RequestParamModel} from "../../models/RequestParamModel";
-import {IncomeForm, PaymentForm} from "../../models/FormModels";
+import {BudgetForm, IncomeForm, PaymentForm} from "../../models/FormModels";
 
 @Injectable({
   providedIn: 'root',
@@ -78,6 +78,15 @@ export class HttpService {
     return this.httpClient.put(
       UrlApi.payment(idIncome),
       paymentForm,
+      {observe: 'response'}
+    )
+  }
+
+  public updateBudget(budgetForm: BudgetForm, idBudget: string):
+    Observable<HttpResponse<{}>> {
+    return this.httpClient.put(
+      UrlApi.budget(idBudget),
+      budgetForm,
       {observe: 'response'}
     )
   }

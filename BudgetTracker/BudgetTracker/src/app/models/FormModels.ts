@@ -14,7 +14,7 @@ export class PaymentForm {
   comment?: string;
 }
 
-export class BudgetForm {
+export class BudgetFormPicker {
   name: string;
   dateStart: DatePickerModel;
   dateEnd: DatePickerModel;
@@ -24,4 +24,10 @@ export class DatePickerModel {
   year: number;
   month: number;
   day: number;
+}
+
+export class BudgetForm {
+  name: string;
+  dateStart: Date;
+  dateEnd: Date;
 }
