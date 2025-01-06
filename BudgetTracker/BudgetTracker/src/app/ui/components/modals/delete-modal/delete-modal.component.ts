@@ -17,6 +17,8 @@ import {SpinnerSize} from "../../shared/spinner/spinner.component";
 export class DeleteModalComponent implements OnInit, OnDestroy {
   @ViewChild('deleteModal') deleteModal: any;
   @Output() redirectToIndexEvent = new EventEmitter<boolean>();
+  @Output() refreshIncomeEvent = new EventEmitter<boolean>();
+  protected readonly SpinnerSize = SpinnerSize;
   protected subscriptions: Subscription[];
   private paymentModel: PaymentModel | null;
   private budgetModel: BudgetModel | null;
@@ -41,26 +43,32 @@ export class DeleteModalComponent implements OnInit, OnDestroy {
     SubscriptionUtils.unsubscribeAll(this.subscriptions);
   }
 
-  openWithPayment(payment: PaymentModel) {
+  openWithPayment(payment: PaymentModel): void {
+    this.displayLoader = false;
+    this.displayError = false;
     this.paymentModel = new PaymentModel();
-
     this.paymentModel = payment;
+
     this.modalService
       .open(this.deleteModal, ModalOptions.default(ModalSize.SMALL))
   }
 
-  openWithIncome(income: IncomeModel) {
+  openWithIncome(income: IncomeModel): void {
+    this.displayLoader = false;
+    this.displayError = false;
     this.incomeModel = new IncomeModel();
-
     this.incomeModel = income;
+
     this.modalService
       .open(this.deleteModal, ModalOptions.default(ModalSize.SMALL))
   }
 
-  openWithBudget(budget: BudgetModel) {
+  openWithBudget(budget: BudgetModel): void {
+    this.displayLoader = false;
+    this.displayError = false;
     this.budgetModel = new BudgetModel();
-
     this.budgetModel = budget;
+
     this.modalService
       .open(this.deleteModal, ModalOptions.default(ModalSize.SMALL))
   }
@@ -68,13 +76,19 @@ export class DeleteModalComponent implements OnInit, OnDestroy {
   delete(): void {
     this.displayLoader = true;
     const idBudget = this.budgetModel?.id;
-    const idPayment = this.budgetModel?.id;
-    const idIncome = this.budgetModel?.id;
+    const idIncome = this.incomeModel?.id;
+    const idPayment = this.paymentModel?.id;
 
     setTimeout((): void => {
       if (idBudget) {
         this.deleteBudget(idBudget);
+      } else if (idIncome) {
+        this.deleteIncome(idIncome);
+      } else {
+        this.displayLoader = false;
+        this.displayError = true;
       }
+
     }, 500)
 
     this.removeReferences();
@@ -84,6 +98,20 @@ export class DeleteModalComponent implements OnInit, OnDestroy {
     this.incomeModel = null;
     this.budgetModel = null;
     this.paymentModel = null;
+  }
+
+  private deleteIncome(idIncome: string): void {
+    this.subscriptions.push(
+      this.httpService.deleteIncome(idIncome).subscribe({
+        next: (response: HttpResponse<any>): void => {
+          this.onRequestSuccess(response);
+          this.refreshIncomeEvent.emit(true);
+        },
+        error: (err): void => {
+          this.onRequestFailed(err);
+        }
+      })
+    )
   }
 
   private deleteBudget(idBudget: string): void {
@@ -115,6 +143,4 @@ export class DeleteModalComponent implements OnInit, OnDestroy {
     this.displayLoader = false;
     this.displayError = true;
   }
-
-  protected readonly SpinnerSize = SpinnerSize;
 }

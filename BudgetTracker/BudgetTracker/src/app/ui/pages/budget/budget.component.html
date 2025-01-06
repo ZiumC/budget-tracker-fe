@@ -314,11 +314,13 @@
 
       </app-payment-modal>
       <app-delete-modal #deleteModal
-                        (redirectToIndexEvent)="onRedirectToIndex($event)">
+                        (redirectToIndexEvent)="onRedirectToIndex($event)"
+                        (refreshIncomeEvent)="onRefreshIncome($event)">
 
       </app-delete-modal>
       <ng-template #errorPaymentsBlock>
-        <app-error [errorModel]="errorModels.payments"></app-error>
+        <app-error [errorModel]=" errorModels.payments
+      "></app-error>
       </ng-template>
     </ng-template>
   </div>

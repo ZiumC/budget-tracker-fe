@@ -49,7 +49,7 @@ export class HttpService {
   }
 
   public deleteBudget(idBudget: string):
-    Observable<HttpResponse<{}>>{
+    Observable<HttpResponse<{}>> {
     return this.httpClient.delete(
       UrlApi.budgetId(idBudget),
       {observe: 'response'}
@@ -95,6 +95,14 @@ export class HttpService {
     return this.httpClient.put(
       UrlApi.incomeId(idIncome),
       incomeForm,
+      {observe: 'response'}
+    )
+  }
+
+  public deleteIncome(idIncome: string):
+    Observable<HttpResponse<{}>> {
+    return this.httpClient.delete(
+      UrlApi.incomeId(idIncome),
       {observe: 'response'}
     )
   }
