@@ -18,6 +18,7 @@ import { PaymentModalComponent } from './ui/components/modals/payment-modal/paym
 import { ModalErrorComponent } from './ui/components/shared/modal-error/modal-error.component';
 import {DatepickerFormatter} from "./util/datepicker.utils";
 import {BudgetModalComponent} from "./ui/components/modals/budget-modal/budget-modal.component";
+import { DeleteModalComponent } from './ui/components/modals/delete-modal/delete-modal.component';
 
 
 @NgModule({
@@ -33,6 +34,7 @@ import {BudgetModalComponent} from "./ui/components/modals/budget-modal/budget-m
     PaymentModalComponent,
     ModalErrorComponent,
     BudgetModalComponent,
+    DeleteModalComponent,
   ],
   imports: [
     BrowserModule,

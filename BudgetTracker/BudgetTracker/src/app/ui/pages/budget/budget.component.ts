@@ -10,7 +10,6 @@ import {ActivatedRoute, Params} from "@angular/router";
 import {HttpResponse} from "@angular/common/http";
 import {SubscriptionUtils} from "../../../util/subscription.utils";
 import {NumberUtils} from "../../../util/number.utils";
-import BigNumber from "bignumber.js";
 import {Sort} from "../../../util/model.utils";
 
 @Component({
