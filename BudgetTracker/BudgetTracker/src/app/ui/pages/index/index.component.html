@@ -14,7 +14,7 @@
                 <input id="date-from"
                        type="text"
                        class="form-control"
-                       value="{{requestModel.fromDate}}"
+                       value="{{requestParamModel.fromDate}}"
                        disabled>
               </div>
               <div class="col-md-6">
@@ -22,7 +22,7 @@
                 <input id="date-to"
                        type="text"
                        class="form-control"
-                       value="{{requestModel.toDate}}"
+                       value="{{requestParamModel.toDate}}"
                        disabled>
               </div>
             </div>
@@ -111,7 +111,8 @@
       <app-budget-modal #budgetModal>
 
       </app-budget-modal>
-      <app-delete-modal #deleteModal>
+      <app-delete-modal #deleteModal
+                        (indexPageEvent)="onPageIndex($event)">
 
       </app-delete-modal>
       <ng-template #errorBlock>

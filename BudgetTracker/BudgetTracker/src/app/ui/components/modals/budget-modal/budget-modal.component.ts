@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Subscription} from "rxjs";
 import {ErrorModel} from "../../../../models/ErrorModel";
 import {SubscriptionUtils} from "../../../../util/subscription.utils";
@@ -18,7 +18,6 @@ import {HttpService} from "../../../../services/http/httpService";
 })
 export class BudgetModalComponent implements OnInit, OnDestroy {
   @ViewChild('budgetModal') budgetModal: any;
-  @Output() refreshIncomeEvent = new EventEmitter<boolean>();
   protected readonly SpinnerSize = SpinnerSize;
   protected subscriptions: Subscription[];
   protected errorModel: ErrorModel;
@@ -131,7 +130,6 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
   }
 
   private onRequestSuccess(response: HttpResponse<any>): void {
-    this.refreshIncomeEvent.emit(true);
     this.errorModel.responseStatusCode = response.status;
     this.modalService.dismissAll();
     setTimeout((): void => {

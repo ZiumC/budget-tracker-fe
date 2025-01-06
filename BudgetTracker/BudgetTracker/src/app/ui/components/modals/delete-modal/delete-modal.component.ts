@@ -16,7 +16,7 @@ import {SpinnerSize} from "../../shared/spinner/spinner.component";
 })
 export class DeleteModalComponent implements OnInit, OnDestroy {
   @ViewChild('deleteModal') deleteModal: any;
-  @Output() redirectToIndexEvent = new EventEmitter<boolean>();
+  @Output() indexPageEvent = new EventEmitter<boolean>();
   @Output() refreshIncomeEvent = new EventEmitter<boolean>();
   @Output() refreshPaymentEvent = new EventEmitter<boolean>();
   protected readonly SpinnerSize = SpinnerSize;
@@ -136,7 +136,7 @@ export class DeleteModalComponent implements OnInit, OnDestroy {
       this.httpService.deleteBudget(idBudget).subscribe({
         next: (response: HttpResponse<any>): void => {
           this.onRequestSuccess(response);
-          this.redirectToIndexEvent.emit(true);
+          this.indexPageEvent.emit(true);
         },
         error: (err): void => {
           this.onRequestFailed(err);
