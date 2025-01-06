@@ -313,7 +313,8 @@
                          (refreshPaymentEvent)="onRefreshPayment($event)">
 
       </app-payment-modal>
-      <app-delete-modal #deleteModal>
+      <app-delete-modal #deleteModal
+                        (redirectToIndexEvent)="onRedirectToIndex($event)">
 
       </app-delete-modal>
       <ng-template #errorPaymentsBlock>
