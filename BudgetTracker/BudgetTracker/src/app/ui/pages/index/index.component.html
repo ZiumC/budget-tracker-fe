@@ -98,7 +98,8 @@
                           class="btn btn-outline-danger"
                           data-bs-toggle="tooltip"
                           data-bs-placement="bottom"
-                          title="Delete budget">
+                          title="Delete budget"
+                          (click)="deleteModal.openWithBudget(budget)">
                     <i class="bi bi-trash3-fill"></i>
                   </button>
                 </div>
@@ -110,6 +111,9 @@
       <app-budget-modal #budgetModal>
 
       </app-budget-modal>
+      <app-delete-modal #deleteModal>
+
+      </app-delete-modal>
       <ng-template #errorBlock>
         <app-error [errorModel]="errorModel"></app-error>
       </ng-template>
