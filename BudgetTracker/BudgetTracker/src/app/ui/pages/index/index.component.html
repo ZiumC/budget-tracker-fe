@@ -52,64 +52,71 @@
         <div class="budget-card-container">
           @for (budget of budgets; track budget.id; ) {
             <div class="card border-dark my-3 budget-card">
-              <div class="card-header">
-                <h5>{{ budget.name }}</h5>
-              </div>
-              <div class="card-body text-dark">
-                <table>
-                  <tr>
-                    <td>Date start:</td>
-                    <td>
-                      <input type="text"
-                             class="form-control"
-                             value="{{DateUtils.format(budget.dateStart)}}"
-                             disabled>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>Date end:</td>
-                    <td>
-                      <input type="text"
-                             class="form-control"
-                             value="{{DateUtils.format(budget.dateEnd)}}"
-                             disabled>
-                    </td>
-                  </tr>
-                </table>
-                <div class="budget-buttons mt-3 mb-1">
-                  <button type="button"
-                          class="btn btn-outline-secondary"
-                          data-bs-toggle="tooltip"
-                          data-bs-placement="bottom"
-                          title="Details"
-                          [routerLink]="'/budget'"
-                          [queryParams]="{id: budget.id}">
-                    <i class="bi bi-clipboard-data-fill"></i>
-                  </button>
-                  <button type="button"
-                          class="btn btn-outline-warning"
-                          data-bs-toggle="tooltip"
-                          data-bs-placement="bottom"
-                          title="Edit budget"
-                          (click)="budgetModal.open(budget)">
-                    <i class="bi bi-pencil-square"></i>
-                  </button>
-                  <button type="button"
-                          class="btn btn-outline-danger"
-                          data-bs-toggle="tooltip"
-                          data-bs-placement="bottom"
-                          title="Delete budget"
-                          (click)="deleteModal.openWithBudget(budget)">
-                    <i class="bi bi-trash3-fill"></i>
-                  </button>
+              <ng-template [ngIf]="displayBudgetLoader && budget.id == idRefreshBudget"
+                           [ngIfElse]="displayBudget">
+                <app-spinner-grow></app-spinner-grow>
+              </ng-template>
+              <ng-template #displayBudget>
+                <div class="card-header">
+                  <h5>{{ budget.name }}</h5>
                 </div>
-              </div>
+                <div class="card-body text-dark">
+                  <table>
+                    <tr>
+                      <td>Date start:</td>
+                      <td>
+                        <input type="text"
+                               class="form-control"
+                               value="{{DateUtils.format(budget.dateStart)}}"
+                               disabled>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Date end:</td>
+                      <td>
+                        <input type="text"
+                               class="form-control"
+                               value="{{DateUtils.format(budget.dateEnd)}}"
+                               disabled>
+                      </td>
+                    </tr>
+                  </table>
+                  <div class="budget-buttons mt-3 mb-1">
+                    <button type="button"
+                            class="btn btn-outline-secondary"
+                            data-bs-toggle="tooltip"
+                            data-bs-placement="bottom"
+                            title="Details"
+                            [routerLink]="'/budget'"
+                            [queryParams]="{id: budget.id}">
+                      <i class="bi bi-clipboard-data-fill"></i>
+                    </button>
+                    <button type="button"
+                            class="btn btn-outline-warning"
+                            data-bs-toggle="tooltip"
+                            data-bs-placement="bottom"
+                            title="Edit budget"
+                            (click)="budgetModal.open(budget)">
+                      <i class="bi bi-pencil-square"></i>
+                    </button>
+                    <button type="button"
+                            class="btn btn-outline-danger"
+                            data-bs-toggle="tooltip"
+                            data-bs-placement="bottom"
+                            title="Delete budget"
+                            (click)="deleteModal.openWithBudget(budget)">
+                      <i class="bi bi-trash3-fill"></i>
+                    </button>
+                  </div>
+                </div>
+              </ng-template>
             </div>
           }
         </div>
       </ng-template>
       <app-budget-modal #budgetModal
-                        (indexPageEvent)="onPageIndex($event)">
+                        (indexPageEvent)="onPageIndex($event)"
+                        (budgetUpdateEvent)="onBudgetUpdate($event)">
 
       </app-budget-modal>
       <app-delete-modal #deleteModal

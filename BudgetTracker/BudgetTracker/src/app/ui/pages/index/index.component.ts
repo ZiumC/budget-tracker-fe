@@ -18,11 +18,14 @@ export class IndexComponent implements OnInit, OnDestroy {
   protected requiredStatusCode: number = 200;
   protected errorModel: ErrorModel;
   protected budgets: BudgetModel[] | null;
+  protected budget: BudgetModel | null;
   protected subscriptions: Subscription[];
   protected requestParamModel: RequestParamModel;
   protected readonly DateUtils = DateUtils;
   protected readonly SpinnerSize = SpinnerSize;
   protected isLoaded: boolean = false;
+  protected idRefreshBudget: string;
+  protected displayBudgetLoader: boolean;
 
   constructor(private httpService: HttpService) {
   }
@@ -40,6 +43,7 @@ export class IndexComponent implements OnInit, OnDestroy {
     this.budgets = [];
     this.subscriptions = [];
     this.errorModel = new ErrorModel();
+    this.displayBudgetLoader = false;
 
     this.getBudgets(this.requestParamModel);
   }
@@ -54,6 +58,39 @@ export class IndexComponent implements OnInit, OnDestroy {
       this.errorModel = new ErrorModel();
       this.getBudgets(this.requestParamModel);
     }
+  }
+
+  protected onBudgetUpdate(idBudget: string): void {
+    if (idBudget) {
+      this.displayBudgetLoader = true;
+      this.idRefreshBudget = idBudget;
+
+      this.errorModel = new ErrorModel();
+      this.getBudget(idBudget);
+
+      setTimeout((): void => {
+        this.budgets!.forEach((item, index): void => {
+          if (item.id == idBudget && this.budgets) {
+            this.budgets[index] = this.budget!;
+          }
+        })
+        this.displayBudgetLoader = false;
+      }, 1000);
+    }
+  }
+
+  private getBudget(idBudget: string): void {
+    this.subscriptions.push(
+      this.httpService.getBudget(idBudget).subscribe({
+        next: (response: HttpResponse<BudgetModel>): void => {
+          this.budget = response.body;
+          this.errorModel.responseStatusCode = response.status
+        },
+        error: (err): void => {
+          this.onRequestFailed(err);
+        }
+      })
+    )
   }
 
   private getBudgets(requestParamModel: RequestParamModel): void {
