@@ -39,8 +39,8 @@ export class UrlApi {
     return urlResult;
   }
 
-  static budget(idBudget: string): string {
-    return this.HOST + this.CONTROLLERS.BUDGET + "/" + idBudget;
+  static budgetController(): string {
+    return this.HOST + this.CONTROLLERS.BUDGET;
   }
 
   static budgetIncomes(

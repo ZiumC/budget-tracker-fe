@@ -5,7 +5,7 @@ import {SubscriptionUtils} from "../../../../util/subscription.utils";
 import {BudgetModel} from "../../../../models/RequestModels";
 import {ModalOptions} from "../../../../util/modal.utils";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
-import {BudgetForm, BudgetFormPicker} from "../../../../models/FormModels";
+import {BudgetForm, BudgetFormPicker, DatePickerModel} from "../../../../models/FormModels";
 import {DateUtils} from "../../../../util/date.utils";
 import {SpinnerSize} from "../../shared/spinner/spinner.component";
 import {HttpResponse} from "@angular/common/http";
@@ -23,6 +23,7 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
   protected subscriptions: Subscription[];
   protected errorModel: ErrorModel;
   protected budgetForm: BudgetFormPicker;
+  protected budgetDate: DatePickerModel;
   protected isEditing: boolean;
   protected displayLoader: boolean;
   protected displayError: boolean;
@@ -85,7 +86,7 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
       if (this.isEditing) {
         this.updateBudget();
       } else {
-
+        this.createBudget();
       }
     }, 500);
   }
@@ -101,6 +102,24 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
       this.httpService.updateBudget(
         budgetForm,
         this.idBudget).subscribe({
+        next: (response: HttpResponse<any>): void => {
+          this.onRequestSuccess(response);
+        },
+        error: (err): void => {
+          this.onRequestFailed(err);
+        }
+      })
+    )
+  }
+
+  private createBudget(): void {
+    const budgetDate = DateUtils
+      .format(DateUtils.convertToDate(this.budgetDate));
+
+    this.subscriptions.push(
+      this.httpService.createBudget(
+        budgetDate
+      ).subscribe({
         next: (response: HttpResponse<any>): void => {
           this.onRequestSuccess(response);
         },
@@ -138,5 +157,7 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
       dateStart: DateUtils.convertToDatePicker(firsDay),
       dateEnd: DateUtils.convertToDatePicker(lastDay)
     } as BudgetFormPicker;
+
+    this.budgetDate = DateUtils.convertToDatePicker(firsDay);
   }
 }

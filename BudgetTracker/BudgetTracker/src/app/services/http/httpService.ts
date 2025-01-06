@@ -25,7 +25,7 @@ export class HttpService {
   public getBudget(idBudget: string):
     Observable<HttpResponse<BudgetModel>> {
     return this.httpClient.get<BudgetModel>(
-      UrlApi.budget(idBudget),
+      UrlApi.budgetController() + "/" + idBudget,
       {observe: 'response'}
     );
   }
@@ -85,8 +85,17 @@ export class HttpService {
   public updateBudget(budgetForm: BudgetForm, idBudget: string):
     Observable<HttpResponse<{}>> {
     return this.httpClient.put(
-      UrlApi.budget(idBudget),
+      UrlApi.budgetController() + "/" + idBudget,
       budgetForm,
+      {observe: 'response'}
+    )
+  }
+
+  public createBudget(budgetDate: string):
+    Observable<HttpResponse<{}>> {
+    return this.httpClient.post(
+      UrlApi.budgetController() + "?budgetDate=" + budgetDate,
+      null,
       {observe: 'response'}
     )
   }
