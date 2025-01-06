@@ -1,0 +1,41 @@
+<ng-template #deleteModal>
+  @if (!displayLoader) {
+    <div class="modal-header">
+      <h3 class="modal-title" id="modal-basic-title">
+        Proceed?
+      </h3>
+    </div>
+  }
+  <ng-template [ngIf]="displayLoader"
+               [ngIfElse]="loadedBody">
+    <div class="my-5"></div>
+    <app-spinner [size]="SpinnerSize.MEDIUM"></app-spinner>
+    <div class="mt-5 text-center">
+      <p>Action in progress...</p>
+    </div>
+    <div class="mb-3"></div>
+  </ng-template>
+  <ng-template #loadedBody>
+    <div class="modal-body col-mx text-center">
+      <h5>This action can't be undone!</h5>
+      <ng-template [ngIf]="displayError">
+        <app-modal-error [errorModel]="errorModel">
+        </app-modal-error>
+      </ng-template>
+    </div>
+    <div class="modal-footer">
+      <button
+        type="button"
+        class="btn btn-outline-secondary"
+        (click)="close()">
+        Cancel
+      </button>
+      <button
+        type="button"
+        class="btn btn-outline-danger"
+        (click)="delete()">
+        Delete
+      </button>
+    </div>
+  </ng-template>
+</ng-template>

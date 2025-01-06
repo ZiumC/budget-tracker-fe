@@ -50,7 +50,8 @@
                       class="btn btn-danger"
                       data-bs-toggle="tooltip"
                       data-bs-placement="bottom"
-                      title="Delete budget">
+                      title="Delete budget"
+                      (click)="deleteModal.openWithBudget(budget!)">
                 <i class="bi bi-trash3-fill"></i> Delete
               </button>
             </div>
@@ -143,7 +144,8 @@
                               class="btn btn-danger"
                               data-bs-toggle="tooltip"
                               data-bs-placement="bottom"
-                              title="Delete income">
+                              title="Delete income"
+                              (click)="deleteModal.openWithIncome(income)">
                               <i class="bi bi-trash3-fill"></i> Delete
                             </button>
                           </div>
@@ -286,7 +288,8 @@
                               class="btn btn-danger"
                               data-bs-toggle="tooltip"
                               data-bs-placement="bottom"
-                              title="Delete payment">
+                              title="Delete payment"
+                              (click)="deleteModal.openWithPayment(payment)">
                               <i class="bi bi-trash3-fill"></i> Delete
                             </button>
                           </div>
@@ -301,17 +304,24 @@
         </div>
       </ng-template>
       <app-income-modal #incomeModal
-                  [idBudget]="idBudget"
-                  (refreshIncomeEvent)="onRefreshIncome($event)">
+                        [idBudget]="idBudget"
+                        (refreshIncomeEvent)="onRefreshIncome($event)">
 
       </app-income-modal>
       <app-payment-modal #paymentModal
-                   [idBudget]="idBudget"
-                   (refreshPaymentEvent)="onRefreshPayment($event)">
+                         [idBudget]="idBudget"
+                         (refreshPaymentEvent)="onRefreshPayment($event)">
 
       </app-payment-modal>
+      <app-delete-modal #deleteModal
+                        (redirectToIndexEvent)="onRedirectToIndex($event)"
+                        (refreshIncomeEvent)="onRefreshIncome($event)"
+                        (refreshPaymentEvent)="onRefreshPayment($event)">
+
+      </app-delete-modal>
       <ng-template #errorPaymentsBlock>
-        <app-error [errorModel]="errorModels.payments"></app-error>
+        <app-error [errorModel]=" errorModels.payments
+      "></app-error>
       </ng-template>
     </ng-template>
   </div>

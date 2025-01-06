@@ -25,9 +25,35 @@ export class HttpService {
   public getBudget(idBudget: string):
     Observable<HttpResponse<BudgetModel>> {
     return this.httpClient.get<BudgetModel>(
-      UrlApi.budgetController() + "/" + idBudget,
+      UrlApi.budgetId(idBudget),
       {observe: 'response'}
     );
+  }
+
+  public updateBudget(budgetForm: BudgetForm, idBudget: string):
+    Observable<HttpResponse<{}>> {
+    return this.httpClient.put(
+      UrlApi.budgetId(idBudget),
+      budgetForm,
+      {observe: 'response'}
+    )
+  }
+
+  public createBudget(budgetDate: string):
+    Observable<HttpResponse<{}>> {
+    return this.httpClient.post(
+      UrlApi.budgetDate(budgetDate),
+      null,
+      {observe: 'response'}
+    )
+  }
+
+  public deleteBudget(idBudget: string):
+    Observable<HttpResponse<{}>> {
+    return this.httpClient.delete(
+      UrlApi.budgetId(idBudget),
+      {observe: 'response'}
+    )
   }
 
   public getBudgetIncomes(requestModel: RequestParamModel, idBudget: string):
@@ -55,15 +81,6 @@ export class HttpService {
     )
   }
 
-  public updateIncome(incomeForm: IncomeForm, idIncome: string):
-    Observable<HttpResponse<{}>> {
-    return this.httpClient.put(
-      UrlApi.income(idIncome),
-      incomeForm,
-      {observe: 'response'}
-    )
-  }
-
   public createBudgetPayment(paymentForm: PaymentForm, idBudget: string):
     Observable<HttpResponse<{}>> {
     return this.httpClient.post(
@@ -73,29 +90,36 @@ export class HttpService {
     )
   }
 
+  public updateIncome(incomeForm: IncomeForm, idIncome: string):
+    Observable<HttpResponse<{}>> {
+    return this.httpClient.put(
+      UrlApi.incomeId(idIncome),
+      incomeForm,
+      {observe: 'response'}
+    )
+  }
+
+  public deleteIncome(idIncome: string):
+    Observable<HttpResponse<{}>> {
+    return this.httpClient.delete(
+      UrlApi.incomeId(idIncome),
+      {observe: 'response'}
+    )
+  }
+
   public updatePayment(paymentForm: PaymentForm, idIncome: string):
     Observable<HttpResponse<{}>> {
     return this.httpClient.put(
-      UrlApi.payment(idIncome),
+      UrlApi.paymentId(idIncome),
       paymentForm,
       {observe: 'response'}
     )
   }
 
-  public updateBudget(budgetForm: BudgetForm, idBudget: string):
-    Observable<HttpResponse<{}>> {
-    return this.httpClient.put(
-      UrlApi.budgetController() + "/" + idBudget,
-      budgetForm,
-      {observe: 'response'}
-    )
-  }
-
-  public createBudget(budgetDate: string):
-    Observable<HttpResponse<{}>> {
-    return this.httpClient.post(
-      UrlApi.budgetController() + "?budgetDate=" + budgetDate,
-      null,
+  public deletePayment(idPayment: string):
+    Observable<HttpResponse<{}>>{
+    return this.httpClient.delete(
+      UrlApi.paymentId(idPayment),
       {observe: 'response'}
     )
   }

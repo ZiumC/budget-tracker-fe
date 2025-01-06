@@ -6,11 +6,10 @@ import {ErrorModel} from "../../../models/ErrorModel";
 import {RequestParamModel} from "../../../models/RequestParamModel";
 import {DateUtils} from '../../../util/date.utils';
 import {HttpService} from "../../../services/http/httpService";
-import {ActivatedRoute, Params} from "@angular/router";
+import {ActivatedRoute, Params, Router} from "@angular/router";
 import {HttpResponse} from "@angular/common/http";
 import {SubscriptionUtils} from "../../../util/subscription.utils";
 import {NumberUtils} from "../../../util/number.utils";
-import BigNumber from "bignumber.js";
 import {Sort} from "../../../util/model.utils";
 
 @Component({
@@ -42,7 +41,8 @@ export class BudgetComponent implements OnInit, OnDestroy {
 
   constructor(
     private httpService: HttpService,
-    private activatedRoute: ActivatedRoute) {
+    private activatedRoute: ActivatedRoute,
+    private router: Router) {
   }
 
   ngOnDestroy(): void {
@@ -162,6 +162,12 @@ export class BudgetComponent implements OnInit, OnDestroy {
       this.requestLoaded.payments = false;
       this.errorModels.payments = new ErrorModel();
       this.getBudgetPayments();
+    }
+  }
+
+  protected onRedirectToIndex(redirect: boolean): void{
+    if (redirect){
+      this.router.navigate(['/']);
     }
   }
 
