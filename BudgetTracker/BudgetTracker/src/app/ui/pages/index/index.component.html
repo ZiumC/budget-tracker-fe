@@ -108,7 +108,8 @@
           }
         </div>
       </ng-template>
-      <app-budget-modal #budgetModal>
+      <app-budget-modal #budgetModal
+                        (indexPageEvent)="onPageIndex($event)">
 
       </app-budget-modal>
       <app-delete-modal #deleteModal

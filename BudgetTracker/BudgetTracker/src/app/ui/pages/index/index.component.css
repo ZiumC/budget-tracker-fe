@@ -19,6 +19,10 @@ table tr td:first-child {
   width: 38%;
 }
 
+div.card-header h5 {
+  margin: 0;
+}
+
 
 @media only screen and (max-width: 1015px) {
   .budget-card-container {
