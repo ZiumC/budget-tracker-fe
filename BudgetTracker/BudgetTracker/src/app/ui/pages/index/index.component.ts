@@ -18,47 +18,101 @@ export class IndexComponent implements OnInit, OnDestroy {
   protected requiredStatusCode: number = 200;
   protected errorModel: ErrorModel;
   protected budgets: BudgetModel[] | null;
+  protected budget: BudgetModel | null;
   protected subscriptions: Subscription[];
-  protected requestModel: RequestParamModel;
+  protected requestParamModel: RequestParamModel;
   protected readonly DateUtils = DateUtils;
   protected readonly SpinnerSize = SpinnerSize;
   protected isLoaded: boolean = false;
+  protected idRefreshBudget: string;
+  protected displayBudgetLoader: boolean;
 
   constructor(private httpService: HttpService) {
   }
 
   ngOnInit(): void {
-    const currentYear = new Date().getFullYear()-1;
-    this.requestModel = new RequestParamModel();
-    this.requestModel.page = 1;
-    this.requestModel.pageSize = 12;
-    this.requestModel.fromDate = DateUtils
+    const currentYear = new Date().getFullYear() - 1;
+    this.requestParamModel = new RequestParamModel();
+    this.requestParamModel.page = 1;
+    this.requestParamModel.pageSize = 12;
+    this.requestParamModel.fromDate = DateUtils
       .format(new Date(currentYear, 0, 1));
-    this.requestModel.toDate = DateUtils
+    this.requestParamModel.toDate = DateUtils
       .format(new Date(currentYear, 11, 31));
+
     this.budgets = [];
     this.subscriptions = [];
     this.errorModel = new ErrorModel();
+    this.displayBudgetLoader = false;
 
-    this.subscriptions.push(
-      this.httpService.getBudgets(this.requestModel).subscribe({
-        next: (response: HttpResponse<BudgetModel[]>): void => {
-          this.budgets = response.body;
-          this.errorModel.responseStatusCode = response.status
-          this.isLoaded = true;
-        },
-        error: (err) => {
-          this.errorModel.traceId = err.headers.get('X-Trace-Id');
-          this.errorModel.responseStatusCode = err.status;
-          this.errorModel.responseErrorModel = err.error;
-          this.isLoaded = true;
-        }
-      })
-    )
-
+    this.getBudgets(this.requestParamModel);
   }
 
   ngOnDestroy(): void {
     SubscriptionUtils.unsubscribeAll(this.subscriptions);
+  }
+
+  protected onPageIndex(reload: boolean): void {
+    if (reload) {
+      this.isLoaded = false;
+      this.errorModel = new ErrorModel();
+      this.getBudgets(this.requestParamModel);
+    }
+  }
+
+  protected onBudgetUpdate(idBudget: string): void {
+    if (idBudget) {
+      this.displayBudgetLoader = true;
+      this.idRefreshBudget = idBudget;
+
+      this.errorModel = new ErrorModel();
+      this.getBudget(idBudget);
+
+      setTimeout((): void => {
+        this.budgets!.forEach((item, index): void => {
+          if (item.id == idBudget && this.budgets) {
+            this.budgets[index] = this.budget!;
+          }
+        })
+        this.displayBudgetLoader = false;
+      }, 1000);
+    }
+  }
+
+  private getBudget(idBudget: string): void {
+    this.subscriptions.push(
+      this.httpService.getBudget(idBudget).subscribe({
+        next: (response: HttpResponse<BudgetModel>): void => {
+          this.budget = response.body;
+          this.errorModel.responseStatusCode = response.status
+        },
+        error: (err): void => {
+          this.onRequestFailed(err);
+        }
+      })
+    )
+  }
+
+  private getBudgets(requestParamModel: RequestParamModel): void {
+    this.subscriptions.push(
+      this.httpService.getBudgets(requestParamModel).subscribe({
+        next: (response: HttpResponse<BudgetModel[]>): void => {
+          this.budgets = response.body;
+          this.errorModel.responseStatusCode = response.status
+        },
+        error: (err): void => {
+          this.onRequestFailed(err);
+        },
+        complete: (): void => {
+          this.isLoaded = true;
+        }
+      })
+    )
+  }
+
+  private onRequestFailed(err: any): void {
+    this.errorModel.traceId = err.headers.get('X-Trace-Id');
+    this.errorModel.responseStatusCode = err.status;
+    this.errorModel.responseErrorModel = err.error;
   }
 }

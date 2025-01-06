@@ -18,7 +18,8 @@ import {HttpService} from "../../../../services/http/httpService";
 })
 export class BudgetModalComponent implements OnInit, OnDestroy {
   @ViewChild('budgetModal') budgetModal: any;
-  @Output() refreshIncomeEvent = new EventEmitter<boolean>();
+  @Output() indexPageEvent = new EventEmitter<boolean>();
+  @Output() budgetUpdateEvent = new EventEmitter<string>();
   protected readonly SpinnerSize = SpinnerSize;
   protected subscriptions: Subscription[];
   protected errorModel: ErrorModel;
@@ -104,6 +105,7 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
         this.idBudget).subscribe({
         next: (response: HttpResponse<any>): void => {
           this.onRequestSuccess(response);
+          this.budgetUpdateEvent.emit(this.idBudget);
         },
         error: (err): void => {
           this.onRequestFailed(err);
@@ -122,6 +124,7 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
       ).subscribe({
         next: (response: HttpResponse<any>): void => {
           this.onRequestSuccess(response);
+          this.indexPageEvent.emit(true);
         },
         error: (err): void => {
           this.onRequestFailed(err);
@@ -131,7 +134,6 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
   }
 
   private onRequestSuccess(response: HttpResponse<any>): void {
-    this.refreshIncomeEvent.emit(true);
     this.errorModel.responseStatusCode = response.status;
     this.modalService.dismissAll();
     setTimeout((): void => {

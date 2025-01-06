@@ -19,6 +19,7 @@ import { ModalErrorComponent } from './ui/components/shared/modal-error/modal-er
 import {DatepickerFormatter} from "./util/datepicker.utils";
 import {BudgetModalComponent} from "./ui/components/modals/budget-modal/budget-modal.component";
 import { DeleteModalComponent } from './ui/components/modals/delete-modal/delete-modal.component';
+import { SpinnerGrowComponent } from './ui/components/shared/spinner-grow/spinner-grow.component';
 
 
 @NgModule({
@@ -35,6 +36,7 @@ import { DeleteModalComponent } from './ui/components/modals/delete-modal/delete
     ModalErrorComponent,
     BudgetModalComponent,
     DeleteModalComponent,
+    SpinnerGrowComponent,
   ],
   imports: [
     BrowserModule,
