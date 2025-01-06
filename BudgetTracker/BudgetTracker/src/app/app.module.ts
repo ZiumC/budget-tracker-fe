@@ -4,7 +4,7 @@ import '@angular/common/locales/global/pl';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './ui/components/shared/header/header.component';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import {NgbDateParserFormatter, NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import { HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { IndexComponent } from './ui/pages/index/index.component';
@@ -12,9 +12,13 @@ import { FooterComponent } from './ui/components/shared/footer/footer.component'
 import { SpinnerComponent } from './ui/components/shared/spinner/spinner.component';
 import { ErrorComponent } from './ui/components/shared/error/error.component';
 import { BudgetComponent } from './ui/pages/budget/budget.component';
-import { IncomeComponent } from './ui/components/modals/income/income.component';
+import { IncomeModalComponent } from './ui/components/modals/income-modal/income-modal.component';
 import {FormsModule} from "@angular/forms";
-import { PaymentComponent } from './ui/components/modals/payment/payment.component';
+import { PaymentModalComponent } from './ui/components/modals/payment-modal/payment-modal.component';
+import { ModalErrorComponent } from './ui/components/shared/modal-error/modal-error.component';
+import {DatepickerFormatter} from "./util/datepicker.utils";
+import {BudgetModalComponent} from "./ui/components/modals/budget-modal/budget-modal.component";
+
 
 @NgModule({
   declarations: [
@@ -25,8 +29,10 @@ import { PaymentComponent } from './ui/components/modals/payment/payment.compone
     SpinnerComponent,
     ErrorComponent,
     BudgetComponent,
-    IncomeComponent,
-    PaymentComponent
+    IncomeModalComponent,
+    PaymentModalComponent,
+    ModalErrorComponent,
+    BudgetModalComponent,
   ],
   imports: [
     BrowserModule,
@@ -34,9 +40,9 @@ import { PaymentComponent } from './ui/components/modals/payment/payment.compone
     NgbModule,
     HttpClientModule,
     CommonModule,
-    FormsModule
+    FormsModule,
   ],
-  providers: [],
+  providers: [ { provide: NgbDateParserFormatter, useClass: DatepickerFormatter },],
   bootstrap: [AppComponent],
 })
 export class AppModule { }

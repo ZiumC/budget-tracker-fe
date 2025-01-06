@@ -5,8 +5,49 @@
     </ng-template>
     <ng-template #loadedBlock>
       <ng-template [ngIf]="errorModel.responseStatusCode == requiredStatusCode" [ngIfElse]="errorBlock">
-        <div class="text-center">
-          <h4>Budgets from {{ requestModel.fromDate }} to {{ requestModel.toDate }}</h4>
+        <div class="card text-center mb-3">
+          <div class="card-body">
+            <h3 class="card-title">Budgets</h3>
+            <div class="row">
+              <div class="col-md-6">
+                <label for="date-from">From</label>
+                <input id="date-from"
+                       type="text"
+                       class="form-control"
+                       value="{{requestModel.fromDate}}"
+                       disabled>
+              </div>
+              <div class="col-md-6">
+                <label for="date-to">To</label>
+                <input id="date-to"
+                       type="text"
+                       class="form-control"
+                       value="{{requestModel.toDate}}"
+                       disabled>
+              </div>
+            </div>
+            <div class="budget-button-options mt-3 mb-1 text-center">
+              <div class="px-5">
+                <button type="button"
+                        class="btn btn-success"
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="bottom"
+                        title="Create budget"
+                        (click)="budgetModal.open()">
+                  <i class="bi bi-box"></i> Create
+                </button>
+              </div>
+              <div class="px-5">
+                <button type="button"
+                        class="btn btn-success"
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="bottom"
+                        title="Create multiple budgets">
+                  <i class="bi bi-boxes"></i> Multiple
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
         <div class="budget-card-container">
           @for (budget of budgets; track budget.id; ) {
@@ -49,7 +90,8 @@
                           class="btn btn-outline-warning"
                           data-bs-toggle="tooltip"
                           data-bs-placement="bottom"
-                          title="Edit budget">
+                          title="Edit budget"
+                          (click)="budgetModal.open(budget)">
                     <i class="bi bi-pencil-square"></i>
                   </button>
                   <button type="button"
@@ -65,6 +107,9 @@
           }
         </div>
       </ng-template>
+      <app-budget-modal #budgetModal>
+
+      </app-budget-modal>
       <ng-template #errorBlock>
         <app-error [errorModel]="errorModel"></app-error>
       </ng-template>

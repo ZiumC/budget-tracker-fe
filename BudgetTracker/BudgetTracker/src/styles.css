@@ -76,6 +76,15 @@ table tr th {
   grid-auto-flow: row;
 }
 
+.budget-button-options {
+  display: grid;
+  grid-template-columns: auto auto;
+  justify-items: center;
+  justify-content: center;
+  gap: 3ex;
+  grid-auto-flow: row;
+}
+
 .input-group-append button {
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
@@ -84,6 +93,14 @@ table tr th {
 .input-group-append span {
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
+}
+
+div.ngb-dp-weekday {
+  color: #495057;
+}
+
+.ngb-dp-arrow-btn {
+  color: #6c757d;
 }
 
 @media only screen and (max-width: 770px) {

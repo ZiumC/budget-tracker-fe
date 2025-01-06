@@ -12,11 +12,11 @@ import {SpinnerSize} from "../../shared/spinner/spinner.component";
 import {HttpResponse} from "@angular/common/http";
 
 @Component({
-  selector: 'app-income',
-  templateUrl: './income.component.html',
-  styleUrl: './income.component.css'
+  selector: 'app-income-modal',
+  templateUrl: './income-modal.component.html',
+  styleUrl: './income-modal.component.css'
 })
-export class IncomeComponent implements OnInit, OnDestroy {
+export class IncomeModalComponent implements OnInit, OnDestroy {
   @ViewChild('incomeModal') incomeModal: any;
   @Input() idBudget: string;
   @Output() refreshIncomeEvent = new EventEmitter<boolean>();
@@ -24,11 +24,11 @@ export class IncomeComponent implements OnInit, OnDestroy {
   protected subscriptions: Subscription[];
   protected errorModel: ErrorModel;
   protected incomeForm: IncomeForm;
-  protected idIncome: string;
   protected displayLoader: boolean;
   protected displayError: boolean;
   protected isEditing: boolean;
   protected buttonCopyName: string;
+  private idIncome: string;
 
   constructor(
     private modalService: NgbModal,
@@ -77,18 +77,6 @@ export class IncomeComponent implements OnInit, OnDestroy {
         this.createIncome();
       }
     }, 500);
-  }
-
-  protected copy(inputElement: any): any {
-    this.buttonCopyName = "Copied";
-    inputElement.select();
-    //this is so far deprecated but
-    //there is no any best alternatives for now
-    document.execCommand('copy');
-    inputElement.setSelectionRange(0, 0);
-    setTimeout((): void => {
-      this.buttonCopyName = "Copy";
-    }, 2500)
   }
 
   private updateIncome(): void {

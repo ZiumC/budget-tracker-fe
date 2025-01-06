@@ -13,3 +13,21 @@ export class PaymentForm {
   isPaid: boolean;
   comment?: string;
 }
+
+export class BudgetFormPicker {
+  name: string;
+  dateStart: DatePickerModel;
+  dateEnd: DatePickerModel;
+}
+
+export class DatePickerModel {
+  year: number;
+  month: number;
+  day: number;
+}
+
+export class BudgetForm {
+  name: string;
+  dateStart: Date;
+  dateEnd: Date;
+}

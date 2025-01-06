@@ -13,11 +13,11 @@ import {HttpResponse} from "@angular/common/http";
 import {HttpService} from "../../../../services/http/httpService";
 
 @Component({
-  selector: 'app-payment',
-  templateUrl: './payment.component.html',
-  styleUrl: './payment.component.css'
+  selector: 'app-payment-modal',
+  templateUrl: './payment-modal.component.html',
+  styleUrl: './payment-modal.component.css'
 })
-export class PaymentComponent implements OnInit, OnDestroy {
+export class PaymentModalComponent implements OnInit, OnDestroy {
   @ViewChild('paymentModal') paymentModal: any;
   @Input() idBudget: string;
   @Output() refreshPaymentEvent = new EventEmitter<boolean>();
@@ -80,18 +80,6 @@ export class PaymentComponent implements OnInit, OnDestroy {
         this.createBudgetPayment();
       }
     }, 500);
-  }
-
-  protected copy(inputElement: any): any {
-    this.buttonCopyName = "Copied";
-    inputElement.select();
-    //this is so far deprecated but
-    //there is no any best alternatives for now
-    document.execCommand('copy');
-    inputElement.setSelectionRange(0, 0);
-    setTimeout((): void => {
-      this.buttonCopyName = "Copy";
-    }, 2500)
   }
 
   private updatePayment(): void {
