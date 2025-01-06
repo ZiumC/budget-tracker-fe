@@ -1,4 +1,4 @@
-<ng-template #deleteModal let-modal>
+<ng-template #deleteModal>
   @if (!displayLoader) {
     <div class="modal-header">
       <h3 class="modal-title" id="modal-basic-title">
@@ -27,7 +27,7 @@
       <button
         type="button"
         class="btn btn-outline-secondary"
-        (click)="modal.close()">
+        (click)="close()">
         Cancel
       </button>
       <button

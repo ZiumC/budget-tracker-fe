@@ -315,7 +315,8 @@
       </app-payment-modal>
       <app-delete-modal #deleteModal
                         (redirectToIndexEvent)="onRedirectToIndex($event)"
-                        (refreshIncomeEvent)="onRefreshIncome($event)">
+                        (refreshIncomeEvent)="onRefreshIncome($event)"
+                        (refreshPaymentEvent)="onRefreshPayment($event)">
 
       </app-delete-modal>
       <ng-template #errorPaymentsBlock>

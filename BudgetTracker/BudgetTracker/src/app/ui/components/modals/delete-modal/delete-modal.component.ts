@@ -18,6 +18,7 @@ export class DeleteModalComponent implements OnInit, OnDestroy {
   @ViewChild('deleteModal') deleteModal: any;
   @Output() redirectToIndexEvent = new EventEmitter<boolean>();
   @Output() refreshIncomeEvent = new EventEmitter<boolean>();
+  @Output() refreshPaymentEvent = new EventEmitter<boolean>();
   protected readonly SpinnerSize = SpinnerSize;
   protected subscriptions: Subscription[];
   private paymentModel: PaymentModel | null;
@@ -33,10 +34,9 @@ export class DeleteModalComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.resetLoaderAndError();
     this.subscriptions = [];
     this.errorModel = new ErrorModel();
-    this.displayLoader = false;
-    this.displayError = false;
   }
 
   ngOnDestroy(): void {
@@ -44,8 +44,7 @@ export class DeleteModalComponent implements OnInit, OnDestroy {
   }
 
   openWithPayment(payment: PaymentModel): void {
-    this.displayLoader = false;
-    this.displayError = false;
+    this.resetLoaderAndError();
     this.paymentModel = new PaymentModel();
     this.paymentModel = payment;
 
@@ -54,8 +53,7 @@ export class DeleteModalComponent implements OnInit, OnDestroy {
   }
 
   openWithIncome(income: IncomeModel): void {
-    this.displayLoader = false;
-    this.displayError = false;
+    this.resetLoaderAndError();
     this.incomeModel = new IncomeModel();
     this.incomeModel = income;
 
@@ -64,8 +62,7 @@ export class DeleteModalComponent implements OnInit, OnDestroy {
   }
 
   openWithBudget(budget: BudgetModel): void {
-    this.displayLoader = false;
-    this.displayError = false;
+    this.resetLoaderAndError();
     this.budgetModel = new BudgetModel();
     this.budgetModel = budget;
 
@@ -84,20 +81,40 @@ export class DeleteModalComponent implements OnInit, OnDestroy {
         this.deleteBudget(idBudget);
       } else if (idIncome) {
         this.deleteIncome(idIncome);
+      } else if (idPayment) {
+        this.deletePayment(idPayment);
       } else {
         this.displayLoader = false;
         this.displayError = true;
       }
-
     }, 500)
 
     this.removeReferences();
+  }
+
+  close(): void {
+    this.removeReferences();
+    this.modalService.dismissAll();
   }
 
   private removeReferences(): void {
     this.incomeModel = null;
     this.budgetModel = null;
     this.paymentModel = null;
+  }
+
+  private deletePayment(idPayment: string): void {
+    this.subscriptions.push(
+      this.httpService.deletePayment(idPayment).subscribe({
+        next: (response: HttpResponse<any>): void => {
+          this.onRequestSuccess(response);
+          this.refreshPaymentEvent.emit(true);
+        },
+        error: (err): void => {
+          this.onRequestFailed(err);
+        }
+      })
+    )
   }
 
   private deleteIncome(idIncome: string): void {
@@ -142,5 +159,10 @@ export class DeleteModalComponent implements OnInit, OnDestroy {
     this.errorModel.responseErrorModel = err.error;
     this.displayLoader = false;
     this.displayError = true;
+  }
+
+  private resetLoaderAndError(): void {
+    this.displayLoader = false;
+    this.displayError = false;
   }
 }

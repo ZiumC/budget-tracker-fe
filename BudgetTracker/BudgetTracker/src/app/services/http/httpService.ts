@@ -115,4 +115,12 @@ export class HttpService {
       {observe: 'response'}
     )
   }
+
+  public deletePayment(idPayment: string):
+    Observable<HttpResponse<{}>>{
+    return this.httpClient.delete(
+      UrlApi.paymentId(idPayment),
+      {observe: 'response'}
+    )
+  }
 }
