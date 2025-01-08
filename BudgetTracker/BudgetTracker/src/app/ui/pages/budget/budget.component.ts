@@ -29,14 +29,13 @@ export class BudgetComponent implements OnInit, OnDestroy {
   protected selectedIncome: IncomeModel;
   protected selectedPayment: PaymentModel;
   protected requestParam: RequestParamModel;
+  protected idBudget: string;
 
-  protected pageLoaded: boolean;
-  protected requestLoaded: any;
+  protected loaders: any;
   protected requiredStatusCode: any;
   protected errorModels: any;
   protected commentRows: number;
 
-  protected idBudget: string;
   public innerWidth: any;
 
   constructor(
@@ -56,8 +55,8 @@ export class BudgetComponent implements OnInit, OnDestroy {
       payments: 200
     };
 
-    this.requestLoaded = {
-      budget: false,
+    this.loaders = {
+      page: false,
       incomes: false,
       payments: false
     };
@@ -71,7 +70,6 @@ export class BudgetComponent implements OnInit, OnDestroy {
     this.commentRows = 1;
     this.innerWidth = window.innerWidth;
     this.subscriptions = [];
-    this.pageLoaded = false;
 
     this.requestParam = new RequestParamModel({
       page: 1,
@@ -90,9 +88,6 @@ export class BudgetComponent implements OnInit, OnDestroy {
         },
         error: (err): void => {
           this.onRequestFailed(this.errorModels.budget, err);
-        },
-        complete: (): void => {
-          this.requestLoaded.budget = true;
         }
       })
     )
@@ -102,16 +97,15 @@ export class BudgetComponent implements OnInit, OnDestroy {
 
     let retryCount = 0;
     setTimeout((): void => {
-      while (!this.pageLoaded) {
-        if ((this.requestLoaded.incomes &&
-            this.requestLoaded.budget &&
-            this.requestLoaded.payments) ||
+      while (!this.loaders.page) {
+        if ((this.loaders.incomes &&
+            this.loaders.payments) ||
           retryCount == 5) {
-          this.pageLoaded = true;
+          this.loaders.page = true;
         }
         retryCount++;
       }
-    }, 1500);
+    }, 1000);
   }
 
   protected displayComment(comment: string): string {
@@ -151,7 +145,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
 
   protected onRefreshIncome(refresh: boolean): void {
     if (refresh) {
-      this.requestLoaded.incomes = false;
+      this.loaders.incomes = false;
       this.errorModels.incomes = new ErrorModel();
       this.getBudgetIncomes();
     }
@@ -159,14 +153,14 @@ export class BudgetComponent implements OnInit, OnDestroy {
 
   protected onRefreshPayment(refresh: boolean): void {
     if (refresh) {
-      this.requestLoaded.payments = false;
+      this.loaders.payments = false;
       this.errorModels.payments = new ErrorModel();
       this.getBudgetPayments();
     }
   }
 
-  protected onRedirectToIndex(redirect: boolean): void{
-    if (redirect){
+  protected onRedirectToIndex(redirect: boolean): void {
+    if (redirect) {
       this.router.navigate(['/']);
     }
   }
@@ -190,7 +184,9 @@ export class BudgetComponent implements OnInit, OnDestroy {
           this.onRequestFailed(this.errorModels.incomes, err);
         },
         complete: (): void => {
-          this.requestLoaded.incomes = true;
+          setTimeout(() => {
+            this.loaders.incomes = true;
+          }, 500)
         }
       })
     )
@@ -209,7 +205,9 @@ export class BudgetComponent implements OnInit, OnDestroy {
           this.onRequestFailed(this.errorModels.payments, err);
         },
         complete: (): void => {
-          this.requestLoaded.payments = true;
+          setTimeout(() => {
+            this.loaders.payments = true;
+          }, 500)
         }
       })
     )

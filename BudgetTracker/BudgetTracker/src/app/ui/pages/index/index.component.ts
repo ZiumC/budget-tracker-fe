@@ -15,17 +15,16 @@ import {SpinnerSize} from "../../components/shared/spinner/spinner.component";
   styleUrl: './index.component.css'
 })
 export class IndexComponent implements OnInit, OnDestroy {
+  protected readonly DateUtils = DateUtils;
+  protected readonly SpinnerSize = SpinnerSize;
   protected requiredStatusCode: number = 200;
-  protected errorModel: ErrorModel;
   protected budgets: BudgetModel[] | null;
   protected budget: BudgetModel | null;
   protected subscriptions: Subscription[];
   protected requestParamModel: RequestParamModel;
-  protected readonly DateUtils = DateUtils;
-  protected readonly SpinnerSize = SpinnerSize;
-  protected isLoaded: boolean = false;
+  protected errorModels: any;
+  protected loaders: any;
   protected idRefreshBudget: string;
-  protected displayBudgetLoader: boolean;
 
   constructor(private httpService: HttpService) {
   }
@@ -42,8 +41,15 @@ export class IndexComponent implements OnInit, OnDestroy {
 
     this.budgets = [];
     this.subscriptions = [];
-    this.errorModel = new ErrorModel();
-    this.displayBudgetLoader = false;
+    this.errorModels = {
+      budgets: new ErrorModel(),
+      budget: new ErrorModel()
+    }
+
+    this.loaders = {
+      page: false,
+      budget: false
+    }
 
     this.getBudgets(this.requestParamModel);
   }
@@ -54,28 +60,18 @@ export class IndexComponent implements OnInit, OnDestroy {
 
   protected onPageIndex(reload: boolean): void {
     if (reload) {
-      this.isLoaded = false;
-      this.errorModel = new ErrorModel();
+      this.loaders.page = false;
+      this.errorModels.budgets = new ErrorModel();
       this.getBudgets(this.requestParamModel);
     }
   }
 
   protected onBudgetUpdate(idBudget: string): void {
     if (idBudget) {
-      this.displayBudgetLoader = true;
+      this.loaders.budget = true;
       this.idRefreshBudget = idBudget;
-
-      this.errorModel = new ErrorModel();
+      this.errorModels.budget = new ErrorModel();
       this.getBudget(idBudget);
-
-      setTimeout((): void => {
-        this.budgets!.forEach((item, index): void => {
-          if (item.id == idBudget && this.budgets) {
-            this.budgets[index] = this.budget!;
-          }
-        })
-        this.displayBudgetLoader = false;
-      }, 1000);
     }
   }
 
@@ -84,10 +80,20 @@ export class IndexComponent implements OnInit, OnDestroy {
       this.httpService.getBudget(idBudget).subscribe({
         next: (response: HttpResponse<BudgetModel>): void => {
           this.budget = response.body;
-          this.errorModel.responseStatusCode = response.status
+          this.errorModels.budget.responseStatusCode = response.status
         },
         error: (err): void => {
-          this.onRequestFailed(err);
+          this.onRequestFailed(this.errorModels.budget, err);
+        },
+        complete: (): void =>{
+          setTimeout((): void => {
+            this.budgets!.forEach((item, index): void => {
+              if (item.id == idBudget && this.budgets) {
+                this.budgets[index] = this.budget!;
+              }
+            })
+            this.loaders.budget = false;
+          }, 500);
         }
       })
     )
@@ -98,21 +104,21 @@ export class IndexComponent implements OnInit, OnDestroy {
       this.httpService.getBudgets(requestParamModel).subscribe({
         next: (response: HttpResponse<BudgetModel[]>): void => {
           this.budgets = response.body;
-          this.errorModel.responseStatusCode = response.status
+          this.errorModels.budgets.responseStatusCode = response.status
         },
         error: (err): void => {
-          this.onRequestFailed(err);
+          this.onRequestFailed(this.errorModels.budgets, err);
         },
         complete: (): void => {
-          this.isLoaded = true;
+          this.loaders.page = true;
         }
       })
     )
   }
 
-  private onRequestFailed(err: any): void {
-    this.errorModel.traceId = err.headers.get('X-Trace-Id');
-    this.errorModel.responseStatusCode = err.status;
-    this.errorModel.responseErrorModel = err.error;
+  private onRequestFailed(errorModel: ErrorModel, err: any): void {
+    errorModel.traceId = err.headers.get('X-Trace-Id');
+    errorModel.responseStatusCode = err.status;
+    errorModel.responseErrorModel = err.error;
   }
 }
