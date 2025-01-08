@@ -30,7 +30,6 @@ export class BudgetComponent implements OnInit, OnDestroy {
   protected selectedPayment: PaymentModel;
   protected requestParam: RequestParamModel;
   protected idBudget: string;
-  protected idRefreshIncome: string = "";
 
   protected loaders: any;
   protected requiredStatusCode: any;
