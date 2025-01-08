@@ -45,6 +45,7 @@ export class IndexComponent implements OnInit, OnDestroy {
       budgets: new ErrorModel(),
       budget: new ErrorModel()
     }
+
     this.loaders = {
       page: false,
       budget: false
@@ -60,7 +61,7 @@ export class IndexComponent implements OnInit, OnDestroy {
   protected onPageIndex(reload: boolean): void {
     if (reload) {
       this.loaders.page = false;
-      this.errorModels = new ErrorModel();
+      this.errorModels.budgets = new ErrorModel();
       this.getBudgets(this.requestParamModel);
     }
   }
@@ -69,18 +70,8 @@ export class IndexComponent implements OnInit, OnDestroy {
     if (idBudget) {
       this.loaders.budget = true;
       this.idRefreshBudget = idBudget;
-
-      this.errorModels.singleBudget = new ErrorModel();
+      this.errorModels.budget = new ErrorModel();
       this.getBudget(idBudget);
-
-      setTimeout((): void => {
-        this.budgets!.forEach((item, index): void => {
-          if (item.id == idBudget && this.budgets) {
-            this.budgets[index] = this.budget!;
-          }
-        })
-        this.loaders.budget = false;
-      }, 1000);
     }
   }
 
@@ -93,6 +84,16 @@ export class IndexComponent implements OnInit, OnDestroy {
         },
         error: (err): void => {
           this.onRequestFailed(this.errorModels.budget, err);
+        },
+        complete: (): void =>{
+          setTimeout((): void => {
+            this.budgets!.forEach((item, index): void => {
+              if (item.id == idBudget && this.budgets) {
+                this.budgets[index] = this.budget!;
+              }
+            })
+            this.loaders.budget = false;
+          }, 500);
         }
       })
     )

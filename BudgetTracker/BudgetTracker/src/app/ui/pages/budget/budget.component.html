@@ -1,6 +1,6 @@
 <div class="height-wrapper width-wrapper">
   <div class="component-wrapper component-bg">
-    <ng-template [ngIf]="!pageLoaded" [ngIfElse]="loadedBlock">
+    <ng-template [ngIf]="!loaders.page" [ngIfElse]="loadedBlock">
       <app-spinner [size]="SpinnerSize.BIG"></app-spinner>
     </ng-template>
     <ng-template #loadedBlock>
@@ -68,94 +68,100 @@
             Incomes
           </div>
           <div class="card-body">
-            @for (income of incomes; track income) {
-              <div ngbAccordion>
-                <div ngbAccordionItem
-                     [collapsed]="selectedIncome !== income"
-                     [class.surplus-border]="income.isSurplus">
-                  <h2 ngbAccordionHeader>
-                    <button ngbAccordionButton
-                            (click)="selectedIncome = income"
-                            class="light-gray-bg accordion-button-header">
-                      <table>
-                        <tr class="table-header">
-                          <th>Name</th>
-                          <th>Income (PLN)</th>
-                          <th [style.display]="innerWidth > mobileWidth ? '' : 'none'">
-                            Appropriation
-                          </th>
-                          <th [style.display]="innerWidth > mobileWidth ? '' : 'none'">
-                            Date created
-                          </th>
-                        </tr>
-                        <tr>
-                          <td>{{ income.name }}</td>
-                          <td>{{ NumberUtils.format(income.wage) }}</td>
-                          <td [style.display]="innerWidth > mobileWidth ? '' : 'none'">
-                            #Category
-                          </td>
-                          <td [style.display]="innerWidth > mobileWidth ? '' : 'none'">
-                            {{ DateUtils.format(income.dateUpdated) }}
-                          </td>
-                        </tr>
-                      </table>
-                    </button>
-                  </h2>
-                  <div ngbAccordionCollapse>
-                    <div ngbAccordionBody class="text-center">
-                      <div class="row">
-                        <div [style.display]="income.isSurplus ? 'block' : 'none'"
-                             class="col-lg-6 mb-2 condition-container">
-                          <p>Income is surplus</p>
-                        </div>
-                        <div [style.display]="innerWidth > mobileWidth ? 'none' : ''"
-                             class="mb-3 condition-container">
-                          <div class="form-group">
-                            <label for="payment-date-updated">Category
-                            </label>
-                            <input type="text"
-                                   id="income-category"
-                                   class="form-control mb-2"
-                                   value="#category"
-                                   disabled>
-                            <label for="payment-date-updated">Date updated
-                            </label>
-                            <input type="text"
-                                   id="income-date-updated"
-                                   class="form-control mb-2"
-                                   value="{{DateUtils.formatWithTime(income.dateUpdated)}}"
-                                   disabled>
+            <ng-template [ngIf]="!loaders.incomes"
+                         [ngIfElse]="displayIncomes">
+              <app-spinner-grow></app-spinner-grow>
+            </ng-template>
+            <ng-template #displayIncomes>
+              @for (income of incomes; track income) {
+                <div ngbAccordion>
+                  <div ngbAccordionItem
+                       [collapsed]="selectedIncome !== income"
+                       [class.surplus-border]="income.isSurplus">
+                    <h2 ngbAccordionHeader>
+                      <button ngbAccordionButton
+                              (click)="selectedIncome = income"
+                              class="light-gray-bg accordion-button-header">
+                        <table>
+                          <tr class="table-header">
+                            <th>Name</th>
+                            <th>Income (PLN)</th>
+                            <th [style.display]="innerWidth > mobileWidth ? '' : 'none'">
+                              Appropriation
+                            </th>
+                            <th [style.display]="innerWidth > mobileWidth ? '' : 'none'">
+                              Date created
+                            </th>
+                          </tr>
+                          <tr>
+                            <td>{{ income.name }}</td>
+                            <td>{{ NumberUtils.format(income.wage) }}</td>
+                            <td [style.display]="innerWidth > mobileWidth ? '' : 'none'">
+                              #Category
+                            </td>
+                            <td [style.display]="innerWidth > mobileWidth ? '' : 'none'">
+                              {{ DateUtils.format(income.dateUpdated) }}
+                            </td>
+                          </tr>
+                        </table>
+                      </button>
+                    </h2>
+                    <div ngbAccordionCollapse>
+                      <div ngbAccordionBody class="text-center">
+                        <div class="row">
+                          <div [style.display]="income.isSurplus ? 'block' : 'none'"
+                               class="col-lg-6 mb-2 condition-container">
+                            <p>Income is surplus</p>
                           </div>
-                        </div>
-                        <div [class.col-lg-6]="income.isSurplus"
-                             class="buttons-container">
-                          <div class="income-buttons text-center">
-                            <button
-                              type="button"
-                              class="btn btn-warning"
-                              data-bs-toggle="tooltip"
-                              data-bs-placement="bottom"
-                              title="Edit income"
-                              (click)="incomeModal.open(income)">
-                              <i class="bi bi-pencil-square"></i> Edit
-                            </button>
-                            <button
-                              type="button"
-                              class="btn btn-danger"
-                              data-bs-toggle="tooltip"
-                              data-bs-placement="bottom"
-                              title="Delete income"
-                              (click)="deleteModal.openWithIncome(income)">
-                              <i class="bi bi-trash3-fill"></i> Delete
-                            </button>
+                          <div [style.display]="innerWidth > mobileWidth ? 'none' : ''"
+                               class="mb-3 condition-container">
+                            <div class="form-group">
+                              <label for="payment-date-updated">Category
+                              </label>
+                              <input type="text"
+                                     id="income-category"
+                                     class="form-control mb-2"
+                                     value="#category"
+                                     disabled>
+                              <label for="payment-date-updated">Date updated
+                              </label>
+                              <input type="text"
+                                     id="income-date-updated"
+                                     class="form-control mb-2"
+                                     value="{{DateUtils.formatWithTime(income.dateUpdated)}}"
+                                     disabled>
+                            </div>
+                          </div>
+                          <div [class.col-lg-6]="income.isSurplus"
+                               class="buttons-container">
+                            <div class="income-buttons text-center">
+                              <button
+                                type="button"
+                                class="btn btn-warning"
+                                data-bs-toggle="tooltip"
+                                data-bs-placement="bottom"
+                                title="Edit income"
+                                (click)="incomeModal.open(income)">
+                                <i class="bi bi-pencil-square"></i> Edit
+                              </button>
+                              <button
+                                type="button"
+                                class="btn btn-danger"
+                                data-bs-toggle="tooltip"
+                                data-bs-placement="bottom"
+                                title="Delete income"
+                                (click)="deleteModal.openWithIncome(income)">
+                                <i class="bi bi-trash3-fill"></i> Delete
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            }
+              }
+            </ng-template>
           </div>
         </div>
       </ng-template>
@@ -169,137 +175,143 @@
             Payments
           </div>
           <div class="card-body">
-            @for (payment of payments; track payment) {
-              <div ngbAccordion>
-                <div ngbAccordionItem
-                     [collapsed]="selectedPayment !== payment"
-                     [class.payment-border]="payment.isPaid">
-                  <h2 ngbAccordionHeader>
-                    <button ngbAccordionButton
-                            (click)="selectedPayment = payment"
-                            class="light-gray-bg accordion-button-header">
-                      <table>
-                        <tr class="table-header">
-                          <th>Name</th>
-                          <th [style.display]="innerWidth > mobileWidth ? '' : 'none'">
-                            Price (PLN)
-                          </th>
-                          <th [style.display]="innerWidth > mobileWidth ? '' : 'none'">
-                            Refund (PLN)
-                          </th>
-                          <th>Real (PLN)</th>
-                        </tr>
-                        <tr>
-                          <td>{{ payment.name }}</td>
-                          <td [style.display]="innerWidth > mobileWidth ? '' : 'none'">
-                            {{ NumberUtils.format(payment.price) }}
-                          </td>
-                          <td [style.display]="innerWidth > mobileWidth ? '' : 'none'">
-                            {{ NumberUtils.format(payment.refund) }}
-                          </td>
-                          <td>{{ NumberUtils.format(NumberUtils.subtract(payment.price, payment.refund)) }}</td>
-                        </tr>
-                      </table>
-                    </button>
-                  </h2>
-                  <div ngbAccordionCollapse>
-                    <div ngbAccordionBody>
-                      <div class="row">
-                        <div class="col-lg-6">
-                          <div [style.display]="payment.isPaid ? 'block' : 'none'"
-                               class="mb-2 condition-container text-center">
-                            <h6>Payment is paid</h6>
-                          </div>
-                          <div class="mb-3 condition-container">
-                            <div class="form-group">
-                              <div [style.display]="innerWidth > mobileWidth ? 'none' : ''">
+            <ng-template [ngIf]="!loaders.payments"
+                         [ngIfElse]="displayPayments">
+              <app-spinner-grow></app-spinner-grow>
+            </ng-template>
+            <ng-template #displayPayments>
+              @for (payment of payments; track payment) {
+                <div ngbAccordion>
+                  <div ngbAccordionItem
+                       [collapsed]="selectedPayment !== payment"
+                       [class.payment-border]="payment.isPaid">
+                    <h2 ngbAccordionHeader>
+                      <button ngbAccordionButton
+                              (click)="selectedPayment = payment"
+                              class="light-gray-bg accordion-button-header">
+                        <table>
+                          <tr class="table-header">
+                            <th>Name</th>
+                            <th [style.display]="innerWidth > mobileWidth ? '' : 'none'">
+                              Price (PLN)
+                            </th>
+                            <th [style.display]="innerWidth > mobileWidth ? '' : 'none'">
+                              Refund (PLN)
+                            </th>
+                            <th>Real (PLN)</th>
+                          </tr>
+                          <tr>
+                            <td>{{ payment.name }}</td>
+                            <td [style.display]="innerWidth > mobileWidth ? '' : 'none'">
+                              {{ NumberUtils.format(payment.price) }}
+                            </td>
+                            <td [style.display]="innerWidth > mobileWidth ? '' : 'none'">
+                              {{ NumberUtils.format(payment.refund) }}
+                            </td>
+                            <td>{{ NumberUtils.format(NumberUtils.subtract(payment.price, payment.refund)) }}</td>
+                          </tr>
+                        </table>
+                      </button>
+                    </h2>
+                    <div ngbAccordionCollapse>
+                      <div ngbAccordionBody>
+                        <div class="row">
+                          <div class="col-lg-6">
+                            <div [style.display]="payment.isPaid ? 'block' : 'none'"
+                                 class="mb-2 condition-container text-center">
+                              <h6>Payment is paid</h6>
+                            </div>
+                            <div class="mb-3 condition-container">
+                              <div class="form-group">
+                                <div [style.display]="innerWidth > mobileWidth ? 'none' : ''">
 
-                                <label for="payment-price">Price (PLN)
+                                  <label for="payment-price">Price (PLN)
+                                  </label>
+                                  <input type="text"
+                                         id="payment-price"
+                                         class="form-control mb-2"
+                                         value="{{ NumberUtils.format(payment.price) }}"
+                                         disabled>
+                                  <label for="payment-refund">Refund (PLN)
+                                  </label>
+                                  <input type="text"
+                                         id="payment-refund"
+                                         class="form-control mb-2"
+                                         value="{{ NumberUtils.format(payment.refund) }}"
+                                         disabled>
+                                </div>
+                                <label for="payment-date-updated">Category
                                 </label>
                                 <input type="text"
-                                       id="payment-price"
+                                       id="payment-category"
                                        class="form-control mb-2"
-                                       value="{{ NumberUtils.format(payment.price) }}"
+                                       value="#category"
                                        disabled>
-                                <label for="payment-refund">Refund (PLN)
+                                <label for="payment-date-updated">Date updated
                                 </label>
                                 <input type="text"
-                                       id="payment-refund"
+                                       id="payment-date-updated"
                                        class="form-control mb-2"
-                                       value="{{ NumberUtils.format(payment.refund) }}"
+                                       value="{{DateUtils.formatWithTime(payment.dateUpdated)}}"
                                        disabled>
-                              </div>
-                              <label for="payment-date-updated">Category
-                              </label>
-                              <input type="text"
-                                     id="payment-category"
-                                     class="form-control mb-2"
-                                     value="#category"
-                                     disabled>
-                              <label for="payment-date-updated">Date updated
-                              </label>
-                              <input type="text"
-                                     id="payment-date-updated"
-                                     class="form-control mb-2"
-                                     value="{{DateUtils.formatWithTime(payment.dateUpdated)}}"
-                                     disabled>
-                              <label for="payment-comment">Comment</label>
-                              <textarea type="text"
-                                        id="payment-comment"
-                                        class="form-control"
-                                        value="{{ displayComment(payment.comment) }}"
-                                        rows="{{commentRows}}"
-                                        disabled>
+                                <label for="payment-comment">Comment</label>
+                                <textarea type="text"
+                                          id="payment-comment"
+                                          class="form-control"
+                                          value="{{ displayComment(payment.comment) }}"
+                                          rows="{{commentRows}}"
+                                          disabled>
                                 </textarea>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                        <div class="col-lg-6 buttons-container">
-                          <div class="payment-buttons text-center">
-                            <button
-                              [style.display]="payment.isPaid ? 'block' : 'none'"
-                              type="button"
-                              class="btn btn-primary"
-                              data-bs-toggle="tooltip"
-                              data-bs-placement="bottom"
-                              title="Switch to not paid status">
-                              <i class="bi bi-bag-x-fill"></i> Unpaid
-                            </button>
-                            <button
-                              [style.display]="!payment.isPaid ? 'block' : 'none'"
-                              type="button"
-                              class="btn btn-secondary"
-                              data-bs-toggle="tooltip"
-                              data-bs-placement="bottom"
-                              title="Switch to paid status">
-                              <i class="bi bi-bag-check-fill"></i> Paid
-                            </button>
-                            <button
-                              type="button"
-                              class="btn btn-warning"
-                              data-bs-toggle="tooltip"
-                              data-bs-placement="bottom"
-                              title="Edit payment"
-                              (click)="paymentModal.open(payment)">
-                              <i class="bi bi-pencil-square"></i> Edit
-                            </button>
-                            <button
-                              type="button"
-                              class="btn btn-danger"
-                              data-bs-toggle="tooltip"
-                              data-bs-placement="bottom"
-                              title="Delete payment"
-                              (click)="deleteModal.openWithPayment(payment)">
-                              <i class="bi bi-trash3-fill"></i> Delete
-                            </button>
+                          <div class="col-lg-6 buttons-container">
+                            <div class="payment-buttons text-center">
+                              <button
+                                [style.display]="payment.isPaid ? 'block' : 'none'"
+                                type="button"
+                                class="btn btn-primary"
+                                data-bs-toggle="tooltip"
+                                data-bs-placement="bottom"
+                                title="Switch to not paid status">
+                                <i class="bi bi-bag-x-fill"></i> Unpaid
+                              </button>
+                              <button
+                                [style.display]="!payment.isPaid ? 'block' : 'none'"
+                                type="button"
+                                class="btn btn-secondary"
+                                data-bs-toggle="tooltip"
+                                data-bs-placement="bottom"
+                                title="Switch to paid status">
+                                <i class="bi bi-bag-check-fill"></i> Paid
+                              </button>
+                              <button
+                                type="button"
+                                class="btn btn-warning"
+                                data-bs-toggle="tooltip"
+                                data-bs-placement="bottom"
+                                title="Edit payment"
+                                (click)="paymentModal.open(payment)">
+                                <i class="bi bi-pencil-square"></i> Edit
+                              </button>
+                              <button
+                                type="button"
+                                class="btn btn-danger"
+                                data-bs-toggle="tooltip"
+                                data-bs-placement="bottom"
+                                title="Delete payment"
+                                (click)="deleteModal.openWithPayment(payment)">
+                                <i class="bi bi-trash3-fill"></i> Delete
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            }
+              }
+            </ng-template>
           </div>
         </div>
       </ng-template>

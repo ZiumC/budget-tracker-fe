@@ -54,7 +54,9 @@
             <div class="card border-dark my-3 budget-card">
               <ng-template [ngIf]="loaders.budget && budget.id == idRefreshBudget"
                            [ngIfElse]="displayBudget">
-                <app-spinner-grow></app-spinner-grow>
+                <div class="flex-absolute-container">
+                  <app-spinner-grow></app-spinner-grow>
+                </div>
               </ng-template>
               <ng-template #displayBudget>
                 <div class="card-header">
