@@ -56,7 +56,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
     };
 
     this.loaders = {
-      page: false,
+      budget: false,
       incomes: false,
       payments: false
     };
@@ -88,25 +88,18 @@ export class BudgetComponent implements OnInit, OnDestroy {
         },
         error: (err): void => {
           this.onRequestFailed(this.errorModels.budget, err);
+          this.markBudgetAsLoaded(true);
+        },
+        complete: (): void => {
+          this.markBudgetAsLoaded(true);
         }
       })
     )
 
     this.getBudgetIncomes();
     this.getBudgetPayments();
-
-    let retryCount = 0;
-    setTimeout((): void => {
-      while (!this.loaders.page) {
-        if ((this.loaders.incomes &&
-            this.loaders.payments) ||
-          retryCount == 5) {
-          this.loaders.page = true;
-        }
-        retryCount++;
-      }
-    }, 1000);
   }
+
 
   protected displayComment(comment: string): string {
     if (comment) {
@@ -145,7 +138,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
 
   protected onRefreshIncome(refresh: boolean): void {
     if (refresh) {
-      this.loaders.incomes = false;
+      this.markIncomesAsLoaded(false);
       this.errorModels.incomes = new ErrorModel();
       this.getBudgetIncomes();
     }
@@ -153,7 +146,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
 
   protected onRefreshPayment(refresh: boolean): void {
     if (refresh) {
-      this.loaders.payments = false;
+      this.markPaymentsAsLoaded(false);
       this.errorModels.payments = new ErrorModel();
       this.getBudgetPayments();
     }
@@ -182,11 +175,10 @@ export class BudgetComponent implements OnInit, OnDestroy {
         },
         error: (err): void => {
           this.onRequestFailed(this.errorModels.incomes, err);
+          this.markIncomesAsLoaded(true);
         },
         complete: (): void => {
-          setTimeout(() => {
-            this.loaders.incomes = true;
-          }, 500)
+          this.markIncomesAsLoaded(true);
         }
       })
     )
@@ -203,13 +195,30 @@ export class BudgetComponent implements OnInit, OnDestroy {
         },
         error: (err): void => {
           this.onRequestFailed(this.errorModels.payments, err);
+          this.markPaymentsAsLoaded(true);
         },
         complete: (): void => {
-          setTimeout(() => {
-            this.loaders.payments = true;
-          }, 500)
+          this.markPaymentsAsLoaded(true);
         }
       })
     )
+  }
+
+  private markPaymentsAsLoaded(value: boolean): void {
+    setTimeout((): void => {
+      this.loaders.payments = value;
+    }, value ? 500 : 0)
+  }
+
+  private markIncomesAsLoaded(value: boolean): void {
+    setTimeout((): void => {
+      this.loaders.incomes = value;
+    },  value ? 500 : 0)
+  }
+
+  private markBudgetAsLoaded(value: boolean): void {
+    setTimeout((): void => {
+      this.loaders.budget = value;
+    },  value ? 500 : 0)
   }
 }
