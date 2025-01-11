@@ -5,7 +5,7 @@
         <div class="text-center ">
           <h3 class="card-title">Budgets</h3>
         </div>
-        <form>
+        <form ngbAutofocus #form="ngForm">
           <div class="row">
             <div class="col-md-6">
               <div class="mb-2 mr-5">
@@ -19,6 +19,7 @@
                     name="from-date"
                     class="form-control"
                     [(ngModel)]="fromDatePicker"
+                    (ngModelChange)="validateDate(fromDate, toDate)"
                     required
                     #fromDate="ngModel"
                     container="body"
@@ -40,7 +41,10 @@
                       <label *ngIf="fromDate.errors?.['required']">
                         Field is required.
                       </label>
-                      <label *ngIf="fromDate.errors?.['required'] == null">
+                      <label *ngIf="fromDate.errors?.['invalidDateRange']">
+                        <strong>Date To</strong> can't be less or equal to <strong>Date from</strong>.
+                      </label>
+                      <label *ngIf="toDate.errors?.['ngbDate']">
                         Date is invalid.
                       </label>
                     </div>
@@ -64,6 +68,7 @@
                     name="to-date"
                     class="form-control"
                     [(ngModel)]="toDatePicker"
+                    (ngModelChange)="validateDate(fromDate, toDate)"
                     container="body"
                     placement="bottom-end"
                     required
@@ -85,7 +90,10 @@
                       <label *ngIf="toDate.errors?.['required']">
                         Field is required.
                       </label>
-                      <label *ngIf="toDate.errors?.['required'] == null">
+                      <label *ngIf="toDate.errors?.['invalidDateRange']">
+                        <strong>Date To</strong> can't be less or equal to <strong>Date from</strong>.
+                      </label>
+                      <label *ngIf="toDate.errors?.['ngbDate']">
                         Date is invalid.
                       </label>
                     </div>
@@ -103,7 +111,8 @@
                           data-bs-toggle="tooltip"
                           data-bs-placement="bottom"
                           title="Search budgets"
-                          (click)="onBudgetsSearch()">
+                          (click)="onBudgetsSearch()"
+                          [disabled]="form.invalid">
                     <i class="bi bi-search"></i>
                   </button>
                 </div>
@@ -136,6 +145,7 @@
     </div>
     <ng-template [ngIf]="!loaders.page"
                  [ngIfElse]="loadedBlock">
+      <div class="mt-5"></div>
       <app-spinner [size]="SpinnerSize.BIG"></app-spinner>
     </ng-template>
     <ng-template #loadedBlock>

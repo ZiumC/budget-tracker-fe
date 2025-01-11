@@ -9,6 +9,7 @@ import {DateUtils} from "../../../util/date.utils";
 import {RequestParamModel} from "../../../models/RequestParamModel";
 import {SpinnerSize} from "../../components/shared/spinner/spinner.component";
 import {DatePickerModel} from "../../../models/FormModels";
+import {NgModel, ValidationErrors} from "@angular/forms";
 
 @Component({
   selector: 'app-index',
@@ -92,6 +93,19 @@ export class IndexComponent implements OnInit, OnDestroy {
     console.log(this.requestParams);
 
     this.onPageIndex(true);
+  }
+
+  protected validateDate(input1: any, input2: any): void {
+    const fromDate = DateUtils.convertToDate(this.fromDatePicker);
+    const toDate = DateUtils.convertToDate(this.toDatePicker);
+
+    if (toDate <= fromDate){
+      input1.control.setErrors({invalidDateRange: 'Invalid date'});
+      input2.control.setErrors({invalidDateRange: 'Invalid date'});
+    } else {
+      input1.control.setErrors(null);
+      input2.control.setErrors(null);
+    }
   }
 
   private getBudget(idBudget: string): void {

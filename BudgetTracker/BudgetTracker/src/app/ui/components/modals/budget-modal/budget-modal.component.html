@@ -100,7 +100,7 @@
                     <label *ngIf="dateStartInput.errors?.['required']">
                       Field is required.
                     </label>
-                    <label *ngIf="dateStartInput.errors?.['required'] == null">
+                    <label *ngIf="dateStartInput.errors?.['ngbDate']">
                       Date is invalid.
                     </label>
                     <label *ngIf="dateStartInput.errors?.['invalidMonth']">
@@ -149,7 +149,7 @@
                     <label *ngIf="dateEndInput.errors?.['required']">
                       Field is required.
                     </label>
-                    <label *ngIf="dateEndInput.errors?.['required'] == null">
+                    <label *ngIf="dateEndInput.errors?.['ngbDate']">
                       Date is invalid.
                     </label>
                     <label *ngIf="dateEndInput.errors?.['invalidMonth']">
@@ -199,7 +199,7 @@
                     <label *ngIf="budgetDateInput.errors?.['required']">
                       Field is required.
                     </label>
-                    <label *ngIf="budgetDateInput.errors?.['required'] == null">
+                    <label *ngIf="budgetDateInput.errors?.['ngbDate']">
                       Date is invalid.
                     </label>
                   </div>
