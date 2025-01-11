@@ -1,61 +1,65 @@
 <div class="height-wrapper width-wrapper">
   <div class="component-wrapper component-bg">
-    <ng-template [ngIf]="!loaders.page" [ngIfElse]="loadedBlock">
+    <div class="card text-center mb-3">
+      <div class="card-body">
+        <h3 class="card-title">Budgets</h3>
+        <div class="row">
+          <div class="col-md-6">
+            <label for="date-from">From</label>
+            <input id="date-from"
+                   type="text"
+                   class="form-control"
+                   value="{{requestParamModel.fromDate}}"
+                   disabled>
+          </div>
+          <div class="col-md-6">
+            <label for="date-to">To</label>
+            <input id="date-to"
+                   type="text"
+                   class="form-control"
+                   value="{{requestParamModel.toDate}}"
+                   disabled>
+          </div>
+        </div>
+        <div class="budget-button-options mt-3 mb-1 text-center">
+          <div class="px-5">
+            <button type="button"
+                    class="btn btn-success"
+                    data-bs-toggle="tooltip"
+                    data-bs-placement="bottom"
+                    title="Create budget"
+                    (click)="budgetModal.open()">
+              <i class="bi bi-box"></i> Create
+            </button>
+          </div>
+          <div class="px-5">
+            <button type="button"
+                    class="btn btn-success"
+                    data-bs-toggle="tooltip"
+                    data-bs-placement="bottom"
+                    title="Create multiple budgets">
+              <i class="bi bi-boxes"></i> Multiple
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <ng-template [ngIf]="!loaders.page"
+                 [ngIfElse]="loadedBlock">
       <app-spinner [size]="SpinnerSize.BIG"></app-spinner>
     </ng-template>
     <ng-template #loadedBlock>
-      <ng-template [ngIf]="errorModels.budgets.responseStatusCode == requiredStatusCode" [ngIfElse]="errorBlock">
-        <div class="card text-center mb-3">
-          <div class="card-body">
-            <h3 class="card-title">Budgets</h3>
-            <div class="row">
-              <div class="col-md-6">
-                <label for="date-from">From</label>
-                <input id="date-from"
-                       type="text"
-                       class="form-control"
-                       value="{{requestParamModel.fromDate}}"
-                       disabled>
-              </div>
-              <div class="col-md-6">
-                <label for="date-to">To</label>
-                <input id="date-to"
-                       type="text"
-                       class="form-control"
-                       value="{{requestParamModel.toDate}}"
-                       disabled>
-              </div>
-            </div>
-            <div class="budget-button-options mt-3 mb-1 text-center">
-              <div class="px-5">
-                <button type="button"
-                        class="btn btn-success"
-                        data-bs-toggle="tooltip"
-                        data-bs-placement="bottom"
-                        title="Create budget"
-                        (click)="budgetModal.open()">
-                  <i class="bi bi-box"></i> Create
-                </button>
-              </div>
-              <div class="px-5">
-                <button type="button"
-                        class="btn btn-success"
-                        data-bs-toggle="tooltip"
-                        data-bs-placement="bottom"
-                        title="Create multiple budgets">
-                  <i class="bi bi-boxes"></i> Multiple
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+      <ng-template [ngIf]="errorModels.budgets.responseStatusCode == requiredStatusCode"
+                   [ngIfElse]="errorBudgetsBlock">
         <div class="budget-card-container">
           @for (budget of budgets; track budget.id; ) {
             <div class="card border-dark my-3 budget-card">
-              <ng-template [ngIf]="loaders.budget && budget.id == idRefreshBudget"
+              <ng-template [ngIf]="!loaders.budget && budget.id == idRefreshBudget"
                            [ngIfElse]="displayBudget">
-                <div class="flex-absolute-container">
-                  <app-spinner-grow></app-spinner-grow>
+                <div class="mx-auto my-auto">
+                  <div class="my-3 mx-3">
+                    <app-spinner-grow></app-spinner-grow>
+                  </div>
                 </div>
               </ng-template>
               <ng-template #displayBudget>
@@ -116,18 +120,19 @@
           }
         </div>
       </ng-template>
-      <app-budget-modal #budgetModal
-                        (indexPageEvent)="onPageIndex($event)"
-                        (budgetUpdateEvent)="onBudgetUpdate($event)">
-
-      </app-budget-modal>
-      <app-delete-modal #deleteModal
-                        (indexPageEvent)="onPageIndex($event)">
-
-      </app-delete-modal>
-      <ng-template #errorBlock>
-        <app-error [errorModel]="errorModels.budgets"></app-error>
+      <ng-template #errorBudgetsBlock>
+        <app-error [errorModel]="errorModels.budgets"
+                   [notFoundErrorText]="'Budgets not found'"></app-error>
       </ng-template>
     </ng-template>
+    <app-budget-modal #budgetModal
+                      (indexPageEvent)="onPageIndex($event)"
+                      (budgetUpdateEvent)="onBudgetUpdate($event)">
+
+    </app-budget-modal>
+    <app-delete-modal #deleteModal
+                      (indexPageEvent)="onPageIndex($event)">
+
+    </app-delete-modal>
   </div>
 </div>
