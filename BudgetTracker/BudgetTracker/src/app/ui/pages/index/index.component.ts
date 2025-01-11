@@ -48,7 +48,7 @@ export class IndexComponent implements OnInit, OnDestroy {
 
     this.loaders = {
       page: false,
-      budget: false
+      budget: false,
     }
 
     this.getBudgets(this.requestParamModel);
@@ -60,7 +60,7 @@ export class IndexComponent implements OnInit, OnDestroy {
 
   protected onPageIndex(reload: boolean): void {
     if (reload) {
-      this.loaders.page = false;
+      this.markPageAsLoaded(false);
       this.errorModels.budgets = new ErrorModel();
       this.getBudgets(this.requestParamModel);
     }
@@ -68,7 +68,7 @@ export class IndexComponent implements OnInit, OnDestroy {
 
   protected onBudgetUpdate(idBudget: string): void {
     if (idBudget) {
-      this.loaders.budget = true;
+      this.markBudgetAsLoaded(false);
       this.idRefreshBudget = idBudget;
       this.errorModels.budget = new ErrorModel();
       this.getBudget(idBudget);
@@ -84,16 +84,15 @@ export class IndexComponent implements OnInit, OnDestroy {
         },
         error: (err): void => {
           this.onRequestFailed(this.errorModels.budget, err);
+          this.markBudgetAsLoaded(true);
         },
-        complete: (): void =>{
-          setTimeout((): void => {
-            this.budgets!.forEach((item, index): void => {
-              if (item.id == idBudget && this.budgets) {
-                this.budgets[index] = this.budget!;
-              }
-            })
-            this.loaders.budget = false;
-          }, 500);
+        complete: (): void => {
+          this.budgets!.forEach((item, index): void => {
+            if (item.id == idBudget && this.budgets) {
+              this.budgets[index] = this.budget!;
+            }
+          })
+          this.markBudgetAsLoaded(true);
         }
       })
     )
@@ -108,9 +107,10 @@ export class IndexComponent implements OnInit, OnDestroy {
         },
         error: (err): void => {
           this.onRequestFailed(this.errorModels.budgets, err);
+          this.markPageAsLoaded(true);
         },
         complete: (): void => {
-          this.loaders.page = true;
+          this.markPageAsLoaded(true);
         }
       })
     )
@@ -120,5 +120,17 @@ export class IndexComponent implements OnInit, OnDestroy {
     errorModel.traceId = err.headers.get('X-Trace-Id');
     errorModel.responseStatusCode = err.status;
     errorModel.responseErrorModel = err.error;
+  }
+
+  private markPageAsLoaded(value: boolean): void {
+    setTimeout((): void => {
+      this.loaders.page = value;
+    }, value ? 500 : 0)
+  }
+
+  private markBudgetAsLoaded(value: boolean): void {
+    setTimeout((): void => {
+      this.loaders.budget = value;
+    }, value ? 500 : 0)
   }
 }
