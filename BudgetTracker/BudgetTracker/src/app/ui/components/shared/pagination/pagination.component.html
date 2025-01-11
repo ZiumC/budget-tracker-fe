@@ -12,10 +12,11 @@
           <i class="bi bi-caret-left-fill"></i>
         </button>
       </div>
-      <div class="d-inline-flex align-items-center pagination-input">
+      <div class=" d-flex flex-nowrap align-items-center pagination-input">
         <label class="mx-1">Page</label>
         <input
           type="text"
+          inputmode="numeric"
           id="page"
           name="page"
           min="1"
@@ -27,6 +28,9 @@
           [ngClass]="{
           'invalid-outline':
           pageInput.invalid}"/>
+        <span class="col-form-label text-nowrap px-2">
+          of 2
+        </span>
       </div>
       <div class="mx-3">
         <button type="button"
