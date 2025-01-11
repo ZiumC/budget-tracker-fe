@@ -7,9 +7,11 @@ import {Component, OnInit} from '@angular/core';
 })
 export class PaginationComponent implements OnInit {
   protected page: number;
+  protected pageSize: number;
 
   ngOnInit(): void {
     this.page = 1;
+    this.pageSize = 12;
   }
 
   protected previous(): void {
