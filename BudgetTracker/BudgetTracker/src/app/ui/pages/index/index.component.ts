@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ErrorModel} from '../../../models/ErrorModel';
-import {BudgetModel} from '../../../models/RequestModels';
+import {BudgetModel, PageModel} from '../../../models/RequestModels';
 import {HttpService} from '../../../services/http/httpService';
 import {Subscription} from 'rxjs';
 import {HttpResponse} from '@angular/common/http';
@@ -9,7 +9,6 @@ import {DateUtils} from "../../../util/date.utils";
 import {RequestParamModel} from "../../../models/RequestParamModel";
 import {SpinnerSize} from "../../components/shared/spinner/spinner.component";
 import {DatePickerModel} from "../../../models/FormModels";
-import {NgModel, ValidationErrors} from "@angular/forms";
 
 @Component({
   selector: 'app-index',
@@ -29,6 +28,7 @@ export class IndexComponent implements OnInit, OnDestroy {
   protected errorModels: any;
   protected loaders: any;
   protected idRefreshBudget: string;
+  protected totalPages: number;
 
   constructor(private httpService: HttpService) {
   }
@@ -38,6 +38,7 @@ export class IndexComponent implements OnInit, OnDestroy {
     const fromDate = new Date(currentYear, 0, 1);
     const toDate = new Date(currentYear, 11, 31);
 
+    this.totalPages = 1;
     this.requestParams = new RequestParamModel();
     this.requestParams.page = 1;
     this.requestParams.pageSize = 12;
@@ -99,7 +100,7 @@ export class IndexComponent implements OnInit, OnDestroy {
     const fromDate = DateUtils.convertToDate(this.fromDatePicker);
     const toDate = DateUtils.convertToDate(this.toDatePicker);
 
-    if (toDate <= fromDate){
+    if (toDate <= fromDate) {
       input1.control.setErrors({invalidDateRange: 'Invalid date'});
       input2.control.setErrors({invalidDateRange: 'Invalid date'});
     } else {
@@ -143,7 +144,22 @@ export class IndexComponent implements OnInit, OnDestroy {
           this.markPageAsLoaded(true);
         },
         complete: (): void => {
+          this.getBudgetsTotalPage();
           this.markPageAsLoaded(true);
+        }
+      })
+    )
+  }
+
+  private getBudgetsTotalPage(): void {
+    const pageSize = this.requestParams.pageSize;
+    this.subscriptions.push(
+      this.httpService.getBudgetsTotalPage(pageSize).subscribe({
+        next: (response: HttpResponse<PageModel>): void => {
+          const pages = response.body?.pages;
+          if (pages) {
+            this.totalPages = pages;
+          }
         }
       })
     )

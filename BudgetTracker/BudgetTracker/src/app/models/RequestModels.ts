@@ -24,3 +24,7 @@ export class PaymentModel {
   comment: string;
   dateUpdated: Date;
 }
+
+export class PageModel {
+  pages: number;
+}
