@@ -51,6 +51,7 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
   open(budgetData?: BudgetModel): void {
     this.setDefaultBudgetForm();
     this.isEditing = budgetData != null;
+    this.displayError = false;
 
     if (budgetData) {
       this.idBudget = budgetData.id;
