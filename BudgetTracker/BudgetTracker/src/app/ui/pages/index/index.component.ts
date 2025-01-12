@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ErrorModel} from '../../../models/ErrorModel';
-import {BudgetModel, PageModel} from '../../../models/RequestModels';
+import {BudgetModel} from '../../../models/RequestModels';
 import {HttpService} from '../../../services/http/httpService';
 import {Subscription} from 'rxjs';
 import {HttpResponse} from '@angular/common/http';
@@ -18,9 +18,6 @@ import {DatePickerModel} from "../../../models/FormModels";
 export class IndexComponent implements OnInit, OnDestroy {
   protected readonly DateUtils = DateUtils;
   protected readonly SpinnerSize = SpinnerSize;
-  private currentYear = new Date().getFullYear() - 1;
-  protected readonly firstDayOfYear = new Date(this.currentYear, 0, 1);
-  protected readonly lastDayOfYear = new Date(this.currentYear, 11, 31);
   protected requiredStatusCode: number = 200;
   protected budgets: BudgetModel[] | null;
   protected budget: BudgetModel | null;
@@ -31,22 +28,23 @@ export class IndexComponent implements OnInit, OnDestroy {
   protected errorModels: any;
   protected loaders: any;
   protected idRefreshBudget: string;
-  protected totalPages: number;
-  protected disablePagination: boolean;
 
   constructor(private httpService: HttpService) {
   }
 
   ngOnInit(): void {
-    this.totalPages = 1;
+    const currentYear = new Date().getFullYear();
+    const firstDayOfYear = new Date(currentYear, 0, 1);
+    const lastDayOfYear = new Date(currentYear, 11, 31);
+
     this.requestParams = new RequestParamModel();
     this.requestParams.page = 1;
-    this.requestParams.pageSize = 12;
-    this.requestParams.fromDate = DateUtils.format(this.firstDayOfYear);
-    this.requestParams.toDate = DateUtils.format(this.lastDayOfYear);
+    this.requestParams.pageSize = 36;
+    this.requestParams.fromDate = DateUtils.format(firstDayOfYear);
+    this.requestParams.toDate = DateUtils.format(lastDayOfYear);
 
-    this.fromDatePicker = DateUtils.convertToDatePicker(this.firstDayOfYear);
-    this.toDatePicker = DateUtils.convertToDatePicker(this.lastDayOfYear);
+    this.fromDatePicker = DateUtils.convertToDatePicker(firstDayOfYear);
+    this.toDatePicker = DateUtils.convertToDatePicker(lastDayOfYear);
 
     this.budgets = [];
     this.subscriptions = [];
@@ -59,8 +57,6 @@ export class IndexComponent implements OnInit, OnDestroy {
       page: false,
       budget: false,
     }
-
-    this.disablePagination = false;
 
     this.getBudgets(this.requestParams);
   }
@@ -90,8 +86,8 @@ export class IndexComponent implements OnInit, OnDestroy {
     const fromDate = DateUtils.convertToDate(this.fromDatePicker);
     const toDate = DateUtils.convertToDate(this.toDatePicker);
 
-    this.requestParams.fromDate = DateUtils.format(fromDate)
-    this.requestParams.toDate = DateUtils.format(toDate)
+    this.requestParams.fromDate = DateUtils.format(fromDate);
+    this.requestParams.toDate = DateUtils.format(toDate);
 
     console.log(this.requestParams);
 
@@ -108,13 +104,6 @@ export class IndexComponent implements OnInit, OnDestroy {
     } else {
       input1.control.setErrors(null);
       input2.control.setErrors(null);
-    }
-
-    if (DateUtils.format(fromDate) == DateUtils.format(this.firstDayOfYear) &&
-      DateUtils.format(toDate) == DateUtils.format(this.lastDayOfYear)) {
-      this.disablePagination = false;
-    } else {
-      this.disablePagination = true;
     }
   }
 
@@ -153,22 +142,7 @@ export class IndexComponent implements OnInit, OnDestroy {
           this.markPageAsLoaded(true);
         },
         complete: (): void => {
-          this.getBudgetsTotalPage();
           this.markPageAsLoaded(true);
-        }
-      })
-    )
-  }
-
-  private getBudgetsTotalPage(): void {
-    const pageSize = this.requestParams.pageSize;
-    this.subscriptions.push(
-      this.httpService.getBudgetsTotalPage(pageSize).subscribe({
-        next: (response: HttpResponse<PageModel>): void => {
-          const pages = response.body?.pages;
-          if (pages) {
-            this.totalPages = pages;
-          }
         }
       })
     )

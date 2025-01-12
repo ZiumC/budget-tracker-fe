@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 
 @Component({
   selector: 'app-pagination',
@@ -10,6 +10,7 @@ export class PaginationComponent implements OnInit {
   @Input() displayPageSize: boolean;
   @Input() pageSizeOptions: number[];
   @Input() disableFully: boolean;
+  @Output() emitNextPageEvent = new EventEmitter<boolean>();
   protected page: number;
   protected pageSize: number;
   protected disablePrevious: boolean;
@@ -47,6 +48,8 @@ export class PaginationComponent implements OnInit {
     if (this.page < this.pageCount) {
       this.disableNext = false;
     }
+
+    this.emitNextPageEvent.emit(false);
   }
 
   protected next(): void {
@@ -59,5 +62,7 @@ export class PaginationComponent implements OnInit {
     if (this.page >= this.pageCount) {
       this.disableNext = true;
     }
+
+    this.emitNextPageEvent.emit(true);
   }
 }
