@@ -100,37 +100,6 @@ export class BudgetComponent implements OnInit, OnDestroy {
     this.getBudgetPayments();
   }
 
-
-  protected displayComment(comment: string): string {
-    if (comment) {
-      const length = comment.length;
-      if (length == 0) {
-        return "No comment"
-      } else {
-        switch (length) {
-          case 100:
-            this.commentRows = 2;
-            break;
-          case 200:
-            this.commentRows = 3;
-            break;
-          case 300:
-            this.commentRows = 4;
-            break;
-          case 400:
-            this.commentRows = 5;
-            break;
-          case 500:
-            this.commentRows = 6;
-            break;
-        }
-      }
-      return comment;
-    } else {
-      return "No comment"
-    }
-  }
-
   @HostListener('window:resize', ['$event'])
   onResize(): void {
     this.innerWidth = window.innerWidth;
@@ -213,12 +182,12 @@ export class BudgetComponent implements OnInit, OnDestroy {
   private markIncomesAsLoaded(value: boolean): void {
     setTimeout((): void => {
       this.loaders.incomes = value;
-    },  value ? 500 : 0)
+    }, value ? 500 : 0)
   }
 
   private markBudgetAsLoaded(value: boolean): void {
     setTimeout((): void => {
       this.loaders.budget = value;
-    },  value ? 500 : 0)
+    }, value ? 500 : 0)
   }
 }
