@@ -14,61 +14,58 @@
     <form #form="ngForm">
       @for (budgetField of budgetFields; let i = $index; track i) {
         <label for="budget-date-{{i}}">Budget date</label>
-        <div class="row">
-          <div class="col-md-10">
-            <div class="input-group">
-              <input
-                id="budget-date-{{i}}"
-                name="budget-date-{{i}}"
-                class="form-control"
-                [(ngModel)]="budgetFields[i]"
-                container="body"
-                placement="bottom-end"
-                required
-                #toDate="ngModel"
-                ngbDatepicker
-                #dateEnd="ngbDatepicker"
-                [ngClass]="{
+        <div class="d-flex">
+          <div class="input-group">
+            <input
+              id="budget-date-{{i}}"
+              name="budget-date-{{i}}"
+              class="form-control"
+              [(ngModel)]="budgetFields[i]"
+              container="body"
+              placement="bottom-end"
+              required
+              #toDate="ngModel"
+              ngbDatepicker
+              #dateEnd="ngbDatepicker"
+              [ngClass]="{
                     'is-invalid':
                       toDate.invalid,
                     'is-valid': toDate.valid }"/>
-              <div class="input-group-append">
-                <button class="btn btn-outline-secondary bi bi-calendar3"
-                        (click)="dateEnd.toggle()"
-                        type="button">
-                </button>
-              </div>
-              @if (toDate.invalid) {
-                <div class="invalid-feedback">
-                  <label *ngIf="toDate.errors?.['required']">
-                    Field is required.
-                  </label>
-                  <label *ngIf="toDate.errors?.['invalidDateRange']">
-                    <strong>Date To</strong> can't be less or equal to <strong>Date from</strong>.
-                  </label>
-                  <label *ngIf="toDate.errors?.['ngbDate']">
-                    Date is invalid.
-                  </label>
-                </div>
-              } @else if (toDate.valid) {
-                <div class="valid-feedback pb-3">
-                </div>
-              } @else {
-                <div class="pb-4"></div>
-              }
-            </div>
-          </div>
-          <div class="col-md-2">
-            <div class="text-center">
-              <button type="button"
-                      class="btn btn-outline-danger"
-                      data-bs-toggle="tooltip"
-                      data-bs-placement="bottom"
-                      title="Remove budget"
-                      (click)="remove(i)">
-                <i class="bi bi-trash"></i>
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary bi bi-calendar3"
+                      (click)="dateEnd.toggle()"
+                      type="button">
               </button>
             </div>
+            @if (toDate.invalid) {
+              <div class="invalid-feedback">
+                <label *ngIf="toDate.errors?.['required']">
+                  Field is required.
+                </label>
+                <label *ngIf="toDate.errors?.['invalidDateRange']">
+                  <strong>Date To</strong> can't be less or equal to <strong>Date from</strong>.
+                </label>
+                <label *ngIf="toDate.errors?.['ngbDate']">
+                  Date is invalid.
+                </label>
+              </div>
+            } @else if (toDate.valid) {
+              <div class="valid-feedback pb-3">
+              </div>
+            } @else {
+              <div class="pb-4"></div>
+            }
+          </div>
+          <div class="mx-2"></div>
+          <div>
+            <button type="button"
+                    class="btn btn-outline-danger"
+                    data-bs-toggle="tooltip"
+                    data-bs-placement="bottom"
+                    title="Remove budget"
+                    (click)="remove(i)">
+              <i class="bi bi-trash"></i>
+            </button>
           </div>
         </div>
       }
