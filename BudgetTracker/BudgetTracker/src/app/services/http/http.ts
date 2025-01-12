@@ -5,13 +5,15 @@ export class UrlApi {
   private static CONTROLLERS = {
     BUDGETS: "/Budgets",
     PAYMENTS: "/Payments",
-    INCOMES: "/Incomes"
+    INCOMES: "/Incomes",
+    PAGINATION: "/Pagination"
   }
   private static ACTIONS = {
     PAYMENTS: "/payments",
     PAYMENT: "/payment",
     INCOMES: "/incomes",
-    INCOME: "/income"
+    INCOME: "/income",
+    BUDGETS: "/budgets"
   }
 
   static budgets(requestParamModel: RequestParamModel): string {
@@ -37,6 +39,11 @@ export class UrlApi {
     }
 
     return urlResult;
+  }
+
+  static budgetsPages(pageSize: number): string {
+    return this.paginationController() +
+      this.ACTIONS.BUDGETS + "?pageSize=" + pageSize
   }
 
   static budgetId(idBudget: string): string {
@@ -129,5 +136,9 @@ export class UrlApi {
 
   private static incomeController(): string {
     return this.HOST + this.CONTROLLERS.INCOMES;
+  }
+
+  private static paginationController(): string {
+    return this.HOST + this.CONTROLLERS.PAGINATION;
   }
 }

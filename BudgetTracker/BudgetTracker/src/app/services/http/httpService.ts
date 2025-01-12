@@ -1,5 +1,5 @@
 import {HttpClient, HttpResponse} from "@angular/common/http";
-import {BudgetModel, IncomeModel, PaymentModel} from "../../models/RequestModels";
+import {BudgetModel, IncomeModel, PageModel, PaymentModel} from "../../models/RequestModels";
 import {Observable} from "rxjs";
 import {UrlApi} from "./http";
 import {Injectable} from "@angular/core";
@@ -28,6 +28,14 @@ export class HttpService {
       UrlApi.budgetId(idBudget),
       {observe: 'response'}
     );
+  }
+
+  public getBudgetsTotalPage(pageSize: number):
+    Observable<HttpResponse<PageModel>> {
+    return this.httpClient.get<PageModel>(
+      UrlApi.budgetsPages(pageSize),
+      {observe: 'response'}
+    )
   }
 
   public updateBudget(budgetForm: BudgetForm, idBudget: string):
@@ -117,7 +125,7 @@ export class HttpService {
   }
 
   public deletePayment(idPayment: string):
-    Observable<HttpResponse<{}>>{
+    Observable<HttpResponse<{}>> {
     return this.httpClient.delete(
       UrlApi.paymentId(idPayment),
       {observe: 'response'}

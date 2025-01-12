@@ -8,6 +8,7 @@ import {SubscriptionUtils} from '../../../util/subscription.utils';
 import {DateUtils} from "../../../util/date.utils";
 import {RequestParamModel} from "../../../models/RequestParamModel";
 import {SpinnerSize} from "../../components/shared/spinner/spinner.component";
+import {DatePickerModel} from "../../../models/FormModels";
 
 @Component({
   selector: 'app-index',
@@ -21,7 +22,9 @@ export class IndexComponent implements OnInit, OnDestroy {
   protected budgets: BudgetModel[] | null;
   protected budget: BudgetModel | null;
   protected subscriptions: Subscription[];
-  protected requestParamModel: RequestParamModel;
+  protected requestParams: RequestParamModel;
+  protected fromDatePicker: DatePickerModel;
+  protected toDatePicker: DatePickerModel;
   protected errorModels: any;
   protected loaders: any;
   protected idRefreshBudget: string;
@@ -30,14 +33,18 @@ export class IndexComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    const currentYear = new Date().getFullYear() - 1;
-    this.requestParamModel = new RequestParamModel();
-    this.requestParamModel.page = 1;
-    this.requestParamModel.pageSize = 12;
-    this.requestParamModel.fromDate = DateUtils
-      .format(new Date(currentYear, 0, 1));
-    this.requestParamModel.toDate = DateUtils
-      .format(new Date(currentYear, 11, 31));
+    const currentYear = new Date().getFullYear();
+    const firstDayOfYear = new Date(currentYear, 0, 1);
+    const lastDayOfYear = new Date(currentYear, 11, 31);
+
+    this.requestParams = new RequestParamModel();
+    this.requestParams.page = 1;
+    this.requestParams.pageSize = 36;
+    this.requestParams.fromDate = DateUtils.format(firstDayOfYear);
+    this.requestParams.toDate = DateUtils.format(lastDayOfYear);
+
+    this.fromDatePicker = DateUtils.convertToDatePicker(firstDayOfYear);
+    this.toDatePicker = DateUtils.convertToDatePicker(lastDayOfYear);
 
     this.budgets = [];
     this.subscriptions = [];
@@ -51,7 +58,7 @@ export class IndexComponent implements OnInit, OnDestroy {
       budget: false,
     }
 
-    this.getBudgets(this.requestParamModel);
+    this.getBudgets(this.requestParams);
   }
 
   ngOnDestroy(): void {
@@ -62,7 +69,7 @@ export class IndexComponent implements OnInit, OnDestroy {
     if (reload) {
       this.markPageAsLoaded(false);
       this.errorModels.budgets = new ErrorModel();
-      this.getBudgets(this.requestParamModel);
+      this.getBudgets(this.requestParams);
     }
   }
 
@@ -72,6 +79,31 @@ export class IndexComponent implements OnInit, OnDestroy {
       this.idRefreshBudget = idBudget;
       this.errorModels.budget = new ErrorModel();
       this.getBudget(idBudget);
+    }
+  }
+
+  protected onBudgetsSearch(): void {
+    const fromDate = DateUtils.convertToDate(this.fromDatePicker);
+    const toDate = DateUtils.convertToDate(this.toDatePicker);
+
+    this.requestParams.fromDate = DateUtils.format(fromDate);
+    this.requestParams.toDate = DateUtils.format(toDate);
+
+    console.log(this.requestParams);
+
+    this.onPageIndex(true);
+  }
+
+  protected validateDate(input1: any, input2: any): void {
+    const fromDate = DateUtils.convertToDate(this.fromDatePicker);
+    const toDate = DateUtils.convertToDate(this.toDatePicker);
+
+    if (toDate <= fromDate) {
+      input1.control.setErrors({invalidDateRange: 'Invalid date'});
+      input2.control.setErrors({invalidDateRange: 'Invalid date'});
+    } else {
+      input1.control.setErrors(null);
+      input2.control.setErrors(null);
     }
   }
 

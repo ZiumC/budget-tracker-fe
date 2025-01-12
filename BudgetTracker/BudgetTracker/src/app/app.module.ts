@@ -20,6 +20,7 @@ import {DatepickerFormatter} from "./util/datepicker.utils";
 import {BudgetModalComponent} from "./ui/components/modals/budget-modal/budget-modal.component";
 import { DeleteModalComponent } from './ui/components/modals/delete-modal/delete-modal.component';
 import { SpinnerGrowComponent } from './ui/components/shared/spinner-grow/spinner-grow.component';
+import { PaginationComponent } from './ui/components/shared/pagination/pagination.component';
 
 
 @NgModule({
@@ -37,6 +38,7 @@ import { SpinnerGrowComponent } from './ui/components/shared/spinner-grow/spinne
     BudgetModalComponent,
     DeleteModalComponent,
     SpinnerGrowComponent,
+    PaginationComponent,
   ],
   imports: [
     BrowserModule,

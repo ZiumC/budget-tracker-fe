@@ -1,0 +1,71 @@
+<div class="mx-auto">
+  <form ngbAutofocus #form="ngForm">
+    <div class="d-flex justify-content-center">
+      <div class="mx-3">
+        <button type="button"
+                class="btn btn-outline-secondary"
+                data-bs-toggle="tooltip"
+                data-bs-placement="bottom"
+                title="Previous page"
+                (click)="previous()"
+                [disabled]="form.invalid || disablePrevious || disableFully">
+          <i class="bi bi-caret-left-fill"></i>
+        </button>
+      </div>
+      <div class="row">
+        <div [className]="displayPageSize ? 'col-md-6 my-1' : '' ">
+          <div class="d-flex flex-nowrap align-items-center pagination-input">
+            <label class="mx-1">Page</label>
+            <input
+              type="text"
+              inputmode="numeric"
+              id="page"
+              name="page"
+              min="1"
+              class="form-control"
+              [(ngModel)]="page"
+              pattern="[1-9]*"
+              required
+              [disabled]="disableFully"
+              #pageInput="ngModel"
+              [ngClass]="{
+              'invalid-outline':
+              pageInput.invalid}"/>
+            <span class="col-form-label text-nowrap px-2">
+              of {{ this.pageCount }}
+            </span>
+          </div>
+        </div>
+        @if (displayPageSize) {
+          <div class="col-md-6 my-1">
+            <div class="d-flex pagination-input">
+              <span class="col-form-label text-nowrap px-2">Size</span>
+              <select type="number"
+                      id="pageSize"
+                      name="pageSize"
+                      class="form-control"
+                      [(ngModel)]="pageSize"
+                      [disabled]="disableFully"
+                      required>
+                @for (sizeOption of pageSizeOptions; track $index) {
+                  <option [value]="sizeOption">{{ sizeOption }}</option>
+                }
+              </select>
+            </div>
+          </div>
+        }
+      </div>
+      <div class="mx-3">
+        <button type="button"
+                class="btn btn-outline-secondary"
+                data-bs-toggle="tooltip"
+                data-bs-placement="bottom"
+                title="Next page"
+                (click)="next()"
+                [disabled]="form.invalid || disableNext || disableFully">
+          <i class="bi bi-caret-right-fill"></i>
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
