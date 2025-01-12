@@ -2,6 +2,8 @@ import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {FormArray, FormBuilder, FormGroup} from "@angular/forms";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {ModalOptions} from "../../../../util/modal.utils";
+import {DatePickerModel} from "../../../../models/FormModels";
+import {DateUtils} from "../../../../util/date.utils";
 
 @Component({
   selector: 'app-budgets-modal',
@@ -10,16 +12,19 @@ import {ModalOptions} from "../../../../util/modal.utils";
 })
 export class BudgetsModalComponent implements OnInit, OnDestroy {
   @ViewChild('budgetsModal') budgetsModal: any;
-  protected budgets: FormGroup;
+  protected budgetsGroup: FormGroup;
+  protected budgetFields: DatePickerModel[];
 
   constructor(private fb: FormBuilder,
               private modalService: NgbModal) {
   }
 
   ngOnInit(): void {
-    this.budgets = this.fb.group({
-      fields: this.fb.array([])
-    });
+    this.budgetFields = [];
+    // this.budgetsGroup = this.fb.group({
+    //   fields: this.fb.array([])
+    // });
+    this.add();
   }
 
   ngOnDestroy(): void {
@@ -29,22 +34,24 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
     this.modalService.open(this.budgetsModal, ModalOptions.default());
   }
 
-  get fields(): FormArray {
-    return this.budgets.get('fields') as FormArray;
-  }
+  // get fields(): FormArray {
+  //   return this.budgetsGroup.get('fields') as FormArray;
+  // }
 
   protected add(): void {
-    const fieldGroup = this.fb.group({
-      fieldName: [''],
-    });
-    this.fields.push(fieldGroup);
+    // const fieldGroup = this.fb.group({
+    //   fieldName: [''],
+    // });
+    // this.fields.push(fieldGroup);
+    this.budgetFields.push(DateUtils.convertToDatePicker(new Date()))
   }
 
   protected remove(index: number): void {
-    this.fields.removeAt(index);
+    // this.fields.removeAt(index);
+    this.budgetFields.slice(index, 1);
   }
 
   protected saveBudgets(): void {
-    console.log(this.budgets.value);
+    console.log(this.budgetFields);
   }
 }
