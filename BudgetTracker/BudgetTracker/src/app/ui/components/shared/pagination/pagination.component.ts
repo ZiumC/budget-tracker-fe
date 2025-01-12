@@ -9,6 +9,7 @@ export class PaginationComponent implements OnInit {
   @Input() pageCount: number;
   @Input() displayPageSize: boolean;
   @Input() pageSizeOptions: number[];
+  @Input() disableFully: boolean;
   protected page: number;
   protected pageSize: number;
   protected disablePrevious: boolean;
@@ -29,6 +30,10 @@ export class PaginationComponent implements OnInit {
       throw new Error('Page size options are not provided');
     } else if (this.pageSizeOptions != undefined) {
       this.pageSize = this.pageSizeOptions[0];
+    }
+
+    if (!this.disableFully){
+      this.disableFully = false;
     }
   }
 

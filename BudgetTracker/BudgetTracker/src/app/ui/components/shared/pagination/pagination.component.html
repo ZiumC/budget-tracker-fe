@@ -8,7 +8,7 @@
                 data-bs-placement="bottom"
                 title="Previous page"
                 (click)="previous()"
-                [disabled]="form.invalid || disablePrevious">
+                [disabled]="form.invalid || disablePrevious || disableFully">
           <i class="bi bi-caret-left-fill"></i>
         </button>
       </div>
@@ -26,6 +26,7 @@
               [(ngModel)]="page"
               pattern="[1-9]*"
               required
+              [disabled]="disableFully"
               #pageInput="ngModel"
               [ngClass]="{
               'invalid-outline':
@@ -44,6 +45,7 @@
                       name="pageSize"
                       class="form-control"
                       [(ngModel)]="pageSize"
+                      [disabled]="disableFully"
                       required>
                 @for (sizeOption of pageSizeOptions; track $index) {
                   <option [value]="sizeOption">{{ sizeOption }}</option>
@@ -60,7 +62,7 @@
                 data-bs-placement="bottom"
                 title="Next page"
                 (click)="next()"
-                [disabled]="form.invalid || disableNext">
+                [disabled]="form.invalid || disableNext || disableFully">
           <i class="bi bi-caret-right-fill"></i>
         </button>
       </div>

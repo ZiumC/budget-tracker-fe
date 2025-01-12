@@ -18,6 +18,9 @@ import {DatePickerModel} from "../../../models/FormModels";
 export class IndexComponent implements OnInit, OnDestroy {
   protected readonly DateUtils = DateUtils;
   protected readonly SpinnerSize = SpinnerSize;
+  private currentYear = new Date().getFullYear() - 1;
+  protected readonly firstDayOfYear = new Date(this.currentYear, 0, 1);
+  protected readonly lastDayOfYear = new Date(this.currentYear, 11, 31);
   protected requiredStatusCode: number = 200;
   protected budgets: BudgetModel[] | null;
   protected budget: BudgetModel | null;
@@ -29,24 +32,21 @@ export class IndexComponent implements OnInit, OnDestroy {
   protected loaders: any;
   protected idRefreshBudget: string;
   protected totalPages: number;
+  protected disablePagination: boolean;
 
   constructor(private httpService: HttpService) {
   }
 
   ngOnInit(): void {
-    const currentYear = new Date().getFullYear() - 1;
-    const fromDate = new Date(currentYear, 0, 1);
-    const toDate = new Date(currentYear, 11, 31);
-
     this.totalPages = 1;
     this.requestParams = new RequestParamModel();
     this.requestParams.page = 1;
     this.requestParams.pageSize = 12;
-    this.requestParams.fromDate = DateUtils.format(fromDate);
-    this.requestParams.toDate = DateUtils.format(toDate);
+    this.requestParams.fromDate = DateUtils.format(this.firstDayOfYear);
+    this.requestParams.toDate = DateUtils.format(this.lastDayOfYear);
 
-    this.fromDatePicker = DateUtils.convertToDatePicker(fromDate);
-    this.toDatePicker = DateUtils.convertToDatePicker(toDate);
+    this.fromDatePicker = DateUtils.convertToDatePicker(this.firstDayOfYear);
+    this.toDatePicker = DateUtils.convertToDatePicker(this.lastDayOfYear);
 
     this.budgets = [];
     this.subscriptions = [];
@@ -59,6 +59,8 @@ export class IndexComponent implements OnInit, OnDestroy {
       page: false,
       budget: false,
     }
+
+    this.disablePagination = false;
 
     this.getBudgets(this.requestParams);
   }
@@ -106,6 +108,13 @@ export class IndexComponent implements OnInit, OnDestroy {
     } else {
       input1.control.setErrors(null);
       input2.control.setErrors(null);
+    }
+
+    if (DateUtils.format(fromDate) == DateUtils.format(this.firstDayOfYear) &&
+      DateUtils.format(toDate) == DateUtils.format(this.lastDayOfYear)) {
+      this.disablePagination = false;
+    } else {
+      this.disablePagination = true;
     }
   }
 
