@@ -6,8 +6,11 @@ import {Component, Input, OnInit} from '@angular/core';
   styleUrl: './pagination.component.css'
 })
 export class PaginationComponent implements OnInit {
-  @Input() lastPage: number;
+  @Input() pageCount: number;
+  @Input() displayPageSize: boolean;
+  @Input() pageSizeOptions: number[];
   protected page: number;
+  protected pageSize: number;
   protected disablePrevious: boolean;
   protected disableNext: boolean;
 
@@ -15,17 +18,17 @@ export class PaginationComponent implements OnInit {
   ngOnInit(): void {
     this.page = 1;
 
-    if (this.page == this.lastPage) {
-      this.disableNext = true;
-    } else {
-      this.disableNext = false;
-    }
-
+    this.disableNext = this.page == this.pageCount;
     this.disablePrevious = true;
 
-    if (!this.lastPage){
-      this.disableNext = true;
-      this.disablePrevious = true;
+    if (!this.pageCount) {
+      throw new Error('Page count is not provided');
+    }
+
+    if (this.displayPageSize && this.pageSizeOptions == undefined) {
+      throw new Error('Page size options are not provided');
+    } else if (this.pageSizeOptions != undefined) {
+      this.pageSize = this.pageSizeOptions[0];
     }
   }
 
@@ -36,7 +39,7 @@ export class PaginationComponent implements OnInit {
       this.disablePrevious = true;
     }
 
-    if (this.page < this.lastPage) {
+    if (this.page < this.pageCount) {
       this.disableNext = false;
     }
   }
@@ -48,7 +51,7 @@ export class PaginationComponent implements OnInit {
       this.disablePrevious = false;
     }
 
-    if (this.page >= this.lastPage) {
+    if (this.page >= this.pageCount) {
       this.disableNext = true;
     }
   }
