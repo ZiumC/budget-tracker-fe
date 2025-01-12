@@ -94,6 +94,8 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
   }
 
   private updateBudget(): void {
+    this.budgetForm.dateStart.day++;
+    this.budgetForm.dateEnd.day++;
     const budgetForm = {
       name: this.budgetForm.name,
       dateStart: DateUtils.convertToDate(this.budgetForm.dateStart),
