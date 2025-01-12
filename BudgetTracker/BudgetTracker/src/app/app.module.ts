@@ -13,7 +13,7 @@ import { SpinnerComponent } from './ui/components/shared/spinner/spinner.compone
 import { ErrorComponent } from './ui/components/shared/error/error.component';
 import { BudgetComponent } from './ui/pages/budget/budget.component';
 import { IncomeModalComponent } from './ui/components/modals/income-modal/income-modal.component';
-import {FormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import { PaymentModalComponent } from './ui/components/modals/payment-modal/payment-modal.component';
 import { ModalErrorComponent } from './ui/components/shared/modal-error/modal-error.component';
 import {DatepickerFormatter} from "./util/datepicker.utils";
@@ -21,6 +21,7 @@ import {BudgetModalComponent} from "./ui/components/modals/budget-modal/budget-m
 import { DeleteModalComponent } from './ui/components/modals/delete-modal/delete-modal.component';
 import { SpinnerGrowComponent } from './ui/components/shared/spinner-grow/spinner-grow.component';
 import { PaginationComponent } from './ui/components/shared/pagination/pagination.component';
+import { BudgetsModalComponent } from './ui/components/modals/budgets-modal/budgets-modal.component';
 
 
 @NgModule({
@@ -39,6 +40,7 @@ import { PaginationComponent } from './ui/components/shared/pagination/paginatio
     DeleteModalComponent,
     SpinnerGrowComponent,
     PaginationComponent,
+    BudgetsModalComponent,
   ],
   imports: [
     BrowserModule,
@@ -47,6 +49,7 @@ import { PaginationComponent } from './ui/components/shared/pagination/paginatio
     HttpClientModule,
     CommonModule,
     FormsModule,
+    ReactiveFormsModule,
   ],
   providers: [ { provide: NgbDateParserFormatter, useClass: DatepickerFormatter },],
   bootstrap: [AppComponent],

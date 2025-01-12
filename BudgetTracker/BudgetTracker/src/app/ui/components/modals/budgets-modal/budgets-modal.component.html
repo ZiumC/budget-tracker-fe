@@ -1,0 +1,34 @@
+<ng-template #budgetsModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">
+      Add multiple budgets
+    </h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="modal.close()">
+    </button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="budgets" #form="ngForm">
+      <div formArrayName="fields">
+        <div *ngFor="let field of fields.controls; let i = index" [formGroupName]="i">
+          <label for="fieldName">Field {{ i + 1 }}</label>
+          <input formControlName="fieldName" id="fieldName" type="date"/>
+          <button type="button" (click)="remove(i)">Remove</button>
+        </div>
+      </div>
+      <button type="button" (click)="add()">Add Field</button>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button
+      [disabled]="form.invalid"
+      type="button"
+      class="btn btn-outline-secondary"
+      (click)="saveBudgets()">
+      Save
+    </button>
+  </div>
+</ng-template>
