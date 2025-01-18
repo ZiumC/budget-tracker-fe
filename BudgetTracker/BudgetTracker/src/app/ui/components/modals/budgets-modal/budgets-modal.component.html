@@ -70,7 +70,8 @@
         </div>
       }
       <div class="text-center">
-        <button type="button"
+        <button [disabled]="budgetFields.length >= budgetsLimit"
+                type="button"
                 class="btn btn-outline-primary"
                 data-bs-toggle="tooltip"
                 data-bs-placement="bottom"
@@ -80,6 +81,11 @@
         </button>
       </div>
     </form>
+    <div class="w-100 text-end">
+      <label [ngClass]="budgetFields.length >= budgetsLimit? 'text-danger' : 'text-secondary'">
+        {{ budgetFields.length }} / {{ budgetsLimit }}
+      </label>
+    </div>
   </div>
   <div class="modal-footer">
     <button

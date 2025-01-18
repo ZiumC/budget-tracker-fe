@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
-import {ModalOptions} from "../../../../util/modal.utils";
+import {ModalOptions, ModalSize} from "../../../../util/modal.utils";
 import {DatePickerModel} from "../../../../models/FormModels";
 import {DateUtils} from "../../../../util/date.utils";
 
@@ -12,6 +12,7 @@ import {DateUtils} from "../../../../util/date.utils";
 export class BudgetsModalComponent implements OnInit, OnDestroy {
   @ViewChild('budgetsModal') budgetsModal: any;
   protected budgetFields: DatePickerModel[];
+  protected readonly budgetsLimit: number = 2;
 
   constructor(private modalService: NgbModal) {
   }
@@ -25,11 +26,13 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
   }
 
   open(): void {
-    this.modalService.open(this.budgetsModal, ModalOptions.default());
+    this.modalService.open(this.budgetsModal, ModalOptions.default(ModalSize.BIG));
   }
 
   protected add(): void {
-    this.budgetFields.push(DateUtils.convertToDatePicker(new Date()))
+    if (this.budgetFields.length < this.budgetsLimit){
+      this.budgetFields.push(DateUtils.convertToDatePicker(new Date()))
+    }
   }
 
   protected remove(index: number): void {
