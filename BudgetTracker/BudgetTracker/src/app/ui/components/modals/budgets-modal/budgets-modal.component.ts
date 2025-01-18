@@ -43,6 +43,9 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
 
   open(): void {
     this.resetBudgetStatus();
+    this.budgetFields = [];
+    this.lastDate = new Date();
+    this.add();
     this.modalService.open(this.budgetsModal, ModalOptions.default(ModalSize.BIG));
   }
 
@@ -99,7 +102,7 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
           }));
       }
     }
-    setTimeout(() => {
+    setTimeout((): void => {
       this.disableForm = false;
     }, 100)
   }
