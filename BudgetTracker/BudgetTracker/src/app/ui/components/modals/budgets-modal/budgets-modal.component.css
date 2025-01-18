@@ -1,0 +1,7 @@
+.flex-container {
+  display: flex;
+  flex: 0 0 100%;
+  align-items: baseline;
+  justify-content: center;
+  width: 100%;
+}
