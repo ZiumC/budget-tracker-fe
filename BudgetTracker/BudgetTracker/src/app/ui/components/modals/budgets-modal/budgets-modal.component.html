@@ -26,6 +26,7 @@
               required
               #toDate="ngModel"
               ngbDatepicker
+              (ngModelChange)="setLastDate(i)"
               #dateEnd="ngbDatepicker"
               [ngClass]="{
                     'is-invalid':
