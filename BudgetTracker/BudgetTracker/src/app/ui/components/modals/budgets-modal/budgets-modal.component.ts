@@ -4,7 +4,7 @@ import {ModalOptions, ModalSize} from "../../../../util/modal.utils";
 import {DatePickerModel} from "../../../../models/FormModels";
 import {DateUtils} from "../../../../util/date.utils";
 import {HttpService} from "../../../../services/http/httpService";
-import {forkJoin, Subscription} from "rxjs";
+import {interval, Subscription, takeWhile} from "rxjs";
 import {HttpResponse} from "@angular/common/http";
 import {SubscriptionUtils} from "../../../../util/subscription.utils";
 
@@ -18,6 +18,7 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
   @ViewChild('budgetsModal') budgetsModal: any;
   @Output() indexPageEvent = new EventEmitter<boolean>();
   protected readonly budgetsLimit: number = 3;
+  protected readonly maxTime = 25;
   protected readonly DateUtils = DateUtils;
   protected subscriptions: Subscription[];
   protected budgetFields: DatePickerModel[];
@@ -25,6 +26,7 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
   protected disableForm: boolean;
   protected disableRemove: boolean;
   protected lastDate: Date;
+  protected timeLeft: number = this.maxTime;
 
   constructor(private modalService: NgbModal,
               private httpService: HttpService) {
@@ -49,7 +51,7 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
     this.budgetFields = [];
     this.lastDate = new Date();
     this.add();
-    this.modalService.open(this.budgetsModal, ModalOptions.default(ModalSize.BIG));
+    this.modalService.open(this.budgetsModal, ModalOptions.default());
   }
 
   protected add(): void {
@@ -98,26 +100,36 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
           }));
       }
     }
+    this.disableForm = false;
 
-    setTimeout((): void => {
-      this.disableForm = false;
-      let autoCloseModal = true;
-      for (const budgetResponse of this.budgetResponses) {
-        if (!this.isUndefined(budgetResponse) && !budgetResponse.status) {
-          autoCloseModal = false;
-        }
+    let autoCloseModal = true;
+    for (const budgetResponse of this.budgetResponses) {
+      if (!this.isUndefined(budgetResponse) && !budgetResponse.status) {
+        autoCloseModal = false;
       }
+    }
 
-      if (autoCloseModal) {
-        this.modalService.dismissAll();
-        this.indexPageEvent.emit(true);
-      }
-    }, 1000)
+    if (autoCloseModal) {
+      this.startTimer();
+    }
   }
 
   protected isUndefined(budgetStatus: BudgetStatus): boolean {
     return typeof budgetStatus.status === "undefined" &&
       typeof budgetStatus.message === "undefined"
+  }
+
+  protected startTimer(): void {
+    this.subscriptions
+      .push(interval(100)
+        .pipe(takeWhile((): boolean => this.timeLeft > 0))
+        .subscribe((): void => {
+          this.timeLeft--;
+          if (this.timeLeft == 0) {
+            this.modalService.dismissAll();
+            this.indexPageEvent.emit(true);
+          }
+        }));
   }
 
   private resetBudgetStatus(): void {
