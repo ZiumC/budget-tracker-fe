@@ -1,11 +1,12 @@
-import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {ModalOptions, ModalSize} from "../../../../util/modal.utils";
 import {DatePickerModel} from "../../../../models/FormModels";
 import {DateUtils} from "../../../../util/date.utils";
 import {HttpService} from "../../../../services/http/httpService";
-import {Subscription} from "rxjs";
+import {forkJoin, Subscription} from "rxjs";
 import {HttpResponse} from "@angular/common/http";
+import {SubscriptionUtils} from "../../../../util/subscription.utils";
 
 
 @Component({
@@ -15,11 +16,12 @@ import {HttpResponse} from "@angular/common/http";
 })
 export class BudgetsModalComponent implements OnInit, OnDestroy {
   @ViewChild('budgetsModal') budgetsModal: any;
+  @Output() indexPageEvent = new EventEmitter<boolean>();
   protected readonly budgetsLimit: number = 3;
   protected readonly DateUtils = DateUtils;
   protected subscriptions: Subscription[];
   protected budgetFields: DatePickerModel[];
-  protected budgetResponse: BudgetStatus[];
+  protected budgetResponses: BudgetStatus[];
   protected disableForm: boolean;
   protected disableRemove: boolean;
   protected lastDate: Date;
@@ -39,6 +41,7 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    SubscriptionUtils.unsubscribeAll(this.subscriptions);
   }
 
   open(): void {
@@ -79,32 +82,37 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
   protected saveBudgets(): void {
     this.disableRemove = true;
     this.disableForm = true;
+
     for (let i = 0; i < this.budgetFields.length; i++) {
-      if (!this.budgetResponse[i].status || this.isUndefined(this.budgetResponse[i])) {
+      if (!this.budgetResponses[i].status || this.isUndefined(this.budgetResponses[i])) {
         const date = this.budgetFields[i];
         const formatedDate = DateUtils.formatDatePicker(date);
         this.subscriptions.push(
           this.httpService.createBudget(formatedDate).subscribe({
             next: (response: HttpResponse<any>): void => {
-              const status = response.status;
-              const isSuccess = status >= 200 && status <= 299;
-              this.budgetResponse[i] = {
-                status: isSuccess,
-                message: status + " - Ok"
-              } as BudgetStatus;
+              this.onRequestSuccess(i, response);
             },
             error: (err): void => {
-              this.budgetResponse[i] = {
-                status: false,
-                message: err.status + " - " + err.error["title"]
-              } as BudgetStatus;
+              this.onRequestFailed(i, err);
             }
           }));
       }
     }
+
     setTimeout((): void => {
       this.disableForm = false;
-    }, 100)
+      let autoCloseModal = true;
+      for (const budgetResponse of this.budgetResponses) {
+        if (!this.isUndefined(budgetResponse) && !budgetResponse.status) {
+          autoCloseModal = false;
+        }
+      }
+
+      if (autoCloseModal) {
+        this.modalService.dismissAll();
+        this.indexPageEvent.emit(true);
+      }
+    }, 1000)
   }
 
   protected isUndefined(budgetStatus: BudgetStatus): boolean {
@@ -113,10 +121,26 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
   }
 
   private resetBudgetStatus(): void {
-    this.budgetResponse = [];
+    this.budgetResponses = [];
     for (let i = 0; i < this.budgetsLimit; i++) {
-      this.budgetResponse.push(new BudgetStatus());
+      this.budgetResponses.push(new BudgetStatus());
     }
+  }
+
+  private onRequestSuccess(index: number, response: HttpResponse<any>): void {
+    const status = response.status;
+    const isSuccess = status >= 200 && status <= 299;
+    this.budgetResponses[index] = {
+      status: isSuccess,
+      message: status + " - Ok"
+    } as BudgetStatus;
+  }
+
+  private onRequestFailed(index: number, err: any) {
+    this.budgetResponses[index] = {
+      status: false,
+      message: err.status + " - " + err.error["title"]
+    } as BudgetStatus;
   }
 }
 

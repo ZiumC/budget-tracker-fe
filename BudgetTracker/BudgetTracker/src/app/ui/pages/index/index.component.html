@@ -231,7 +231,8 @@
                       (budgetUpdateEvent)="onBudgetUpdate($event)">
 
     </app-budget-modal>
-    <app-budgets-modal #budgetsModal>
+    <app-budgets-modal #budgetsModal
+                       (indexPageEvent)="onPageIndex($event)">
 
     </app-budgets-modal>
     <app-delete-modal #deleteModal
