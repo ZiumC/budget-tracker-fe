@@ -19,8 +19,9 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
   protected readonly DateUtils = DateUtils;
   protected subscriptions: Subscription[];
   protected budgetFields: DatePickerModel[];
-  protected budgetStatus: BudgetStatus[];
+  protected budgetResponse: BudgetStatus[];
   protected disableForm: boolean;
+  protected disableRemove: boolean;
   protected lastDate: Date;
 
   constructor(private modalService: NgbModal,
@@ -33,6 +34,7 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
     this.budgetFields = [];
     this.lastDate = new Date();
     this.disableForm = false;
+    this.disableRemove = false;
     this.add();
   }
 
@@ -45,7 +47,6 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
   }
 
   protected add(): void {
-    this.resetBudgetStatus();
     if (this.budgetFields.length < this.budgetsLimit) {
       this.budgetFields.push(DateUtils.convertToDatePicker(this.lastDate));
       this.lastDate = new Date(this.lastDate.setMonth(this.lastDate.getMonth() + 1));
@@ -53,7 +54,6 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
   }
 
   protected remove(index: number): void {
-    this.resetBudgetStatus();
     const budgetToRemove = DateUtils.convertToDate(this.budgetFields[index]);
     this.budgetFields = this.budgetFields.filter((_, i) => i !== index);
     if (this.lastDate > budgetToRemove) {
@@ -62,8 +62,7 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
     this.lastDate = new Date(this.lastDate.setMonth(this.lastDate.getMonth() - 1));
   }
 
-  protected setLastDate(index: number): void {
-    this.resetBudgetStatus();
+  protected onDateChanged(index: number): void {
     let maxDate: Date = DateUtils.convertToDate(this.budgetFields[index]);
     for (const date of this.budgetFields) {
       const convertedDate = DateUtils.convertToDate(date);
@@ -75,49 +74,50 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
   }
 
   protected saveBudgets(): void {
+    this.disableRemove = true;
     this.disableForm = true;
     for (let i = 0; i < this.budgetFields.length; i++) {
-      const date = this.budgetFields[i];
-      const formatedDate = DateUtils.formatDatePicker(date);
-      this.subscriptions.push(
-        this.httpService.createBudget(formatedDate).subscribe({
-          next: (response: HttpResponse<any>): void => {
-            const status = response.status;
-            const isSuccess = status >= 200 && status <= 299;
-            this.budgetStatus[i] = {
-              isSuccess: isSuccess,
-              message: status + " - Ok"
-            } as BudgetStatus;
-          },
-          error: (err): void => {
-            this.budgetStatus[i] = {
-              isSuccess: false,
-              message: err.status + " - " + err.error["title"]
-            } as BudgetStatus;
-          }
-        }));
+      if (!this.budgetResponse[i].status || this.isUndefined(this.budgetResponse[i])) {
+        const date = this.budgetFields[i];
+        const formatedDate = DateUtils.formatDatePicker(date);
+        this.subscriptions.push(
+          this.httpService.createBudget(formatedDate).subscribe({
+            next: (response: HttpResponse<any>): void => {
+              const status = response.status;
+              const isSuccess = status >= 200 && status <= 299;
+              this.budgetResponse[i] = {
+                status: isSuccess,
+                message: status + " - Ok"
+              } as BudgetStatus;
+            },
+            error: (err): void => {
+              this.budgetResponse[i] = {
+                status: false,
+                message: err.status + " - " + err.error["title"]
+              } as BudgetStatus;
+            }
+          }));
+      }
     }
     setTimeout(() => {
       this.disableForm = false;
     }, 100)
-    console.log(this.budgetFields);
   }
 
   protected isUndefined(budgetStatus: BudgetStatus): boolean {
-    debugger
-    return typeof budgetStatus.isSuccess === "undefined" &&
+    return typeof budgetStatus.status === "undefined" &&
       typeof budgetStatus.message === "undefined"
   }
 
   private resetBudgetStatus(): void {
-    this.budgetStatus = [];
+    this.budgetResponse = [];
     for (let i = 0; i < this.budgetsLimit; i++) {
-      this.budgetStatus.push(new BudgetStatus());
+      this.budgetResponse.push(new BudgetStatus());
     }
   }
 }
 
 export class BudgetStatus {
-  isSuccess: boolean;
+  status: boolean;
   message: string;
 }

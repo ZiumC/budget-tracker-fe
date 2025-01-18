@@ -1,7 +1,3 @@
-.flex-container {
-  display: flex;
-  flex: 0 0 100%;
-  align-items: baseline;
-  justify-content: center;
-  width: 100%;
+.icon-big{
+  font-size: 2.5ex;
 }
