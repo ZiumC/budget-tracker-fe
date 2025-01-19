@@ -101,6 +101,7 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
         maxDate = convertedDate;
       }
     }
+
     this.lastDate = new Date(maxDate.setMonth(maxDate.getMonth() + 1));
   }
 
@@ -109,7 +110,7 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
     this.autoCloseModal = false;
 
     const budgetRequests = [];
-    debugger
+
     for (let i = 0; i < this.budgetDateFields.length; i++) {
       const field = this.budgetDateFields[i];
       const formatedDate = DateUtils.formatDatePicker(field);
