@@ -89,8 +89,6 @@ export class IndexComponent implements OnInit, OnDestroy {
     this.requestParams.fromDate = DateUtils.format(fromDate);
     this.requestParams.toDate = DateUtils.format(toDate);
 
-    console.log(this.requestParams);
-
     this.onPageIndex(true);
   }
 

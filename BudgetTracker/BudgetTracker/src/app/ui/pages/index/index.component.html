@@ -136,7 +136,8 @@
                     class="btn btn-success"
                     data-bs-toggle="tooltip"
                     data-bs-placement="bottom"
-                    title="Create multiple budgets">
+                    title="Create multiple budgets"
+                    (click)="budgetsModal.open()">
               <i class="bi bi-boxes"></i> Multiple
             </button>
           </div>
@@ -230,6 +231,10 @@
                       (budgetUpdateEvent)="onBudgetUpdate($event)">
 
     </app-budget-modal>
+    <app-budgets-modal #budgetsModal
+                       (indexPageEvent)="onPageIndex($event)">
+
+    </app-budgets-modal>
     <app-delete-modal #deleteModal
                       (indexPageEvent)="onPageIndex($event)">
 

@@ -29,4 +29,14 @@ export class DateUtils {
   static convertToDate(date: DatePickerModel): Date {
     return new Date(date.year, date.month - 1, date.day);
   }
+
+  static getMonthName(datePicker: DatePickerModel): string {
+    const convertedDate = this.convertToDate(datePicker);
+    return new Date(convertedDate).toLocaleString('default', {month: 'long'});
+  }
+
+  static formatDatePicker(datePicker: DatePickerModel): string {
+    const formatedDate = this.convertToDate(datePicker);
+    return this.format(formatedDate);
+  }
 }
