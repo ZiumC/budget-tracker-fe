@@ -47,7 +47,7 @@
               required
               #toDate="ngModel"
               ngbDatepicker
-              (ngModelChange)="onDateChanged(i)"
+              (ngModelChange)="onDateChanged(i, toDate)"
               #dateEnd="ngbDatepicker"
               [ngClass]="{
                     'is-invalid': toDate.invalid || (!isUndefinedStatus(budgetResponses[i]) && !budgetResponses[i].status),
@@ -69,6 +69,9 @@
                 </label>
                 <label *ngIf="toDate.errors?.['ngbDate']">
                   Date is invalid.
+                </label>
+                <label>
+                  This month is invalid, set another one
                 </label>
               </div>
             } @else if (toDate.valid) {
@@ -96,7 +99,7 @@
           <div class="py-2"></div>
         }
       }
-      @if (disableForm) {
+      @if (disableForm || form.invalid) {
         <div class="py-2"></div>
       }
       <div class="text-center">

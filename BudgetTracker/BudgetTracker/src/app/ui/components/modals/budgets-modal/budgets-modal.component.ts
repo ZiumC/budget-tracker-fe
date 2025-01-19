@@ -17,7 +17,7 @@ import {SubscriptionUtils} from "../../../../util/subscription.utils";
 export class BudgetsModalComponent implements OnInit, OnDestroy {
   @ViewChild('budgetsModal') budgetsModal: any;
   @Output() indexPageEvent = new EventEmitter<boolean>();
-  protected readonly budgetsLimit: number = 3;
+  protected readonly budgetsLimit: number = 6;
   protected readonly maxTime = 25;
   protected readonly DateUtils = DateUtils;
   protected subscriptions: Subscription[];
@@ -81,8 +81,20 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
     this.lastDate = new Date(this.lastDate.setMonth(this.lastDate.getMonth() - 1));
   }
 
-  protected onDateChanged(index: number): void {
-    let maxDate: Date = DateUtils.convertToDate(this.budgetDateFields[index]);
+  protected onDateChanged(index: number, ngModel: any): void {
+    const changedField = this.budgetDateFields[index];
+
+    for (let i = 0; i < this.budgetDateFields.length; i++) {
+      const field = this.budgetDateFields[i];
+      if (field.month == changedField.month && i != index) {
+        ngModel.control.setErrors({invalidMonth: 'Invalid month'});
+        i = this.budgetDateFields.length;
+      } else {
+        ngModel.control.setErrors(null);
+      }
+    }
+
+    let maxDate: Date = DateUtils.convertToDate(changedField);
     for (const date of this.budgetDateFields) {
       const convertedDate = DateUtils.convertToDate(date);
       if (convertedDate > maxDate) {
