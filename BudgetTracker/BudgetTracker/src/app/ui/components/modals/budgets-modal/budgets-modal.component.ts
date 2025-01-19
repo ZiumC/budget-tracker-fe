@@ -1,6 +1,6 @@
 import {Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
-import {ModalOptions, ModalSize} from "../../../../util/modal.utils";
+import {ModalOptions} from "../../../../util/modal.utils";
 import {DatePickerModel} from "../../../../models/FormModels";
 import {DateUtils} from "../../../../util/date.utils";
 import {HttpService} from "../../../../services/http/httpService";
@@ -24,7 +24,8 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
   protected budgetDateFields: DatePickerModel[];
   protected budgetResponses: BudgetStatus[];
   protected disableForm: boolean;
-  protected disableRemove: boolean;
+  protected autoCloseModal: boolean;
+  protected disableTimer: boolean;
   protected lastDate: Date;
   protected timeLeft: number;
 
@@ -38,7 +39,8 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
     this.budgetDateFields = [];
     this.lastDate = new Date();
     this.disableForm = false;
-    this.disableRemove = false;
+    this.autoCloseModal = false;
+    this.disableTimer = false;
     this.timeLeft = this.maxTime;
     this.add();
   }
@@ -52,11 +54,18 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
     this.budgetDateFields = [];
     this.lastDate = new Date();
     this.timeLeft = this.maxTime;
+    this.disableTimer = false;
+    this.autoCloseModal = false;
+    this.disableForm = false;
     this.add();
     this.modalService.open(this.budgetsModal, ModalOptions.default());
   }
 
   protected add(): void {
+    if (this.budgetDateFields.length == 0) {
+      this.lastDate = new Date();
+    }
+
     if (this.budgetDateFields.length < this.budgetsLimit) {
       this.budgetDateFields.push(DateUtils.convertToDatePicker(this.lastDate));
       this.lastDate = new Date(this.lastDate.setMonth(this.lastDate.getMonth() + 1));
@@ -85,13 +94,15 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
 
   protected saveBudgets(): void {
     this.disableForm = true;
+    this.autoCloseModal = false;
+
     const budgetRequests = [];
     debugger
     for (let i = 0; i < this.budgetDateFields.length; i++) {
       const field = this.budgetDateFields[i];
       const formatedDate = DateUtils.formatDatePicker(field);
       if (!this.budgetResponses[i].status ||
-        this.isUndefined(this.budgetResponses[i])) {
+        this.isUndefinedStatus(this.budgetResponses[i])) {
         budgetRequests.push(this.httpService.createBudget(formatedDate).pipe(
           catchError((err): Observable<HttpResponse<any>> => {
             return of(err);
@@ -123,13 +134,13 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
           }
         },
         complete: (): void => {
-          let autoCloseModal = true;
+          this.autoCloseModal = true;
           this.budgetResponses.forEach((value): void => {
-            if (!this.isUndefined(value) && !value.status) {
-              autoCloseModal = false;
+            if (!this.isUndefinedStatus(value) && !value.status) {
+              this.autoCloseModal = false;
             }
           });
-          if (autoCloseModal) {
+          if (this.autoCloseModal) {
             this.startTimer();
           }
         }
@@ -138,7 +149,23 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
     this.disableForm = false;
   }
 
-  protected isUndefined(budgetStatus: BudgetStatus): boolean {
+  protected close(modal: any): void {
+    let pageReload = false;
+    for (const budgetResponse of this.budgetResponses) {
+      if (!this.isUndefinedStatus(budgetResponse)) {
+        pageReload = true;
+      }
+    }
+
+    if (pageReload) {
+      this.disableTimer = true;
+      this.indexPageEvent.emit(true);
+    }
+
+    modal.close();
+  }
+
+  protected isUndefinedStatus(budgetStatus: BudgetStatus): boolean {
     return typeof budgetStatus.status === "undefined" &&
       typeof budgetStatus.message === "undefined"
   }
@@ -149,6 +176,9 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
         .pipe(takeWhile((): boolean => this.timeLeft > 0))
         .subscribe((): void => {
           this.timeLeft--;
+          if (this.disableTimer) {
+            this.timeLeft = 0;
+          }
           if (this.timeLeft == 0) {
             this.modalService.dismissAll();
             this.indexPageEvent.emit(true);

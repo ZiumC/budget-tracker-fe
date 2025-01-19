@@ -7,14 +7,14 @@
       type="button"
       class="btn-close"
       aria-label="Close"
-      (click)="modal.close()">
+      (click)="close(modal)">
     </button>
   </div>
   <div class="modal-body">
     <form #form="ngForm">
       @for (budgetField of budgetDateFields; let i = $index; track i) {
         <div class="d-flex align-items-baseline">
-          @if (!isUndefined(budgetResponses[i])) {
+          @if (!isUndefinedStatus(budgetResponses[i])) {
             @if (budgetResponses[i].status) {
               <div class="text-success"
                    data-bs-toggle="tooltip"
@@ -50,7 +50,7 @@
               (ngModelChange)="onDateChanged(i)"
               #dateEnd="ngbDatepicker"
               [ngClass]="{
-                    'is-invalid': toDate.invalid || (!isUndefined(budgetResponses[i]) && !budgetResponses[i].status),
+                    'is-invalid': toDate.invalid || (!isUndefinedStatus(budgetResponses[i]) && !budgetResponses[i].status),
                     'is-valid': toDate.valid }"/>
             <div class="input-group-append">
               <button class="btn btn-outline-secondary bi bi-calendar3"
@@ -81,7 +81,8 @@
           <div class="mx-2"></div>
           <div>
             <button type="button"
-                    [disabled]="disableForm || (!isUndefined(budgetResponses[i]) && budgetResponses[i].status)"
+                    [disabled]="disableForm ||
+                     (!isUndefinedStatus(budgetResponses[i]) && budgetResponses[i].status)"
                     class="btn btn-outline-danger"
                     data-bs-toggle="tooltip"
                     data-bs-placement="bottom"
@@ -115,7 +116,8 @@
         {{ budgetDateFields.length }} / {{ budgetsLimit }}
       </label>
     </div>
-      <div class="w-25 mx-auto">
+    <ng-template [ngIf]="autoCloseModal">
+      <div class="w-50 mx-auto">
         <div class="progress">
           <div class="progress-bar bg-success"
                role="progressbar"
@@ -126,7 +128,8 @@
 
           </div>
         </div>
-    </div>
+      </div>
+    </ng-template>
   </div>
   <div class="modal-footer">
     <button
