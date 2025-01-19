@@ -4,7 +4,7 @@ import {ModalOptions, ModalSize} from "../../../../util/modal.utils";
 import {DatePickerModel} from "../../../../models/FormModels";
 import {DateUtils} from "../../../../util/date.utils";
 import {HttpService} from "../../../../services/http/httpService";
-import {interval, Subscription, takeWhile} from "rxjs";
+import {catchError, forkJoin, interval, Observable, of, Subscription, takeWhile} from "rxjs";
 import {HttpResponse} from "@angular/common/http";
 import {SubscriptionUtils} from "../../../../util/subscription.utils";
 
@@ -21,12 +21,12 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
   protected readonly maxTime = 25;
   protected readonly DateUtils = DateUtils;
   protected subscriptions: Subscription[];
-  protected budgetFields: DatePickerModel[];
+  protected budgetDateFields: DatePickerModel[];
   protected budgetResponses: BudgetStatus[];
   protected disableForm: boolean;
   protected disableRemove: boolean;
   protected lastDate: Date;
-  protected timeLeft: number = this.maxTime;
+  protected timeLeft: number;
 
   constructor(private modalService: NgbModal,
               private httpService: HttpService) {
@@ -35,10 +35,11 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.subscriptions = [];
     this.resetBudgetStatus();
-    this.budgetFields = [];
+    this.budgetDateFields = [];
     this.lastDate = new Date();
     this.disableForm = false;
     this.disableRemove = false;
+    this.timeLeft = this.maxTime;
     this.add();
   }
 
@@ -48,22 +49,23 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
 
   open(): void {
     this.resetBudgetStatus();
-    this.budgetFields = [];
+    this.budgetDateFields = [];
     this.lastDate = new Date();
+    this.timeLeft = this.maxTime;
     this.add();
     this.modalService.open(this.budgetsModal, ModalOptions.default());
   }
 
   protected add(): void {
-    if (this.budgetFields.length < this.budgetsLimit) {
-      this.budgetFields.push(DateUtils.convertToDatePicker(this.lastDate));
+    if (this.budgetDateFields.length < this.budgetsLimit) {
+      this.budgetDateFields.push(DateUtils.convertToDatePicker(this.lastDate));
       this.lastDate = new Date(this.lastDate.setMonth(this.lastDate.getMonth() + 1));
     }
   }
 
   protected remove(index: number): void {
-    const budgetToRemove = DateUtils.convertToDate(this.budgetFields[index]);
-    this.budgetFields = this.budgetFields.filter((_, i) => i !== index);
+    const budgetToRemove = DateUtils.convertToDate(this.budgetDateFields[index]);
+    this.budgetDateFields = this.budgetDateFields.filter((_, i) => i !== index);
     if (this.lastDate > budgetToRemove) {
       this.lastDate = new Date(this.lastDate.setMonth(this.lastDate.getMonth() + 1));
     }
@@ -71,8 +73,8 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
   }
 
   protected onDateChanged(index: number): void {
-    let maxDate: Date = DateUtils.convertToDate(this.budgetFields[index]);
-    for (const date of this.budgetFields) {
+    let maxDate: Date = DateUtils.convertToDate(this.budgetDateFields[index]);
+    for (const date of this.budgetDateFields) {
       const convertedDate = DateUtils.convertToDate(date);
       if (convertedDate > maxDate) {
         maxDate = convertedDate;
@@ -82,36 +84,58 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
   }
 
   protected saveBudgets(): void {
-    this.disableRemove = true;
     this.disableForm = true;
+    const budgetRequests = [];
+    debugger
+    for (let i = 0; i < this.budgetDateFields.length; i++) {
+      const field = this.budgetDateFields[i];
+      const formatedDate = DateUtils.formatDatePicker(field);
+      if (!this.budgetResponses[i].status ||
+        this.isUndefined(this.budgetResponses[i])) {
+        budgetRequests.push(this.httpService.createBudget(formatedDate).pipe(
+          catchError((err): Observable<HttpResponse<any>> => {
+            return of(err);
+          })
+        ))
+      }
+    }
 
-    for (let i = 0; i < this.budgetFields.length; i++) {
-      if (!this.budgetResponses[i].status || this.isUndefined(this.budgetResponses[i])) {
-        const date = this.budgetFields[i];
-        const formatedDate = DateUtils.formatDatePicker(date);
-        this.subscriptions.push(
-          this.httpService.createBudget(formatedDate).subscribe({
-            next: (response: HttpResponse<any>): void => {
-              this.onRequestSuccess(i, response);
-            },
-            error: (err): void => {
-              this.onRequestFailed(i, err);
+    this.subscriptions.push(
+      forkJoin(budgetRequests).subscribe({
+        next: (responses): void => {
+          let newRequestIndex = 0;
+          //iterate through last requests
+          //that was made by clicking save btn
+          for (let i = 0; i < this.budgetResponses.length; i++) {
+            let budgetResponse = this.budgetResponses[i];
+            //when previous request status was invalid
+            // - retry that request. All success requests
+            // are skipping
+            if (!budgetResponse.status) {
+              const response = responses[newRequestIndex];
+              if (response.status >= 200 && response.status <= 299) {
+                this.onRequestSuccess(i, response);
+              } else {
+                this.onRequestFailed(i, response);
+              }
+              newRequestIndex++;
             }
-          }));
-      }
-    }
+          }
+        },
+        complete: (): void => {
+          let autoCloseModal = true;
+          this.budgetResponses.forEach((value): void => {
+            if (!this.isUndefined(value) && !value.status) {
+              autoCloseModal = false;
+            }
+          });
+          if (autoCloseModal) {
+            this.startTimer();
+          }
+        }
+      }));
+
     this.disableForm = false;
-
-    let autoCloseModal = true;
-    for (const budgetResponse of this.budgetResponses) {
-      if (!this.isUndefined(budgetResponse) && !budgetResponse.status) {
-        autoCloseModal = false;
-      }
-    }
-
-    if (autoCloseModal) {
-      this.startTimer();
-    }
   }
 
   protected isUndefined(budgetStatus: BudgetStatus): boolean {

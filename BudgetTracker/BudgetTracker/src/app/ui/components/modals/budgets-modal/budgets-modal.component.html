@@ -12,7 +12,7 @@
   </div>
   <div class="modal-body">
     <form #form="ngForm">
-      @for (budgetField of budgetFields; let i = $index; track i) {
+      @for (budgetField of budgetDateFields; let i = $index; track i) {
         <div class="d-flex align-items-baseline">
           @if (!isUndefined(budgetResponses[i])) {
             @if (budgetResponses[i].status) {
@@ -40,7 +40,7 @@
               id="budget-date-{{i}}"
               name="budget-date-{{i}}"
               class="form-control"
-              [(ngModel)]="budgetFields[i]"
+              [(ngModel)]="budgetDateFields[i]"
               [disabled]="disableForm || budgetResponses[i].status"
               container="body"
               placement="bottom-end"
@@ -81,7 +81,7 @@
           <div class="mx-2"></div>
           <div>
             <button type="button"
-                    [disabled]="disableForm || disableRemove"
+                    [disabled]="disableForm || (!isUndefined(budgetResponses[i]) && budgetResponses[i].status)"
                     class="btn btn-outline-danger"
                     data-bs-toggle="tooltip"
                     data-bs-placement="bottom"
@@ -99,7 +99,7 @@
         <div class="py-2"></div>
       }
       <div class="text-center">
-        <button [disabled]="budgetFields.length >= budgetsLimit || disableForm || form.invalid"
+        <button [disabled]="budgetDateFields.length >= budgetsLimit || disableForm || form.invalid"
                 type="button"
                 class="btn btn-outline-primary"
                 data-bs-toggle="tooltip"
@@ -111,8 +111,8 @@
       </div>
     </form>
     <div class="w-100 text-end">
-      <label [ngClass]="budgetFields.length >= budgetsLimit? 'text-danger' : 'text-secondary'">
-        {{ budgetFields.length }} / {{ budgetsLimit }}
+      <label [ngClass]="budgetDateFields.length >= budgetsLimit? 'text-danger' : 'text-secondary'">
+        {{ budgetDateFields.length }} / {{ budgetsLimit }}
       </label>
     </div>
       <div class="w-25 mx-auto">
