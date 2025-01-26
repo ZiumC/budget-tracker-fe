@@ -171,8 +171,8 @@
                               [pageCount]="incomeTotalPages!"
                               [displayPageSize]="true"
                               [pageSizeOptions]="[6,9,12]"
-                              (pageSizeEvent)="onPageSizeEvent($event)"
-                              (pageEvent)="onPageEvent($event)">
+                              (pageSizeEvent)="onPageSizeEvent($event, true)"
+                              (pageEvent)="onPageEvent($event, true)">
 
               </app-pagination>
             }
@@ -328,6 +328,16 @@
                   </div>
                 </div>
               </div>
+            }
+            @if (paymentTotalPages! > 0) {
+              <app-pagination [name]="'payment-paginate'"
+                              [pageCount]="paymentTotalPages!"
+                              [displayPageSize]="true"
+                              [pageSizeOptions]="[6,9,12]"
+                              (pageSizeEvent)="onPageSizeEvent($event, false)"
+                              (pageEvent)="onPageEvent($event, false)">
+
+              </app-pagination>
             }
           </ng-template>
           <ng-template #errorPaymentsBlock>
