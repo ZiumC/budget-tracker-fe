@@ -9,6 +9,7 @@ import {DateUtils} from "../../../util/date.utils";
 import {RequestParamModel} from "../../../models/RequestParamModel";
 import {SpinnerSize} from "../../components/shared/spinner/spinner.component";
 import {DatePickerModel} from "../../../models/FormModels";
+import {CookieUtils} from "../../../util/cookie.utils";
 
 @Component({
   selector: 'app-index',
@@ -16,14 +17,18 @@ import {DatePickerModel} from "../../../models/FormModels";
   styleUrl: './index.component.css'
 })
 export class IndexComponent implements OnInit, OnDestroy {
+  private readonly cookieUtils = new CookieUtils();
   protected readonly DateUtils = DateUtils;
   protected readonly SpinnerSize = SpinnerSize;
+  protected readonly fromDateName: string = "from-date"
+  protected readonly toDateName: string = "to-date"
   protected requiredStatusCode: number = 200;
   protected budgets: BudgetModel[] | null;
   protected budget: BudgetModel | null;
   protected subscriptions: Subscription[];
   protected requestParams: RequestParamModel;
   protected fromDatePicker: DatePickerModel;
+
   protected toDatePicker: DatePickerModel;
   protected errorModels: any;
   protected loaders: any;
@@ -36,15 +41,37 @@ export class IndexComponent implements OnInit, OnDestroy {
     const currentYear = new Date().getFullYear();
     const firstDayOfYear = new Date(currentYear, 0, 1);
     const lastDayOfYear = new Date(currentYear, 11, 31);
+    debugger
+
+    const readFromDate = this.readDateFromCookie(this.fromDateName);
+    const readToDate = this.readDateFromCookie(this.toDateName);
 
     this.requestParams = new RequestParamModel();
     this.requestParams.page = 1;
     this.requestParams.pageSize = 36;
-    this.requestParams.fromDate = DateUtils.format(firstDayOfYear);
-    this.requestParams.toDate = DateUtils.format(lastDayOfYear);
 
-    this.fromDatePicker = DateUtils.convertToDatePicker(firstDayOfYear);
-    this.toDatePicker = DateUtils.convertToDatePicker(lastDayOfYear);
+    if (readFromDate) {
+      this.fromDatePicker = readFromDate;
+      this.requestParams.fromDate = DateUtils.format(DateUtils.convertToDate(readFromDate));
+    } else {
+      this.fromDatePicker = DateUtils.convertToDatePicker(firstDayOfYear);
+      this.requestParams.fromDate = DateUtils.format(firstDayOfYear);
+    }
+
+    if (readToDate) {
+      this.toDatePicker = readToDate;
+      this.requestParams.toDate = DateUtils.format(DateUtils.convertToDate(readToDate));
+    } else {
+      this.toDatePicker = DateUtils.convertToDatePicker(lastDayOfYear);
+      this.requestParams.toDate = DateUtils.format(lastDayOfYear);
+    }
+
+    // this.requestParams.fromDate = DateUtils.format(firstDayOfYear);
+    // this.requestParams.toDate = DateUtils.format(lastDayOfYear);
+    //
+    //
+    // this.fromDatePicker = DateUtils.convertToDatePicker(firstDayOfYear);
+    // this.toDatePicker = DateUtils.convertToDatePicker(lastDayOfYear);
 
     this.budgets = [];
     this.subscriptions = [];
@@ -65,7 +92,7 @@ export class IndexComponent implements OnInit, OnDestroy {
     SubscriptionUtils.unsubscribeAll(this.subscriptions);
   }
 
-  protected onPageIndex(reload: boolean): void {
+  protected onPageReload(reload: boolean): void {
     if (reload) {
       this.markPageAsLoaded(false);
       this.errorModels.budgets = new ErrorModel();
@@ -89,7 +116,10 @@ export class IndexComponent implements OnInit, OnDestroy {
     this.requestParams.fromDate = DateUtils.format(fromDate);
     this.requestParams.toDate = DateUtils.format(toDate);
 
-    this.onPageIndex(true);
+    this.saveDateToCookie(this.fromDateName, fromDate);
+    this.saveDateToCookie(this.toDateName, toDate);
+
+    this.onPageReload(true);
   }
 
   protected validateDate(input1: any, input2: any): void {
@@ -162,5 +192,15 @@ export class IndexComponent implements OnInit, OnDestroy {
     setTimeout((): void => {
       this.loaders.budget = value;
     }, value ? 500 : 0)
+  }
+
+  private saveDateToCookie(dateName: string,
+                           date: Date): void {
+    this.cookieUtils.setCookie(dateName, date.toString());
+  }
+
+  private readDateFromCookie(dateName: string): DatePickerModel | null {
+    const cookieDate = this.cookieUtils.getCookie(dateName);
+    return cookieDate ? DateUtils.convertToDatePicker(new Date(cookieDate)) : null;
   }
 }

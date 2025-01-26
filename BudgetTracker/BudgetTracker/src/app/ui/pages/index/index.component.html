@@ -227,16 +227,16 @@
       </ng-template>
     </ng-template>
     <app-budget-modal #budgetModal
-                      (indexPageEvent)="onPageIndex($event)"
+                      (indexPageEvent)="onPageReload($event)"
                       (budgetUpdateEvent)="onBudgetUpdate($event)">
 
     </app-budget-modal>
     <app-budgets-modal #budgetsModal
-                       (indexPageEvent)="onPageIndex($event)">
+                       (indexPageEvent)="onPageReload($event)">
 
     </app-budgets-modal>
     <app-delete-modal #deleteModal
-                      (indexPageEvent)="onPageIndex($event)">
+                      (indexPageEvent)="onPageReload($event)">
 
     </app-delete-modal>
   </div>
