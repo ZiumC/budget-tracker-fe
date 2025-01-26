@@ -1,6 +1,6 @@
-import {Component, HostListener, OnDestroy, OnInit} from '@angular/core';
+import {Component, HostListener, OnDestroy, OnInit, Output} from '@angular/core';
 import {SpinnerSize} from "../../components/shared/spinner/spinner.component";
-import {BudgetModel, IncomeModel, PaymentModel} from "../../../models/RequestModels";
+import {BudgetModel, IncomeModel, PageModel, PaymentModel} from "../../../models/RequestModels";
 import {Subscription} from "rxjs";
 import {ErrorModel} from "../../../models/ErrorModel";
 import {RequestParamModel} from "../../../models/RequestParamModel";
@@ -28,13 +28,15 @@ export class BudgetComponent implements OnInit, OnDestroy {
   protected subscriptions: Subscription[];
   protected selectedIncome: IncomeModel;
   protected selectedPayment: PaymentModel;
-  protected requestParam: RequestParamModel;
-  protected idBudget: string;
+  protected requestIncomeParam: RequestParamModel;
+  protected requestPaymentParam: RequestParamModel;
 
+  protected idBudget: string;
   protected loaders: any;
   protected requiredStatusCode: any;
   protected errorModels: any;
   protected commentRows: number;
+  protected incomeTotalPages: number | undefined;
 
   public innerWidth: any;
 
@@ -71,10 +73,18 @@ export class BudgetComponent implements OnInit, OnDestroy {
     this.innerWidth = window.innerWidth;
     this.subscriptions = [];
 
-    this.requestParam = new RequestParamModel({
+    this.requestIncomeParam = new RequestParamModel({
       page: 1,
-      pageSize: 15
+      pageSize: 6,
+      orderBy: "ASC"
     })
+
+    this.requestPaymentParam = new RequestParamModel({
+      page: 1,
+      pageSize: 1
+    })
+
+    this.incomeTotalPages = 0;
 
     this.activatedRoute.queryParams.subscribe((params: Params): void => {
       this.idBudget = params['id'];
@@ -108,7 +118,6 @@ export class BudgetComponent implements OnInit, OnDestroy {
   protected onRefreshIncome(refresh: boolean): void {
     if (refresh) {
       this.markIncomesAsLoaded(false);
-      this.errorModels.incomes = new ErrorModel();
       this.getBudgetIncomes();
     }
   }
@@ -116,7 +125,6 @@ export class BudgetComponent implements OnInit, OnDestroy {
   protected onRefreshPayment(refresh: boolean): void {
     if (refresh) {
       this.markPaymentsAsLoaded(false);
-      this.errorModels.payments = new ErrorModel();
       this.getBudgetPayments();
     }
   }
@@ -125,6 +133,17 @@ export class BudgetComponent implements OnInit, OnDestroy {
     if (redirect) {
       this.router.navigate(['/']);
     }
+  }
+
+  protected onPageSizeEvent(pageSize: number): void {
+    this.requestIncomeParam.pageSize = pageSize;
+    this.requestIncomeParam.page = 1;
+    this.onRefreshIncome(true);
+  }
+
+  protected onPageEvent(page: number): void {
+    this.requestIncomeParam.page = page;
+    this.onRefreshIncome(true);
   }
 
   private onRequestFailed(errorModel: ErrorModel, err: any): void {
@@ -136,7 +155,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
   private getBudgetIncomes(): void {
     this.subscriptions.push(
       this.httpService.getBudgetIncomes(
-        this.requestParam,
+        this.requestIncomeParam,
         this.idBudget).subscribe({
         next: (response: HttpResponse<IncomeModel[]>): void => {
           this.incomes = Sort.incomeSurplusFirst(response.body);
@@ -147,6 +166,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
           this.markIncomesAsLoaded(true);
         },
         complete: (): void => {
+          this.getIncomeTotalPages();
           this.markIncomesAsLoaded(true);
         }
       })
@@ -156,7 +176,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
   private getBudgetPayments(): void {
     this.subscriptions.push(
       this.httpService.getBudgetPayments(
-        this.requestParam,
+        this.requestPaymentParam,
         this.idBudget).subscribe({
         next: (response: HttpResponse<PaymentModel[]>): void => {
           this.payments = Sort.incomePaidFirst(response.body);
@@ -168,6 +188,18 @@ export class BudgetComponent implements OnInit, OnDestroy {
         },
         complete: (): void => {
           this.markPaymentsAsLoaded(true);
+        }
+      })
+    )
+  }
+
+  private getIncomeTotalPages(): void {
+    this.subscriptions.push(
+      this.httpService.getIncomePages(
+        this.requestIncomeParam,
+        this.idBudget).subscribe({
+        next: (response: HttpResponse<PageModel>): void => {
+          this.incomeTotalPages = response.body?.pages;
         }
       })
     )

@@ -70,7 +70,7 @@
       <div class="card-header">
         Incomes
       </div>
-      <div class="card-body">
+      <div id="incomes-card" class="card-body">
         <ng-template [ngIf]="!loaders.incomes"
                      [ngIfElse]="loadedIncomesBlock">
           <app-spinner-grow></app-spinner-grow>
@@ -166,6 +166,16 @@
                 </div>
               </div>
             }
+            @if (incomeTotalPages! > 0) {
+              <app-pagination [name]="'income-paginate'"
+                              [pageCount]="incomeTotalPages!"
+                              [displayPageSize]="true"
+                              [pageSizeOptions]="[6,9,12]"
+                              (pageSizeEvent)="onPageSizeEvent($event)"
+                              (pageEvent)="onPageEvent($event)">
+
+              </app-pagination>
+            }
           </ng-template>
           <ng-template #errorIncomeBlock>
             <app-error [errorModel]="errorModels.incomes"
@@ -180,7 +190,7 @@
       <div class="card-header">
         Payments
       </div>
-      <div class="card-body">
+      <div id="payments-card" class="card-body">
         <ng-template [ngIf]="!loaders.payments"
                      [ngIfElse]="loadedPaymentsBlock">
           <app-spinner-grow></app-spinner-grow>

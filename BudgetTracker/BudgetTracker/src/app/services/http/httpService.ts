@@ -64,18 +64,18 @@ export class HttpService {
     )
   }
 
-  public getBudgetIncomes(requestModel: RequestParamModel, idBudget: string):
+  public getBudgetIncomes(requestParams: RequestParamModel, idBudget: string):
     Observable<HttpResponse<IncomeModel[]>> {
     return this.httpClient.get<IncomeModel[]>(
-      UrlApi.budgetIncomes(requestModel, idBudget),
+      UrlApi.budgetIncomes(requestParams, idBudget),
       {observe: 'response'}
     );
   }
 
-  public getBudgetPayments(requestModel: RequestParamModel, idBudget: string):
+  public getBudgetPayments(requestParams: RequestParamModel, idBudget: string):
     Observable<HttpResponse<PaymentModel[]>> {
     return this.httpClient.get<PaymentModel[]>(
-      UrlApi.budgetPayments(requestModel, idBudget),
+      UrlApi.budgetPayments(requestParams, idBudget),
       {observe: 'response'}
     )
   }
@@ -111,6 +111,14 @@ export class HttpService {
     Observable<HttpResponse<{}>> {
     return this.httpClient.delete(
       UrlApi.incomeId(idIncome),
+      {observe: 'response'}
+    )
+  }
+
+  public getIncomePages(requestParams: RequestParamModel, idBudget: string):
+    Observable<HttpResponse<PageModel>> {
+    return this.httpClient.get<PageModel>(
+      UrlApi.paginationIncomes(requestParams, idBudget),
       {observe: 'response'}
     )
   }

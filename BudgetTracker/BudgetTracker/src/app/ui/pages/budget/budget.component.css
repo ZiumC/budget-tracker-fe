@@ -46,6 +46,10 @@ label {
   display: table-row;
 }
 
+#incomes-card, #payments-card {
+  background-color: var(--bs-card-cap-bg);
+}
+
 @media only screen and (max-width: 770px) {
   table tr th:first-child {
     width: 60%;
