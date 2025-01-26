@@ -77,7 +77,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
 
     this.requestIncomeParam = new RequestParamModel({
       page: 1,
-      pageSize: 1
+      pageSize: 6
     })
 
     this.requestPaymentParam = new RequestParamModel({
@@ -138,13 +138,19 @@ export class BudgetComponent implements OnInit, OnDestroy {
     }
   }
 
-
-  protected onPageSizeEvent(pageSize: number): number {
+  protected onPageSizeEvent(pageSize: number): void {
     this.requestIncomeParam.pageSize = pageSize;
+    this.requestIncomeParam.page = 1;
     this.disablePagination = true;
     this.onRefreshIncome(true);
     this.disablePagination = false;
-    return pageSize;
+  }
+
+  protected onPageEvent(page: number): void {
+    this.requestIncomeParam.page = page;
+    this.disablePagination = true;
+    this.onRefreshIncome(true);
+    this.disablePagination = false;
   }
 
   private onRequestFailed(errorModel: ErrorModel, err: any): void {

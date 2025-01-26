@@ -19,13 +19,15 @@ export class PaginationComponent implements OnInit {
   protected disableNext: boolean;
   protected isInvalidRange: boolean;
   private pageSizeName: string;
+  private pageName: string;
 
 
   ngOnInit(): void {
     this.pageSizeName = this.name + "-pageSize";
+    this.pageName = this.name + "-page";
 
-    this.page = 1;
-    this.disablePrevious = true;
+    this.page = this.getPage();
+    this.disablePrevious = this.page <= 1;
     this.disableNext = this.page == this.pageCount;
 
     if (!this.pageCount) {
@@ -49,6 +51,11 @@ export class PaginationComponent implements OnInit {
 
   protected onPageChanged(): void {
     this.isInvalidRange = this.page < 1 || this.page > this.pageCount;
+    if (!this.isInvalidRange) {
+      localStorage.setItem(this.pageName, this.page.toString());
+      this.onPageSizeChange();
+      this.pageEvent.emit(this.page);
+    }
   }
 
   protected previous(): void {
@@ -62,9 +69,6 @@ export class PaginationComponent implements OnInit {
     }
 
     this.onPageChanged();
-    if (!this.isInvalidRange) {
-      this.pageEvent.emit(this.page);
-    }
   }
 
   protected next(): void {
@@ -78,9 +82,6 @@ export class PaginationComponent implements OnInit {
     }
 
     this.onPageChanged();
-    if (!this.isInvalidRange) {
-      this.pageEvent.emit(this.page);
-    }
   }
 
   protected onPageSizeChange(): void {
@@ -91,7 +92,13 @@ export class PaginationComponent implements OnInit {
   private getPageSizeIndex(): number {
     const loadedPageSize = localStorage.getItem(this.pageSizeName);
     localStorage.removeItem(this.pageSizeName);
+    return loadedPageSize ? this.pageSizeOptions
+      .findIndex(x => x === +loadedPageSize) : 0;
+  }
 
-    return loadedPageSize ? this.pageSizeOptions.findIndex(x => x === +loadedPageSize) : 0;
+  private getPage(): number {
+    const loadedPage = localStorage.getItem(this.pageName);
+    localStorage.removeItem(this.pageName);
+    return loadedPage ? +loadedPage : 1;
   }
 }
