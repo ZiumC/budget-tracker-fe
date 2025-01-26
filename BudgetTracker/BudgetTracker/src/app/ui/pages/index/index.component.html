@@ -120,7 +120,8 @@
             </div>
           </div>
         </form>
-        <div class="budget-button-options mt-3 mb-1 text-center">
+        <div class="mt-3 mb-1 text-center"
+             [className]=" displayNowButton ? 'budget-button-options-3-cols' :'budget-button-options-2-cols'">
           <div class="px-5">
             <button type="button"
                     class="btn btn-success"
@@ -141,6 +142,18 @@
               <i class="bi bi-boxes"></i> Multiple
             </button>
           </div>
+          @if (displayNowButton) {
+            <div class="px-5">
+              <button type="button"
+                      class="btn btn-primary"
+                      data-bs-toggle="tooltip"
+                      data-bs-placement="bottom"
+                      title="Switch to current year"
+                      (click)="toCurrentDate()">
+                <i class="bi bi-intersect"></i> Current
+              </button>
+            </div>
+          }
         </div>
       </div>
     </div>
