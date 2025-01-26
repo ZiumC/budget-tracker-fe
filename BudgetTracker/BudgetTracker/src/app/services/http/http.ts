@@ -13,7 +13,8 @@ export class UrlApi {
     PAYMENT: "/payment",
     INCOMES: "/incomes",
     INCOME: "/income",
-    BUDGETS: "/budgets"
+    BUDGETS: "/budgets",
+    BUDGET: "/budget"
   }
 
   static budgets(requestParamModel: RequestParamModel): string {
@@ -55,16 +56,16 @@ export class UrlApi {
   }
 
   static budgetIncomes(
-    requestParamModel: RequestParamModel,
+    requestParam: RequestParamModel,
     idBudget: string): string {
 
     let baseUrl = this.budgetId(idBudget) + this.ACTIONS.INCOMES;
 
-    const page = requestParamModel.page;
-    const pageSize = requestParamModel.pageSize;
-    const fromDate = requestParamModel.fromDate;
-    const toDate = requestParamModel.toDate;
-    const orderBy = requestParamModel.orderBy;
+    const page = requestParam.page;
+    const pageSize = requestParam.pageSize;
+    const fromDate = requestParam.fromDate;
+    const toDate = requestParam.toDate;
+    const orderBy = requestParam.orderBy;
 
     baseUrl = baseUrl + "?page=" + page + "&pageSize=" + pageSize;
 
@@ -83,14 +84,13 @@ export class UrlApi {
     return baseUrl;
   }
 
-  static budgetPayments(
-    requestParamModel: RequestParamModel,
-    idBudget: string): string {
-    const page = requestParamModel.page;
-    const pageSize = requestParamModel.pageSize;
-    const fromDate = requestParamModel.fromDate;
-    const toDate = requestParamModel.toDate;
-    const orderBy = requestParamModel.orderBy;
+  static budgetPayments(requestParam: RequestParamModel,
+                        idBudget: string): string {
+    const page = requestParam.page;
+    const pageSize = requestParam.pageSize;
+    const fromDate = requestParam.fromDate;
+    const toDate = requestParam.toDate;
+    const orderBy = requestParam.orderBy;
 
     let urlResult = this.budgetId(idBudget) + this.ACTIONS.PAYMENTS +
       "?page=" + page + "&pageSize=" + pageSize;
@@ -124,6 +124,26 @@ export class UrlApi {
 
   static paymentId(idPayment: string): string {
     return this.paymentController() + "/" + idPayment;
+  }
+
+  static paginationIncomes(requestParam: RequestParamModel,
+                           idBudget: string): string {
+    const pageSize = requestParam.pageSize;
+    const fromDate = requestParam.fromDate;
+    const toDate = requestParam.toDate;
+
+    let urlResult = this.paginationController() +
+      this.ACTIONS.BUDGET + "/" + idBudget + "/incomes?pageSize=" + pageSize;
+
+    if (fromDate) {
+      urlResult = urlResult + "&fromDate=" + fromDate;
+    }
+
+    if (toDate) {
+      urlResult = urlResult + "&toDate=" + toDate;
+    }
+
+    return urlResult;
   }
 
   private static budgetController(): string {

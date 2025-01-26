@@ -166,6 +166,13 @@
                 </div>
               </div>
             }
+            @if (incomeTotalPages! > 0) {
+              <app-pagination [pageCount]="incomeTotalPages!"
+                              [displayPageSize]="true"
+                              [pageSizeOptions]="[6,12,24]">
+
+              </app-pagination>
+            }
           </ng-template>
           <ng-template #errorIncomeBlock>
             <app-error [errorModel]="errorModels.incomes"
