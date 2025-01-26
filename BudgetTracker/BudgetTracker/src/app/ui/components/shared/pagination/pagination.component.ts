@@ -6,31 +6,40 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
   styleUrl: './pagination.component.css'
 })
 export class PaginationComponent implements OnInit {
+  @Input() name: string;
   @Input() pageCount: number;
   @Input() displayPageSize: boolean;
   @Input() pageSizeOptions: number[];
   @Input() disableFully: boolean;
-  @Output() emitNextPageEvent = new EventEmitter<boolean>();
-  @Output() emitPreviousPageEvent = new EventEmitter<boolean>();
+  @Output() pageSizeEvent = new EventEmitter<number>;
+  @Output() pageEvent = new EventEmitter<number>();
   protected page: number;
   protected pageSize: number;
   protected disablePrevious: boolean;
   protected disableNext: boolean;
-  protected invalidRange: boolean;
+  protected isInvalidRange: boolean;
+  private pageSizeName: string;
 
 
   ngOnInit(): void {
+    this.pageSizeName = this.name + "-pageSize";
+
     this.page = 1;
     this.disablePrevious = true;
+    this.disableNext = this.page == this.pageCount;
 
     if (!this.pageCount) {
       throw new Error('Page count is not provided');
     }
 
+    if (!this.name) {
+      throw new Error('Name is not provided');
+    }
+
     if (this.displayPageSize && this.pageSizeOptions == undefined) {
       throw new Error('Page size options are not provided');
     } else if (this.pageSizeOptions != undefined) {
-      this.pageSize = this.pageSizeOptions[0];
+      this.pageSize = this.pageSizeOptions[this.getPageSizeIndex()];
     }
 
     if (!this.disableFully) {
@@ -38,8 +47,8 @@ export class PaginationComponent implements OnInit {
     }
   }
 
-  protected validateRange(): void {
-    this.invalidRange = this.page < 1 || this.page > this.pageCount;
+  protected onPageChanged(): void {
+    this.isInvalidRange = this.page < 1 || this.page > this.pageCount;
   }
 
   protected previous(): void {
@@ -52,8 +61,10 @@ export class PaginationComponent implements OnInit {
       this.disableNext = false;
     }
 
-    this.validateRange();
-    this.emitPreviousPageEvent.emit(!this.invalidRange);
+    this.onPageChanged();
+    if (!this.isInvalidRange) {
+      this.pageEvent.emit(this.page);
+    }
   }
 
   protected next(): void {
@@ -65,8 +76,22 @@ export class PaginationComponent implements OnInit {
     if (this.page >= this.pageCount) {
       this.disableNext = true;
     }
-    
-    this.validateRange();
-    this.emitNextPageEvent.emit(!this.invalidRange);
+
+    this.onPageChanged();
+    if (!this.isInvalidRange) {
+      this.pageEvent.emit(this.page);
+    }
+  }
+
+  protected onPageSizeChange(): void {
+    localStorage.setItem(this.pageSizeName, this.pageSize.toString());
+    this.pageSizeEvent.emit(this.pageSize);
+  }
+
+  private getPageSizeIndex(): number {
+    const loadedPageSize = localStorage.getItem(this.pageSizeName);
+    localStorage.removeItem(this.pageSizeName);
+
+    return loadedPageSize ? this.pageSizeOptions.findIndex(x => x === +loadedPageSize) : 0;
   }
 }

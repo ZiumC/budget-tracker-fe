@@ -1,4 +1,4 @@
-import {Component, HostListener, OnDestroy, OnInit} from '@angular/core';
+import {Component, EventEmitter, HostListener, OnDestroy, OnInit, Output} from '@angular/core';
 import {SpinnerSize} from "../../components/shared/spinner/spinner.component";
 import {BudgetModel, IncomeModel, PageModel, PaymentModel} from "../../../models/RequestModels";
 import {Subscription} from "rxjs";
@@ -30,8 +30,9 @@ export class BudgetComponent implements OnInit, OnDestroy {
   protected selectedPayment: PaymentModel;
   protected requestIncomeParam: RequestParamModel;
   protected requestPaymentParam: RequestParamModel;
-  protected idBudget: string;
 
+  protected idBudget: string;
+  protected disablePagination: boolean;
   protected loaders: any;
   protected requiredStatusCode: any;
   protected errorModels: any;
@@ -72,6 +73,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
     this.commentRows = 1;
     this.innerWidth = window.innerWidth;
     this.subscriptions = [];
+    this.disablePagination = false;
 
     this.requestIncomeParam = new RequestParamModel({
       page: 1,
@@ -134,6 +136,15 @@ export class BudgetComponent implements OnInit, OnDestroy {
     if (redirect) {
       this.router.navigate(['/']);
     }
+  }
+
+
+  protected onPageSizeEvent(pageSize: number): number {
+    this.requestIncomeParam.pageSize = pageSize;
+    this.disablePagination = true;
+    this.onRefreshIncome(true);
+    this.disablePagination = false;
+    return pageSize;
   }
 
   private onRequestFailed(errorModel: ErrorModel, err: any): void {

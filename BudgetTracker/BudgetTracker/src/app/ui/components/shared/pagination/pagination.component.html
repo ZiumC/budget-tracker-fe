@@ -25,11 +25,11 @@
               class="form-control"
               [(ngModel)]="page"
               pattern="(^-[0-9]*$)|(^[0-9]*$)"
-              (ngModelChange)="validateRange()"
+              (ngModelChange)="onPageChanged()"
               required
               [disabled]="disableFully"
               #pageInput="ngModel"
-              [ngClass]="{'invalid-outline': pageInput.invalid || invalidRange}"/>
+              [ngClass]="{'invalid-outline': pageInput.invalid || isInvalidRange}"/>
             <span class="col-form-label text-nowrap px-2">
               of {{ this.pageCount }}
             </span>
@@ -44,7 +44,8 @@
                       name="pageSize"
                       class="form-control"
                       [(ngModel)]="pageSize"
-                      [disabled]="disableFully"
+                      [disabled]="pageInput.invalid || isInvalidRange || disableFully"
+                      (ngModelChange)="onPageSizeChange()"
                       required>
                 @for (sizeOption of pageSizeOptions; track $index) {
                   <option [value]="sizeOption">{{ sizeOption }}</option>

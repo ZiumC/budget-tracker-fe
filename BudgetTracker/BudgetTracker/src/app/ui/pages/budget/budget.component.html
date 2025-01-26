@@ -167,9 +167,12 @@
               </div>
             }
             @if (incomeTotalPages! > 0) {
-              <app-pagination [pageCount]="12"
+              <app-pagination [name]="'income-paginate'"
+                [pageCount]="incomeTotalPages!"
                               [displayPageSize]="true"
-                              [pageSizeOptions]="[6,12,24]">
+                              [pageSizeOptions]="[1,2,3]"
+                              [disableFully]="disablePagination"
+                              (pageSizeEvent)="onPageSizeEvent($event)">
 
               </app-pagination>
             }
