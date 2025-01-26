@@ -1,7 +1,7 @@
 import {HttpClient, HttpResponse} from "@angular/common/http";
 import {BudgetModel, IncomeModel, PageModel, PaymentModel} from "../../models/RequestModels";
 import {Observable} from "rxjs";
-import {UrlApi} from "./http";
+import {TotalPages, UrlApi} from "./http";
 import {Injectable} from "@angular/core";
 import {RequestParamModel} from "../../models/RequestParamModel";
 import {BudgetForm, IncomeForm, PaymentForm} from "../../models/FormModels";
@@ -118,7 +118,7 @@ export class HttpService {
   public getIncomePages(requestParams: RequestParamModel, idBudget: string):
     Observable<HttpResponse<PageModel>> {
     return this.httpClient.get<PageModel>(
-      UrlApi.paginationIncomes(requestParams, idBudget),
+      UrlApi.budgetDataPages(requestParams, idBudget, TotalPages.INCOMES),
       {observe: 'response'}
     )
   }
@@ -136,6 +136,14 @@ export class HttpService {
     Observable<HttpResponse<{}>> {
     return this.httpClient.delete(
       UrlApi.paymentId(idPayment),
+      {observe: 'response'}
+    )
+  }
+
+  public getPaymentPages(requestParams: RequestParamModel, idBudget: string):
+    Observable<HttpResponse<PageModel>> {
+    return this.httpClient.get<PageModel>(
+      UrlApi.budgetDataPages(requestParams, idBudget, TotalPages.PAYMENTS),
       {observe: 'response'}
     )
   }

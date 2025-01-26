@@ -1,5 +1,10 @@
 import {RequestParamModel} from "../../models/RequestParamModel";
 
+export enum TotalPages{
+  INCOMES = "incomes",
+  PAYMENTS = "payments"
+}
+
 export class UrlApi {
   private static HOST: string = "https://localhost:7139/api"
   private static CONTROLLERS = {
@@ -126,14 +131,15 @@ export class UrlApi {
     return this.paymentController() + "/" + idPayment;
   }
 
-  static paginationIncomes(requestParam: RequestParamModel,
-                           idBudget: string): string {
+  static budgetDataPages(requestParam: RequestParamModel,
+                         idBudget: string,
+                         action: TotalPages): string {
     const pageSize = requestParam.pageSize;
     const fromDate = requestParam.fromDate;
     const toDate = requestParam.toDate;
 
     let urlResult = this.paginationController() +
-      this.ACTIONS.BUDGET + "/" + idBudget + "/incomes?pageSize=" + pageSize;
+      this.ACTIONS.BUDGET + "/" + idBudget + "/" + action + "?pageSize=" + pageSize;
 
     if (fromDate) {
       urlResult = urlResult + "&fromDate=" + fromDate;
