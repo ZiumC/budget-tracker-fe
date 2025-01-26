@@ -11,16 +11,16 @@ export class PaginationComponent implements OnInit {
   @Input() pageSizeOptions: number[];
   @Input() disableFully: boolean;
   @Output() emitNextPageEvent = new EventEmitter<boolean>();
+  @Output() emitPreviousPageEvent = new EventEmitter<boolean>();
   protected page: number;
   protected pageSize: number;
   protected disablePrevious: boolean;
   protected disableNext: boolean;
+  protected invalidRange: boolean;
 
 
   ngOnInit(): void {
     this.page = 1;
-
-    this.disableNext = this.page == this.pageCount;
     this.disablePrevious = true;
 
     if (!this.pageCount) {
@@ -33,14 +33,17 @@ export class PaginationComponent implements OnInit {
       this.pageSize = this.pageSizeOptions[0];
     }
 
-    if (!this.disableFully){
+    if (!this.disableFully) {
       this.disableFully = false;
     }
   }
 
+  protected validateRange(): void {
+    this.invalidRange = this.page < 1 || this.page > this.pageCount;
+  }
+
   protected previous(): void {
     this.page--;
-
     if (this.page <= 1) {
       this.disablePrevious = true;
     }
@@ -49,12 +52,12 @@ export class PaginationComponent implements OnInit {
       this.disableNext = false;
     }
 
-    this.emitNextPageEvent.emit(false);
+    this.validateRange();
+    this.emitPreviousPageEvent.emit(!this.invalidRange);
   }
 
   protected next(): void {
     this.page++;
-
     if (this.page > 1) {
       this.disablePrevious = false;
     }
@@ -62,7 +65,8 @@ export class PaginationComponent implements OnInit {
     if (this.page >= this.pageCount) {
       this.disableNext = true;
     }
-
-    this.emitNextPageEvent.emit(true);
+    
+    this.validateRange();
+    this.emitNextPageEvent.emit(!this.invalidRange);
   }
 }

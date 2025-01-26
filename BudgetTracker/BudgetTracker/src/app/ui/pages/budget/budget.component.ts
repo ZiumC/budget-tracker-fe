@@ -105,7 +105,6 @@ export class BudgetComponent implements OnInit, OnDestroy {
       })
     )
 
-    this.getIncomePages();
     this.getBudgetIncomes();
     this.getBudgetPayments();
   }
@@ -157,6 +156,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
           this.markIncomesAsLoaded(true);
         },
         complete: (): void => {
+          this.getIncomeTotalPages();
           this.markIncomesAsLoaded(true);
         }
       })
@@ -183,7 +183,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
     )
   }
 
-  private getIncomePages() {
+  private getIncomeTotalPages(): void {
     this.subscriptions.push(
       this.httpService.getIncomePages(
         this.requestIncomeParam,
