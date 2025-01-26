@@ -1,4 +1,4 @@
-import {Component, EventEmitter, HostListener, OnDestroy, OnInit, Output} from '@angular/core';
+import {Component, HostListener, OnDestroy, OnInit, Output} from '@angular/core';
 import {SpinnerSize} from "../../components/shared/spinner/spinner.component";
 import {BudgetModel, IncomeModel, PageModel, PaymentModel} from "../../../models/RequestModels";
 import {Subscription} from "rxjs";
@@ -32,7 +32,6 @@ export class BudgetComponent implements OnInit, OnDestroy {
   protected requestPaymentParam: RequestParamModel;
 
   protected idBudget: string;
-  protected disablePagination: boolean;
   protected loaders: any;
   protected requiredStatusCode: any;
   protected errorModels: any;
@@ -73,11 +72,11 @@ export class BudgetComponent implements OnInit, OnDestroy {
     this.commentRows = 1;
     this.innerWidth = window.innerWidth;
     this.subscriptions = [];
-    this.disablePagination = false;
 
     this.requestIncomeParam = new RequestParamModel({
       page: 1,
-      pageSize: 6
+      pageSize: 6,
+      orderBy: "ASC"
     })
 
     this.requestPaymentParam = new RequestParamModel({
@@ -119,7 +118,6 @@ export class BudgetComponent implements OnInit, OnDestroy {
   protected onRefreshIncome(refresh: boolean): void {
     if (refresh) {
       this.markIncomesAsLoaded(false);
-      this.errorModels.incomes = new ErrorModel();
       this.getBudgetIncomes();
     }
   }
@@ -127,7 +125,6 @@ export class BudgetComponent implements OnInit, OnDestroy {
   protected onRefreshPayment(refresh: boolean): void {
     if (refresh) {
       this.markPaymentsAsLoaded(false);
-      this.errorModels.payments = new ErrorModel();
       this.getBudgetPayments();
     }
   }
@@ -141,16 +138,12 @@ export class BudgetComponent implements OnInit, OnDestroy {
   protected onPageSizeEvent(pageSize: number): void {
     this.requestIncomeParam.pageSize = pageSize;
     this.requestIncomeParam.page = 1;
-    this.disablePagination = true;
     this.onRefreshIncome(true);
-    this.disablePagination = false;
   }
 
   protected onPageEvent(page: number): void {
     this.requestIncomeParam.page = page;
-    this.disablePagination = true;
     this.onRefreshIncome(true);
-    this.disablePagination = false;
   }
 
   private onRequestFailed(errorModel: ErrorModel, err: any): void {
