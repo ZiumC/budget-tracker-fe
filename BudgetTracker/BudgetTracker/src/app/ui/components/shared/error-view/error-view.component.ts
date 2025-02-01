@@ -2,11 +2,11 @@ import {Component, Input, OnInit} from '@angular/core';
 import {ErrorModel} from "../../../../models/ErrorModel";
 
 @Component({
-  selector: 'app-modal-error',
-  templateUrl: './modal-error.component.html',
-  styleUrl: './modal-error.component.css'
+  selector: 'app-error-view',
+  templateUrl: './error-view.component.html',
+  styleUrl: './error-view.component.css'
 })
-export class ModalErrorComponent implements OnInit {
+export class ErrorViewComponent implements OnInit {
   @Input() errorModel: ErrorModel;
   protected buttonCopyName: string;
 

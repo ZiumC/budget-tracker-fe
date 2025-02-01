@@ -18,10 +18,6 @@
   <ng-template #loadedBody>
     <div class="modal-body col-mx text-center">
       <h5>This action can't be undone!</h5>
-      <ng-template [ngIf]="displayError">
-        <app-modal-error [errorModel]="errorModel">
-        </app-modal-error>
-      </ng-template>
     </div>
     <div class="modal-footer">
       <button
@@ -39,3 +35,6 @@
     </div>
   </ng-template>
 </ng-template>
+<app-error-modal #errorModal
+                 [errorModel]="errorModel">
+</app-error-modal>

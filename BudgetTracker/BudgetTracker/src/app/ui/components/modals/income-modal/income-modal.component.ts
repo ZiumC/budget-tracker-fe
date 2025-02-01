@@ -18,6 +18,7 @@ import {HttpResponse} from "@angular/common/http";
 })
 export class IncomeModalComponent implements OnInit, OnDestroy {
   @ViewChild('incomeModal') incomeModal: any;
+  @ViewChild('errorModal') errorModal: any;
   @Input() idBudget: string;
   @Output() refreshIncomeEvent = new EventEmitter<boolean>();
   protected readonly SpinnerSize = SpinnerSize;
@@ -25,7 +26,6 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
   protected errorModel: ErrorModel;
   protected incomeForm: IncomeForm;
   protected displayLoader: boolean;
-  protected displayError: boolean;
   protected isEditing: boolean;
   protected buttonCopyName: string;
   private idIncome: string;
@@ -44,14 +44,12 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
     this.errorModel = new ErrorModel();
     this.subscriptions = [];
     this.displayLoader = false;
-    this.displayError = false;
     this.isEditing = false;
     this.buttonCopyName = "Copy";
   }
 
   open(incomeData?: IncomeModel): void {
     this.setDefaultIncomeForm();
-    this.displayError = false;
     this.isEditing = incomeData != null;
 
     if (incomeData) {
@@ -68,7 +66,7 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
     this.displayLoader = true;
 
     const surplus = String(this.incomeForm.isSurplus);
-    this.incomeForm.isSurplus = JSON.parse(surplus)
+    this.incomeForm.isSurplus = JSON.parse(surplus);
 
     setTimeout((): void => {
       if (this.isEditing) {
@@ -123,11 +121,10 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
     this.errorModel.responseStatusCode = err.status;
     this.errorModel.responseErrorModel = err.error;
     this.displayLoader = false;
-    this.displayError = true;
+    this.errorModal.open();
   }
 
   private setDefaultIncomeForm(): void {
-    this.displayError = false;
     this.incomeForm = {
       name: "",
       wage: new BigNumber(0.00),

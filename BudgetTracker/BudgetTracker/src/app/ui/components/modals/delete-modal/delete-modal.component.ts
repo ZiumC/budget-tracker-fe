@@ -16,6 +16,7 @@ import {SpinnerSize} from "../../shared/spinner/spinner.component";
 })
 export class DeleteModalComponent implements OnInit, OnDestroy {
   @ViewChild('deleteModal') deleteModal: any;
+  @ViewChild('errorModal') errorModal: any;
   @Output() indexPageEvent = new EventEmitter<boolean>();
   @Output() refreshIncomeEvent = new EventEmitter<boolean>();
   @Output() refreshPaymentEvent = new EventEmitter<boolean>();
@@ -26,7 +27,6 @@ export class DeleteModalComponent implements OnInit, OnDestroy {
   private incomeModel: IncomeModel | null;
   protected errorModel: ErrorModel;
   protected displayLoader: boolean;
-  protected displayError: boolean;
 
   constructor(
     private modalService: NgbModal,
@@ -34,7 +34,7 @@ export class DeleteModalComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.resetLoaderAndError();
+    this.displayLoader = false;
     this.subscriptions = [];
     this.errorModel = new ErrorModel();
   }
@@ -44,7 +44,7 @@ export class DeleteModalComponent implements OnInit, OnDestroy {
   }
 
   openWithPayment(payment: PaymentModel): void {
-    this.resetLoaderAndError();
+    this.displayLoader = false;
     this.paymentModel = new PaymentModel();
     this.paymentModel = payment;
 
@@ -53,7 +53,7 @@ export class DeleteModalComponent implements OnInit, OnDestroy {
   }
 
   openWithIncome(income: IncomeModel): void {
-    this.resetLoaderAndError();
+    this.displayLoader = false;
     this.incomeModel = new IncomeModel();
     this.incomeModel = income;
 
@@ -62,7 +62,7 @@ export class DeleteModalComponent implements OnInit, OnDestroy {
   }
 
   openWithBudget(budget: BudgetModel): void {
-    this.resetLoaderAndError();
+    this.displayLoader = false;
     this.budgetModel = new BudgetModel();
     this.budgetModel = budget;
 
@@ -85,7 +85,6 @@ export class DeleteModalComponent implements OnInit, OnDestroy {
         this.deletePayment(idPayment);
       } else {
         this.displayLoader = false;
-        this.displayError = true;
       }
     }, 500)
 
@@ -158,11 +157,6 @@ export class DeleteModalComponent implements OnInit, OnDestroy {
     this.errorModel.responseStatusCode = err.status;
     this.errorModel.responseErrorModel = err.error;
     this.displayLoader = false;
-    this.displayError = true;
-  }
-
-  private resetLoaderAndError(): void {
-    this.displayLoader = false;
-    this.displayError = false;
+    this.errorModal.open();
   }
 }

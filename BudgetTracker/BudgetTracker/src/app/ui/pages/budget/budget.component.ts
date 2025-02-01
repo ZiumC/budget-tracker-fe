@@ -1,4 +1,4 @@
-import {Component, HostListener, OnDestroy, OnInit, Output} from '@angular/core';
+import {Component, HostListener, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {SpinnerSize} from "../../components/shared/spinner/spinner.component";
 import {BudgetModel, IncomeModel, PageModel, PaymentModel} from "../../../models/RequestModels";
 import {Subscription} from "rxjs";
@@ -11,6 +11,7 @@ import {HttpResponse} from "@angular/common/http";
 import {SubscriptionUtils} from "../../../util/subscription.utils";
 import {NumberUtils} from "../../../util/number.utils";
 import {Sort} from "../../../util/model.utils";
+import {PaymentStatusForm} from "../../../models/FormModels";
 
 @Component({
   selector: 'app-budget',
@@ -18,6 +19,7 @@ import {Sort} from "../../../util/model.utils";
   styleUrl: './budget.component.css'
 })
 export class BudgetComponent implements OnInit, OnDestroy {
+  @ViewChild('errorModal') errorModal: any;
   public readonly mobileWidth: number = 770;
   protected readonly DateUtils = DateUtils;
   protected readonly NumberUtils = NumberUtils;
@@ -61,13 +63,15 @@ export class BudgetComponent implements OnInit, OnDestroy {
     this.loaders = {
       budget: false,
       incomes: false,
-      payments: false
+      payments: false,
+      paymentStatusBtn: false
     };
 
     this.errorModels = {
       budget: new ErrorModel(),
       incomes: new ErrorModel(),
-      payments: new ErrorModel()
+      payments: new ErrorModel(),
+      paymentStatus: new ErrorModel()
     };
 
     this.commentRows = 1;
@@ -158,10 +162,35 @@ export class BudgetComponent implements OnInit, OnDestroy {
     }
   }
 
+  protected patchPaymentStatus(isPaid: boolean, idPayment: string): void {
+    this.loaders.paymentStatusBtn = true;
+    this.subscriptions.push(
+      this.httpService.patchPaymentStatus(
+        {
+          isPaid: isPaid
+        } as PaymentStatusForm,
+        idPayment
+      ).subscribe({
+        next: (): void => {
+          this.payments!.find((payment): boolean => payment.id == idPayment)!.isPaid! = isPaid;
+          this.loaders.paymentStatusBtn = false;
+        },
+        error: (err): void => {
+          this.onRequestFailed(this.errorModels.paymentStatus, err);
+          this.loaders.paymentStatusBtn = false;
+        },
+        complete: (): void => {
+          this.loaders.paymentStatusBtn = false;
+        }
+      })
+    )
+  }
+
   private onRequestFailed(errorModel: ErrorModel, err: any): void {
     errorModel.traceId = err.headers.get('X-Trace-Id');
     errorModel.responseStatusCode = err.status;
     errorModel.responseErrorModel = err.error;
+    this.errorModal.open(errorModel);
   }
 
   private getBudgetIncomes(): void {

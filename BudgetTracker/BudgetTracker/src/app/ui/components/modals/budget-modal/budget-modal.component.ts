@@ -5,7 +5,7 @@ import {SubscriptionUtils} from "../../../../util/subscription.utils";
 import {BudgetModel} from "../../../../models/RequestModels";
 import {ModalOptions} from "../../../../util/modal.utils";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
-import {BudgetForm, BudgetFormPicker, DatePickerModel} from "../../../../models/FormModels";
+import {BudgetForm, BudgetPickerForm, DatePickerModel} from "../../../../models/FormModels";
 import {DateUtils} from "../../../../util/date.utils";
 import {SpinnerSize} from "../../shared/spinner/spinner.component";
 import {HttpResponse} from "@angular/common/http";
@@ -23,7 +23,7 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
   protected readonly SpinnerSize = SpinnerSize;
   protected subscriptions: Subscription[];
   protected errorModel: ErrorModel;
-  protected budgetForm: BudgetFormPicker;
+  protected budgetForm: BudgetPickerForm;
   protected budgetDate: DatePickerModel;
   protected isEditing: boolean;
   protected displayLoader: boolean;
@@ -161,7 +161,7 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
       name: "",
       dateStart: DateUtils.convertToDatePicker(firsDay),
       dateEnd: DateUtils.convertToDatePicker(lastDay)
-    } as BudgetFormPicker;
+    } as BudgetPickerForm;
 
     this.budgetDate = DateUtils.convertToDatePicker(firsDay);
   }

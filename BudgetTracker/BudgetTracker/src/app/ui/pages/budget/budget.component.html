@@ -291,8 +291,14 @@
                               class="btn btn-primary"
                               data-bs-toggle="tooltip"
                               data-bs-placement="bottom"
-                              title="Switch to not paid status">
-                              <i class="bi bi-bag-x-fill"></i> Unpaid
+                              title="Switch to not paid status"
+                              (click)="patchPaymentStatus(false, payment.id)">
+                              @if (loaders.paymentStatusBtn) {
+                                <div class="spinner-border spinner-border-sm text-light" role="status">
+                                </div>
+                              } @else {
+                                <i class="bi bi-bag-x-fill"></i> Unpaid
+                              }
                             </button>
                             <button
                               [style.display]="!payment.isPaid ? 'block' : 'none'"
@@ -300,8 +306,14 @@
                               class="btn btn-secondary"
                               data-bs-toggle="tooltip"
                               data-bs-placement="bottom"
-                              title="Switch to paid status">
-                              <i class="bi bi-bag-check-fill"></i> Paid
+                              title="Switch to paid status"
+                              (click)="patchPaymentStatus(true, payment.id)">
+                              @if (loaders.paymentStatusBtn) {
+                                <div class="spinner-border spinner-border-sm text-light" role="status">
+                                </div>
+                              } @else {
+                                <i class="bi bi-bag-check-fill"></i> Paid
+                              }
                             </button>
                             <button
                               type="button"
@@ -367,3 +379,5 @@
     </app-delete-modal>
   </div>
 </div>
+<app-error-modal #errorModal>
+</app-error-modal>

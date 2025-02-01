@@ -14,7 +14,11 @@ export class PaymentForm {
   comment?: string;
 }
 
-export class BudgetFormPicker {
+export class PaymentStatusForm {
+  isPaid: boolean;
+}
+
+export class BudgetPickerForm {
   name: string;
   dateStart: DatePickerModel;
   dateEnd: DatePickerModel;
