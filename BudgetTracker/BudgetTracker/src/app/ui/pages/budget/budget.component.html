@@ -198,6 +198,16 @@
         <ng-template #loadedPaymentsBlock>
           <ng-template [ngIf]="errorModels.payments.responseStatusCode == requiredStatusCode.payments"
                        [ngIfElse]="errorPaymentsBlock">
+            <div class="mb-3">
+              <app-order [orderTypes]="[
+              ORDER_TYPES.DATE_UPDATED,
+              ORDER_TYPES.MONEY,
+              ORDER_TYPES.REAL_COST,
+              ORDER_TYPES.PAID_FIRST
+              ]">
+
+              </app-order>
+            </div>
             @for (payment of payments; track payment) {
               <div ngbAccordion>
                 <div ngbAccordionItem

@@ -12,6 +12,7 @@ import {SubscriptionUtils} from "../../../util/subscription.utils";
 import {NumberUtils} from "../../../util/number.utils";
 import {Sort} from "../../../util/model.utils";
 import {PaymentStatusForm} from "../../../models/FormModels";
+import {ORDER_TYPES} from "../../components/shared/order/order.component";
 
 @Component({
   selector: 'app-budget',
@@ -276,4 +277,6 @@ export class BudgetComponent implements OnInit, OnDestroy {
       this.loaders.budget = value;
     }, value ? 500 : 0)
   }
+
+  protected readonly ORDER_TYPES = ORDER_TYPES;
 }

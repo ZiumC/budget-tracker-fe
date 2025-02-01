@@ -23,6 +23,7 @@ import { SpinnerGrowComponent } from './ui/components/shared/spinner-grow/spinne
 import { PaginationComponent } from './ui/components/shared/pagination/pagination.component';
 import { BudgetsModalComponent } from './ui/components/modals/budgets-modal/budgets-modal.component';
 import {ErrorModalComponent} from "./ui/components/modals/error-modal/error-modal.component";
+import { OrderComponent } from './ui/components/shared/order/order.component';
 
 
 @NgModule({
@@ -43,6 +44,7 @@ import {ErrorModalComponent} from "./ui/components/modals/error-modal/error-moda
     PaginationComponent,
     BudgetsModalComponent,
     ErrorModalComponent,
+    OrderComponent,
   ],
   imports: [
     BrowserModule,
