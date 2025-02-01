@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, Input, ViewChild} from '@angular/core';
 import {ErrorModel} from "../../../../models/ErrorModel";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {ModalOptions, ModalSize} from "../../../../util/modal.utils";
@@ -8,20 +8,15 @@ import {ModalOptions, ModalSize} from "../../../../util/modal.utils";
     templateUrl: './error-modal.component.html',
     styleUrl: './error-modal.component.css'
 })
-export class ErrorModalComponent implements OnInit {
+export class ErrorModalComponent {
     @ViewChild('errorModal') errorModal: any;
     @Input() errorModel: ErrorModel;
 
     constructor(private modalService: NgbModal) {
     }
 
-    ngOnInit(): void {
-        if (!this.errorModal) {
-            throw new Error("Error model is required for ErrorModal");
-        }
-    }
-
-    open(): void {
+    open(errorModel: ErrorModel): void {
+        this.errorModel = errorModel;
         this.modalService.open(
             this.errorModal,
             ModalOptions.default(ModalSize.SMALL));

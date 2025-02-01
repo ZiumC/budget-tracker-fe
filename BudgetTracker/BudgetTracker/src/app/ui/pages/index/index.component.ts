@@ -152,7 +152,7 @@ export class IndexComponent implements OnInit, OnDestroy {
             if (item.id == idBudget && this.budgets) {
               this.budgets[index] = this.budget!;
             }
-          })
+          });
           this.markBudgetAsLoaded(true);
         }
       })

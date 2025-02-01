@@ -131,6 +131,10 @@ export class UrlApi {
     return this.paymentController() + "/" + idPayment;
   }
 
+  static paymentStatus(idPayment: string): string {
+    return this.paymentController() + "/" + idPayment + "/status";
+  }
+
   static budgetDataPages(requestParam: RequestParamModel,
                          idBudget: string,
                          action: TotalPages): string {

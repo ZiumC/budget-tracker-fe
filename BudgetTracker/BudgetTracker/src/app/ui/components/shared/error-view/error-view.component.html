@@ -4,27 +4,31 @@
       <p>Unable to create data because resource already exist.</p>
     </div>
   } @else {
-    <p>Unable process request due to errors.</p>
-    <ul>
-      <li>
-        Status code: <span class="text-danger">{{ errorModel.responseStatusCode }}</span>
-      </li>
-    </ul>
-    @if (errorModel.traceId) {
-      <div class="input-group mb-3">
-        <input #traceInput
-               type="text"
-               class="form-control text-danger"
-               readonly="readonly"
-               value="{{ errorModel.traceId }}">
-        <div class="input-group-append">
-          <button class="btn btn-outline-secondary"
-                  type="button"
-                  (click)="copy(traceInput)">
-            {{ buttonCopyName }}
-          </button>
+    @if (errorModel.responseStatusCode == 0) {
+      <p>Unable process request due to cors errors.</p>
+    } @else {
+      <p>Unable process request due to errors.</p>
+      <ul>
+        <li>
+          Status code: <span class="text-danger">{{ errorModel.responseStatusCode }}</span>
+        </li>
+      </ul>
+      @if (errorModel.traceId) {
+        <div class="input-group mb-3">
+          <input #traceInput
+                 type="text"
+                 class="form-control text-danger"
+                 readonly="readonly"
+                 value="{{ errorModel.traceId }}">
+          <div class="input-group-append">
+            <button class="btn btn-outline-secondary"
+                    type="button"
+                    (click)="copy(traceInput)">
+              {{ buttonCopyName }}
+            </button>
+          </div>
         </div>
-      </div>
+      }
     }
   }
 } @else {
