@@ -15,13 +15,14 @@ import { BudgetComponent } from './ui/pages/budget/budget.component';
 import { IncomeModalComponent } from './ui/components/modals/income-modal/income-modal.component';
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import { PaymentModalComponent } from './ui/components/modals/payment-modal/payment-modal.component';
-import { ModalErrorComponent } from './ui/components/shared/modal-error/modal-error.component';
+import { ErrorViewComponent } from './ui/components/shared/error-view/error-view.component';
 import {DatepickerFormatter} from "./util/datepicker.utils";
 import {BudgetModalComponent} from "./ui/components/modals/budget-modal/budget-modal.component";
 import { DeleteModalComponent } from './ui/components/modals/delete-modal/delete-modal.component';
 import { SpinnerGrowComponent } from './ui/components/shared/spinner-grow/spinner-grow.component';
 import { PaginationComponent } from './ui/components/shared/pagination/pagination.component';
 import { BudgetsModalComponent } from './ui/components/modals/budgets-modal/budgets-modal.component';
+import {ErrorModalComponent} from "./ui/components/modals/error-modal/error-modal.component";
 
 
 @NgModule({
@@ -35,12 +36,13 @@ import { BudgetsModalComponent } from './ui/components/modals/budgets-modal/budg
     BudgetComponent,
     IncomeModalComponent,
     PaymentModalComponent,
-    ModalErrorComponent,
+    ErrorViewComponent,
     BudgetModalComponent,
     DeleteModalComponent,
     SpinnerGrowComponent,
     PaginationComponent,
     BudgetsModalComponent,
+    ErrorModalComponent,
   ],
   imports: [
     BrowserModule,
