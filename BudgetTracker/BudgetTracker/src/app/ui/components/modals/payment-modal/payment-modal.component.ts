@@ -19,6 +19,7 @@ import {HttpService} from "../../../../services/http/httpService";
 })
 export class PaymentModalComponent implements OnInit, OnDestroy {
   @ViewChild('paymentModal') paymentModal: any;
+  @ViewChild('errorModal') errorModal: any;
   @Input() idBudget: string;
   @Output() refreshPaymentEvent = new EventEmitter<boolean>();
   protected readonly SpinnerSize = SpinnerSize;
@@ -29,7 +30,6 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
   protected idPayment: string;
   protected isEditing: boolean;
   protected displayLoader: boolean;
-  protected displayError: boolean;
   protected buttonCopyName: string;
 
   constructor(
@@ -41,7 +41,6 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
     this.subscriptions = [];
     this.errorModel = new ErrorModel();
     this.displayLoader = false;
-    this.displayError = false;
     this.isEditing = false;
     this.buttonCopyName = "Copy";
   }
@@ -52,7 +51,6 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
 
   open(paymentData?: PaymentModel): void {
     this.setDefaultPaymentForm();
-    this.displayError = false;
     this.isEditing = paymentData != null;
 
     if (paymentData) {
@@ -126,7 +124,7 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
     this.errorModel.responseStatusCode = err.status;
     this.errorModel.responseErrorModel = err.error;
     this.displayLoader = false;
-    this.displayError = true;
+    this.errorModal.open();
   }
 
   private setDefaultPaymentForm(): void {
