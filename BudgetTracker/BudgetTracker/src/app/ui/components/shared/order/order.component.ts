@@ -78,7 +78,7 @@ export enum ORDER_TYPES {
   DATE_UPDATED = 'date updated',
   PRICE = 'price',
   REFUND = 'refund',
-  INCOME = 'income',
+  WAGE = 'wage',
   REAL_COST = 'real cost',
   PAID_FIRST = 'paid first',
   SURPLUS_FIRST = 'surplus first'

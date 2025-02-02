@@ -22,6 +22,7 @@ import {ORDER_TYPES} from "../../components/shared/order/order.component";
 export class BudgetComponent implements OnInit, OnDestroy {
   @ViewChild('errorModal') errorModal: any;
   public readonly mobileWidth: number = 770;
+  protected readonly ORDER_TYPES = ORDER_TYPES;
   protected readonly DateUtils = DateUtils;
   protected readonly NumberUtils = NumberUtils;
   protected readonly SpinnerSize = SpinnerSize;
@@ -277,6 +278,4 @@ export class BudgetComponent implements OnInit, OnDestroy {
       this.loaders.budget = value;
     }, value ? 500 : 0)
   }
-
-  protected readonly ORDER_TYPES = ORDER_TYPES;
 }
