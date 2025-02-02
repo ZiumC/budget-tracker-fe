@@ -23,13 +23,6 @@ export class PaginationComponent implements OnInit {
 
 
   ngOnInit(): void {
-    this.pageSizeName = this.name + "-pageSize";
-    this.pageName = this.name + "-page";
-
-    this.page = this.getPage();
-    this.disablePrevious = this.page <= 1;
-    this.disableNext = this.page == this.pageCount;
-
     if (!this.pageCount) {
       throw new Error('Page count is not provided');
     }
@@ -37,6 +30,9 @@ export class PaginationComponent implements OnInit {
     if (!this.name) {
       throw new Error('Name is not provided');
     }
+
+    this.pageSizeName = this.name + "-pageSize";
+    this.pageName = this.name + "-page";
 
     if (this.displayPageSize && this.pageSizeOptions == undefined) {
       throw new Error('Page size options are not provided');
@@ -47,6 +43,10 @@ export class PaginationComponent implements OnInit {
     if (!this.disableFully) {
       this.disableFully = false;
     }
+
+    this.disablePrevious = this.page <= 1;
+    this.disableNext = this.page == this.pageCount;
+    this.page = this.getPage();
   }
 
   protected onPageChanged(): void {

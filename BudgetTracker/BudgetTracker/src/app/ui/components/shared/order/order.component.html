@@ -15,15 +15,18 @@
           }
         </select>
       </div>
-      @if (displayOrderOption) {
+      @if (!this.excludedTypes.includes(this.selectedOrderType)) {
         <div class="mx-2 my-auto">
           <select type="text"
                   id="orderOption"
                   name="orderOption"
                   class="form-control"
+                  [(ngModel)]="selectedOrderOption"
+                  (ngModelChange)="onOrderOptionChanged()"
                   required>
-            <option [value]="'ASC'">ascending</option>
-            <option [value]="'DESC'">descending</option>
+            @for (orderOption of orderOptions; track $index) {
+              <option [value]="orderOption">{{ orderOption }}</option>
+            }
           </select>
         </div>
       }
