@@ -12,6 +12,7 @@ import {SubscriptionUtils} from "../../../util/subscription.utils";
 import {NumberUtils} from "../../../util/number.utils";
 import {Sort} from "../../../util/model.utils";
 import {PaymentStatusForm} from "../../../models/FormModels";
+import {ORDER_TYPES} from "../../components/shared/order/order.component";
 
 @Component({
   selector: 'app-budget',
@@ -21,6 +22,7 @@ import {PaymentStatusForm} from "../../../models/FormModels";
 export class BudgetComponent implements OnInit, OnDestroy {
   @ViewChild('errorModal') errorModal: any;
   public readonly mobileWidth: number = 770;
+  protected readonly ORDER_TYPES = ORDER_TYPES;
   protected readonly DateUtils = DateUtils;
   protected readonly NumberUtils = NumberUtils;
   protected readonly SpinnerSize = SpinnerSize;

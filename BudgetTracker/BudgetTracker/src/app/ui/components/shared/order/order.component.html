@@ -1,0 +1,35 @@
+<div class="mx-auto">
+  <form ngbAutofocus #form="ngForm">
+    <div class="d-flex align-items-center justify-content-center">
+      <label for="orderType">Order by</label>
+      <div class="mx-2 my-auto">
+        <select type="text"
+                id="orderType"
+                name="orderType"
+                class="form-control"
+                [(ngModel)]="selectedOrderType"
+                (ngModelChange)="onOrderTypeChanged()"
+                required>
+          @for (orderType of orderTypes; track $index) {
+            <option [value]="orderType">{{ orderType }}</option>
+          }
+        </select>
+      </div>
+      @if (!this.excludedTypes.includes(this.selectedOrderType)) {
+        <div class="mx-2 my-auto">
+          <select type="text"
+                  id="orderOption"
+                  name="orderOption"
+                  class="form-control"
+                  [(ngModel)]="selectedOrderOption"
+                  (ngModelChange)="onOrderOptionChanged()"
+                  required>
+            @for (orderOption of orderOptions; track $index) {
+              <option [value]="orderOption">{{ orderOption }}</option>
+            }
+          </select>
+        </div>
+      }
+    </div>
+  </form>
+</div>

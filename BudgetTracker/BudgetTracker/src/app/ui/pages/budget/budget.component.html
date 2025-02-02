@@ -78,6 +78,15 @@
         <ng-template #loadedIncomesBlock>
           <ng-template [ngIf]="errorModels.incomes.responseStatusCode == requiredStatusCode.incomes"
                        [ngIfElse]="errorIncomeBlock">
+            <div class="mb-3">
+              <app-order [name]="'income-order'"
+                         [orderTypes]="[
+                            ORDER_TYPES.DATE_UPDATED,
+                            ORDER_TYPES.WAGE,
+                            ORDER_TYPES.SURPLUS_FIRST]">
+
+              </app-order>
+            </div>
             @for (income of incomes; track income) {
               <div ngbAccordion>
                 <div ngbAccordionItem
@@ -198,6 +207,17 @@
         <ng-template #loadedPaymentsBlock>
           <ng-template [ngIf]="errorModels.payments.responseStatusCode == requiredStatusCode.payments"
                        [ngIfElse]="errorPaymentsBlock">
+            <div class="mb-3">
+              <app-order [name]="'payment-order'"
+                         [orderTypes]="[
+                            ORDER_TYPES.DATE_UPDATED,
+                            ORDER_TYPES.PRICE,
+                            ORDER_TYPES.REFUND,
+                            ORDER_TYPES.REAL_COST,
+                            ORDER_TYPES.PAID_FIRST]">
+
+              </app-order>
+            </div>
             @for (payment of payments; track payment) {
               <div ngbAccordion>
                 <div ngbAccordionItem
