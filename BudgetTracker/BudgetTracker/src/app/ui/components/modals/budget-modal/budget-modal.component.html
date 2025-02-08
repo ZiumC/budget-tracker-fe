@@ -14,18 +14,30 @@
       (click)="close(modal)">
     </button>
   </div>
-  <!--  <ng-template [ngIf]="displayLoader"-->
-  <!--               [ngIfElse]="loadedBody">-->
-  <!--    <div class="my-5"></div>-->
-  <!--    <app-spinner [size]="SpinnerSize.MEDIUM"></app-spinner>-->
-  <!--    <div class="mt-5 text-center">-->
-  <!--      <p>Budget is saving...</p>-->
-  <!--    </div>-->
-  <!--    <div class="mb-3"></div>-->
-  <!--  </ng-template>-->
   <div class="modal-body">
     <form ngbAutofocus #form="ngForm">
       <div class="col-mx">
+        <div class="d-flex align-items-baseline">
+          @if (!ModalUtils.isUndefinedBudgetStatus(budgetResponse)) {
+            @if (budgetResponse.status) {
+              <div class="text-success"
+                   data-bs-toggle="tooltip"
+                   data-bs-placement="bottom"
+                   title="{{budgetResponse.message}}">
+                <i class="bi bi-check-circle icon-big"></i>
+              </div>
+            } @else {
+              <div class="text-danger"
+                   data-bs-toggle="tooltip"
+                   data-bs-placement="bottom"
+                   title="{{budgetResponse.message}}">
+                <i class="bi bi-x-circle icon-big"></i>
+              </div>
+            }
+            <div class="mx-1"></div>
+          }
+          <label for="budget-date">{{ DateUtils.getMonthName(budgetDate) }}</label>
+        </div>
         @if (isEditing) {
           <!--            <div class="mb-2">-->
             <!--              <label for="budget-name">Name</label>-->
@@ -166,27 +178,6 @@
             <!--            </div>-->
         } @else {
           <div class="d-flex align-items-baseline">
-            @if (!ModalUtils.isUndefinedBudgetStatus(budgetResponse)) {
-              @if (budgetResponse.status) {
-                <div class="text-success"
-                     data-bs-toggle="tooltip"
-                     data-bs-placement="bottom"
-                     title="{{budgetResponse.message}}">
-                  <i class="bi bi-check-circle icon-big"></i>
-                </div>
-              } @else {
-                <div class="text-danger"
-                     data-bs-toggle="tooltip"
-                     data-bs-placement="bottom"
-                     title="{{budgetResponse.message}}">
-                  <i class="bi bi-x-circle icon-big"></i>
-                </div>
-              }
-              <div class="mx-1"></div>
-            }
-            <label for="budget-date">{{ DateUtils.getMonthName(budgetDate) }}</label>
-          </div>
-          <div class="d-flex align-items-baseline">
             <div class="input-group">
               <input
                 type="text"
@@ -217,6 +208,10 @@
                   <label *ngIf="budgetDateInput.errors?.['ngbDate']">
                     Date is invalid.
                   </label>
+                  <label *ngIf="budgetDateInput.errors?.['test']">
+                    {{ budgetDateInput.errors?.['test'] }}
+                  </label>
+
                 </div>
               } @else if (budgetDateInput.valid) {
                 <div class="valid-feedback pb-3">
@@ -243,17 +238,13 @@
         </ng-template>
       </div>
     </form>
-    <!--      <ng-template [ngIf]="displayError">-->
-    <!--        <app-error-view [errorModel]="errorModel">-->
-    <!--        </app-error-view>-->
-    <!--      </ng-template>-->
   </div>
   <div class="modal-footer">
     <button
       [disabled]="form.invalid"
       type="button"
       class="btn btn-outline-secondary"
-      (click)="saveBudget()">
+      (click)="saveBudget(form)">
       Save
     </button>
   </div>

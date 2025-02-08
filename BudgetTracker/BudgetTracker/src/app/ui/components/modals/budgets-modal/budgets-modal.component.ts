@@ -169,7 +169,8 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
   protected close(modal: any): void {
     let pageReload = false;
     for (const budgetResponse of this.budgetResponses) {
-      if (!ModalUtils.isUndefinedBudgetStatus(budgetResponse)) {
+      if (!ModalUtils.isUndefinedBudgetStatus(budgetResponse) &&
+        budgetResponse.status) {
         pageReload = true;
       }
     }

@@ -1,4 +1,14 @@
-import {Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {
+  AfterViewChecked,
+  AfterViewInit,
+  Component,
+  ElementRef,
+  EventEmitter,
+  OnDestroy,
+  OnInit,
+  Output,
+  ViewChild
+} from '@angular/core';
 import {interval, Subscription, takeWhile} from "rxjs";
 import {SubscriptionUtils} from "../../../../util/subscription.utils";
 import {BudgetModel} from "../../../../models/RequestModels";
@@ -11,6 +21,7 @@ import {HttpResponse} from "@angular/common/http";
 import {HttpService} from "../../../../services/http/httpService";
 import {BudgetStatus} from "../../../../models/modal-models/BudgetStatusModel";
 import {ModalUtils} from "../../../../util/modal.utils";
+import {AbstractControl, NgForm, NgModel} from "@angular/forms";
 
 @Component({
   selector: 'app-budget-modal',
@@ -91,19 +102,18 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
     }
   }
 
-  protected saveBudget(): void {
+  protected saveBudget(formControls: NgForm): void {
     if (this.isEditing) {
       this.updateBudget();
     } else {
-      this.createBudget();
+      this.createBudget(formControls);
     }
   }
 
   protected close(modal: any): void {
-    const pageReload = !ModalUtils
-      .isUndefinedBudgetStatus(this.budgetResponse);
+    if (!ModalUtils.isUndefinedBudgetStatus(this.budgetResponse) &&
+      this.budgetResponse.status) {
 
-    if (pageReload) {
       this.disableTimer = true;
       this.refreshPageEvent.emit(true);
     }
@@ -129,13 +139,13 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
           this.updateBudgetEvent.emit(this.idBudget);
         },
         error: (err): void => {
-          this.onRequestFailed(err);
+          // this.onRequestFailed(err);
         }
       })
     )
   }
 
-  private createBudget(): void {
+  private createBudget(formControls: NgForm): void {
     const budgetDate = DateUtils
       .format(DateUtils.convertToDate(this.budgetDate));
 
@@ -147,7 +157,7 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
           this.onRequestSuccess(response);
         },
         error: (err): void => {
-          this.onRequestFailed(err);
+          this.onRequestFailed(err, formControls.controls['budget-date']);
         },
         complete: (): void => {
           this.startTimer();
@@ -165,7 +175,8 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
     } as BudgetStatus;
   }
 
-  private onRequestFailed(err: any): void {
+  private onRequestFailed(err: any, control: AbstractControl): void {
+    control.setErrors({test:  err.error["message"]})
     this.budgetResponse = {
       status: false,
       message: err.status + " - " + err.error["title"]
