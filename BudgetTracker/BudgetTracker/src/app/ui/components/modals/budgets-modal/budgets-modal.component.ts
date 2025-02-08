@@ -22,6 +22,7 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
   protected readonly budgetsLimit: number = 6;
   protected readonly maxTime = 25;
   protected readonly DateUtils = DateUtils;
+  protected readonly ModalUtils = ModalUtils;
   protected subscriptions: Subscription[];
   protected budgetDateFields: DatePickerModel[];
   protected budgetResponses: BudgetStatus[];
@@ -151,7 +152,8 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
         complete: (): void => {
           this.autoCloseModal = true;
           this.budgetResponses.forEach((value): void => {
-            if (!ModalUtils.isUndefinedBudgetStatus(value) && !value.status) {
+            if (!ModalUtils.isUndefinedBudgetStatus(value) &&
+              !value.status) {
               this.autoCloseModal = false;
             }
           });
@@ -218,6 +220,4 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
       message: err.status + " - " + err.error["title"]
     } as BudgetStatus;
   }
-
-  protected readonly ModalUtils = ModalUtils;
 }

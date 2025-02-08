@@ -1,6 +1,5 @@
 import {Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {interval, Subscription, takeWhile} from "rxjs";
-import {ErrorModel} from "../../../../models/ErrorModel";
 import {SubscriptionUtils} from "../../../../util/subscription.utils";
 import {BudgetModel} from "../../../../models/RequestModels";
 import {ModalOptions} from "../../../../util/modal-options.utils";
@@ -20,20 +19,19 @@ import {ModalUtils} from "../../../../util/modal.utils";
 })
 export class BudgetModalComponent implements OnInit, OnDestroy {
   @ViewChild('budgetModal') budgetModal: any;
-  @Output() indexPageEvent = new EventEmitter<boolean>();
-  @Output() budgetUpdateEvent = new EventEmitter<string>();
+  @Output() refreshPageEvent = new EventEmitter<boolean>();
+  @Output() updateBudgetEvent = new EventEmitter<string>();
   protected readonly DateUtils = DateUtils;
   protected readonly SpinnerSize = SpinnerSize;
   protected readonly maxTime = 25;
+  protected readonly ModalUtils = ModalUtils;
   protected subscriptions: Subscription[];
   protected budgetResponse: BudgetStatus;
-  protected errorModel: ErrorModel;
   protected budgetForm: BudgetPickerForm;
   protected budgetDate: DatePickerModel;
   protected isEditing: boolean;
-  protected displayLoader: boolean;
-  protected displayError: boolean;
-  protected autoCloseModal: boolean;
+  protected disableTimer: boolean;
+  protected displayTimer: boolean;
   protected timeLeft: number;
   private idBudget: string;
 
@@ -48,21 +46,22 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.resetBudgetStatus();
-    this.setDefaultBudgetToSendForm();
-    this.errorModel = new ErrorModel();
+    this.setDefaultDatePicker();
     this.subscriptions = [];
-    this.displayLoader = false;
-    this.displayError = false;
+    this.timeLeft = this.maxTime;
     this.isEditing = false;
-    this.autoCloseModal = false;
+    this.disableTimer = false;
+    this.displayTimer = false;
   }
 
   open(budgetData?: BudgetModel): void {
     this.resetBudgetStatus();
-    this.setDefaultBudgetToSendForm();
-    this.autoCloseModal = false;
+    this.setDefaultDatePicker();
 
     this.isEditing = budgetData != null;
+    this.disableTimer = false;
+    this.displayTimer = false;
+    this.timeLeft = this.maxTime;
 
     if (budgetData) {
       this.idBudget = budgetData.id;
@@ -76,7 +75,7 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
     this.modalService.open(this.budgetModal, ModalOptions.default());
   }
 
-  protected validateDate(input1: any, input2: any): void {
+  protected validateDates(input1: any, input2: any): void {
     const dateStart = this.budgetForm.dateStart;
     const dateEnd = this.budgetForm.dateEnd;
 
@@ -93,13 +92,23 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
   }
 
   protected saveBudget(): void {
-    this.autoCloseModal = false;
-
     if (this.isEditing) {
       this.updateBudget();
     } else {
       this.createBudget();
     }
+  }
+
+  protected close(modal: any): void {
+    const pageReload = !ModalUtils
+      .isUndefinedBudgetStatus(this.budgetResponse);
+
+    if (pageReload) {
+      this.disableTimer = true;
+      this.refreshPageEvent.emit(true);
+    }
+
+    modal.close();
   }
 
   private updateBudget(): void {
@@ -117,7 +126,7 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
         this.idBudget).subscribe({
         next: (response: HttpResponse<any>): void => {
           this.onRequestSuccess(response);
-          this.budgetUpdateEvent.emit(this.idBudget);
+          this.updateBudgetEvent.emit(this.idBudget);
         },
         error: (err): void => {
           this.onRequestFailed(err);
@@ -136,10 +145,12 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
       ).subscribe({
         next: (response: HttpResponse<any>): void => {
           this.onRequestSuccess(response);
-          this.indexPageEvent.emit(true);
         },
         error: (err): void => {
           this.onRequestFailed(err);
+        },
+        complete: (): void => {
+          this.startTimer();
         }
       })
     )
@@ -155,14 +166,13 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
   }
 
   private onRequestFailed(err: any): void {
-    this.errorModel.traceId = err.headers.get('X-Trace-Id');
     this.budgetResponse = {
       status: false,
       message: err.status + " - " + err.error["title"]
     } as BudgetStatus;
   }
 
-  private setDefaultBudgetToSendForm(): void {
+  private setDefaultDatePicker(): void {
     const now = new Date();
     const firsDay = new Date(now.getFullYear(), now.getMonth(), 1);
     const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
@@ -180,5 +190,20 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
     this.budgetResponse = new BudgetStatus();
   }
 
-  protected readonly ModalUtils = ModalUtils;
+  protected startTimer(): void {
+    this.displayTimer = true;
+    this.subscriptions
+      .push(interval(100)
+        .pipe(takeWhile((): boolean => this.timeLeft > 0))
+        .subscribe((): void => {
+          this.timeLeft--;
+          if (this.disableTimer) {
+            this.timeLeft = 0;
+          }
+          if (this.timeLeft == 0) {
+            this.modalService.dismissAll();
+            this.refreshPageEvent.emit(true);
+          }
+        }));
+  }
 }
