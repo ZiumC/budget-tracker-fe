@@ -10,7 +10,7 @@ import {ActivatedRoute, Params, Router} from "@angular/router";
 import {HttpResponse} from "@angular/common/http";
 import {SubscriptionUtils} from "../../../util/subscription.utils";
 import {NumberUtils} from "../../../util/number.utils";
-import {Sort} from "../../../util/model.utils";
+import {SortIncome, SortPayment} from "../../../util/sort-model.utils";
 import {PaymentStatusForm} from "../../../models/FormModels";
 import {ORDER_TYPES} from "../../components/shared/order/order.component";
 
@@ -201,7 +201,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
         this.requestIncomeParam,
         this.idBudget).subscribe({
         next: (response: HttpResponse<IncomeModel[]>): void => {
-          this.incomes = Sort.incomeSurplusFirst(response.body);
+          this.incomes = SortIncome.surplusFirst(response.body);
           this.errorModels.incomes.responseStatusCode = response.status;
         },
         error: (err): void => {
@@ -222,7 +222,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
         this.requestPaymentParam,
         this.idBudget).subscribe({
         next: (response: HttpResponse<PaymentModel[]>): void => {
-          this.payments = Sort.incomePaidFirst(response.body);
+          this.payments = SortPayment.paidFirst(response.body);
           this.errorModels.payments.responseStatusCode = response.status;
         },
         error: (err): void => {

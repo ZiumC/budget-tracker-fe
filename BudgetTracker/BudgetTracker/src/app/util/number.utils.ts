@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 
 export class NumberUtils {
-  static format(number: BigNumber | null | undefined) {
+  static format(number: BigNumber | null | undefined): string {
     const formatter = {
       decimalSeparator: '.',
       groupSeparator: ' ',

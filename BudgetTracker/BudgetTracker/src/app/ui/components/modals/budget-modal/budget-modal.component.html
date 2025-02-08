@@ -169,22 +169,24 @@
               <!--            </div>-->
           } @else {
             <div class="d-flex align-items-baseline">
-              @if (budgetResponse.status) {
-                <div class="text-success"
-                     data-bs-toggle="tooltip"
-                     data-bs-placement="bottom"
-                     title="{{budgetResponse.message}}">
-                  <i class="bi bi-check-circle icon-big"></i>
-                </div>
-              } @else {
-                <div class="text-danger"
-                     data-bs-toggle="tooltip"
-                     data-bs-placement="bottom"
-                     title="{{budgetResponse.message}}">
-                  <i class="bi bi-x-circle icon-big"></i>
-                </div>
+              @if (!ModalUtils.isUndefinedBudgetStatus(budgetResponse)) {
+                @if (budgetResponse.status) {
+                  <div class="text-success"
+                       data-bs-toggle="tooltip"
+                       data-bs-placement="bottom"
+                       title="{{budgetResponse.message}}">
+                    <i class="bi bi-check-circle icon-big"></i>
+                  </div>
+                } @else {
+                  <div class="text-danger"
+                       data-bs-toggle="tooltip"
+                       data-bs-placement="bottom"
+                       title="{{budgetResponse.message}}">
+                    <i class="bi bi-x-circle icon-big"></i>
+                  </div>
+                }
+                <div class="mx-1"></div>
               }
-              <div class="mx-1"></div>
               <label for="budget-date">{{ DateUtils.getMonthName(budgetDate) }}</label>
             </div>
             <div class="d-flex align-items-baseline">

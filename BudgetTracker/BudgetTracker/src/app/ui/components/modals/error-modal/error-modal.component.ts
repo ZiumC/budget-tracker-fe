@@ -1,7 +1,7 @@
 import {Component, Input, ViewChild} from '@angular/core';
 import {ErrorModel} from "../../../../models/ErrorModel";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
-import {ModalOptions, ModalSize} from "../../../../util/modal.utils";
+import {ModalOptions, ModalSize} from "../../../../util/modal-options.utils";
 
 @Component({
     selector: 'app-error-modal',

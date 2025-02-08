@@ -3,14 +3,15 @@ import {interval, Subscription, takeWhile} from "rxjs";
 import {ErrorModel} from "../../../../models/ErrorModel";
 import {SubscriptionUtils} from "../../../../util/subscription.utils";
 import {BudgetModel} from "../../../../models/RequestModels";
-import {ModalOptions} from "../../../../util/modal.utils";
+import {ModalOptions} from "../../../../util/modal-options.utils";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {BudgetForm, BudgetPickerForm, DatePickerModel} from "../../../../models/FormModels";
 import {DateUtils} from "../../../../util/date.utils";
 import {SpinnerSize} from "../../shared/spinner/spinner.component";
 import {HttpResponse} from "@angular/common/http";
 import {HttpService} from "../../../../services/http/httpService";
-import {BudgetStatus} from "../../../../models/BudgetStatusModel";
+import {BudgetStatus} from "../../../../models/modal-models/BudgetStatusModel";
+import {ModalUtils} from "../../../../util/modal.utils";
 
 @Component({
   selector: 'app-budget-modal',
@@ -57,6 +58,7 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
   }
 
   open(budgetData?: BudgetModel): void {
+    this.resetBudgetStatus();
     this.setDefaultBudgetToSendForm();
     this.autoCloseModal = false;
 
@@ -177,4 +179,6 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
   private resetBudgetStatus(): void {
     this.budgetResponse = new BudgetStatus();
   }
+
+  protected readonly ModalUtils = ModalUtils;
 }

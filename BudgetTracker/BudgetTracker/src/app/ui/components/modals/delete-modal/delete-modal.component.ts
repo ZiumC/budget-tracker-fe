@@ -2,7 +2,7 @@ import {Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@an
 import {Subscription} from "rxjs";
 import {SubscriptionUtils} from "../../../../util/subscription.utils";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
-import {ModalOptions, ModalSize} from "../../../../util/modal.utils";
+import {ModalOptions, ModalSize} from "../../../../util/modal-options.utils";
 import {BudgetModel, IncomeModel, PaymentModel} from "../../../../models/RequestModels";
 import {HttpService} from "../../../../services/http/httpService";
 import {HttpResponse} from "@angular/common/http";

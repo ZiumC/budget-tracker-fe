@@ -3,7 +3,7 @@ import {Subscription} from "rxjs";
 import {SubscriptionUtils} from "../../../../util/subscription.utils";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {PaymentModel} from "../../../../models/RequestModels";
-import {ModalOptions, ModalSize} from "../../../../util/modal.utils";
+import {ModalOptions, ModalSize} from "../../../../util/modal-options.utils";
 import {PaymentForm} from "../../../../models/FormModels";
 import {ErrorModel} from "../../../../models/ErrorModel";
 import BigNumber from "bignumber.js";

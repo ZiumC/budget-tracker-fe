@@ -2,7 +2,7 @@ import {Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} fr
 import {IncomeForm} from "../../../../models/FormModels";
 import {IncomeModel} from "../../../../models/RequestModels";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
-import {ModalOptions} from "../../../../util/modal.utils";
+import {ModalOptions} from "../../../../util/modal-options.utils";
 import BigNumber from "bignumber.js";
 import {Subscription} from "rxjs";
 import {HttpService} from "../../../../services/http/httpService";
