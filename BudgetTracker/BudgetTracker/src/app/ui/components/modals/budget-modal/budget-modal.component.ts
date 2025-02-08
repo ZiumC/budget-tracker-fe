@@ -1,15 +1,12 @@
 import {
-  AfterViewChecked,
-  AfterViewInit,
   Component,
-  ElementRef,
   EventEmitter,
   OnDestroy,
   OnInit,
   Output,
   ViewChild
 } from '@angular/core';
-import {interval, Subscription, takeWhile} from "rxjs";
+import {Subscription} from "rxjs";
 import {SubscriptionUtils} from "../../../../util/subscription.utils";
 import {BudgetModel} from "../../../../models/RequestModels";
 import {ModalOptions} from "../../../../util/modal-options.utils";
@@ -22,6 +19,7 @@ import {HttpService} from "../../../../services/http/httpService";
 import {BudgetStatus} from "../../../../models/modal-models/BudgetStatusModel";
 import {ModalUtils} from "../../../../util/modal.utils";
 import {AbstractControl, NgForm, NgModel} from "@angular/forms";
+import {ErrorModel} from "../../../../models/ErrorModel";
 
 @Component({
   selector: 'app-budget-modal',
@@ -30,20 +28,20 @@ import {AbstractControl, NgForm, NgModel} from "@angular/forms";
 })
 export class BudgetModalComponent implements OnInit, OnDestroy {
   @ViewChild('budgetModal') budgetModal: any;
+  @ViewChild('errorModal') errorModal: any;
   @Output() refreshPageEvent = new EventEmitter<boolean>();
   @Output() updateBudgetEvent = new EventEmitter<string>();
   protected readonly DateUtils = DateUtils;
-  protected readonly SpinnerSize = SpinnerSize;
-  protected readonly maxTime = 25;
   protected readonly ModalUtils = ModalUtils;
+  protected readonly SpinnerSize = SpinnerSize;
   protected subscriptions: Subscription[];
   protected budgetResponse: BudgetStatus;
   protected budgetForm: BudgetPickerForm;
   protected budgetDate: DatePickerModel;
+  protected responseErrorModel: ErrorModel;
   protected isEditing: boolean;
-  protected disableTimer: boolean;
   protected displayTimer: boolean;
-  protected timeLeft: number;
+  protected disableForm: boolean;
   private idBudget: string;
 
   constructor(
@@ -57,22 +55,22 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.resetBudgetStatus();
-    this.setDefaultDatePicker();
+    this.resetDatePicker();
     this.subscriptions = [];
-    this.timeLeft = this.maxTime;
+    this.responseErrorModel = new ErrorModel();
     this.isEditing = false;
-    this.disableTimer = false;
     this.displayTimer = false;
+    this.disableForm = false;
   }
 
   open(budgetData?: BudgetModel): void {
     this.resetBudgetStatus();
-    this.setDefaultDatePicker();
+    this.resetDatePicker();
+    this.responseErrorModel = new ErrorModel();
 
     this.isEditing = budgetData != null;
-    this.disableTimer = false;
     this.displayTimer = false;
-    this.timeLeft = this.maxTime;
+    this.disableForm = false;
 
     if (budgetData) {
       this.idBudget = budgetData.id;
@@ -86,25 +84,39 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
     this.modalService.open(this.budgetModal, ModalOptions.default());
   }
 
-  protected validateDates(input1: any, input2: any): void {
+  protected onDatesChanged(input1: NgModel, input2: NgModel): void {
     const dateStart = this.budgetForm.dateStart;
     const dateEnd = this.budgetForm.dateEnd;
 
+    const monthsMessage = 'Months in both dates should be equal.'
+    const yearsMessage = 'Years in both dates should be equal.'
+
     if (dateStart.month != dateEnd.month) {
-      input1.control.setErrors({invalidMonth: 'Invalid month'});
-      input2.control.setErrors({invalidMonth: 'Invalid month'});
+      input1.control.setErrors({invalidMonth: monthsMessage});
+      input2.control.setErrors({invalidMonth: monthsMessage});
     } else if (dateStart.year != dateEnd.year) {
-      input1.control.setErrors({invalidYear: 'Invalid year'});
-      input2.control.setErrors({invalidYear: 'Invalid year'});
+      input1.control.setErrors({invalidYear: yearsMessage});
+      input2.control.setErrors({invalidYear: yearsMessage});
     } else {
       input1.control.setErrors(null);
       input2.control.setErrors(null);
     }
   }
 
+  protected onDateChanged(input: NgModel): void {
+    this.resetBudgetStatus();
+    input.control.setErrors(null);
+  }
+
+  protected onFinishedEvent(modal: any): void {
+    this.refreshPageEvent.emit(true);
+    modal.close();
+  }
+
   protected saveBudget(formControls: NgForm): void {
+    this.disableForm = true;
     if (this.isEditing) {
-      this.updateBudget();
+      this.updateBudget(formControls);
     } else {
       this.createBudget(formControls);
     }
@@ -113,17 +125,16 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
   protected close(modal: any): void {
     if (!ModalUtils.isUndefinedBudgetStatus(this.budgetResponse) &&
       this.budgetResponse.status) {
-
-      this.disableTimer = true;
       this.refreshPageEvent.emit(true);
     }
 
     modal.close();
   }
 
-  private updateBudget(): void {
+  private updateBudget(formControls: NgForm): void {
     this.budgetForm.dateStart.day++;
     this.budgetForm.dateEnd.day++;
+
     const budgetForm = {
       name: this.budgetForm.name,
       dateStart: DateUtils.convertToDate(this.budgetForm.dateStart),
@@ -139,7 +150,8 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
           this.updateBudgetEvent.emit(this.idBudget);
         },
         error: (err): void => {
-          // this.onRequestFailed(err);
+          this.onRequestFailed(err, this.responseErrorModel);
+          this.errorModal.open(this.responseErrorModel);
         }
       })
     )
@@ -160,7 +172,7 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
           this.onRequestFailed(err, formControls.controls['budget-date']);
         },
         complete: (): void => {
-          this.startTimer();
+          this.displayTimer = true;
         }
       })
     )
@@ -175,15 +187,24 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
     } as BudgetStatus;
   }
 
-  private onRequestFailed(err: any, control: AbstractControl): void {
-    control.setErrors({test:  err.error["message"]})
+  private onRequestFailed(err: any, control: AbstractControl | ErrorModel): void {
+    if (control instanceof AbstractControl) {
+      control.setErrors({'responseMessage': err.error["message"]})
+    } else {
+      this.responseErrorModel.traceId = err.headers.get('X-Trace-Id');
+      this.responseErrorModel.responseStatusCode = err.status;
+      this.responseErrorModel.responseErrorModel = err.error;
+    }
+
     this.budgetResponse = {
       status: false,
       message: err.status + " - " + err.error["title"]
     } as BudgetStatus;
+
+    this.disableForm = false;
   }
 
-  private setDefaultDatePicker(): void {
+  private resetDatePicker(): void {
     const now = new Date();
     const firsDay = new Date(now.getFullYear(), now.getMonth(), 1);
     const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
@@ -199,22 +220,5 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
 
   private resetBudgetStatus(): void {
     this.budgetResponse = new BudgetStatus();
-  }
-
-  protected startTimer(): void {
-    this.displayTimer = true;
-    this.subscriptions
-      .push(interval(100)
-        .pipe(takeWhile((): boolean => this.timeLeft > 0))
-        .subscribe((): void => {
-          this.timeLeft--;
-          if (this.disableTimer) {
-            this.timeLeft = 0;
-          }
-          if (this.timeLeft == 0) {
-            this.modalService.dismissAll();
-            this.refreshPageEvent.emit(true);
-          }
-        }));
   }
 }

@@ -127,20 +127,6 @@ div.ngb-dp-weekday {
   font-size: 2.5ex;
 }
 
-.progress {
-  height: 0.7ex;
-  width: 100%;
-  overflow: hidden;
-}
-
-.progress-bar {
-  height: 100%;
-  transition: width 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 @media only screen and (max-width: 770px) {
   .width-wrapper {
     width: 92%;
