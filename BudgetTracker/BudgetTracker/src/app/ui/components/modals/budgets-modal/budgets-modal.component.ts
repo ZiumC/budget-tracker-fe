@@ -7,6 +7,7 @@ import {HttpService} from "../../../../services/http/httpService";
 import {catchError, forkJoin, interval, Observable, of, Subscription, takeWhile} from "rxjs";
 import {HttpResponse} from "@angular/common/http";
 import {SubscriptionUtils} from "../../../../util/subscription.utils";
+import {BudgetStatus} from "../../../../models/BudgetStatusModel";
 
 
 @Component({
@@ -81,7 +82,7 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
     this.lastDate = new Date(this.lastDate.setMonth(this.lastDate.getMonth() - 1));
   }
 
-  protected onDateChanged(index: number, ngModel: any): void {
+  protected validateMonthsOccurs(index: number, ngModel: any): void {
     const changedField = this.budgetDateFields[index];
 
     for (let i = 0; i < this.budgetDateFields.length; i++) {
@@ -221,9 +222,4 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
       message: err.status + " - " + err.error["title"]
     } as BudgetStatus;
   }
-}
-
-export class BudgetStatus {
-  status: boolean;
-  message: string;
 }

@@ -1,5 +1,5 @@
 import {Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
-import {Subscription} from "rxjs";
+import {interval, Subscription, takeWhile} from "rxjs";
 import {ErrorModel} from "../../../../models/ErrorModel";
 import {SubscriptionUtils} from "../../../../util/subscription.utils";
 import {BudgetModel} from "../../../../models/RequestModels";
@@ -10,6 +10,7 @@ import {DateUtils} from "../../../../util/date.utils";
 import {SpinnerSize} from "../../shared/spinner/spinner.component";
 import {HttpResponse} from "@angular/common/http";
 import {HttpService} from "../../../../services/http/httpService";
+import {BudgetStatus} from "../../../../models/BudgetStatusModel";
 
 @Component({
   selector: 'app-budget-modal',
@@ -20,14 +21,19 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
   @ViewChild('budgetModal') budgetModal: any;
   @Output() indexPageEvent = new EventEmitter<boolean>();
   @Output() budgetUpdateEvent = new EventEmitter<string>();
+  protected readonly DateUtils = DateUtils;
   protected readonly SpinnerSize = SpinnerSize;
+  protected readonly maxTime = 25;
   protected subscriptions: Subscription[];
+  protected budgetResponse: BudgetStatus;
   protected errorModel: ErrorModel;
   protected budgetForm: BudgetPickerForm;
   protected budgetDate: DatePickerModel;
   protected isEditing: boolean;
   protected displayLoader: boolean;
   protected displayError: boolean;
+  protected autoCloseModal: boolean;
+  protected timeLeft: number;
   private idBudget: string;
 
   constructor(
@@ -40,18 +46,21 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.setDefaultBudgetForm();
+    this.resetBudgetStatus();
+    this.setDefaultBudgetToSendForm();
     this.errorModel = new ErrorModel();
     this.subscriptions = [];
     this.displayLoader = false;
     this.displayError = false;
     this.isEditing = false;
+    this.autoCloseModal = false;
   }
 
   open(budgetData?: BudgetModel): void {
-    this.setDefaultBudgetForm();
+    this.setDefaultBudgetToSendForm();
+    this.autoCloseModal = false;
+
     this.isEditing = budgetData != null;
-    this.displayError = false;
 
     if (budgetData) {
       this.idBudget = budgetData.id;
@@ -82,15 +91,13 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
   }
 
   protected saveBudget(): void {
-    this.displayLoader = true;
+    this.autoCloseModal = false;
 
-    setTimeout((): void => {
-      if (this.isEditing) {
-        this.updateBudget();
-      } else {
-        this.createBudget();
-      }
-    }, 500);
+    if (this.isEditing) {
+      this.updateBudget();
+    } else {
+      this.createBudget();
+    }
   }
 
   private updateBudget(): void {
@@ -137,22 +144,23 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
   }
 
   private onRequestSuccess(response: HttpResponse<any>): void {
-    this.errorModel.responseStatusCode = response.status;
-    this.modalService.dismissAll();
-    setTimeout((): void => {
-      this.displayLoader = false;
-    }, 500)
+    const status = response.status;
+    const isSuccess = status >= 200 && status <= 299;
+    this.budgetResponse = {
+      status: isSuccess,
+      message: status + " - Ok"
+    } as BudgetStatus;
   }
 
   private onRequestFailed(err: any): void {
     this.errorModel.traceId = err.headers.get('X-Trace-Id');
-    this.errorModel.responseStatusCode = err.status;
-    this.errorModel.responseErrorModel = err.error;
-    this.displayLoader = false;
-    this.displayError = true;
+    this.budgetResponse = {
+      status: false,
+      message: err.status + " - " + err.error["title"]
+    } as BudgetStatus;
   }
 
-  private setDefaultBudgetForm(): void {
+  private setDefaultBudgetToSendForm(): void {
     const now = new Date();
     const firsDay = new Date(now.getFullYear(), now.getMonth(), 1);
     const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
@@ -164,5 +172,9 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
     } as BudgetPickerForm;
 
     this.budgetDate = DateUtils.convertToDatePicker(firsDay);
+  }
+
+  private resetBudgetStatus(): void {
+    this.budgetResponse = new BudgetStatus();
   }
 }
