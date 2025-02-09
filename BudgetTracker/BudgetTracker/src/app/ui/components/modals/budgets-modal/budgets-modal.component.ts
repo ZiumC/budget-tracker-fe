@@ -29,7 +29,6 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
   protected budgetPickers: DatePicker[];
   protected budgetStatusIcons: BudgetStatus[];
   protected displayTimer: boolean;
-  protected disableForm: boolean;
   protected autoCloseModal: boolean;
   protected disableTimer: boolean;
   protected lastDate: Date;
@@ -72,9 +71,10 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
 
   protected remove(index: number, formControls: NgForm): void {
     this.budgetPickers = this.budgetPickers.filter((_, i) => i !== index);
+    this.budgetStatusIcons = this.budgetStatusIcons.filter((_, i) => i !== index);
+
     if (!this.hasDuplicatedMonths()) {
       for (let i = 0; i < this.budgetPickers.length; i++) {
-        this.budgetStatusIcons[i] = new BudgetStatus();
         formControls.controls['budget-date' + i].setErrors(null);
       }
     }
@@ -93,7 +93,6 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
   }
 
   protected saveBudgets(formControls: NgForm): void {
-    this.disableForm = true;
     this.autoCloseModal = false;
 
     const budgetRequests = [];
@@ -145,8 +144,6 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
           }
         }
       }));
-
-    this.disableForm = false;
   }
 
   protected close(modal: any): void {
@@ -179,7 +176,7 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
         maxDate = convertedDate;
       }
     }
-    //increment month by one
+
     maxDate.setMonth(maxDate.getMonth() + 1);
     return DateUtils.convertToDatePicker(maxDate);
   }
@@ -213,7 +210,7 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
   }
 
   private onRequestFailed(index: number, err: any, control: AbstractControl): void {
-    control.setErrors({'responseMessage': err.error["message"]})
+    control.setErrors({'responseMessage': err.error["message"]});
     this.budgetStatusIcons[index] = {
       status: false,
       message: err.status + " - " + err.error["title"]
@@ -221,7 +218,6 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
   }
 
   private resetModalOptions(): void {
-    this.disableForm = false;
     this.autoCloseModal = false;
     this.disableTimer = false;
     this.displayTimer = false;

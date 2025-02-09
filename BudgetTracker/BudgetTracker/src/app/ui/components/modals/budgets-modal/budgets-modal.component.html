@@ -41,40 +41,41 @@
               name="budget-date-{{i}}"
               class="form-control"
               [(ngModel)]="budgetPickers[i]"
-              [disabled]="disableForm || budgetStatusIcons[i].status"
+              [disabled]="displayTimer || budgetStatusIcons[i].status"
               container="body"
               placement="bottom-end"
               required
-              #budgetDate="ngModel"
+              #budgetDateField="ngModel"
               ngbDatepicker
-              (ngModelChange)="onDateChanged(i, budgetDate)"
-              #dateEnd="ngbDatepicker"
+              (ngModelChange)="onDateChanged(i, budgetDateField)"
+              #budgetDatePicker="ngbDatepicker"
               [ngClass]="{
-                    'is-invalid': budgetDate.invalid,
-                    'is-valid': budgetDate.valid }"/>
+                    'is-invalid': budgetDateField.invalid ||
+                      (!ModalUtils.isUndefinedBudgetStatus(budgetStatusIcons[i]) && !budgetStatusIcons[i].status),
+                    'is-valid': budgetDateField.valid }"/>
             <div class="input-group-append">
               <button class="btn btn-outline-secondary bi bi-calendar3"
-                      [disabled]="disableForm || budgetStatusIcons[i].status"
-                      (click)="dateEnd.toggle()"
+                      [disabled]="displayTimer || budgetStatusIcons[i].status"
+                      (click)="budgetDatePicker.toggle()"
                       type="button">
               </button>
             </div>
-            @if (budgetDate.invalid) {
+            @if (budgetDateField.invalid) {
               <div class="invalid-feedback">
-                <label *ngIf="budgetDate.errors?.['required']">
+                <label *ngIf="budgetDateField.errors?.['required']">
                   Field is required.
                 </label>
-                <label *ngIf="budgetDate.errors?.['ngbDate']">
+                <label *ngIf="budgetDateField.errors?.['ngbDate']">
                   Date is invalid.
                 </label>
-                <label *ngIf="budgetDate.errors?.['alreadyExist']">
-                  {{ budgetDate.errors?.['alreadyExist'] }}
+                <label *ngIf="budgetDateField.errors?.['alreadyExist']">
+                  {{ budgetDateField.errors?.['alreadyExist'] }}
                 </label>
-                <label *ngIf="budgetDate.errors?.['responseMessage']">
-                  {{ budgetDate.errors?.['responseMessage'] }}
+                <label *ngIf="budgetDateField.errors?.['responseMessage']">
+                  {{ budgetDateField.errors?.['responseMessage'] }}
                 </label>
               </div>
-            } @else if (budgetDate.valid) {
+            } @else if (budgetDateField.valid) {
               <div class="valid-feedback pb-3">
               </div>
             } @else {
@@ -84,8 +85,8 @@
           <div class="mx-2"></div>
           <div>
             <button type="button"
-                    [disabled]="disableForm ||
-                     (!ModalUtils.isUndefinedBudgetStatus(budgetStatusIcons[i]) && budgetStatusIcons[i].status)"
+                    [disabled]="!ModalUtils.isUndefinedBudgetStatus(budgetStatusIcons[i]) &&
+                      budgetStatusIcons[i].status"
                     class="btn btn-outline-danger"
                     data-bs-toggle="tooltip"
                     data-bs-placement="bottom"
@@ -95,15 +96,15 @@
             </button>
           </div>
         </div>
-        @if (budgetStatusIcons[i].status && !disableForm) {
+        @if (budgetStatusIcons[i].status) {
           <div class="py-2"></div>
         }
       }
-      @if (disableForm || form.invalid) {
+      @if (form.invalid || displayTimer) {
         <div class="py-2"></div>
       }
       <div class="text-center">
-        <button [disabled]="budgetPickers.length >= budgetsLimit || disableForm || form.invalid"
+        <button [disabled]="budgetPickers.length >= budgetsLimit || displayTimer"
                 type="button"
                 class="btn btn-outline-primary"
                 data-bs-toggle="tooltip"
@@ -121,13 +122,13 @@
     </div>
     <ng-template [ngIf]="displayTimer">
       <div class="my-4"></div>
-      <app-timer [duration]="LoadersConfig.SHORT_DURATION"
+      <app-timer [duration]="LoadersConfig.DEFAULT_DURATION"
                  (timerFinishedEvent)="onTimerFinishedEvent(modal)"></app-timer>
     </ng-template>
   </div>
   <div class="modal-footer">
     <button
-      [disabled]="form.invalid"
+      [disabled]="form.invalid || displayTimer"
       type="button"
       class="btn btn-outline-secondary"
       (click)="saveBudgets(form)">
