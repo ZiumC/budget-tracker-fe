@@ -50,8 +50,7 @@
               (ngModelChange)="onDateChanged(i, budgetDate)"
               #dateEnd="ngbDatepicker"
               [ngClass]="{
-                    'is-invalid': budgetDate.invalid ||
-                      (!ModalUtils.isUndefinedBudgetStatus(budgetStatusIcons[i]) && !budgetStatusIcons[i].status),
+                    'is-invalid': budgetDate.invalid,
                     'is-valid': budgetDate.valid }"/>
             <div class="input-group-append">
               <button class="btn btn-outline-secondary bi bi-calendar3"

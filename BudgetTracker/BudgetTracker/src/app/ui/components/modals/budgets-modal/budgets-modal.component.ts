@@ -74,6 +74,7 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
     this.budgetPickers = this.budgetPickers.filter((_, i) => i !== index);
     if (!this.hasDuplicatedMonths()) {
       for (let i = 0; i < this.budgetPickers.length; i++) {
+        this.budgetStatusIcons[i] = new BudgetStatus();
         formControls.controls['budget-date' + i].setErrors(null);
       }
     }
@@ -165,6 +166,11 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
     modal.close();
   }
 
+  protected onTimerFinishedEvent(modal: any): void {
+    this.refreshPageEvent.emit(true);
+    modal.close();
+  }
+
   private getMaxDate(): DatePicker {
     let maxDate: Date = new Date();
     for (const datePicker of this.budgetPickers) {
@@ -182,7 +188,7 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
     const months: number[] = [];
 
     this.budgetPickers.forEach(b => {
-      if (b){
+      if (b) {
         months.push(b.month);
       }
     })
@@ -212,11 +218,6 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
       status: false,
       message: err.status + " - " + err.error["title"]
     } as BudgetStatus;
-  }
-
-  protected onTimerFinishedEvent(modal: any): void {
-    this.refreshPageEvent.emit(true);
-    modal.close();
   }
 
   private resetModalOptions(): void {
