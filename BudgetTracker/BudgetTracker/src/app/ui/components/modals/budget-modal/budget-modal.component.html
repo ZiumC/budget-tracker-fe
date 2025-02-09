@@ -168,19 +168,19 @@
             </div>
           } @else {
             <div class="d-flex align-items-baseline">
-              @if (!ModalUtils.isUndefinedBudgetStatus(budgetIconStatus)) {
-                @if (budgetIconStatus.status) {
+              @if (!ModalUtils.isUndefinedBudgetStatus(budgetStatusIcon)) {
+                @if (budgetStatusIcon.status) {
                   <div class="text-success"
                        data-bs-toggle="tooltip"
                        data-bs-placement="bottom"
-                       title="{{budgetIconStatus.message}}">
+                       title="{{budgetStatusIcon.message}}">
                     <i class="bi bi-check-circle icon-big"></i>
                   </div>
                 } @else {
                   <div class="text-danger"
                        data-bs-toggle="tooltip"
                        data-bs-placement="bottom"
-                       title="{{budgetIconStatus.message}}">
+                       title="{{budgetStatusIcon.message}}">
                     <i class="bi bi-x-circle icon-big"></i>
                   </div>
                 }
@@ -202,15 +202,15 @@
                   container="body"
                   ngbDatepicker
                   #date="ngbDatepicker"
-                  [disabled]="budgetIconStatus.status"
+                  [disabled]="budgetStatusIcon.status"
                   [ngClass]="{
                   'is-invalid': budgetDateInput.invalid ||
-                    (!ModalUtils.isUndefinedBudgetStatus(budgetIconStatus) && !budgetIconStatus.status),
+                    (!ModalUtils.isUndefinedBudgetStatus(budgetStatusIcon) && !budgetStatusIcon.status),
                   'is-valid': budgetDateInput.valid }"/>
                 <div class="input-group-append">
                   <button class="btn btn-outline-secondary bi bi-calendar3"
                           (click)="date.toggle()"
-                          [disabled]="budgetIconStatus.status"
+                          [disabled]="budgetStatusIcon.status"
                           type="button">
                   </button>
                 </div>
@@ -245,7 +245,7 @@
     </div>
     <div class="modal-footer">
       <button
-        [disabled]="form.invalid || budgetIconStatus.status"
+        [disabled]="form.invalid || budgetStatusIcon.status"
         type="button"
         class="btn btn-outline-secondary"
         (click)="saveBudget(form)">

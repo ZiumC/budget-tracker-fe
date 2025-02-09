@@ -12,21 +12,21 @@
   </div>
   <div class="modal-body">
     <form #form="ngForm">
-      @for (budgetField of budgetDateFields; let i = $index; track i) {
+      @for (budgetField of budgetPickers; let i = $index; track i) {
         <div class="d-flex align-items-baseline">
-          @if (!ModalUtils.isUndefinedBudgetStatus(budgetResponses[i])) {
-            @if (budgetResponses[i].status) {
+          @if (!ModalUtils.isUndefinedBudgetStatus(budgetStatusIcons[i])) {
+            @if (budgetStatusIcons[i].status) {
               <div class="text-success"
                    data-bs-toggle="tooltip"
                    data-bs-placement="bottom"
-                   title="{{budgetResponses[i].message}}">
+                   title="{{budgetStatusIcons[i].message}}">
                 <i class="bi bi-check-circle icon-big"></i>
               </div>
             } @else {
               <div class="text-danger"
                    data-bs-toggle="tooltip"
                    data-bs-placement="bottom"
-                   title="{{budgetResponses[i].message}}">
+                   title="{{budgetStatusIcons[i].message}}">
                 <i class="bi bi-x-circle icon-big"></i>
               </div>
             }
@@ -40,39 +40,42 @@
               id="budget-date-{{i}}"
               name="budget-date-{{i}}"
               class="form-control"
-              [(ngModel)]="budgetDateFields[i]"
-              [disabled]="disableForm || budgetResponses[i].status"
+              [(ngModel)]="budgetPickers[i]"
+              [disabled]="disableForm || budgetStatusIcons[i].status"
               container="body"
               placement="bottom-end"
               required
-              #toDate="ngModel"
+              #budgetDate="ngModel"
               ngbDatepicker
-              (ngModelChange)="validateMonthsOccurs(i, toDate)"
+              (ngModelChange)="onDateChanged(i, budgetDate)"
               #dateEnd="ngbDatepicker"
               [ngClass]="{
-                    'is-invalid': toDate.invalid ||
-                      (!ModalUtils.isUndefinedBudgetStatus(budgetResponses[i]) && !budgetResponses[i].status),
-                    'is-valid': toDate.valid }"/>
+                    'is-invalid': budgetDate.invalid ||
+                      (!ModalUtils.isUndefinedBudgetStatus(budgetStatusIcons[i]) && !budgetStatusIcons[i].status),
+                    'is-valid': budgetDate.valid }"/>
             <div class="input-group-append">
               <button class="btn btn-outline-secondary bi bi-calendar3"
-                      [disabled]="disableForm || budgetResponses[i].status"
+                      [disabled]="disableForm || budgetStatusIcons[i].status"
                       (click)="dateEnd.toggle()"
                       type="button">
               </button>
             </div>
-            @if (toDate.invalid) {
+            @if (budgetDate.invalid) {
               <div class="invalid-feedback">
-                <label *ngIf="toDate.errors?.['required']">
+                <label *ngIf="budgetDate.errors?.['required']">
                   Field is required.
                 </label>
-                <label *ngIf="toDate.errors?.['invalidDateRange']">
-                  <strong>Date To</strong> can't be less or equal to <strong>Date from</strong>.
-                </label>
-                <label *ngIf="toDate.errors?.['ngbDate']">
+                <label *ngIf="budgetDate.errors?.['ngbDate']">
                   Date is invalid.
                 </label>
+                <label *ngIf="budgetDate.errors?.['alreadyExist']">
+                  {{ budgetDate.errors?.['alreadyExist'] }}
+                </label>
+                <label *ngIf="budgetDate.errors?.['responseMessage']">
+                  {{ budgetDate.errors?.['responseMessage'] }}
+                </label>
               </div>
-            } @else if (toDate.valid) {
+            } @else if (budgetDate.valid) {
               <div class="valid-feedback pb-3">
               </div>
             } @else {
@@ -83,17 +86,17 @@
           <div>
             <button type="button"
                     [disabled]="disableForm ||
-                     (!ModalUtils.isUndefinedBudgetStatus(budgetResponses[i]) && budgetResponses[i].status)"
+                     (!ModalUtils.isUndefinedBudgetStatus(budgetStatusIcons[i]) && budgetStatusIcons[i].status)"
                     class="btn btn-outline-danger"
                     data-bs-toggle="tooltip"
                     data-bs-placement="bottom"
                     title="Remove budget"
-                    (click)="remove(i)">
+                    (click)="remove(i, form)">
               <i class="bi bi-trash"></i>
             </button>
           </div>
         </div>
-        @if (budgetResponses[i].status && !disableForm) {
+        @if (budgetStatusIcons[i].status && !disableForm) {
           <div class="py-2"></div>
         }
       }
@@ -101,7 +104,7 @@
         <div class="py-2"></div>
       }
       <div class="text-center">
-        <button [disabled]="budgetDateFields.length >= budgetsLimit || disableForm || form.invalid"
+        <button [disabled]="budgetPickers.length >= budgetsLimit || disableForm || form.invalid"
                 type="button"
                 class="btn btn-outline-primary"
                 data-bs-toggle="tooltip"
@@ -113,23 +116,14 @@
       </div>
     </form>
     <div class="w-100 text-end">
-      <label [ngClass]="budgetDateFields.length >= budgetsLimit? 'text-danger' : 'text-secondary'">
-        {{ budgetDateFields.length }} / {{ budgetsLimit }}
+      <label [ngClass]="budgetPickers.length >= budgetsLimit? 'text-danger' : 'text-secondary'">
+        {{ budgetPickers.length }} / {{ budgetsLimit }}
       </label>
     </div>
-    <ng-template [ngIf]="autoCloseModal">
-      <div class="w-50 mx-auto">
-        <div class="progress">
-          <div class="progress-bar bg-success"
-               role="progressbar"
-               aria-valuemin="0"
-               aria-valuemax="4"
-               [style.width.%]="(timeLeft / maxTime) * 100"
-               [attr.aria-valuenow]="timeLeft">
-
-          </div>
-        </div>
-      </div>
+    <ng-template [ngIf]="displayTimer">
+      <div class="my-4"></div>
+      <app-timer [duration]="LoadersConfig.SHORT_DURATION"
+                 (timerFinishedEvent)="onTimerFinishedEvent(modal)"></app-timer>
     </ng-template>
   </div>
   <div class="modal-footer">
@@ -137,7 +131,7 @@
       [disabled]="form.invalid"
       type="button"
       class="btn btn-outline-secondary"
-      (click)="saveBudgets()">
+      (click)="saveBudgets(form)">
       Save
     </button>
   </div>

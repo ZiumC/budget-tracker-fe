@@ -14,6 +14,7 @@ export class DatesConfig {
   public static MONTHS_MESSAGE: string = 'Months in both dates should be equal.';
   public static YEARS_MESSAGE: string = 'Years in both dates should be equal.';
   public static RANGE_MESSAGE: string = 'Date range is invalid.';
+  public static MONTH_ALREADY_EXIST_MESSAGE: string = 'Month already defined.';
   public static FIRST_DAY: Date = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
   public static LAST_DAY: Date = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0);
   public static DEFAULT_PICKER: BudgetPickerForm = {

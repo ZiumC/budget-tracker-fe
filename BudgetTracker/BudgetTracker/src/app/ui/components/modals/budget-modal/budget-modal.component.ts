@@ -33,7 +33,7 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
   protected subscriptions: Subscription[];
   protected budgetPickerForm: BudgetPickerForm;
   protected budgetPicker: DatePicker;
-  protected budgetIconStatus: BudgetStatus;
+  protected budgetStatusIcon: BudgetStatus;
   protected responseErrorModel: ResponseErrorModel;
   protected isEditing: boolean;
   protected displayTimer: boolean;
@@ -120,8 +120,8 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
   }
 
   protected close(modal: any): void {
-    if (!ModalUtils.isUndefinedBudgetStatus(this.budgetIconStatus) &&
-      this.budgetIconStatus.status) {
+    if (!ModalUtils.isUndefinedBudgetStatus(this.budgetStatusIcon) &&
+      this.budgetStatusIcon.status) {
       this.refreshPageEvent.emit(true);
     }
 
@@ -188,7 +188,7 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
   private onRequestSuccess(response: HttpResponse<any>): void {
     const status = response.status;
     const isSuccess = status >= 200 && status <= 299;
-    this.budgetIconStatus = {
+    this.budgetStatusIcon = {
       status: isSuccess,
       message: status + " - Ok"
     } as BudgetStatus;
@@ -204,7 +204,7 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
       this.errorModal.open(this.responseErrorModel);
     }
 
-    this.budgetIconStatus = {
+    this.budgetStatusIcon = {
       status: false,
       message: err.status + " - " + err.error["title"]
     } as BudgetStatus;
@@ -218,7 +218,7 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
   }
 
   private resetBudgetStatus(): void {
-    this.budgetIconStatus = new BudgetStatus();
+    this.budgetStatusIcon = new BudgetStatus();
   }
 
   private resetModalOptions(): void {
