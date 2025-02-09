@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {ErrorModel} from '../../../models/ErrorModel';
+import {ResponseErrorModel} from '../../../models/ResponseErrorModel';
 import {BudgetModel} from '../../../models/RequestModels';
 import {HttpService} from '../../../services/http/httpService';
 import {Subscription} from 'rxjs';
@@ -8,7 +8,7 @@ import {SubscriptionUtils} from '../../../util/subscription.utils';
 import {DateUtils} from "../../../util/date.utils";
 import {RequestParamModel} from "../../../models/RequestParamModel";
 import {SpinnerSize} from "../../components/shared/spinner/spinner.component";
-import {DatePickerModel} from "../../../models/FormModels";
+import {DatePicker} from "../../../models/FormModels";
 import {CookieUtils} from "../../../util/cookie.utils";
 
 @Component({
@@ -30,8 +30,8 @@ export class IndexComponent implements OnInit, OnDestroy {
   protected budget: BudgetModel | null;
   protected subscriptions: Subscription[];
   protected requestParams: RequestParamModel;
-  protected fromDatePicker: DatePickerModel;
-  protected toDatePicker: DatePickerModel;
+  protected fromDatePicker: DatePicker;
+  protected toDatePicker: DatePicker;
 
   protected displayNowButton: boolean;
   protected errorModels: any;
@@ -66,8 +66,8 @@ export class IndexComponent implements OnInit, OnDestroy {
     this.budgets = [];
     this.subscriptions = [];
     this.errorModels = {
-      budgets: new ErrorModel(),
-      budget: new ErrorModel()
+      budgets: new ResponseErrorModel(),
+      budget: new ResponseErrorModel()
     }
 
     this.loaders = {
@@ -85,7 +85,7 @@ export class IndexComponent implements OnInit, OnDestroy {
   protected onPageReload(reload: boolean): void {
     if (reload) {
       this.markPageAsLoaded(false);
-      this.errorModels.budgets = new ErrorModel();
+      this.errorModels.budgets = new ResponseErrorModel();
       this.getBudgets(this.requestParams);
     }
   }
@@ -94,7 +94,7 @@ export class IndexComponent implements OnInit, OnDestroy {
     if (idBudget) {
       this.markBudgetAsLoaded(false);
       this.idRefreshBudget = idBudget;
-      this.errorModels.budget = new ErrorModel();
+      this.errorModels.budget = new ResponseErrorModel();
       this.getBudget(idBudget);
     }
   }
@@ -177,7 +177,7 @@ export class IndexComponent implements OnInit, OnDestroy {
     )
   }
 
-  private onRequestFailed(errorModel: ErrorModel, err: any): void {
+  private onRequestFailed(errorModel: ResponseErrorModel, err: any): void {
     errorModel.traceId = err.headers.get('X-Trace-Id');
     errorModel.responseStatusCode = err.status;
     errorModel.responseErrorModel = err.error;
@@ -200,7 +200,7 @@ export class IndexComponent implements OnInit, OnDestroy {
     this.cookieUtils.setCookie(dateName, date.toString());
   }
 
-  private readDateFromCookie(dateName: string): DatePickerModel | null {
+  private readDateFromCookie(dateName: string): DatePicker | null {
     const cookieDate = this.cookieUtils.getCookie(dateName);
     return cookieDate ? DateUtils.convertToDatePicker(new Date(cookieDate)) : null;
   }

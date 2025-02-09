@@ -1,7 +1,7 @@
 import {Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {ModalOptions} from "../../../../util/modal-options.utils";
-import {DatePickerModel} from "../../../../models/FormModels";
+import {DatePicker} from "../../../../models/FormModels";
 import {DateUtils} from "../../../../util/date.utils";
 import {HttpService} from "../../../../services/http/httpService";
 import {catchError, forkJoin, interval, Observable, of, Subscription, takeWhile} from "rxjs";
@@ -24,7 +24,7 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
   protected readonly DateUtils = DateUtils;
   protected readonly ModalUtils = ModalUtils;
   protected subscriptions: Subscription[];
-  protected budgetDateFields: DatePickerModel[];
+  protected budgetDateFields: DatePicker[];
   protected budgetResponses: BudgetStatus[];
   protected disableForm: boolean;
   protected autoCloseModal: boolean;

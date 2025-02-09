@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {interval, Subscription, takeWhile} from "rxjs";
 
 @Component({
@@ -8,27 +8,20 @@ import {interval, Subscription, takeWhile} from "rxjs";
 })
 export class TimerComponent implements OnInit, OnDestroy {
   @Output() timerFinishedEvent = new EventEmitter<boolean>();
-  protected readonly maxTime = 25;
+  @Input() duration: number;
   protected timeLeft: number;
   protected disableTimer: boolean;
   private subscription: Subscription;
 
   ngOnInit(): void {
-    this.default();
+    this.disableTimer = false;
+    this.timeLeft = this.duration;
     this.start();
   }
 
   ngOnDestroy(): void {
-    this.subscription.unsubscribe();
-  }
-
-  default(): void {
-    this.disableTimer = false;
-    this.timeLeft = this.maxTime;
-  }
-
-  disable(): void {
     this.disableTimer = true;
+    this.subscription.unsubscribe();
   }
 
   private start(): void {

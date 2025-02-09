@@ -2,7 +2,7 @@ import {Component, HostListener, OnDestroy, OnInit, Output, ViewChild} from '@an
 import {SpinnerSize} from "../../components/shared/spinner/spinner.component";
 import {BudgetModel, IncomeModel, PageModel, PaymentModel} from "../../../models/RequestModels";
 import {Subscription} from "rxjs";
-import {ErrorModel} from "../../../models/ErrorModel";
+import {ResponseErrorModel} from "../../../models/ResponseErrorModel";
 import {RequestParamModel} from "../../../models/RequestParamModel";
 import {DateUtils} from '../../../util/date.utils';
 import {HttpService} from "../../../services/http/httpService";
@@ -70,10 +70,10 @@ export class BudgetComponent implements OnInit, OnDestroy {
     };
 
     this.errorModels = {
-      budget: new ErrorModel(),
-      incomes: new ErrorModel(),
-      payments: new ErrorModel(),
-      paymentStatus: new ErrorModel()
+      budget: new ResponseErrorModel(),
+      incomes: new ResponseErrorModel(),
+      payments: new ResponseErrorModel(),
+      paymentStatus: new ResponseErrorModel()
     };
 
     this.commentRows = 1;
@@ -188,7 +188,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
     )
   }
 
-  private onRequestFailed(errorModel: ErrorModel, err: any): void {
+  private onRequestFailed(errorModel: ResponseErrorModel, err: any): void {
     errorModel.traceId = err.headers.get('X-Trace-Id');
     errorModel.responseStatusCode = err.status;
     errorModel.responseErrorModel = err.error;
