@@ -14,7 +14,7 @@ import {ModalUtils} from "../../../../util/modal.utils";
 import {AbstractControl, NgForm, NgModel} from "@angular/forms";
 import {ResponseErrorModel} from "../../../../models/ResponseErrorModel";
 import {TimerUtils} from "../../../../util/timer.utils";
-import {DatesConfig, LoadersConfig} from "../../../../app-config";
+import {AnimationsConfig, DatesConfig, LoadersConfig} from "../../../../app-config";
 
 @Component({
   selector: 'app-budget-modal',
@@ -29,6 +29,7 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
   protected readonly DateUtils = DateUtils;
   protected readonly ModalUtils = ModalUtils;
   protected readonly SpinnerSize = SpinnerSize;
+  protected readonly LoadersConfig = LoadersConfig;
   protected subscriptions: Subscription[];
   protected budgetPickerForm: BudgetPickerForm;
   protected budgetPicker: DatePicker;
@@ -146,11 +147,12 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
         },
         complete: (): void => {
           this.updateBudgetEvent.emit(this.idBudget);
-          new TimerUtils(500).start().subscribe(finished => {
-            if (finished) {
-              this.modalService.dismissAll();
-            }
-          })
+          new TimerUtils(AnimationsConfig.DEFAULT_DURATION).start()
+            .subscribe(finished => {
+              if (finished) {
+                this.modalService.dismissAll();
+              }
+            })
         }
       })
     )
@@ -219,6 +221,4 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
     this.disableForm = false;
     this.displayLoader = false;
   }
-
-  protected readonly LoadersConfig = LoadersConfig;
 }

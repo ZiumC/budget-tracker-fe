@@ -2,7 +2,7 @@ import {BudgetPickerForm} from "./models/FormModels";
 import {DateUtils} from "./util/date.utils";
 
 export class AnimationsConfig {
-  public static DURATION = 500;
+  public static DEFAULT_DURATION = 500;
 }
 
 export class LoadersConfig {
