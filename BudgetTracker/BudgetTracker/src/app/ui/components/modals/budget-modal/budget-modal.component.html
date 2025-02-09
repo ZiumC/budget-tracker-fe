@@ -103,6 +103,9 @@
                     <label *ngIf="dateStartInput.errors?.['invalidYear']">
                       {{ dateStartInput.errors?.['invalidYear'] }}
                     </label>
+                    <label *ngIf="dateStartInput.errors?.['invalidRange']">
+                      {{ dateStartInput.errors?.['invalidRange'] }}
+                    </label>
                   </div>
                 } @else if (dateStartInput.valid) {
                   <div class="valid-feedback pb-3">
@@ -150,6 +153,9 @@
                     </label>
                     <label *ngIf="dateEndInput.errors?.['invalidYear']">
                       {{ dateEndInput.errors?.['invalidYear'] }}
+                    </label>
+                    <label *ngIf="dateStartInput.errors?.['invalidRange']">
+                      {{ dateStartInput.errors?.['invalidRange'] }}
                     </label>
                   </div>
                 } @else if (dateEndInput.valid) {

@@ -79,15 +79,21 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
   }
 
   protected onDatesChanged(input1: NgModel, input2: NgModel): void {
-    const dateStart = this.budgetPickerForm.dateStart;
-    const dateEnd = this.budgetPickerForm.dateEnd;
+    const datePickerStart = this.budgetPickerForm.dateStart;
+    const datePickerEnd = this.budgetPickerForm.dateEnd;
 
-    if (dateStart.month != dateEnd.month) {
+    const dateStart = DateUtils.convertToDate(datePickerStart);
+    const dateEnd = DateUtils.convertToDate(datePickerEnd);
+
+    if (datePickerStart.month != datePickerEnd.month) {
       input1.control.setErrors({invalidMonth: DatesConfig.MONTHS_MESSAGE});
       input2.control.setErrors({invalidMonth: DatesConfig.MONTHS_MESSAGE});
-    } else if (dateStart.year != dateEnd.year) {
+    } else if (datePickerStart.year != datePickerEnd.year) {
       input1.control.setErrors({invalidYear: DatesConfig.YEARS_MESSAGE});
       input2.control.setErrors({invalidYear: DatesConfig.YEARS_MESSAGE});
+    } else if (dateStart >= dateEnd) {
+      input1.control.setErrors({invalidRange: DatesConfig.RANGE_MESSAGE});
+      input2.control.setErrors({invalidRange: DatesConfig.RANGE_MESSAGE});
     } else {
       input1.control.setErrors(null);
       input2.control.setErrors(null);

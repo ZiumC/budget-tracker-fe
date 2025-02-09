@@ -50,7 +50,8 @@
               (ngModelChange)="validateMonthsOccurs(i, toDate)"
               #dateEnd="ngbDatepicker"
               [ngClass]="{
-                    'is-invalid': toDate.invalid || (!ModalUtils.isUndefinedBudgetStatus(budgetResponses[i]) && !budgetResponses[i].status),
+                    'is-invalid': toDate.invalid ||
+                      (!ModalUtils.isUndefinedBudgetStatus(budgetResponses[i]) && !budgetResponses[i].status),
                     'is-valid': toDate.valid }"/>
             <div class="input-group-append">
               <button class="btn btn-outline-secondary bi bi-calendar3"
@@ -69,9 +70,6 @@
                 </label>
                 <label *ngIf="toDate.errors?.['ngbDate']">
                   Date is invalid.
-                </label>
-                <label>
-                  This month is invalid, set another one
                 </label>
               </div>
             } @else if (toDate.valid) {
