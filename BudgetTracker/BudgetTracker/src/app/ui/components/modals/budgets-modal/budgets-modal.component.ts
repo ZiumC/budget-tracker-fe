@@ -60,12 +60,15 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
   }
 
   protected add(): void {
-    if (this.budgetPickers.length == 0) {
-      this.lastDate = new Date();
-    }
-
     if (this.budgetPickers.length < this.budgetsLimit) {
-      this.budgetPickers.push(this.getMaxDate());
+      let maxDate = this.getMaxDate();
+
+      if (this.budgetPickers.length > 0) {
+        maxDate.setMonth(maxDate.getMonth() + 1);
+      }
+
+      this.budgetPickers.push(DateUtils.convertToDatePicker(maxDate));
+      this.budgetStatusIcons.push(new BudgetStatus());
     }
   }
 
@@ -75,8 +78,15 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
 
     if (!this.hasDuplicatedMonths()) {
       for (let i = 0; i < this.budgetPickers.length; i++) {
-        formControls.controls['budget-date' + i].setErrors(null);
+        let fieldControl = formControls.controls['budget-date' + i];
+        if (fieldControl) {
+          fieldControl.setErrors(null);
+        }
       }
+    }
+
+    if (this.budgetStatusIcons.length > 0 && this.hasAllSuccess()) {
+      this.displayTimer = true;
     }
   }
 
@@ -168,7 +178,7 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
     modal.close();
   }
 
-  private getMaxDate(): DatePicker {
+  private getMaxDate(): Date {
     let maxDate: Date = new Date();
     for (const datePicker of this.budgetPickers) {
       const convertedDate = DateUtils.convertToDate(datePicker);
@@ -176,9 +186,7 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
         maxDate = convertedDate;
       }
     }
-
-    maxDate.setMonth(maxDate.getMonth() + 1);
-    return DateUtils.convertToDatePicker(maxDate);
+    return maxDate;
   }
 
   private hasDuplicatedMonths(): boolean {
@@ -193,9 +201,13 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
     return new Set(months).size < months.length;
   }
 
+  private hasAllSuccess(): boolean {
+    return this.budgetStatusIcons.every(s => s && s.status);
+  }
+
   private resetBudgetStatus(): void {
     this.budgetStatusIcons = [];
-    for (let i = 0; i < this.budgetsLimit; i++) {
+    for (let i = 0; i < this.budgetPickers.length; i++) {
       this.budgetStatusIcons.push(new BudgetStatus());
     }
   }
