@@ -3,9 +3,9 @@ import {Subscription} from "rxjs";
 import {SubscriptionUtils} from "../../../../util/subscription.utils";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {PaymentModel} from "../../../../models/RequestModels";
-import {ModalOptions, ModalSize} from "../../../../util/modal.utils";
+import {ModalOptions, ModalSize} from "../../../../util/modal-options.utils";
 import {PaymentForm} from "../../../../models/FormModels";
-import {ErrorModel} from "../../../../models/ErrorModel";
+import {ResponseErrorModel} from "../../../../models/ResponseErrorModel";
 import BigNumber from "bignumber.js";
 import {NumberUtils} from "../../../../util/number.utils";
 import {SpinnerSize} from "../../shared/spinner/spinner.component";
@@ -25,7 +25,7 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
   protected readonly SpinnerSize = SpinnerSize;
   protected readonly NumberUtils = NumberUtils;
   protected subscriptions: Subscription[];
-  protected errorModel: ErrorModel;
+  protected errorModel: ResponseErrorModel;
   protected paymentForm: PaymentForm;
   protected idPayment: string;
   protected isEditing: boolean;
@@ -39,7 +39,7 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.subscriptions = [];
-    this.errorModel = new ErrorModel();
+    this.errorModel = new ResponseErrorModel();
     this.displayLoader = false;
     this.isEditing = false;
     this.buttonCopyName = "Copy";

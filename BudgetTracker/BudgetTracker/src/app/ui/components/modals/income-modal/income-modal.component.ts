@@ -2,11 +2,11 @@ import {Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} fr
 import {IncomeForm} from "../../../../models/FormModels";
 import {IncomeModel} from "../../../../models/RequestModels";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
-import {ModalOptions} from "../../../../util/modal.utils";
+import {ModalOptions} from "../../../../util/modal-options.utils";
 import BigNumber from "bignumber.js";
 import {Subscription} from "rxjs";
 import {HttpService} from "../../../../services/http/httpService";
-import {ErrorModel} from "../../../../models/ErrorModel";
+import {ResponseErrorModel} from "../../../../models/ResponseErrorModel";
 import {SubscriptionUtils} from "../../../../util/subscription.utils";
 import {SpinnerSize} from "../../shared/spinner/spinner.component";
 import {HttpResponse} from "@angular/common/http";
@@ -23,7 +23,7 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
   @Output() refreshIncomeEvent = new EventEmitter<boolean>();
   protected readonly SpinnerSize = SpinnerSize;
   protected subscriptions: Subscription[];
-  protected errorModel: ErrorModel;
+  protected errorModel: ResponseErrorModel;
   protected incomeForm: IncomeForm;
   protected displayLoader: boolean;
   protected isEditing: boolean;
@@ -41,7 +41,7 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.setDefaultIncomeForm();
-    this.errorModel = new ErrorModel();
+    this.errorModel = new ResponseErrorModel();
     this.subscriptions = [];
     this.displayLoader = false;
     this.isEditing = false;

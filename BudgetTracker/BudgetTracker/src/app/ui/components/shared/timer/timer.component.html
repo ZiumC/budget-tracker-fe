@@ -1,0 +1,12 @@
+<div class="w-50 mx-auto">
+  <div class="progress">
+    <div class="progress-bar bg-success"
+         role="progressbar"
+         aria-valuemin="0"
+         aria-valuemax="4"
+         [style.width.%]="(timeLeft / duration) * 100"
+         [attr.aria-valuenow]="timeLeft">
+
+    </div>
+  </div>
+</div>

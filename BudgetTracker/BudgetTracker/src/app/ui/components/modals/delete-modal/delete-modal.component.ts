@@ -2,11 +2,11 @@ import {Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@an
 import {Subscription} from "rxjs";
 import {SubscriptionUtils} from "../../../../util/subscription.utils";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
-import {ModalOptions, ModalSize} from "../../../../util/modal.utils";
+import {ModalOptions, ModalSize} from "../../../../util/modal-options.utils";
 import {BudgetModel, IncomeModel, PaymentModel} from "../../../../models/RequestModels";
 import {HttpService} from "../../../../services/http/httpService";
 import {HttpResponse} from "@angular/common/http";
-import {ErrorModel} from "../../../../models/ErrorModel";
+import {ResponseErrorModel} from "../../../../models/ResponseErrorModel";
 import {SpinnerSize} from "../../shared/spinner/spinner.component";
 
 @Component({
@@ -25,7 +25,7 @@ export class DeleteModalComponent implements OnInit, OnDestroy {
   private paymentModel: PaymentModel | null;
   private budgetModel: BudgetModel | null;
   private incomeModel: IncomeModel | null;
-  protected errorModel: ErrorModel;
+  protected errorModel: ResponseErrorModel;
   protected displayLoader: boolean;
 
   constructor(
@@ -36,7 +36,7 @@ export class DeleteModalComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.displayLoader = false;
     this.subscriptions = [];
-    this.errorModel = new ErrorModel();
+    this.errorModel = new ResponseErrorModel();
   }
 
   ngOnDestroy(): void {

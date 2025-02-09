@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {ErrorModel} from "../../../../models/ErrorModel";
+import {ResponseErrorModel} from "../../../../models/ResponseErrorModel";
 
 @Component({
   selector: 'app-error-view',
@@ -7,12 +7,12 @@ import {ErrorModel} from "../../../../models/ErrorModel";
   styleUrl: './error-view.component.css'
 })
 export class ErrorViewComponent implements OnInit {
-  @Input() errorModel: ErrorModel;
+  @Input() errorModel: ResponseErrorModel;
   protected buttonCopyName: string;
 
   ngOnInit(): void {
     if (!this.errorModel) {
-      this.errorModel = new ErrorModel();
+      this.errorModel = new ResponseErrorModel();
     }
     this.buttonCopyName = "Copy";
   }

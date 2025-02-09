@@ -123,6 +123,10 @@ div.ngb-dp-weekday {
   bottom: 0;
 }
 
+.icon-big {
+  font-size: 2.5ex;
+}
+
 @media only screen and (max-width: 770px) {
   .width-wrapper {
     width: 92%;

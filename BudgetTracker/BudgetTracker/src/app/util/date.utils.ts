@@ -1,5 +1,5 @@
 import {formatDate} from "@angular/common";
-import {DatePickerModel} from "../models/FormModels";
+import {DatePicker} from "../models/FormModels";
 
 export class DateUtils {
   static format(date: Date | null | undefined): string {
@@ -16,26 +16,26 @@ export class DateUtils {
     return '---';
   }
 
-  static convertToDatePicker(date: Date): DatePickerModel {
+  static convertToDatePicker(date: Date): DatePicker {
     const formatedDate = this.format(date);
     const splitDate = formatedDate.split("/");
     return {
       year: +splitDate[2],
       month: +splitDate[1],
       day: +splitDate[0],
-    } as DatePickerModel;
+    } as DatePicker;
   }
 
-  static convertToDate(date: DatePickerModel): Date {
+  static convertToDate(date: DatePicker): Date {
     return new Date(date.year, date.month - 1, date.day);
   }
 
-  static getMonthName(datePicker: DatePickerModel): string {
+  static getMonthName(datePicker: DatePicker): string {
     const convertedDate = this.convertToDate(datePicker);
     return new Date(convertedDate).toLocaleString('default', {month: 'long'});
   }
 
-  static formatDatePicker(datePicker: DatePickerModel): string {
+  static formatDatePicker(datePicker: DatePicker): string {
     const formatedDate = this.convertToDate(datePicker);
     return this.format(formatedDate);
   }

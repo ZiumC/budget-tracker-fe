@@ -2,7 +2,7 @@ import {Component, HostListener, OnDestroy, OnInit, Output, ViewChild} from '@an
 import {SpinnerSize} from "../../components/shared/spinner/spinner.component";
 import {BudgetModel, IncomeModel, PageModel, PaymentModel} from "../../../models/RequestModels";
 import {Subscription} from "rxjs";
-import {ErrorModel} from "../../../models/ErrorModel";
+import {ResponseErrorModel} from "../../../models/ResponseErrorModel";
 import {RequestParamModel} from "../../../models/RequestParamModel";
 import {DateUtils} from '../../../util/date.utils';
 import {HttpService} from "../../../services/http/httpService";
@@ -10,7 +10,7 @@ import {ActivatedRoute, Params, Router} from "@angular/router";
 import {HttpResponse} from "@angular/common/http";
 import {SubscriptionUtils} from "../../../util/subscription.utils";
 import {NumberUtils} from "../../../util/number.utils";
-import {Sort} from "../../../util/model.utils";
+import {SortIncome, SortPayment} from "../../../util/sort-model.utils";
 import {PaymentStatusForm} from "../../../models/FormModels";
 import {ORDER_TYPES} from "../../components/shared/order/order.component";
 
@@ -70,10 +70,10 @@ export class BudgetComponent implements OnInit, OnDestroy {
     };
 
     this.errorModels = {
-      budget: new ErrorModel(),
-      incomes: new ErrorModel(),
-      payments: new ErrorModel(),
-      paymentStatus: new ErrorModel()
+      budget: new ResponseErrorModel(),
+      incomes: new ResponseErrorModel(),
+      payments: new ResponseErrorModel(),
+      paymentStatus: new ResponseErrorModel()
     };
 
     this.commentRows = 1;
@@ -188,7 +188,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
     )
   }
 
-  private onRequestFailed(errorModel: ErrorModel, err: any): void {
+  private onRequestFailed(errorModel: ResponseErrorModel, err: any): void {
     errorModel.traceId = err.headers.get('X-Trace-Id');
     errorModel.responseStatusCode = err.status;
     errorModel.responseErrorModel = err.error;
@@ -201,7 +201,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
         this.requestIncomeParam,
         this.idBudget).subscribe({
         next: (response: HttpResponse<IncomeModel[]>): void => {
-          this.incomes = Sort.incomeSurplusFirst(response.body);
+          this.incomes = SortIncome.surplusFirst(response.body);
           this.errorModels.incomes.responseStatusCode = response.status;
         },
         error: (err): void => {
@@ -222,7 +222,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
         this.requestPaymentParam,
         this.idBudget).subscribe({
         next: (response: HttpResponse<PaymentModel[]>): void => {
-          this.payments = Sort.incomePaidFirst(response.body);
+          this.payments = SortPayment.paidFirst(response.body);
           this.errorModels.payments.responseStatusCode = response.status;
         },
         error: (err): void => {

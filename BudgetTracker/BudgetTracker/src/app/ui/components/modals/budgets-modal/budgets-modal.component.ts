@@ -1,12 +1,14 @@
 import {Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
-import {ModalOptions} from "../../../../util/modal.utils";
-import {DatePickerModel} from "../../../../models/FormModels";
+import {ModalOptions} from "../../../../util/modal-options.utils";
+import {DatePicker} from "../../../../models/FormModels";
 import {DateUtils} from "../../../../util/date.utils";
 import {HttpService} from "../../../../services/http/httpService";
 import {catchError, forkJoin, interval, Observable, of, Subscription, takeWhile} from "rxjs";
 import {HttpResponse} from "@angular/common/http";
 import {SubscriptionUtils} from "../../../../util/subscription.utils";
+import {BudgetStatus} from "../../../../models/modal-models/BudgetStatusModel";
+import {ModalUtils} from "../../../../util/modal.utils";
 
 
 @Component({
@@ -20,8 +22,9 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
   protected readonly budgetsLimit: number = 6;
   protected readonly maxTime = 25;
   protected readonly DateUtils = DateUtils;
+  protected readonly ModalUtils = ModalUtils;
   protected subscriptions: Subscription[];
-  protected budgetDateFields: DatePickerModel[];
+  protected budgetDateFields: DatePicker[];
   protected budgetResponses: BudgetStatus[];
   protected disableForm: boolean;
   protected autoCloseModal: boolean;
@@ -81,7 +84,7 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
     this.lastDate = new Date(this.lastDate.setMonth(this.lastDate.getMonth() - 1));
   }
 
-  protected onDateChanged(index: number, ngModel: any): void {
+  protected validateMonthsOccurs(index: number, ngModel: any): void {
     const changedField = this.budgetDateFields[index];
 
     for (let i = 0; i < this.budgetDateFields.length; i++) {
@@ -115,7 +118,7 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
       const field = this.budgetDateFields[i];
       const formatedDate = DateUtils.formatDatePicker(field);
       if (!this.budgetResponses[i].status ||
-        this.isUndefinedStatus(this.budgetResponses[i])) {
+        ModalUtils.isUndefinedBudgetStatus(this.budgetResponses[i])) {
         budgetRequests.push(this.httpService.createBudget(formatedDate).pipe(
           catchError((err): Observable<HttpResponse<any>> => {
             return of(err);
@@ -149,7 +152,8 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
         complete: (): void => {
           this.autoCloseModal = true;
           this.budgetResponses.forEach((value): void => {
-            if (!this.isUndefinedStatus(value) && !value.status) {
+            if (!ModalUtils.isUndefinedBudgetStatus(value) &&
+              !value.status) {
               this.autoCloseModal = false;
             }
           });
@@ -165,7 +169,8 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
   protected close(modal: any): void {
     let pageReload = false;
     for (const budgetResponse of this.budgetResponses) {
-      if (!this.isUndefinedStatus(budgetResponse)) {
+      if (!ModalUtils.isUndefinedBudgetStatus(budgetResponse) &&
+        budgetResponse.status) {
         pageReload = true;
       }
     }
@@ -176,11 +181,6 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
     }
 
     modal.close();
-  }
-
-  protected isUndefinedStatus(budgetStatus: BudgetStatus): boolean {
-    return typeof budgetStatus.status === "undefined" &&
-      typeof budgetStatus.message === "undefined"
   }
 
   protected startTimer(): void {
@@ -221,9 +221,4 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
       message: err.status + " - " + err.error["title"]
     } as BudgetStatus;
   }
-}
-
-export class BudgetStatus {
-  status: boolean;
-  message: string;
 }

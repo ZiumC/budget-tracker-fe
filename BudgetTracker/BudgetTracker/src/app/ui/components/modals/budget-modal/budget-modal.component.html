@@ -1,5 +1,13 @@
 <ng-template #budgetModal let-modal>
-  @if (!displayLoader) {
+  <ng-template [ngIf]="displayLoader" [ngIfElse]="loadedModal">
+    <div class="my-5"></div>
+    <app-spinner [size]="SpinnerSize.MEDIUM"></app-spinner>
+    <div class="mt-5 text-center">
+      <p>Budget is saving...</p>
+    </div>
+    <div class="mb-3"></div>
+  </ng-template>
+  <ng-template #loadedModal>
     <div class="modal-header">
       <h4 class="modal-title" id="modal-basic-title">
         @if (isEditing) {
@@ -12,20 +20,9 @@
         type="button"
         class="btn-close"
         aria-label="Close"
-        (click)="modal.close()">
+        (click)="close(modal)">
       </button>
     </div>
-  }
-  <ng-template [ngIf]="displayLoader"
-               [ngIfElse]="loadedBody">
-    <div class="my-5"></div>
-    <app-spinner [size]="SpinnerSize.MEDIUM"></app-spinner>
-    <div class="mt-5 text-center">
-      <p>Budget is saving...</p>
-    </div>
-    <div class="mb-3"></div>
-  </ng-template>
-  <ng-template #loadedBody>
     <div class="modal-body">
       <form ngbAutofocus #form="ngForm">
         <div class="col-mx">
@@ -38,16 +35,14 @@
                 id="budget-name"
                 name="budget-name"
                 class="form-control"
-                [(ngModel)]="budgetForm.name"
+                [(ngModel)]="budgetPickerForm.name"
                 required
                 minlength="3"
                 maxlength="150"
                 #budgetNameInput="ngModel"
                 [ngClass]="{
-            'is-invalid':
-              budgetNameInput.invalid &&
-              (budgetNameInput.dirty || budgetNameInput.touched),
-            'is-valid': budgetNameInput.valid }"/>
+                'is-invalid': budgetNameInput.invalid && (budgetNameInput.dirty || budgetNameInput.touched),
+                'is-valid': budgetNameInput.valid }"/>
               @if (budgetNameInput.invalid &&
               (budgetNameInput.dirty || budgetNameInput.touched)) {
                 <div class="invalid-feedback">
@@ -77,17 +72,16 @@
                   id="budget-date-start"
                   name="budget-date-start"
                   class="form-control"
-                  [(ngModel)]="budgetForm.dateStart"
+                  [(ngModel)]="budgetPickerForm.dateStart"
                   required
                   #dateStartInput="ngModel"
-                  (ngModelChange)="validateDate(dateStartInput, dateEndInput)"
+                  (ngModelChange)="onDatesChanged(dateStartInput, dateEndInput)"
                   container="body"
                   placement="bottom-end"
                   ngbDatepicker
                   #dateStart="ngbDatepicker"
                   [ngClass]="{
-                  'is-invalid':
-                    dateStartInput.invalid,
+                  'is-invalid': dateStartInput.invalid,
                   'is-valid': dateStartInput.valid }"/>
                 <div class="input-group-append">
                   <button class="btn btn-outline-secondary bi bi-calendar3"
@@ -104,10 +98,10 @@
                       Date is invalid.
                     </label>
                     <label *ngIf="dateStartInput.errors?.['invalidMonth']">
-                      Months in both dates should be equal.
+                      {{ dateStartInput.errors?.['invalidMonth'] }}
                     </label>
                     <label *ngIf="dateStartInput.errors?.['invalidYear']">
-                      Years in both dates should be equal.
+                      {{ dateStartInput.errors?.['invalidYear'] }}
                     </label>
                   </div>
                 } @else if (dateStartInput.valid) {
@@ -126,17 +120,16 @@
                   id="budget-date-end"
                   name="budget-date-end"
                   class="form-control"
-                  [(ngModel)]="budgetForm.dateEnd"
+                  [(ngModel)]="budgetPickerForm.dateEnd"
                   container="body"
                   placement="bottom-end"
                   required
                   #dateEndInput="ngModel"
-                  (ngModelChange)="validateDate(dateStartInput, dateEndInput)"
+                  (ngModelChange)="onDatesChanged(dateStartInput, dateEndInput)"
                   ngbDatepicker
                   #dateEnd="ngbDatepicker"
                   [ngClass]="{
-                  'is-invalid':
-                    dateEndInput.invalid,
+                  'is-invalid': dateEndInput.invalid,
                   'is-valid': dateEndInput.valid }"/>
                 <div class="input-group-append">
                   <button class="btn btn-outline-secondary bi bi-calendar3"
@@ -153,10 +146,10 @@
                       Date is invalid.
                     </label>
                     <label *ngIf="dateEndInput.errors?.['invalidMonth']">
-                      Months in both dates should be equal.
+                      {{ dateEndInput.errors?.['invalidMonth'] }}
                     </label>
                     <label *ngIf="dateEndInput.errors?.['invalidYear']">
-                      Years in both dates should be equal.
+                      {{ dateEndInput.errors?.['invalidYear'] }}
                     </label>
                   </div>
                 } @else if (dateEndInput.valid) {
@@ -168,29 +161,50 @@
               </div>
             </div>
           } @else {
-            <div class="mb-2">
-              <label for="budget-date">Budget date</label>
-              <span class="text-danger">*</span>
+            <div class="d-flex align-items-baseline">
+              @if (!ModalUtils.isUndefinedBudgetStatus(budgetIconStatus)) {
+                @if (budgetIconStatus.status) {
+                  <div class="text-success"
+                       data-bs-toggle="tooltip"
+                       data-bs-placement="bottom"
+                       title="{{budgetIconStatus.message}}">
+                    <i class="bi bi-check-circle icon-big"></i>
+                  </div>
+                } @else {
+                  <div class="text-danger"
+                       data-bs-toggle="tooltip"
+                       data-bs-placement="bottom"
+                       title="{{budgetIconStatus.message}}">
+                    <i class="bi bi-x-circle icon-big"></i>
+                  </div>
+                }
+                <div class="mx-1"></div>
+              }
+              <label for="budget-date">{{ DateUtils.getMonthName(budgetPicker) }}</label>
+            </div>
+            <div class="d-flex align-items-baseline">
               <div class="input-group">
                 <input
                   type="text"
                   id="budget-date"
                   name="budget-date"
                   class="form-control"
-                  [(ngModel)]="budgetDate"
+                  [(ngModel)]="budgetPicker"
+                  (ngModelChange)="onDateChanged(budgetDateInput)"
                   required
                   #budgetDateInput="ngModel"
                   container="body"
-                  placement="bottom-end"
                   ngbDatepicker
                   #date="ngbDatepicker"
+                  [disabled]="budgetIconStatus.status"
                   [ngClass]="{
-                  'is-invalid':
-                    budgetDateInput.invalid,
+                  'is-invalid': budgetDateInput.invalid ||
+                    (!ModalUtils.isUndefinedBudgetStatus(budgetIconStatus) && !budgetIconStatus.status),
                   'is-valid': budgetDateInput.valid }"/>
                 <div class="input-group-append">
                   <button class="btn btn-outline-secondary bi bi-calendar3"
                           (click)="date.toggle()"
+                          [disabled]="budgetIconStatus.status"
                           type="button">
                   </button>
                 </div>
@@ -202,6 +216,9 @@
                     <label *ngIf="budgetDateInput.errors?.['ngbDate']">
                       Date is invalid.
                     </label>
+                    <label *ngIf="budgetDateInput.errors?.['responseMessage']">
+                      {{ budgetDateInput.errors?.['responseMessage'] }}
+                    </label>
                   </div>
                 } @else if (budgetDateInput.valid) {
                   <div class="valid-feedback pb-3">
@@ -211,22 +228,26 @@
                 }
               </div>
             </div>
+            <ng-template [ngIf]="displayTimer">
+              <div class="my-4"></div>
+              <app-timer [duration]="LoadersConfig.SHORT_DURATION"
+                         (timerFinishedEvent)="onTimerFinishedEvent(modal)"></app-timer>
+            </ng-template>
           }
         </div>
       </form>
-      <ng-template [ngIf]="displayError">
-        <app-error-view [errorModel]="errorModel">
-        </app-error-view>
-      </ng-template>
     </div>
     <div class="modal-footer">
       <button
-        [disabled]="form.invalid"
+        [disabled]="form.invalid || budgetIconStatus.status"
         type="button"
         class="btn btn-outline-secondary"
-        (click)="saveBudget()">
+        (click)="saveBudget(form)">
         Save
       </button>
     </div>
   </ng-template>
 </ng-template>
+<app-error-modal #errorModal>
+
+</app-error-modal>

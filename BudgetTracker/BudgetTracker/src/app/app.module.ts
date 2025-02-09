@@ -24,6 +24,7 @@ import { PaginationComponent } from './ui/components/shared/pagination/paginatio
 import { BudgetsModalComponent } from './ui/components/modals/budgets-modal/budgets-modal.component';
 import {ErrorModalComponent} from "./ui/components/modals/error-modal/error-modal.component";
 import { OrderComponent } from './ui/components/shared/order/order.component';
+import { TimerComponent } from './ui/components/shared/timer/timer.component';
 
 
 @NgModule({
@@ -45,6 +46,7 @@ import { OrderComponent } from './ui/components/shared/order/order.component';
     BudgetsModalComponent,
     ErrorModalComponent,
     OrderComponent,
+    TimerComponent,
   ],
   imports: [
     BrowserModule,
