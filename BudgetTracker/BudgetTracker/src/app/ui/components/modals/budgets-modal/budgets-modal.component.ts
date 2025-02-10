@@ -28,9 +28,7 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
   protected budgetPickers: DatePicker[];
   protected budgetStatusIcons: BudgetStatus[];
   protected displayTimer: boolean;
-  protected autoCloseModal: boolean;
   protected disableTimer: boolean;
-  protected lastDate: Date;
 
   constructor(private modalService: NgbModal,
               private httpService: HttpService) {
@@ -39,7 +37,6 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.subscriptions = [];
     this.budgetPickers = [];
-    this.lastDate = new Date();
     this.resetBudgetStatus();
     this.resetModalOptions();
     this.add();
@@ -51,7 +48,6 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
 
   open(): void {
     this.budgetPickers = [];
-    this.lastDate = new Date();
     this.resetBudgetStatus();
     this.resetModalOptions();
     this.add();
@@ -84,7 +80,7 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
       }
     }
 
-    if (this.budgetStatusIcons.length > 0 && this.hasAllSuccess()) {
+    if (this.budgetStatusIcons.length > 0 && this.allSuccessIcons()) {
       this.displayTimer = true;
     }
   }
@@ -102,8 +98,6 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
   }
 
   protected saveBudgets(formControls: NgForm): void {
-    this.autoCloseModal = false;
-
     const budgetRequests = [];
     for (let i = 0; i < this.budgetPickers.length; i++) {
       const field = this.budgetPickers[i];
@@ -141,14 +135,7 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
           }
         },
         complete: (): void => {
-          this.autoCloseModal = true;
-          this.budgetStatusIcons.forEach((value): void => {
-            if (!ModalUtils.isUndefinedBudgetStatus(value) &&
-              !value.status) {
-              this.autoCloseModal = false;
-            }
-          });
-          if (this.autoCloseModal) {
+          if (this.allSuccessIcons()) {
             this.displayTimer = true;
           }
         }
@@ -156,15 +143,7 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
   }
 
   protected close(modal: any): void {
-    let pageReload = false;
-    for (const budgetResponse of this.budgetStatusIcons) {
-      if (!ModalUtils.isUndefinedBudgetStatus(budgetResponse) &&
-        budgetResponse.status) {
-        pageReload = true;
-      }
-    }
-
-    if (pageReload) {
+    if (this.atLeastSuccessIcon()) {
       this.disableTimer = true;
       this.refreshPageEvent.emit(true);
     }
@@ -200,8 +179,12 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
     return new Set(months).size < months.length;
   }
 
-  private hasAllSuccess(): boolean {
+  private allSuccessIcons(): boolean {
     return this.budgetStatusIcons.every(s => s && s.status);
+  }
+
+  private atLeastSuccessIcon(): boolean {
+    return this.budgetStatusIcons.some(s => s && s.status);
   }
 
   private resetBudgetStatus(): void {
@@ -229,7 +212,6 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
   }
 
   private resetModalOptions(): void {
-    this.autoCloseModal = false;
     this.disableTimer = false;
     this.displayTimer = false;
   }
