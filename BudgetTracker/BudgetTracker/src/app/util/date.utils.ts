@@ -39,4 +39,16 @@ export class DateUtils {
     const formatedDate = this.convertToDate(datePicker);
     return this.format(formatedDate);
   }
+
+  static isInvalidDate(valueToCheck: Date | DatePicker): boolean {
+    let dateToCheck: Date;
+
+    if (valueToCheck instanceof Date) {
+      dateToCheck = valueToCheck;
+    } else {
+      dateToCheck = this.convertToDate(valueToCheck);
+    }
+
+    return isNaN(new Date(dateToCheck).getTime());
+  }
 }

@@ -12,7 +12,6 @@ import {ModalUtils} from "../../../../util/modal.utils";
 import {DatesConfig, LoadersConfig} from "../../../../app-config";
 import {AbstractControl, NgForm, NgModel} from "@angular/forms";
 
-
 @Component({
   selector: 'app-budgets-modal',
   templateUrl: './budgets-modal.component.html',
@@ -95,7 +94,7 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
 
     if (this.hasDuplicatedMonths()) {
       ngModel.control.setErrors({alreadyExist: DatesConfig.MONTH_ALREADY_EXIST_MESSAGE});
-    } else if (isNaN(DateUtils.convertToDate(changedPicker).getTime())) {
+    } else if (DateUtils.isInvalidDate(changedPicker)) {
       ngModel.control.setErrors({ngbDate: true});
     } else {
       ngModel.control.setErrors(null);
