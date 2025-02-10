@@ -163,7 +163,7 @@
       <app-spinner [size]="SpinnerSize.BIG"></app-spinner>
     </ng-template>
     <ng-template #loadedBlock>
-      <ng-template [ngIf]="errorModels.budgets.responseStatusCode == requiredStatusCode"
+      <ng-template [ngIf]="errorModels.budgets.responseStatusCode == RequestConfig.OK_CODE"
                    [ngIfElse]="errorBudgetsBlock">
         <div class="budget-card-container">
           @for (budget of budgets; track budget.id; ) {

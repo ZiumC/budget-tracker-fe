@@ -11,15 +11,31 @@ export class LoadersConfig {
 }
 
 export class DatesConfig {
+  private static CURRENT_YEAR = new Date().getFullYear();
   public static MONTHS_MESSAGE: string = 'Months in both dates should be equal.';
   public static YEARS_MESSAGE: string = 'Years in both dates should be equal.';
   public static RANGE_MESSAGE: string = 'Date range is invalid.';
   public static MONTH_ALREADY_EXIST_MESSAGE: string = 'Month already defined.';
-  public static FIRST_DAY: Date = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
-  public static LAST_DAY: Date = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0);
+
+  public static FIRST_DAY_OF_CURRENT_MONTH: Date = new Date(DatesConfig.CURRENT_YEAR, new Date().getMonth(), 1);
+  public static LAST_DAY_OF_CURRENT_MONTH: Date = new Date(DatesConfig.CURRENT_YEAR, new Date().getMonth() + 1, 0);
+  public static FIRST_DAY_OF_CURRENT_YEAR: Date = new Date(DatesConfig.CURRENT_YEAR, 0, 1);
+  public static LAST_DAY_OF_CURRENT_YEAR: Date = new Date(DatesConfig.CURRENT_YEAR, 11, 31);
+
   public static DEFAULT_PICKER: BudgetPickerForm = {
     name: "",
-    dateStart: DateUtils.convertToDatePicker(DatesConfig.FIRST_DAY),
-    dateEnd: DateUtils.convertToDatePicker(DatesConfig.LAST_DAY)
+    dateStart: DateUtils.convertToDatePicker(DatesConfig.FIRST_DAY_OF_CURRENT_MONTH),
+    dateEnd: DateUtils.convertToDatePicker(DatesConfig.LAST_DAY_OF_CURRENT_MONTH)
   };
+}
+
+export class RequestConfig {
+  public static OK_CODE = 200;
+  public static BUDGETS_DEFAULT_PAGE = 1;
+  public static BUDGETS_DEFAULT_PAGE_SIZE = 36;
+}
+
+export class CookieNames {
+  public static FROM_DATE = 'from-date';
+  public static TO_DATE = 'from-date';
 }

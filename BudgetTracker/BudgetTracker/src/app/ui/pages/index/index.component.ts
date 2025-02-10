@@ -10,6 +10,8 @@ import {RequestParamModel} from "../../../models/RequestParamModel";
 import {SpinnerSize} from "../../components/shared/spinner/spinner.component";
 import {DatePicker} from "../../../models/FormModels";
 import {CookieUtils} from "../../../util/cookie.utils";
+import {AnimationsConfig, CookieNames, DatesConfig, RequestConfig} from "../../../app-config";
+import {TimerUtils} from "../../../util/timer.utils";
 
 @Component({
   selector: 'app-index',
@@ -17,15 +19,9 @@ import {CookieUtils} from "../../../util/cookie.utils";
   styleUrl: './index.component.css'
 })
 export class IndexComponent implements OnInit, OnDestroy {
-  private readonly currentYear = new Date().getFullYear();
-  private readonly firstDayOfYear = new Date(this.currentYear, 0, 1);
-  private readonly lastDayOfYear = new Date(this.currentYear, 11, 31);
   private readonly cookieUtils = new CookieUtils();
   protected readonly DateUtils = DateUtils;
   protected readonly SpinnerSize = SpinnerSize;
-  protected readonly fromDateName: string = "from-date"
-  protected readonly toDateName: string = "to-date"
-  protected requiredStatusCode: number = 200;
   protected budgets: BudgetModel[] | null;
   protected budget: BudgetModel | null;
   protected subscriptions: Subscription[];
@@ -45,22 +41,22 @@ export class IndexComponent implements OnInit, OnDestroy {
     this.displayNowButton = this.isCurrentYear();
 
     this.requestParams = new RequestParamModel();
-    this.requestParams.page = 1;
-    this.requestParams.pageSize = 36;
+    this.requestParams.page = RequestConfig.BUDGETS_DEFAULT_PAGE;
+    this.requestParams.pageSize = RequestConfig.BUDGETS_DEFAULT_PAGE_SIZE;
 
-    const fromDatePickerCookie = this.readDateFromCookie(this.fromDateName);
-    const toDatePickerCookie = this.readDateFromCookie(this.toDateName);
+    const fromDatePickerCookie = this.readDateFromCookie(CookieNames.FROM_DATE);
+    const toDatePickerCookie = this.readDateFromCookie(CookieNames.TO_DATE);
 
     if (fromDatePickerCookie) {
       this.setFromDate(DateUtils.convertToDate(fromDatePickerCookie));
     } else {
-      this.setFromDate(this.firstDayOfYear);
+      this.setFromDate(DatesConfig.FIRST_DAY_OF_CURRENT_YEAR);
     }
 
     if (toDatePickerCookie) {
       this.setToDate(DateUtils.convertToDate(toDatePickerCookie));
     } else {
-      this.setToDate(this.lastDayOfYear);
+      this.setToDate(DatesConfig.LAST_DAY_OF_CURRENT_YEAR);
     }
 
     this.budgets = [];
@@ -106,8 +102,8 @@ export class IndexComponent implements OnInit, OnDestroy {
     this.requestParams.fromDate = DateUtils.format(fromDate);
     this.requestParams.toDate = DateUtils.format(toDate);
 
-    this.saveDateToCookie(this.fromDateName, fromDate);
-    this.saveDateToCookie(this.toDateName, toDate);
+    this.saveDateToCookie(CookieNames.FROM_DATE, fromDate);
+    this.saveDateToCookie(CookieNames.TO_DATE, toDate);
 
     this.displayNowButton = this.isCurrentYear();
 
@@ -129,10 +125,10 @@ export class IndexComponent implements OnInit, OnDestroy {
 
   protected toCurrentDate(): void {
     this.displayNowButton = false;
-    this.saveDateToCookie(this.fromDateName, this.firstDayOfYear);
-    this.saveDateToCookie(this.toDateName, this.lastDayOfYear);
-    this.setFromDate(this.firstDayOfYear);
-    this.setToDate(this.lastDayOfYear);
+    this.saveDateToCookie(CookieNames.FROM_DATE, DatesConfig.FIRST_DAY_OF_CURRENT_YEAR);
+    this.saveDateToCookie(CookieNames.TO_DATE, DatesConfig.LAST_DAY_OF_CURRENT_YEAR);
+    this.setFromDate(DatesConfig.FIRST_DAY_OF_CURRENT_YEAR);
+    this.setToDate(DatesConfig.LAST_DAY_OF_CURRENT_YEAR);
     this.onPageReload(true);
   }
 
@@ -184,15 +180,29 @@ export class IndexComponent implements OnInit, OnDestroy {
   }
 
   private markPageAsLoaded(value: boolean): void {
-    setTimeout((): void => {
+    if (value) {
+      new TimerUtils(AnimationsConfig.DEFAULT_DURATION).start()
+        .subscribe(finished => {
+          if (finished) {
+            this.loaders.page = value;
+          }
+        });
+    } else {
       this.loaders.page = value;
-    }, value ? 500 : 0)
+    }
   }
 
   private markBudgetAsLoaded(value: boolean): void {
-    setTimeout((): void => {
+    if (value) {
+      new TimerUtils(AnimationsConfig.DEFAULT_DURATION).start()
+        .subscribe(finished => {
+          if (finished) {
+            this.loaders.budget = value;
+          }
+        });
+    } else {
       this.loaders.budget = value;
-    }, value ? 500 : 0)
+    }
   }
 
   private saveDateToCookie(dateName: string,
@@ -216,13 +226,15 @@ export class IndexComponent implements OnInit, OnDestroy {
   }
 
   private isCurrentYear(): boolean {
-    const fromDatePickerCookie = this.readDateFromCookie(this.fromDateName);
-    const toDatePickerCookie = this.readDateFromCookie(this.toDateName);
+    const fromDatePickerCookie = this.readDateFromCookie(CookieNames.FROM_DATE);
+    const toDatePickerCookie = this.readDateFromCookie(CookieNames.TO_DATE);
 
-    const firstDayDatePicker = DateUtils.convertToDatePicker(this.firstDayOfYear);
-    const lastDayDatePicker = DateUtils.convertToDatePicker(this.lastDayOfYear);
+    const firstDayDatePicker = DateUtils.convertToDatePicker(DatesConfig.FIRST_DAY_OF_CURRENT_YEAR);
+    const lastDayDatePicker = DateUtils.convertToDatePicker(DatesConfig.LAST_DAY_OF_CURRENT_YEAR);
 
     return fromDatePickerCookie?.year != firstDayDatePicker.year ||
       toDatePickerCookie?.year != lastDayDatePicker.year;
   }
+
+  protected readonly RequestConfig = RequestConfig;
 }

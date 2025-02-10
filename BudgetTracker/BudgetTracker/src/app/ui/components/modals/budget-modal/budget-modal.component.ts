@@ -222,7 +222,7 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
 
   private resetDatePicker(): void {
     this.budgetPickerForm = DatesConfig.DEFAULT_PICKER;
-    this.budgetPicker = DateUtils.convertToDatePicker(DatesConfig.FIRST_DAY);
+    this.budgetPicker = DateUtils.convertToDatePicker(DatesConfig.FIRST_DAY_OF_CURRENT_MONTH);
   }
 
   private resetBudgetStatus(): void {
