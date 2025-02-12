@@ -12,6 +12,7 @@ import {DatePicker} from "../../../models/FormModels";
 import {CookieUtils} from "../../../util/cookie.utils";
 import {AnimationsConfig, CookieNames, DatesConfig, RequestConfig} from "../../../app-config";
 import {TimerUtils} from "../../../util/timer.utils";
+import {NgModel} from "@angular/forms";
 
 @Component({
   selector: 'app-index',
@@ -38,6 +39,7 @@ export class IndexComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    debugger
     this.displayNowButton = this.isCurrentYear();
 
     this.requestParams = new RequestParamModel();
@@ -110,16 +112,25 @@ export class IndexComponent implements OnInit, OnDestroy {
     this.onPageReload(true);
   }
 
-  protected validateDate(input1: any, input2: any): void {
-    const fromDate = DateUtils.convertToDate(this.fromDatePicker);
-    const toDate = DateUtils.convertToDate(this.toDatePicker);
+  protected onDatesChanged(fromDateInput: NgModel, toDateInput: NgModel): void {
+    const isInvalidFromDate = DateUtils.isInvalidDate(this.fromDatePicker);
+    const isInvalidToDate = DateUtils.isInvalidDate(this.toDatePicker);
 
-    if (toDate <= fromDate) {
-      input1.control.setErrors({invalidDateRange: 'Invalid date'});
-      input2.control.setErrors({invalidDateRange: 'Invalid date'});
+    if (isInvalidFromDate) {
+      fromDateInput.control.setErrors({ngbDate: true});
+    } else if (isInvalidToDate) {
+      toDateInput.control.setErrors({ngbDate: true});
     } else {
-      input1.control.setErrors(null);
-      input2.control.setErrors(null);
+      const fromDate = DateUtils.convertToDate(this.fromDatePicker);
+      const toDate = DateUtils.convertToDate(this.toDatePicker);
+
+      if (toDate <= fromDate) {
+        fromDateInput.control.setErrors({invalidRange: DatesConfig.RANGE_MESSAGE});
+        toDateInput.control.setErrors({invalidRange: DatesConfig.RANGE_MESSAGE});
+      } else {
+        fromDateInput.control.setErrors(null);
+        toDateInput.control.setErrors(null);
+      }
     }
   }
 

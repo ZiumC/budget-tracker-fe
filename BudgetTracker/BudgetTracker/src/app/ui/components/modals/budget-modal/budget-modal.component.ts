@@ -82,25 +82,31 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
     const datePickerStart = this.budgetPickerForm.dateStart;
     const datePickerEnd = this.budgetPickerForm.dateEnd;
 
-    const dateStart = DateUtils.convertToDate(datePickerStart);
-    const dateEnd = DateUtils.convertToDate(datePickerEnd);
+    const isInvalidStartDate = DateUtils.isInvalidDate(datePickerStart);
+    const isInvalidEndDate = DateUtils.isInvalidDate(datePickerEnd);
 
-    if (datePickerStart.month != datePickerEnd.month) {
-      dateStartInput.control.setErrors({invalidMonth: DatesConfig.MONTHS_MESSAGE});
-      dateEndInput.control.setErrors({invalidMonth: DatesConfig.MONTHS_MESSAGE});
-    } else if (datePickerStart.year != datePickerEnd.year) {
-      dateStartInput.control.setErrors({invalidYear: DatesConfig.YEARS_MESSAGE});
-      dateEndInput.control.setErrors({invalidYear: DatesConfig.YEARS_MESSAGE});
-    } else if (dateStart >= dateEnd) {
-      dateStartInput.control.setErrors({invalidRange: DatesConfig.RANGE_MESSAGE});
-      dateEndInput.control.setErrors({invalidRange: DatesConfig.RANGE_MESSAGE});
-    } else if (DateUtils.isInvalidDate(dateStart)) {
+    if (isInvalidStartDate) {
       dateStartInput.control.setErrors({ngbDate: true});
-    } else if (DateUtils.isInvalidDate(dateEnd)) {
+    } else if (isInvalidEndDate) {
       dateEndInput.control.setErrors({ngbDate: true});
     } else {
-      dateStartInput.control.setErrors(null);
-      dateEndInput.control.setErrors(null);
+
+      const dateStart = DateUtils.convertToDate(datePickerStart);
+      const dateEnd = DateUtils.convertToDate(datePickerEnd);
+
+      if (datePickerStart.month != datePickerEnd.month) {
+        dateStartInput.control.setErrors({invalidMonth: DatesConfig.MONTHS_MESSAGE});
+        dateEndInput.control.setErrors({invalidMonth: DatesConfig.MONTHS_MESSAGE});
+      } else if (datePickerStart.year != datePickerEnd.year) {
+        dateStartInput.control.setErrors({invalidYear: DatesConfig.YEARS_MESSAGE});
+        dateEndInput.control.setErrors({invalidYear: DatesConfig.YEARS_MESSAGE});
+      } else if (dateStart >= dateEnd) {
+        dateStartInput.control.setErrors({invalidRange: DatesConfig.RANGE_MESSAGE});
+        dateEndInput.control.setErrors({invalidRange: DatesConfig.RANGE_MESSAGE});
+      } else {
+        dateStartInput.control.setErrors(null);
+        dateEndInput.control.setErrors(null);
+      }
     }
   }
 

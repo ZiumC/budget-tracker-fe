@@ -19,7 +19,7 @@
                     name="from-date"
                     class="form-control"
                     [(ngModel)]="fromDatePicker"
-                    (ngModelChange)="validateDate(fromDate, toDate)"
+                    (ngModelChange)="onDatesChanged(fromDate, toDate)"
                     required
                     #fromDate="ngModel"
                     container="body"
@@ -41,8 +41,8 @@
                       <label *ngIf="fromDate.errors?.['required']">
                         Field is required.
                       </label>
-                      <label *ngIf="fromDate.errors?.['invalidDateRange']">
-                        <strong>Date To</strong> can't be less or equal to <strong>Date from</strong>.
+                      <label *ngIf="fromDate.errors?.['invalidRange']">
+                        {{ fromDate.errors?.['invalidRange'] }}
                       </label>
                       <label *ngIf="fromDate.errors?.['ngbDate']">
                         Date is invalid.
@@ -68,7 +68,7 @@
                     name="to-date"
                     class="form-control"
                     [(ngModel)]="toDatePicker"
-                    (ngModelChange)="validateDate(fromDate, toDate)"
+                    (ngModelChange)="onDatesChanged(fromDate, toDate)"
                     container="body"
                     placement="bottom-end"
                     required
@@ -90,8 +90,8 @@
                       <label *ngIf="toDate.errors?.['required']">
                         Field is required.
                       </label>
-                      <label *ngIf="toDate.errors?.['invalidDateRange']">
-                        <strong>Date To</strong> can't be less or equal to <strong>Date from</strong>.
+                      <label *ngIf="toDate.errors?.['invalidRange']">
+                        {{ toDate.errors?.['invalidRange'] }}
                       </label>
                       <label *ngIf="toDate.errors?.['ngbDate']">
                         Date is invalid.
