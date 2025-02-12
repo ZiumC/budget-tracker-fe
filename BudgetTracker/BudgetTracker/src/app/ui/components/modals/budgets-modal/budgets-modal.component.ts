@@ -9,7 +9,7 @@ import {HttpResponse} from "@angular/common/http";
 import {SubscriptionUtils} from "../../../../util/subscription.utils";
 import {BudgetStatus} from "../../../../models/modal-models/BudgetStatusModel";
 import {ModalUtils} from "../../../../util/modal.utils";
-import {DatesConfig, LoadersConfig} from "../../../../app-config";
+import {DateMessageConfig, LoadersConfig} from "../../../../app-config";
 import {AbstractControl, NgForm, NgModel} from "@angular/forms";
 
 @Component({
@@ -89,7 +89,7 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
     const changedPicker = this.budgetPickers[index];
 
     if (this.hasDuplicatedMonths()) {
-      ngModel.control.setErrors({alreadyExist: DatesConfig.MONTH_ALREADY_EXIST_MESSAGE});
+      ngModel.control.setErrors({alreadyExist: DateMessageConfig.MONTH_ALREADY_EXIST_MESSAGE});
     } else if (DateUtils.isInvalidDate(changedPicker)) {
       ngModel.control.setErrors({ngbDate: true});
     } else {

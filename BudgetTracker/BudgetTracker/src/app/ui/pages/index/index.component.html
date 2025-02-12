@@ -111,7 +111,7 @@
                           data-bs-toggle="tooltip"
                           data-bs-placement="bottom"
                           title="Search budgets"
-                          (click)="onBudgetsSearch()"
+                          (click)="budgetsSearch(false)"
                           [disabled]="form.invalid">
                     <i class="bi bi-search"></i>
                   </button>
@@ -149,7 +149,7 @@
                       data-bs-toggle="tooltip"
                       data-bs-placement="bottom"
                       title="Switch to current year"
-                      (click)="toCurrentDate()">
+                      (click)="budgetsSearch(true)">
                 <i class="bi bi-intersect"></i> Current
               </button>
             </div>

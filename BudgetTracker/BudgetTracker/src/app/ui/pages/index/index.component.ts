@@ -10,7 +10,7 @@ import {RequestParamModel} from "../../../models/RequestParamModel";
 import {SpinnerSize} from "../../components/shared/spinner/spinner.component";
 import {DatePicker} from "../../../models/FormModels";
 import {CookieUtils} from "../../../util/cookie.utils";
-import {AnimationsConfig, CookieNames, DatesConfig, RequestConfig} from "../../../app-config";
+import {AnimationsConfig, CookieNames, DateConfig, DateMessageConfig, RequestConfig} from "../../../app-config";
 import {TimerUtils} from "../../../util/timer.utils";
 import {NgModel} from "@angular/forms";
 
@@ -23,6 +23,7 @@ export class IndexComponent implements OnInit, OnDestroy {
   private readonly cookieUtils = new CookieUtils();
   protected readonly DateUtils = DateUtils;
   protected readonly SpinnerSize = SpinnerSize;
+  protected readonly RequestConfig = RequestConfig;
   protected budgets: BudgetModel[] | null;
   protected budget: BudgetModel | null;
   protected subscriptions: Subscription[];
@@ -39,27 +40,30 @@ export class IndexComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    debugger
-    this.displayNowButton = this.isCurrentYear();
-
     this.requestParams = new RequestParamModel();
     this.requestParams.page = RequestConfig.BUDGETS_DEFAULT_PAGE;
     this.requestParams.pageSize = RequestConfig.BUDGETS_DEFAULT_PAGE_SIZE;
 
-    const fromDatePickerCookie = this.readDateFromCookie(CookieNames.FROM_DATE);
-    const toDatePickerCookie = this.readDateFromCookie(CookieNames.TO_DATE);
+    const dateFromCookie = this.readDateCookie(CookieNames.FROM_DATE);
+    const dateToCookie = this.readDateCookie(CookieNames.TO_DATE);
 
-    if (fromDatePickerCookie) {
-      this.setFromDate(DateUtils.convertToDate(fromDatePickerCookie));
+    if (dateFromCookie) {
+      this.fromDatePicker = DateUtils.convertToDatePicker(dateFromCookie);
     } else {
-      this.setFromDate(DatesConfig.FIRST_DAY_OF_CURRENT_YEAR);
+      this.fromDatePicker =
+        DateUtils.convertToDatePicker(DateConfig.FIRST_DAY_OF_CURRENT_YEAR)
     }
 
-    if (toDatePickerCookie) {
-      this.setToDate(DateUtils.convertToDate(toDatePickerCookie));
+    if (dateToCookie) {
+      this.toDatePicker = DateUtils.convertToDatePicker(dateToCookie);
     } else {
-      this.setToDate(DatesConfig.LAST_DAY_OF_CURRENT_YEAR);
+      this.toDatePicker =
+        DateUtils.convertToDatePicker(DateConfig.LAST_DAY_OF_CURRENT_YEAR);
     }
+
+    this.requestParams.fromDate = DateUtils.formatDatePicker(this.fromDatePicker);
+    this.requestParams.toDate = DateUtils.formatDatePicker(this.toDatePicker);
+    this.displayNowButton = this.isCurrentYear();
 
     this.budgets = [];
     this.subscriptions = [];
@@ -97,15 +101,26 @@ export class IndexComponent implements OnInit, OnDestroy {
     }
   }
 
-  protected onBudgetsSearch(): void {
-    const fromDate = DateUtils.convertToDate(this.fromDatePicker);
-    const toDate = DateUtils.convertToDate(this.toDatePicker);
+  protected budgetsSearch(toCurrentDate: boolean): void {
+    let fromDate: Date;
+    let toDate: Date;
+
+    if (toCurrentDate) {
+      fromDate = DateConfig.FIRST_DAY_OF_CURRENT_YEAR;
+      toDate = DateConfig.LAST_DAY_OF_CURRENT_YEAR;
+    } else {
+      fromDate = DateUtils.convertToDate(this.fromDatePicker);
+      toDate = DateUtils.convertToDate(this.toDatePicker);
+    }
 
     this.requestParams.fromDate = DateUtils.format(fromDate);
     this.requestParams.toDate = DateUtils.format(toDate);
 
-    this.saveDateToCookie(CookieNames.FROM_DATE, fromDate);
-    this.saveDateToCookie(CookieNames.TO_DATE, toDate);
+    this.saveDateCookie(CookieNames.FROM_DATE, fromDate);
+    this.saveDateCookie(CookieNames.TO_DATE, toDate);
+
+    this.fromDatePicker = DateUtils.convertToDatePicker(fromDate);
+    this.toDatePicker = DateUtils.convertToDatePicker(toDate);
 
     this.displayNowButton = this.isCurrentYear();
 
@@ -125,22 +140,13 @@ export class IndexComponent implements OnInit, OnDestroy {
       const toDate = DateUtils.convertToDate(this.toDatePicker);
 
       if (toDate <= fromDate) {
-        fromDateInput.control.setErrors({invalidRange: DatesConfig.RANGE_MESSAGE});
-        toDateInput.control.setErrors({invalidRange: DatesConfig.RANGE_MESSAGE});
+        fromDateInput.control.setErrors({invalidRange: DateMessageConfig.RANGE_MESSAGE});
+        toDateInput.control.setErrors({invalidRange: DateMessageConfig.RANGE_MESSAGE});
       } else {
         fromDateInput.control.setErrors(null);
         toDateInput.control.setErrors(null);
       }
     }
-  }
-
-  protected toCurrentDate(): void {
-    this.displayNowButton = false;
-    this.saveDateToCookie(CookieNames.FROM_DATE, DatesConfig.FIRST_DAY_OF_CURRENT_YEAR);
-    this.saveDateToCookie(CookieNames.TO_DATE, DatesConfig.LAST_DAY_OF_CURRENT_YEAR);
-    this.setFromDate(DatesConfig.FIRST_DAY_OF_CURRENT_YEAR);
-    this.setToDate(DatesConfig.LAST_DAY_OF_CURRENT_YEAR);
-    this.onPageReload(true);
   }
 
   private getBudget(idBudget: string): void {
@@ -216,36 +222,20 @@ export class IndexComponent implements OnInit, OnDestroy {
     }
   }
 
-  private saveDateToCookie(dateName: string,
-                           date: Date): void {
+  private saveDateCookie(dateName: string, date: Date): void {
+    console.log(date.toString())
     this.cookieUtils.setCookie(dateName, date.toString());
   }
 
-  private readDateFromCookie(dateName: string): DatePicker | null {
+  private readDateCookie(dateName: string): Date | null {
     const cookieDate = this.cookieUtils.getCookie(dateName);
-    return cookieDate ? DateUtils.convertToDatePicker(new Date(cookieDate)) : null;
-  }
-
-  private setFromDate(date: Date): void {
-    this.fromDatePicker = DateUtils.convertToDatePicker(date);
-    this.requestParams.fromDate = DateUtils.format(date);
-  }
-
-  private setToDate(date: Date): void {
-    this.toDatePicker = DateUtils.convertToDatePicker(date);
-    this.requestParams.toDate = DateUtils.format(date);
+    return cookieDate ? new Date(cookieDate) : null;
   }
 
   private isCurrentYear(): boolean {
-    const fromDatePickerCookie = this.readDateFromCookie(CookieNames.FROM_DATE);
-    const toDatePickerCookie = this.readDateFromCookie(CookieNames.TO_DATE);
-
-    const firstDayDatePicker = DateUtils.convertToDatePicker(DatesConfig.FIRST_DAY_OF_CURRENT_YEAR);
-    const lastDayDatePicker = DateUtils.convertToDatePicker(DatesConfig.LAST_DAY_OF_CURRENT_YEAR);
-
-    return fromDatePickerCookie?.year != firstDayDatePicker.year ||
-      toDatePickerCookie?.year != lastDayDatePicker.year;
+    const currentYear = new Date().getFullYear();
+    return !(this.fromDatePicker.year == currentYear &&
+      this.toDatePicker.year == currentYear);
   }
 
-  protected readonly RequestConfig = RequestConfig;
 }

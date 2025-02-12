@@ -14,7 +14,7 @@ import {ModalUtils} from "../../../../util/modal.utils";
 import {AbstractControl, NgForm, NgModel} from "@angular/forms";
 import {ResponseErrorModel} from "../../../../models/ResponseErrorModel";
 import {TimerUtils} from "../../../../util/timer.utils";
-import {AnimationsConfig, DatesConfig, LoadersConfig} from "../../../../app-config";
+import {AnimationsConfig, DateConfig, DateMessageConfig, DatePickerConfig, LoadersConfig} from "../../../../app-config";
 
 @Component({
   selector: 'app-budget-modal',
@@ -95,14 +95,14 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
       const dateEnd = DateUtils.convertToDate(datePickerEnd);
 
       if (datePickerStart.month != datePickerEnd.month) {
-        dateStartInput.control.setErrors({invalidMonth: DatesConfig.MONTHS_MESSAGE});
-        dateEndInput.control.setErrors({invalidMonth: DatesConfig.MONTHS_MESSAGE});
+        dateStartInput.control.setErrors({invalidMonth: DateMessageConfig.MONTHS_MESSAGE});
+        dateEndInput.control.setErrors({invalidMonth: DateMessageConfig.MONTHS_MESSAGE});
       } else if (datePickerStart.year != datePickerEnd.year) {
-        dateStartInput.control.setErrors({invalidYear: DatesConfig.YEARS_MESSAGE});
-        dateEndInput.control.setErrors({invalidYear: DatesConfig.YEARS_MESSAGE});
+        dateStartInput.control.setErrors({invalidYear: DateMessageConfig.YEARS_MESSAGE});
+        dateEndInput.control.setErrors({invalidYear: DateMessageConfig.YEARS_MESSAGE});
       } else if (dateStart >= dateEnd) {
-        dateStartInput.control.setErrors({invalidRange: DatesConfig.RANGE_MESSAGE});
-        dateEndInput.control.setErrors({invalidRange: DatesConfig.RANGE_MESSAGE});
+        dateStartInput.control.setErrors({invalidRange: DateMessageConfig.RANGE_MESSAGE});
+        dateEndInput.control.setErrors({invalidRange: DateMessageConfig.RANGE_MESSAGE});
       } else {
         dateStartInput.control.setErrors(null);
         dateEndInput.control.setErrors(null);
@@ -227,8 +227,8 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
   }
 
   private resetDatePicker(): void {
-    this.budgetPickerForm = DatesConfig.DEFAULT_PICKER;
-    this.budgetPicker = DateUtils.convertToDatePicker(DatesConfig.FIRST_DAY_OF_CURRENT_MONTH);
+    this.budgetPickerForm = DatePickerConfig.DEFAULT_FORM_PICKER;
+    this.budgetPicker = DateUtils.convertToDatePicker(DateConfig.FIRST_DAY_OF_CURRENT_MONTH);
   }
 
   private resetBudgetStatus(): void {
