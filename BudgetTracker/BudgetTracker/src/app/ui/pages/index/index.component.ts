@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ResponseErrorModel} from '../../../models/ResponseErrorModel';
 import {BudgetModel} from '../../../models/RequestModels';
 import {HttpService} from '../../../services/http/httpService';
@@ -20,6 +20,7 @@ import {
 } from "../../../app-config";
 import {TimerUtils} from "../../../util/timer.utils";
 import {NgModel} from "@angular/forms";
+import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 
 @Component({
   selector: 'app-index',
@@ -27,6 +28,7 @@ import {NgModel} from "@angular/forms";
   styleUrl: './index.component.css'
 })
 export class IndexComponent implements OnInit, OnDestroy {
+  @ViewChild('errorModal') errorModal: any;
   private readonly cookieUtils = new CookieUtils();
   protected readonly DateUtils = DateUtils;
   protected readonly SpinnerSize = SpinnerSize;
@@ -103,6 +105,8 @@ export class IndexComponent implements OnInit, OnDestroy {
       this.idRefreshBudget = idBudget;
       this.responseErrorModel.budget = new ResponseErrorModel();
       this.getBudget(idBudget);
+    } else {
+      this.errorModal.open(this.responseErrorModel);
     }
   }
 

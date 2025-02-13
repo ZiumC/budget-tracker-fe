@@ -121,7 +121,7 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
     this.errorModel.responseStatusCode = err.status;
     this.errorModel.responseErrorModel = err.error;
     this.displayLoader = false;
-    this.errorModal.open();
+    this.errorModal.open(this.errorModel);
   }
 
   private setDefaultIncomeForm(): void {
