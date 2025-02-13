@@ -40,6 +40,10 @@ export class RequestConfig {
 }
 
 export class CookieNames {
-  public static FROM_DATE = 'from-date';
-  public static TO_DATE = 'to-date';
+  public static FROM_DATE: string = 'from-date';
+  public static TO_DATE: string = 'to-date';
+}
+
+export class AppDictionary {
+  public static BUDGETS_NOT_FOUND: string = 'Budgets not found';
 }

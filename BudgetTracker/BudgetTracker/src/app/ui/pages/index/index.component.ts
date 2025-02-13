@@ -10,7 +10,14 @@ import {RequestParamModel} from "../../../models/RequestParamModel";
 import {SpinnerSize} from "../../components/shared/spinner/spinner.component";
 import {DatePicker} from "../../../models/FormModels";
 import {CookieUtils} from "../../../util/cookie.utils";
-import {AnimationsConfig, CookieNames, DateConfig, DateMessageConfig, RequestConfig} from "../../../app-config";
+import {
+  AnimationsConfig,
+  AppDictionary,
+  CookieNames,
+  DateConfig,
+  DateMessageConfig,
+  RequestConfig
+} from "../../../app-config";
 import {TimerUtils} from "../../../util/timer.utils";
 import {NgModel} from "@angular/forms";
 
@@ -24,15 +31,15 @@ export class IndexComponent implements OnInit, OnDestroy {
   protected readonly DateUtils = DateUtils;
   protected readonly SpinnerSize = SpinnerSize;
   protected readonly RequestConfig = RequestConfig;
+  protected readonly AppDictionary = AppDictionary;
   protected budgets: BudgetModel[] | null;
   protected budget: BudgetModel | null;
   protected subscriptions: Subscription[];
   protected requestParams: RequestParamModel;
   protected fromDatePicker: DatePicker;
   protected toDatePicker: DatePicker;
-
-  protected displayNowButton: boolean;
-  protected errorModels: any;
+  protected toCurrentYear: boolean;
+  protected responseErrorModel: any;
   protected loaders: any;
   protected idRefreshBudget: string;
 
@@ -63,11 +70,11 @@ export class IndexComponent implements OnInit, OnDestroy {
 
     this.requestParams.fromDate = DateUtils.formatDatePicker(this.fromDatePicker);
     this.requestParams.toDate = DateUtils.formatDatePicker(this.toDatePicker);
-    this.displayNowButton = this.isCurrentYear();
+    this.toCurrentYear = this.isCurrentYear();
 
     this.budgets = [];
     this.subscriptions = [];
-    this.errorModels = {
+    this.responseErrorModel = {
       budgets: new ResponseErrorModel(),
       budget: new ResponseErrorModel()
     }
@@ -84,30 +91,30 @@ export class IndexComponent implements OnInit, OnDestroy {
     SubscriptionUtils.unsubscribeAll(this.subscriptions);
   }
 
-  protected onPageReload(reload: boolean): void {
-    if (reload) {
-      this.markPageAsLoaded(false);
-      this.errorModels.budgets = new ResponseErrorModel();
-      this.getBudgets(this.requestParams);
-    }
+  protected reloadPage(): void {
+    this.markPageAsLoaded(false);
+    this.responseErrorModel.budgets = new ResponseErrorModel();
+    this.getBudgets(this.requestParams);
   }
 
-  protected onBudgetUpdate(idBudget: string): void {
+  protected updateBudget(idBudget: string): void {
     if (idBudget) {
       this.markBudgetAsLoaded(false);
       this.idRefreshBudget = idBudget;
-      this.errorModels.budget = new ResponseErrorModel();
+      this.responseErrorModel.budget = new ResponseErrorModel();
       this.getBudget(idBudget);
     }
   }
 
-  protected budgetsSearch(toCurrentDate: boolean): void {
+  protected searchBudgets(toCurrentDate: boolean): void {
     let fromDate: Date;
     let toDate: Date;
 
     if (toCurrentDate) {
       fromDate = DateConfig.FIRST_DAY_OF_CURRENT_YEAR;
       toDate = DateConfig.LAST_DAY_OF_CURRENT_YEAR;
+      this.fromDatePicker = DateUtils.convertToDatePicker(fromDate);
+      this.toDatePicker = DateUtils.convertToDatePicker(toDate);
     } else {
       fromDate = DateUtils.convertToDate(this.fromDatePicker);
       toDate = DateUtils.convertToDate(this.toDatePicker);
@@ -119,12 +126,9 @@ export class IndexComponent implements OnInit, OnDestroy {
     this.saveDateCookie(CookieNames.FROM_DATE, fromDate);
     this.saveDateCookie(CookieNames.TO_DATE, toDate);
 
-    this.fromDatePicker = DateUtils.convertToDatePicker(fromDate);
-    this.toDatePicker = DateUtils.convertToDatePicker(toDate);
+    this.toCurrentYear = this.isCurrentYear();
 
-    this.displayNowButton = this.isCurrentYear();
-
-    this.onPageReload(true);
+    this.reloadPage();
   }
 
   protected onDatesChanged(fromDateInput: NgModel, toDateInput: NgModel): void {
@@ -154,10 +158,10 @@ export class IndexComponent implements OnInit, OnDestroy {
       this.httpService.getBudget(idBudget).subscribe({
         next: (response: HttpResponse<BudgetModel>): void => {
           this.budget = response.body;
-          this.errorModels.budget.responseStatusCode = response.status
+          this.responseErrorModel.budget.responseStatusCode = response.status
         },
         error: (err): void => {
-          this.onRequestFailed(this.errorModels.budget, err);
+          this.onRequestFailed(this.responseErrorModel.budget, err);
           this.markBudgetAsLoaded(true);
         },
         complete: (): void => {
@@ -177,10 +181,10 @@ export class IndexComponent implements OnInit, OnDestroy {
       this.httpService.getBudgets(requestParamModel).subscribe({
         next: (response: HttpResponse<BudgetModel[]>): void => {
           this.budgets = response.body;
-          this.errorModels.budgets.responseStatusCode = response.status
+          this.responseErrorModel.budgets.responseStatusCode = response.status
         },
         error: (err): void => {
-          this.onRequestFailed(this.errorModels.budgets, err);
+          this.onRequestFailed(this.responseErrorModel.budgets, err);
           this.markPageAsLoaded(true);
         },
         complete: (): void => {
@@ -237,5 +241,4 @@ export class IndexComponent implements OnInit, OnDestroy {
     return !(this.fromDatePicker.year == currentYear &&
       this.toDatePicker.year == currentYear);
   }
-
 }

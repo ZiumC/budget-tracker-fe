@@ -111,7 +111,7 @@
                           data-bs-toggle="tooltip"
                           data-bs-placement="bottom"
                           title="Search budgets"
-                          (click)="budgetsSearch(false)"
+                          (click)="searchBudgets(false)"
                           [disabled]="form.invalid">
                     <i class="bi bi-search"></i>
                   </button>
@@ -121,7 +121,7 @@
           </div>
         </form>
         <div class="mt-3 mb-1 text-center"
-             [className]=" displayNowButton ? 'budget-button-options-3-cols' :'budget-button-options-2-cols'">
+             [className]=" toCurrentYear ? 'budget-button-options-3-cols' :'budget-button-options-2-cols'">
           <div class="px-5">
             <button type="button"
                     class="btn btn-success"
@@ -142,14 +142,14 @@
               <i class="bi bi-boxes"></i> Multiple
             </button>
           </div>
-          @if (displayNowButton) {
+          @if (toCurrentYear) {
             <div class="px-5">
               <button type="button"
                       class="btn btn-primary"
                       data-bs-toggle="tooltip"
                       data-bs-placement="bottom"
                       title="Switch to current year"
-                      (click)="budgetsSearch(true)">
+                      (click)="searchBudgets(true)">
                 <i class="bi bi-intersect"></i> Current
               </button>
             </div>
@@ -163,7 +163,7 @@
       <app-spinner [size]="SpinnerSize.BIG"></app-spinner>
     </ng-template>
     <ng-template #loadedBlock>
-      <ng-template [ngIf]="errorModels.budgets.responseStatusCode == RequestConfig.OK_CODE"
+      <ng-template [ngIf]="responseErrorModel.budgets.responseStatusCode == RequestConfig.OK_CODE"
                    [ngIfElse]="errorBudgetsBlock">
         <div class="budget-card-container">
           @for (budget of budgets; track budget.id; ) {
@@ -235,21 +235,21 @@
         </div>
       </ng-template>
       <ng-template #errorBudgetsBlock>
-        <app-error [errorModel]="errorModels.budgets"
-                   [notFoundErrorText]="'Budgets not found'"></app-error>
+        <app-error [errorModel]="responseErrorModel.budgets"
+                   [notFoundErrorText]="AppDictionary.BUDGETS_NOT_FOUND"></app-error>
       </ng-template>
     </ng-template>
     <app-budget-modal #budgetModal
-                      (refreshPageEvent)="onPageReload($event)"
-                      (updateBudgetEvent)="onBudgetUpdate($event)">
+                      (refreshPageEvent)="reloadPage()"
+                      (updateBudgetEvent)="updateBudget($event)">
 
     </app-budget-modal>
     <app-budgets-modal #budgetsModal
-                       (refreshPageEvent)="onPageReload($event)">
+                       (refreshPageEvent)="reloadPage()">
 
     </app-budgets-modal>
     <app-delete-modal #deleteModal
-                      (indexPageEvent)="onPageReload($event)">
+                      (indexPageEvent)="reloadPage()">
 
     </app-delete-modal>
   </div>
