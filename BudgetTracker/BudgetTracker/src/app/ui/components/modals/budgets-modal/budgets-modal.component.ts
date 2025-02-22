@@ -3,7 +3,7 @@ import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {ModalOptions} from "../../../../util/modal-options.utils";
 import {DatePicker} from "../../../../models/FormModels";
 import {DateUtils} from "../../../../util/date.utils";
-import {HttpService} from "../../../../services/http/httpService";
+import {HttpService} from "../../../../services/http/http.service";
 import {catchError, forkJoin, Observable, of, Subscription} from "rxjs";
 import {HttpResponse} from "@angular/common/http";
 import {SubscriptionUtils} from "../../../../util/subscription.utils";

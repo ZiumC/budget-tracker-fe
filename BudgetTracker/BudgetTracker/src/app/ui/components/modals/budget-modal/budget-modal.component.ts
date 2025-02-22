@@ -8,7 +8,7 @@ import {BudgetDateForm, BudgetPickerForm, DatePicker} from "../../../../models/F
 import {DateUtils} from "../../../../util/date.utils";
 import {SpinnerSize} from "../../shared/spinner/spinner.component";
 import {HttpResponse} from "@angular/common/http";
-import {HttpService} from "../../../../services/http/httpService";
+import {HttpService} from "../../../../services/http/http.service";
 import {BudgetStatus} from "../../../../models/modal-models/BudgetStatusModel";
 import {ModalUtils} from "../../../../util/modal.utils";
 import {AbstractControl, NgForm, NgModel} from "@angular/forms";

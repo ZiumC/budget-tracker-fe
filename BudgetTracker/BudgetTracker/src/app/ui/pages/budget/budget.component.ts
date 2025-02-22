@@ -5,7 +5,7 @@ import {Subscription} from "rxjs";
 import {ResponseErrorModel} from "../../../models/ResponseErrorModel";
 import {RequestParamModel} from "../../../models/RequestParamModel";
 import {DateUtils} from '../../../util/date.utils';
-import {HttpService} from "../../../services/http/httpService";
+import {HttpService} from "../../../services/http/http.service";
 import {ActivatedRoute, Params, Router} from "@angular/router";
 import {HttpResponse} from "@angular/common/http";
 import {SubscriptionUtils} from "../../../util/subscription.utils";

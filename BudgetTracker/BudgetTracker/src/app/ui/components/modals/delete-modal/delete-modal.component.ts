@@ -4,7 +4,7 @@ import {SubscriptionUtils} from "../../../../util/subscription.utils";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {ModalOptions, ModalSize} from "../../../../util/modal-options.utils";
 import {BudgetModel, IncomeModel, PaymentModel} from "../../../../models/RequestModels";
-import {HttpService} from "../../../../services/http/httpService";
+import {HttpService} from "../../../../services/http/http.service";
 import {HttpResponse} from "@angular/common/http";
 import {ResponseErrorModel} from "../../../../models/ResponseErrorModel";
 import {SpinnerSize} from "../../shared/spinner/spinner.component";

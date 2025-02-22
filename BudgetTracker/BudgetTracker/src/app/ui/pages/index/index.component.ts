@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ResponseErrorModel} from '../../../models/ResponseErrorModel';
 import {BudgetModel} from '../../../models/RequestModels';
-import {HttpService} from '../../../services/http/httpService';
+import {HttpService} from '../../../services/http/http.service';
 import {Subscription} from 'rxjs';
 import {HttpResponse} from '@angular/common/http';
 import {SubscriptionUtils} from '../../../util/subscription.utils';

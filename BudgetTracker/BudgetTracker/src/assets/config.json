@@ -1,0 +1,41 @@
+{
+  "app": {
+    "animation": {
+      "duration": {
+        "default": 500,
+        "short": 300
+      }
+    },
+    "timer": {
+      "duration": {
+        "default": 25,
+        "short": 12
+      }
+    },
+    "messages": {
+      "date": {
+        "equalMonths": "Months in both dates should be equal.",
+        "equalYears": "Years in both dates should be equal.",
+        "range": "Date range is invalid.",
+        "alreadyDefined": "Month already defined."
+      }
+    },
+    "request": {
+      "status": {
+        "ok": 200
+      },
+      "pagination": {
+        "defaultPage": 1,
+        "defaultBudgetsPageSize": 36
+      },
+      "cookies": {
+        "names": {
+          "fromDate": "from-date",
+          "toDate": "to-date"
+        }
+      }
+    }
+  },
+  "api": {
+  }
+}

@@ -10,7 +10,10 @@ import BigNumber from "bignumber.js";
 import {NumberUtils} from "../../../../util/number.utils";
 import {SpinnerSize} from "../../shared/spinner/spinner.component";
 import {HttpResponse} from "@angular/common/http";
-import {HttpService} from "../../../../services/http/httpService";
+import {HttpService} from "../../../../services/http/http.service";
+import {TimerUtils} from "../../../../util/timer.utils";
+import {ConfigService} from "../../../../services/config/config.service";
+import {AppConfig} from "../../../../models/config/config";
 
 @Component({
   selector: 'app-payment-modal',
@@ -24,8 +27,9 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
   @Output() refreshPaymentEvent = new EventEmitter<boolean>();
   protected readonly SpinnerSize = SpinnerSize;
   protected readonly NumberUtils = NumberUtils;
+  protected appConfig: AppConfig;
   protected subscriptions: Subscription[];
-  protected errorModel: ResponseErrorModel;
+  protected responseErrorModel: ResponseErrorModel;
   protected paymentForm: PaymentForm;
   protected idPayment: string;
   protected isEditing: boolean;
@@ -34,15 +38,26 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
 
   constructor(
     private modalService: NgbModal,
-    private httpService: HttpService) {
+    private httpService: HttpService,
+    private configService: ConfigService) {
   }
 
   ngOnInit(): void {
     this.subscriptions = [];
-    this.errorModel = new ResponseErrorModel();
+    this.responseErrorModel = new ResponseErrorModel();
     this.displayLoader = false;
     this.isEditing = false;
     this.buttonCopyName = "Copy";
+
+    this.configService.config.subscribe(config => {
+      if (config) {
+        console.log(config);
+        this.appConfig = config.app;
+      } else {
+        throw Error("Timer config not defined");
+      }
+    })
+
   }
 
   ngOnDestroy(): void {
@@ -71,13 +86,16 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
     const isPaid = String(this.paymentForm.isPaid);
     this.paymentForm.isPaid = JSON.parse(isPaid)
 
-    setTimeout((): void => {
-      if (this.isEditing) {
-        this.updatePayment();
-      } else {
-        this.createBudgetPayment();
-      }
-    }, 500);
+    new TimerUtils(this.appConfig.animation.duration.default).start()
+      .subscribe(finished => {
+        if (finished) {
+          if (this.isEditing) {
+            this.updatePayment();
+          } else {
+            this.createBudgetPayment();
+          }
+        }
+      });
   }
 
   private updatePayment(): void {
@@ -112,19 +130,17 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
 
   private onRequestSuccess(response: HttpResponse<any>): void {
     this.refreshPaymentEvent.emit(true);
-    this.errorModel.responseStatusCode = response.status;
+    this.responseErrorModel.responseStatusCode = response.status;
     this.modalService.dismissAll();
-    setTimeout((): void => {
-      this.displayLoader = false;
-    }, 500)
+    this.displayLoader = false;
   }
 
   private onRequestFailed(err: any): void {
-    this.errorModel.traceId = err.headers.get('X-Trace-Id');
-    this.errorModel.responseStatusCode = err.status;
-    this.errorModel.responseErrorModel = err.error;
+    this.responseErrorModel.traceId = err.headers.get('X-Trace-Id');
+    this.responseErrorModel.responseStatusCode = err.status;
+    this.responseErrorModel.responseErrorModel = err.error;
     this.displayLoader = false;
-    this.errorModal.open(this.errorModel);
+    this.errorModal.open(this.responseErrorModel);
   }
 
   private setDefaultPaymentForm(): void {

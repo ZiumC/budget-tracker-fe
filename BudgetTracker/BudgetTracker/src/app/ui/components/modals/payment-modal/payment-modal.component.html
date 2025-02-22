@@ -73,19 +73,21 @@
               <span class="text-danger">*</span>
               <div class="input-group">
                 <input
-                  type="number"
+                  type="text"
                   id="payment-price"
                   name="payment-price"
                   class="form-control"
                   [(ngModel)]="paymentForm.price"
                   required
                   min="0"
+                  maxlength="8"
+                  pattern=""
                   #paymentPriceInput="ngModel"
-                  [ngClass]="{
-            'is-invalid':
-              paymentPriceInput.invalid &&
-              (paymentPriceInput.dirty || paymentPriceInput.touched),
-            'is-valid': paymentPriceInput.valid }"/>
+                  [ngClass]="
+                  { 'is-invalid': paymentPriceInput.invalid &&
+                      (paymentPriceInput.dirty || paymentPriceInput.touched),
+                    'is-valid': paymentPriceInput.valid
+                  }"/>
                 <div class="input-group-append">
                   <span class="input-group-text">PLN</span>
                 </div>
@@ -152,10 +154,7 @@
                 type="number"
                 class="form-control"
                 disabled
-                value="{{
-              NumberUtils.format(NumberUtils.subtract(
-              paymentForm.price,
-              paymentForm.refund)) }}"/>
+                value="{{ NumberUtils.subtract(this.paymentForm.price, this.paymentForm.refund) }}"/>
               <div class="input-group-append">
                 <span class="input-group-text">PLN</span>
               </div>
