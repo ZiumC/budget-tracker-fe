@@ -1,7 +1,7 @@
 import {IncomeModel, PaymentModel} from "../models/RequestModels";
 
 export class SortIncome {
-  static surplusFirst(items: IncomeModel[] | null) {
+  static surplusFirst(items: IncomeModel[] | null): IncomeModel[] | null {
     if (items) {
       return items.sort(
         ({isSurplus: stateA = false}, {isSurplus: stateB = false}) =>
@@ -15,7 +15,7 @@ export class SortIncome {
 }
 
 export class SortPayment {
-  static paidFirst(items: PaymentModel[] | null) {
+  static paidFirst(items: PaymentModel[] | null): PaymentModel[] | null {
     if (items) {
       return items.sort(
         ({isPaid: stateA = false}, {isPaid: stateB = false}) =>

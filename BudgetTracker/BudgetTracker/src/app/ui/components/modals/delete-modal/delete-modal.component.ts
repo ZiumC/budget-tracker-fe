@@ -2,12 +2,12 @@ import {Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@an
 import {Subscription} from "rxjs";
 import {SubscriptionUtils} from "../../../../util/subscription.utils";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
-import {ModalOptions, ModalSize} from "../../../../util/modal-options.utils";
 import {BudgetModel, IncomeModel, PaymentModel} from "../../../../models/RequestModels";
 import {HttpService} from "../../../../services/http/http.service";
 import {HttpResponse} from "@angular/common/http";
 import {ResponseErrorModel} from "../../../../models/ResponseErrorModel";
 import {SpinnerSize} from "../../shared/spinner/spinner.component";
+import {ModalOptions, ModalSize} from "../../../../util/modal.utils";
 
 @Component({
   selector: 'app-delete-modal',

@@ -109,7 +109,7 @@
                         </tr>
                         <tr>
                           <td>{{ income.name }}</td>
-                          <td>{{ NumberUtils.format(income.wage) }}</td>
+                          <td>{{ format(income.wage) }}</td>
                           <td [style.display]="innerWidth > mobileWidth ? '' : 'none'">
                             #Category
                           </td>
@@ -241,12 +241,12 @@
                         <tr>
                           <td>{{ payment.name }}</td>
                           <td [style.display]="innerWidth > mobileWidth ? '' : 'none'">
-                            {{ NumberUtils.format(payment.price) }}
+                            {{ format(payment.price) }}
                           </td>
                           <td [style.display]="innerWidth > mobileWidth ? '' : 'none'">
-                            {{ NumberUtils.format(payment.refund) }}
+                            {{ format(payment.refund) }}
                           </td>
-                          <td>{{ NumberUtils.format(NumberUtils.subtract(payment.price, payment.refund)) }}</td>
+                          <td>{{ format(subtract(payment.price, payment.refund)) }}</td>
                         </tr>
                       </table>
                     </button>
@@ -268,14 +268,14 @@
                                 <input type="text"
                                        id="payment-price"
                                        class="form-control mb-2"
-                                       value="{{ NumberUtils.format(payment.price) }}"
+                                       value="{{ format(payment.price) }}"
                                        disabled>
                                 <label for="payment-refund">Refund (PLN)
                                 </label>
                                 <input type="text"
                                        id="payment-refund"
                                        class="form-control mb-2"
-                                       value="{{ NumberUtils.format(payment.refund) }}"
+                                       value="{{ format(payment.refund) }}"
                                        disabled>
                               </div>
                               <label for="payment-date-updated">Category

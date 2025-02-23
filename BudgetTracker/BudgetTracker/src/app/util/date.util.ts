@@ -1,7 +1,9 @@
 import {formatDate} from "@angular/common";
 import {DatePicker} from "../models/FormModels";
+import {Injectable} from "@angular/core";
+import {NgbDateParserFormatter, NgbDateStruct} from "@ng-bootstrap/ng-bootstrap";
 
-export class DateUtils {
+export class DateUtil {
   static format(date: Date | null | undefined): string {
     if (date) {
       return formatDate(date, 'dd/MM/yyyy', 'pl-PL');
@@ -15,9 +17,11 @@ export class DateUtils {
     }
     return '---';
   }
+}
 
+export class DatePickerUtil {
   static convertToDatePicker(date: Date): DatePicker {
-    const formatedDate = this.format(date);
+    const formatedDate = DateUtil.format(date);
     const splitDate = formatedDate.split("/");
     return {
       year: +splitDate[2],
@@ -37,18 +41,38 @@ export class DateUtils {
 
   static formatDatePicker(datePicker: DatePicker): string {
     const formatedDate = this.convertToDate(datePicker);
-    return this.format(formatedDate);
+    return DateUtil.format(formatedDate);
+  }
+}
+
+export function isInvalidDate(valueToCheck: Date | DatePicker): boolean {
+  let dateToCheck: Date;
+
+  if (valueToCheck instanceof Date) {
+    dateToCheck = valueToCheck;
+  } else {
+    dateToCheck = DatePickerUtil.convertToDate(valueToCheck);
   }
 
-  static isInvalidDate(valueToCheck: Date | DatePicker): boolean {
-    let dateToCheck: Date;
+  return isNaN(new Date(dateToCheck).getTime());
+}
 
-    if (valueToCheck instanceof Date) {
-      dateToCheck = valueToCheck;
-    } else {
-      dateToCheck = this.convertToDate(valueToCheck);
+
+@Injectable()
+export class DatepickerFormatter extends NgbDateParserFormatter {
+  parse(value: string): NgbDateStruct | null {
+    if (value) {
+      const parts = value.split('/');
+      return {day: +parts[0], month: +parts[1], year: +parts[2]};
     }
+    return null;
+  }
 
-    return isNaN(new Date(dateToCheck).getTime());
+  format(date: NgbDateStruct | null): string {
+    return date ? `${this.pad(date.day)}/${this.pad(date.month)}/${date.year}` : '';
+  }
+
+  private pad(value: number): string {
+    return value < 10 ? `0${value}` : `${value}`;
   }
 }

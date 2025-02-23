@@ -2,15 +2,14 @@ import {Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@an
 import {Subscription} from "rxjs";
 import {SubscriptionUtils} from "../../../../util/subscription.utils";
 import {BudgetModel} from "../../../../models/RequestModels";
-import {ModalOptions} from "../../../../util/modal-options.utils";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {BudgetDateForm, BudgetPickerForm, DatePicker} from "../../../../models/FormModels";
-import {DateUtils} from "../../../../util/date.utils";
+import {DatePickerUtil, DateUtil, isInvalidDate} from "../../../../util/date.util";
 import {SpinnerSize} from "../../shared/spinner/spinner.component";
 import {HttpResponse} from "@angular/common/http";
 import {HttpService} from "../../../../services/http/http.service";
 import {BudgetStatus} from "../../../../models/modal-models/BudgetStatusModel";
-import {ModalUtils} from "../../../../util/modal.utils";
+import {ModalOptions, ModalUtils} from "../../../../util/modal.utils";
 import {AbstractControl, NgForm, NgModel} from "@angular/forms";
 import {ResponseErrorModel} from "../../../../models/ResponseErrorModel";
 import {TimerUtils} from "../../../../util/timer.utils";
@@ -26,7 +25,8 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
   @ViewChild('errorModal') errorModal: any;
   @Output() refreshPageEvent = new EventEmitter<boolean>();
   @Output() updateBudgetEvent = new EventEmitter<string>();
-  protected readonly DateUtils = DateUtils;
+  protected readonly DatePickerUtil = DatePickerUtil;
+  protected readonly DateUtil = DateUtil;
   protected readonly ModalUtils = ModalUtils;
   protected readonly SpinnerSize = SpinnerSize;
   protected readonly LoadersConfig = LoadersConfig;
@@ -69,9 +69,9 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
     if (budgetData) {
       this.idBudget = budgetData.id;
       this.budgetPickerForm.name = budgetData.name;
-      this.budgetPickerForm.dateStart = DateUtils
+      this.budgetPickerForm.dateStart = DatePickerUtil
         .convertToDatePicker(budgetData.dateStart);
-      this.budgetPickerForm.dateEnd = DateUtils
+      this.budgetPickerForm.dateEnd = DatePickerUtil
         .convertToDatePicker(budgetData.dateEnd);
     }
 
@@ -82,8 +82,8 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
     const datePickerStart = this.budgetPickerForm.dateStart;
     const datePickerEnd = this.budgetPickerForm.dateEnd;
 
-    const isInvalidStartDate = DateUtils.isInvalidDate(datePickerStart);
-    const isInvalidEndDate = DateUtils.isInvalidDate(datePickerEnd);
+    const isInvalidStartDate = isInvalidDate(datePickerStart);
+    const isInvalidEndDate = isInvalidDate(datePickerEnd);
 
     if (isInvalidStartDate) {
       dateStartInput.control.setErrors({ngbDate: true});
@@ -91,8 +91,8 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
       dateEndInput.control.setErrors({ngbDate: true});
     } else {
 
-      const dateStart = DateUtils.convertToDate(datePickerStart);
-      const dateEnd = DateUtils.convertToDate(datePickerEnd);
+      const dateStart = DatePickerUtil.convertToDate(datePickerStart);
+      const dateEnd = DatePickerUtil.convertToDate(datePickerEnd);
 
       if (datePickerStart.month != datePickerEnd.month) {
         dateStartInput.control.setErrors({invalidMonth: DateMessageConfig.MONTHS_MESSAGE});
@@ -111,7 +111,7 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
   }
 
   protected onDateChanged(input: NgModel): void {
-    if (DateUtils.isInvalidDate(this.budgetPicker)) {
+    if (isInvalidDate(this.budgetPicker)) {
       input.control.setErrors({ngbDate: true});
     } else {
       this.resetBudgetStatus();
@@ -151,8 +151,8 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
 
     const budgetForm = {
       name: this.budgetPickerForm.name,
-      dateStart: DateUtils.convertToDate(this.budgetPickerForm.dateStart),
-      dateEnd: DateUtils.convertToDate(this.budgetPickerForm.dateEnd)
+      dateStart: DatePickerUtil.convertToDate(this.budgetPickerForm.dateStart),
+      dateEnd: DatePickerUtil.convertToDate(this.budgetPickerForm.dateEnd)
     } as BudgetDateForm;
 
     this.subscriptions.push(
@@ -179,8 +179,8 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
   }
 
   private createBudget(formControls: NgForm): void {
-    const budgetDate = DateUtils
-      .format(DateUtils.convertToDate(this.budgetPicker));
+    const budgetDate = DateUtil
+      .format(DatePickerUtil.convertToDate(this.budgetPicker));
 
     this.subscriptions.push(
       this.httpService.createBudget(
@@ -228,7 +228,8 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
 
   private resetDatePicker(): void {
     this.budgetPickerForm = DatePickerConfig.DEFAULT_FORM_PICKER;
-    this.budgetPicker = DateUtils.convertToDatePicker(DateConfig.FIRST_DAY_OF_CURRENT_MONTH);
+    this.budgetPicker = DatePickerUtil
+      .convertToDatePicker(DateConfig.FIRST_DAY_OF_CURRENT_MONTH);
   }
 
   private resetBudgetStatus(): void {

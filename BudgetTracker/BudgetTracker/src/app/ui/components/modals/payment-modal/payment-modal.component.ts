@@ -3,19 +3,18 @@ import {Subscription} from "rxjs";
 import {SubscriptionUtils} from "../../../../util/subscription.utils";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {PaymentModel} from "../../../../models/RequestModels";
-import {ModalOptions, ModalSize} from "../../../../util/modal-options.utils";
 import {PaymentForm} from "../../../../models/FormModels";
 import {ResponseErrorModel} from "../../../../models/ResponseErrorModel";
-import {NumberUtils} from "../../../../util/number.utils";
 import {SpinnerSize} from "../../shared/spinner/spinner.component";
 import {HttpResponse} from "@angular/common/http";
 import {HttpService} from "../../../../services/http/http.service";
 import {TimerUtils} from "../../../../util/timer.utils";
 import {ConfigService} from "../../../../services/config/config.service";
 import {AppConfig} from "../../../../models/config/config";
-import {ModalUtils} from "../../../../util/modal.utils";
-import {formatString} from "../../../../util/string.utils";
+import {ModalOptions, ModalSize, ModalUtils} from "../../../../util/modal.utils";
 import {Form} from "../../../../models/config/form.config";
+import {formatString} from "../../../../util/string.utils";
+import {subtract} from "../../../../util/number.util";
 
 @Component({
   selector: 'app-payment-modal',
@@ -27,8 +26,8 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
   @ViewChild('errorModal') errorModal: any;
   @Input() idBudget: string;
   @Output() refreshPaymentEvent = new EventEmitter<boolean>();
+  protected readonly ModalUtils = ModalUtils;
   protected readonly SpinnerSize = SpinnerSize;
-  protected readonly NumberUtils = NumberUtils;
   protected appConfig: AppConfig;
   protected formConfig: Form;
   protected subscriptions: Subscription[];
@@ -158,6 +157,6 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
     } as PaymentForm;
   }
 
-  protected readonly ModalUtils = ModalUtils;
   protected readonly formatString = formatString;
+  protected readonly subtract = subtract;
 }

@@ -1,14 +1,13 @@
 import {Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
-import {ModalOptions} from "../../../../util/modal-options.utils";
 import {DatePicker} from "../../../../models/FormModels";
-import {DateUtils} from "../../../../util/date.utils";
+import {DatePickerUtil, DateUtil, isInvalidDate} from "../../../../util/date.util";
 import {HttpService} from "../../../../services/http/http.service";
 import {catchError, forkJoin, Observable, of, Subscription} from "rxjs";
 import {HttpResponse} from "@angular/common/http";
 import {SubscriptionUtils} from "../../../../util/subscription.utils";
 import {BudgetStatus} from "../../../../models/modal-models/BudgetStatusModel";
-import {ModalUtils} from "../../../../util/modal.utils";
+import {ModalOptions, ModalUtils} from "../../../../util/modal.utils";
 import {DateMessageConfig, LoadersConfig} from "../../../../app-config";
 import {AbstractControl, NgForm, NgModel} from "@angular/forms";
 
@@ -22,7 +21,7 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
   @Output() refreshPageEvent = new EventEmitter<boolean>();
   protected readonly LoadersConfig = LoadersConfig;
   protected readonly budgetsLimit: number = 6;
-  protected readonly DateUtils = DateUtils;
+  protected readonly DatePickerUtil = DatePickerUtil;
   protected readonly ModalUtils = ModalUtils;
   protected subscriptions: Subscription[];
   protected budgetPickers: DatePicker[];
@@ -62,7 +61,7 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
         maxDate.setMonth(maxDate.getMonth() + 1);
       }
 
-      this.budgetPickers.push(DateUtils.convertToDatePicker(maxDate));
+      this.budgetPickers.push(DatePickerUtil.convertToDatePicker(maxDate));
       this.budgetStatusIcons.push(new BudgetStatus());
     }
   }
@@ -90,7 +89,7 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
 
     if (this.hasDuplicatedMonths()) {
       ngModel.control.setErrors({alreadyExist: DateMessageConfig.MONTH_ALREADY_EXIST_MESSAGE});
-    } else if (DateUtils.isInvalidDate(changedPicker)) {
+    } else if (isInvalidDate(changedPicker)) {
       ngModel.control.setErrors({ngbDate: true});
     } else {
       ngModel.control.setErrors(null);
@@ -101,7 +100,7 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
     const budgetRequests = [];
     for (let i = 0; i < this.budgetPickers.length; i++) {
       const field = this.budgetPickers[i];
-      const formatedDate = DateUtils.formatDatePicker(field);
+      const formatedDate = DatePickerUtil.formatDatePicker(field);
       if (!this.budgetStatusIcons[i].status ||
         ModalUtils.isUndefinedBudgetStatus(this.budgetStatusIcons[i])) {
         budgetRequests.push(this.httpService.createBudget(formatedDate).pipe(
@@ -159,7 +158,7 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
   private getMaxDate(): Date {
     let maxDate: Date = new Date();
     for (const datePicker of this.budgetPickers) {
-      const convertedDate = DateUtils.convertToDate(datePicker);
+      const convertedDate = DatePickerUtil.convertToDate(datePicker);
       if (convertedDate > maxDate) {
         maxDate = convertedDate;
       }

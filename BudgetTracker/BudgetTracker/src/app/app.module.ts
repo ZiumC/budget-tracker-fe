@@ -16,7 +16,6 @@ import {IncomeModalComponent} from './ui/components/modals/income-modal/income-m
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {PaymentModalComponent} from './ui/components/modals/payment-modal/payment-modal.component';
 import {ErrorViewComponent} from './ui/components/shared/error-view/error-view.component';
-import {DatepickerFormatter} from "./util/datepicker.utils";
 import {BudgetModalComponent} from "./ui/components/modals/budget-modal/budget-modal.component";
 import {DeleteModalComponent} from './ui/components/modals/delete-modal/delete-modal.component';
 import {SpinnerGrowComponent} from './ui/components/shared/spinner-grow/spinner-grow.component';
@@ -28,6 +27,7 @@ import {TimerComponent} from './ui/components/shared/timer/timer.component';
 import {ConfigService} from "./services/config/config.service";
 import {firstValueFrom} from "rxjs";
 import {Config} from "./models/config/config";
+import {DatepickerFormatter} from "./util/date.util";
 
 export function loadConfig(configService: ConfigService): () => Promise<Config> {
   return (): Promise<Config> => firstValueFrom(configService.loadConfig());

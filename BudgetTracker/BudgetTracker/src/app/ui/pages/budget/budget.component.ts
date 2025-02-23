@@ -4,15 +4,15 @@ import {BudgetModel, IncomeModel, PageModel, PaymentModel} from "../../../models
 import {Subscription} from "rxjs";
 import {ResponseErrorModel} from "../../../models/ResponseErrorModel";
 import {RequestParamModel} from "../../../models/RequestParamModel";
-import {DateUtils} from '../../../util/date.utils';
+import {DateUtil} from '../../../util/date.util';
 import {HttpService} from "../../../services/http/http.service";
 import {ActivatedRoute, Params, Router} from "@angular/router";
 import {HttpResponse} from "@angular/common/http";
 import {SubscriptionUtils} from "../../../util/subscription.utils";
-import {NumberUtils} from "../../../util/number.utils";
-import {SortIncome, SortPayment} from "../../../util/sort-model.utils";
+import {SortIncome, SortPayment} from "../../../util/sort.utils";
 import {PaymentStatusForm} from "../../../models/FormModels";
 import {ORDER_TYPES} from "../../components/shared/order/order.component";
+import {format, subtract} from "../../../util/number.util";
 
 @Component({
   selector: 'app-budget',
@@ -22,9 +22,10 @@ import {ORDER_TYPES} from "../../components/shared/order/order.component";
 export class BudgetComponent implements OnInit, OnDestroy {
   @ViewChild('errorModal') errorModal: any;
   public readonly mobileWidth: number = 770;
+  protected readonly format = format;
+  protected readonly subtract = subtract;
   protected readonly ORDER_TYPES = ORDER_TYPES;
-  protected readonly DateUtils = DateUtils;
-  protected readonly NumberUtils = NumberUtils;
+  protected readonly DateUtils = DateUtil;
   protected readonly SpinnerSize = SpinnerSize;
   protected incomes: IncomeModel[] | null;
   protected budget: BudgetModel | null;
