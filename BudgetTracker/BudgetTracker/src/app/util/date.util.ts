@@ -17,6 +17,28 @@ export class DateUtil {
     }
     return '---';
   }
+
+  static firstDayOfCurrentMonth(): Date {
+    const currentYear = new Date().getFullYear();
+    const currentMonth = new Date().getMonth();
+    return new Date(currentYear, currentMonth, 1);
+  }
+
+  static lastDayOfCurrentMonth(): Date {
+    const currentYear = new Date().getFullYear();
+    const currentMonth = new Date().getMonth() + 1;
+    return new Date(currentYear, currentMonth, 0);
+  }
+
+  static firstDayOfCurrentYear(): Date {
+    const currentYear = new Date().getFullYear();
+    return new Date(currentYear, 0, 1);
+  }
+
+  static lastDayOfCurrentYear(): Date {
+    const currentYear = new Date().getFullYear();
+    return new Date(currentYear, 11, 31);
+  }
 }
 
 export class DatePickerUtil {
@@ -42,6 +64,22 @@ export class DatePickerUtil {
   static formatDatePicker(datePicker: DatePicker): string {
     const formatedDate = this.convertToDate(datePicker);
     return DateUtil.format(formatedDate);
+  }
+
+  static firstDayOfCurrentMonth(): DatePicker {
+    return this.convertToDatePicker(DateUtil.firstDayOfCurrentMonth());
+  }
+
+  static lastDayOfCurrentMonth(): DatePicker {
+    return this.convertToDatePicker(DateUtil.lastDayOfCurrentMonth());
+  }
+
+  static firstDayOfCurrentYear(): DatePicker {
+    return this.convertToDatePicker(DateUtil.firstDayOfCurrentYear());
+  }
+
+  static lastDayOfCurrentYear(): DatePicker {
+    return this.convertToDatePicker(DateUtil.lastDayOfCurrentYear());
   }
 }
 

@@ -1,11 +1,6 @@
 export interface RequestConfig {
-  status: Status;
   pagination: Pagination;
   cookies: Cookies;
-}
-
-export interface Status {
-  ok: number;
 }
 
 export interface Pagination {

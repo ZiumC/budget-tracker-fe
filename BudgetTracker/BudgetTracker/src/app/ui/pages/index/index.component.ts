@@ -7,19 +7,17 @@ import {DatePickerUtil, DateUtil, isInvalidDate} from "../../../util/date.util";
 import {RequestModel} from "../../../models/request.model";
 import {SpinnerSize} from "../../components/shared/spinner/spinner.component";
 import {DatePicker} from "../../../models/datepicker.model";
-import {
-  AnimationsConfig,
-  AppDictionary,
-  CookieNames,
-  DateConfig,
-  DateMessageConfig,
-  RequestConfig
-} from "../../../app-config";
 import {TimerUtils} from "../../../util/timer.utils";
 import {NgModel} from "@angular/forms";
 import {getCookie, setCookie} from "../../../util/cookie.utils";
 import {GetBudgetDto} from "../../../models/dto/budget.model.dto";
 import {IndexResponse, ResponseModel} from "../../../models/response.model";
+import {AppConfig} from "../../../models/config/config";
+import {FormConfig} from "../../../models/config/form.model.config";
+import {ConfigService} from "../../../services/config/config.service";
+import {RequestConfig} from "../../../models/config/request.model.config";
+import {formatString} from "../../../util/string.utils";
+import {ModalUtils} from "../../../util/modal.utils";
 
 @Component({
   selector: 'app-index',
@@ -30,12 +28,13 @@ export class IndexComponent implements OnInit, OnDestroy {
   @ViewChild('errorModal') errorModal: any;
   protected readonly DateUtils = DateUtil;
   protected readonly SpinnerSize = SpinnerSize;
-  protected readonly RequestConfig = RequestConfig;
-  protected readonly AppDictionary = AppDictionary;
+  protected appConfig: AppConfig;
+  protected formConfig: FormConfig;
+  protected requestConfig: RequestConfig;
   protected budgets: GetBudgetDto[] | null;
   protected budget: GetBudgetDto | null;
   protected subscriptions: Subscription[];
-  protected requestParams: RequestModel;
+  protected requestModel: RequestModel;
   protected fromDatePicker: DatePicker;
   protected toDatePicker: DatePicker;
   protected toCurrentYear: boolean;
@@ -43,33 +42,43 @@ export class IndexComponent implements OnInit, OnDestroy {
   protected loaders: any;
   protected idRefreshBudget: string;
 
-  constructor(private httpService: HttpService) {
+  constructor(private httpService: HttpService,
+              private configService: ConfigService) {
   }
 
   ngOnInit(): void {
-    this.requestParams = new RequestModel();
-    this.requestParams.page = RequestConfig.BUDGETS_DEFAULT_PAGE;
-    this.requestParams.pageSize = RequestConfig.BUDGETS_DEFAULT_PAGE_SIZE;
+    const appCfg = this.configService.getAppConfig();
+    if (appCfg) {
+      this.appConfig = appCfg;
+      this.formConfig = appCfg.form;
+      this.requestConfig = appCfg.request;
+    } else {
+      throw Error("Config not provided")
+    }
 
-    const dateFromCookie = this.readDateCookie(CookieNames.FROM_DATE);
-    const dateToCookie = this.readDateCookie(CookieNames.TO_DATE);
+    this.requestModel = new RequestModel();
+    this.requestModel.page = this.requestConfig.pagination.defaultPage;
+    this.requestModel.pageSize = this.requestConfig.pagination.defaultBudgetsPageSize;
+
+    const dateFromCookie = this.readDateCookie(this.requestConfig.cookies.names.fromDate);
+    const dateToCookie = this.readDateCookie(this.requestConfig.cookies.names.toDate);
 
     if (dateFromCookie) {
       this.fromDatePicker = DatePickerUtil.convertToDatePicker(dateFromCookie);
     } else {
       this.fromDatePicker =
-        DatePickerUtil.convertToDatePicker(DateConfig.FIRST_DAY_OF_CURRENT_YEAR)
+        DatePickerUtil.firstDayOfCurrentYear();
     }
 
     if (dateToCookie) {
       this.toDatePicker = DatePickerUtil.convertToDatePicker(dateToCookie);
     } else {
       this.toDatePicker =
-        DatePickerUtil.convertToDatePicker(DateConfig.LAST_DAY_OF_CURRENT_YEAR);
+        DatePickerUtil.lastDayOfCurrentYear();
     }
 
-    this.requestParams.fromDate = DatePickerUtil.formatDatePicker(this.fromDatePicker);
-    this.requestParams.toDate = DatePickerUtil.formatDatePicker(this.toDatePicker);
+    this.requestModel.fromDate = DatePickerUtil.formatDatePicker(this.fromDatePicker);
+    this.requestModel.toDate = DatePickerUtil.formatDatePicker(this.toDatePicker);
     this.toCurrentYear = this.isCurrentYear();
 
     this.budgets = [];
@@ -84,7 +93,7 @@ export class IndexComponent implements OnInit, OnDestroy {
       budget: false,
     }
 
-    this.getBudgets(this.requestParams);
+    this.getBudgets(this.requestModel);
   }
 
   ngOnDestroy(): void {
@@ -94,7 +103,7 @@ export class IndexComponent implements OnInit, OnDestroy {
   protected reloadPage(): void {
     this.markPageAsLoaded(false);
     this.indexResponse.budgets = new ResponseModel();
-    this.getBudgets(this.requestParams);
+    this.getBudgets(this.requestModel);
   }
 
   protected updateBudget(idBudget: string): void {
@@ -113,8 +122,8 @@ export class IndexComponent implements OnInit, OnDestroy {
     let toDate: Date;
 
     if (toCurrentDate) {
-      fromDate = DateConfig.FIRST_DAY_OF_CURRENT_YEAR;
-      toDate = DateConfig.LAST_DAY_OF_CURRENT_YEAR;
+      fromDate = DateUtil.firstDayOfCurrentYear();
+      toDate = DateUtil.lastDayOfCurrentYear();
       this.fromDatePicker = DatePickerUtil.convertToDatePicker(fromDate);
       this.toDatePicker = DatePickerUtil.convertToDatePicker(toDate);
     } else {
@@ -122,11 +131,11 @@ export class IndexComponent implements OnInit, OnDestroy {
       toDate = DatePickerUtil.convertToDate(this.toDatePicker);
     }
 
-    this.requestParams.fromDate = DateUtil.format(fromDate);
-    this.requestParams.toDate = DateUtil.format(toDate);
+    this.requestModel.fromDate = DateUtil.format(fromDate);
+    this.requestModel.toDate = DateUtil.format(toDate);
 
-    this.saveDateCookie(CookieNames.FROM_DATE, fromDate);
-    this.saveDateCookie(CookieNames.TO_DATE, toDate);
+    this.saveDateCookie(this.requestConfig.cookies.names.fromDate, fromDate);
+    this.saveDateCookie(this.requestConfig.cookies.names.toDate, toDate);
 
     this.toCurrentYear = this.isCurrentYear();
 
@@ -146,8 +155,8 @@ export class IndexComponent implements OnInit, OnDestroy {
       const toDate = DatePickerUtil.convertToDate(this.toDatePicker);
 
       if (toDate <= fromDate) {
-        fromDateInput.control.setErrors({invalidRange: DateMessageConfig.RANGE_MESSAGE});
-        toDateInput.control.setErrors({invalidRange: DateMessageConfig.RANGE_MESSAGE});
+        fromDateInput.control.setErrors({invalidRange: true});
+        toDateInput.control.setErrors({invalidRange: true});
       } else {
         fromDateInput.control.setErrors(null);
         toDateInput.control.setErrors(null);
@@ -204,7 +213,7 @@ export class IndexComponent implements OnInit, OnDestroy {
 
   private markPageAsLoaded(value: boolean): void {
     if (value) {
-      new TimerUtils(AnimationsConfig.DEFAULT_DURATION).start()
+      new TimerUtils(this.appConfig.timer.duration.default).start()
         .subscribe(finished => {
           if (finished) {
             this.loaders.page = value;
@@ -217,7 +226,7 @@ export class IndexComponent implements OnInit, OnDestroy {
 
   private markBudgetAsLoaded(value: boolean): void {
     if (value) {
-      new TimerUtils(AnimationsConfig.DEFAULT_DURATION).start()
+      new TimerUtils(this.appConfig.timer.duration.default).start()
         .subscribe(finished => {
           if (finished) {
             this.loaders.budget = value;
@@ -243,4 +252,7 @@ export class IndexComponent implements OnInit, OnDestroy {
     return !(this.fromDatePicker.year == currentYear &&
       this.toDatePicker.year == currentYear);
   }
+
+  protected readonly formatString = formatString;
+  protected readonly ModalUtils = ModalUtils;
 }

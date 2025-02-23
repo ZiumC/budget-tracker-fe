@@ -59,6 +59,8 @@
                   {{ formatString(formConfig.messages.maxLength, formConfig.incomeModal.name.maxLength) }}
                 </label>
               </div>
+            } @else {
+              <div class="valid-feedback"></div>
             }
           </div>
           <div [className]="ModalUtils.displayMarginFor(incomeWageInput)">

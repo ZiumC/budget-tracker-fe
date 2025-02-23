@@ -79,7 +79,7 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
     this.displayLoader = true;
 
     const surplus = String(this.incomeDto.isSurplus);
-    // this.incomeDto.isSurplus = JSON.parse(surplus);
+    this.incomeDto.isSurplus = JSON.parse(surplus);
 
     new TimerUtils(this.appConfig.animation.duration.default).start()
       .subscribe(finished => {

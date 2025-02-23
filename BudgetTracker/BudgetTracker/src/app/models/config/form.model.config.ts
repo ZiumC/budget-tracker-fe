@@ -2,6 +2,7 @@ export interface FormConfig {
   messages: Messages;
   paymentModal: PaymentModal;
   incomeModal: IncomeModal;
+  budgetModal: BudgetModal;
   regex: Regex;
 }
 
@@ -30,6 +31,10 @@ export interface IncomeModal {
   placeholder: string;
   name: MinMaxLength;
   wage: MinValueMaxLength;
+}
+
+export interface BudgetModal {
+  name: MinMaxLength;
 }
 
 export interface MinMaxLength {

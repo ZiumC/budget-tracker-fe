@@ -16,12 +16,12 @@
     "form": {
       "messages": {
         "required": "Field is required",
-        "minValue": "Minimum value is ${0}",
+        "minValue": "Minimum value is {0}",
         "minLength": "Minimum length are {0} characters",
         "maxLength": "Maximum length are {0} characters",
         "invalid": "{0} is invalid",
         "invalidFormat": "Invalid {0} format",
-        "notFound" : "{0} not found",
+        "notFound": "{0} not found",
         "range": "{0} range is invalid",
         "equal": "{0} in both dates should be equal",
         "alreadyDefined": "Month already defined"
@@ -56,14 +56,17 @@
           "maxLength": "8"
         }
       },
+      "budgetModal": {
+        "name": {
+          "minLength": "3",
+          "maxLength": "150"
+        }
+      },
       "regex": {
         "money": "^[0-9]*\\.[0-9]{1,2}$|^[0-9]{1,}"
       }
     },
     "request": {
-      "status": {
-        "ok": 200
-      },
       "pagination": {
         "defaultPage": 1,
         "defaultBudgetsPageSize": 36
@@ -74,7 +77,13 @@
           "toDate": "to-date"
         }
       }
-    }
+    },
+    "response": {
+      "required": {
+        "budgetStatus": 200
+      }
+    },
+    "budgetLimit": 6
   },
   "api": {
   }

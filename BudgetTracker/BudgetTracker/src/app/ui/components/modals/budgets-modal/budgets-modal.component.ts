@@ -1,15 +1,19 @@
 import {Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {DatePicker} from "../../../../models/datepicker.model";
-import {DatePickerUtil, DateUtil, isInvalidDate} from "../../../../util/date.util";
+import {DatePickerUtil, isInvalidDate} from "../../../../util/date.util";
 import {HttpService} from "../../../../services/http/http.service";
 import {catchError, forkJoin, Observable, of, Subscription} from "rxjs";
 import {HttpResponse} from "@angular/common/http";
 import {SubscriptionUtils} from "../../../../util/subscription.utils";
 import {BudgetStatus} from "../../../../models/modal/budget.model.modal";
 import {ModalOptions, ModalUtils} from "../../../../util/modal.utils";
-import {DateMessageConfig, LoadersConfig} from "../../../../app-config";
 import {AbstractControl, NgForm, NgModel} from "@angular/forms";
+import {AppConfig} from "../../../../models/config/config";
+import {FormConfig} from "../../../../models/config/form.model.config";
+import {ConfigService} from "../../../../services/config/config.service";
+import {isSuccess} from "../../../../util/http.util";
+import {formatString} from "../../../../util/string.utils";
 
 @Component({
   selector: 'app-budgets-modal',
@@ -19,10 +23,11 @@ import {AbstractControl, NgForm, NgModel} from "@angular/forms";
 export class BudgetsModalComponent implements OnInit, OnDestroy {
   @ViewChild('budgetsModal') budgetsModal: any;
   @Output() refreshPageEvent = new EventEmitter<boolean>();
-  protected readonly LoadersConfig = LoadersConfig;
-  protected readonly budgetsLimit: number = 6;
   protected readonly DatePickerUtil = DatePickerUtil;
   protected readonly ModalUtils = ModalUtils;
+  protected budgetsLimit: number;
+  protected appConfig: AppConfig;
+  protected formConfig: FormConfig;
   protected subscriptions: Subscription[];
   protected budgetPickers: DatePicker[];
   protected budgetStatusIcons: BudgetStatus[];
@@ -30,7 +35,8 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
   protected disableTimer: boolean;
 
   constructor(private modalService: NgbModal,
-              private httpService: HttpService) {
+              private httpService: HttpService,
+              private configService: ConfigService) {
   }
 
   ngOnInit(): void {
@@ -38,6 +44,16 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
     this.budgetPickers = [];
     this.resetBudgetStatus();
     this.resetModalOptions();
+
+    const appCfg = this.configService.getAppConfig();
+    if (appCfg) {
+      this.appConfig = appCfg;
+      this.formConfig = appCfg.form;
+      this.budgetsLimit = appCfg.budgetLimit;
+    } else {
+      throw Error("Config not provided")
+    }
+
     this.add();
   }
 
@@ -88,11 +104,12 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
     const changedPicker = this.budgetPickers[index];
 
     if (this.hasDuplicatedMonths()) {
-      ngModel.control.setErrors({alreadyExist: DateMessageConfig.MONTH_ALREADY_EXIST_MESSAGE});
+      ngModel.control.setErrors({alreadyExist: true});
     } else if (isInvalidDate(changedPicker)) {
       ngModel.control.setErrors({ngbDate: true});
     } else {
       ngModel.control.setErrors(null);
+      this.budgetStatusIcons[index] = new BudgetStatus();
     }
   }
 
@@ -194,11 +211,9 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
   }
 
   private onRequestSuccess(index: number, response: HttpResponse<any>): void {
-    const status = response.status;
-    const isSuccess = status >= 200 && status <= 299;
     this.budgetStatusIcons[index] = {
-      status: isSuccess,
-      message: status + " - Ok"
+      status: isSuccess(response),
+      message: "Ok"
     } as BudgetStatus;
   }
 
@@ -206,7 +221,7 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
     control.setErrors({'responseMessage': err.error["message"]});
     this.budgetStatusIcons[index] = {
       status: false,
-      message: err.status + " - " + err.error["title"]
+      message: err.error["title"]
     } as BudgetStatus;
   }
 
@@ -214,4 +229,6 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
     this.disableTimer = false;
     this.displayTimer = false;
   }
+
+  protected readonly formatString = formatString;
 }
