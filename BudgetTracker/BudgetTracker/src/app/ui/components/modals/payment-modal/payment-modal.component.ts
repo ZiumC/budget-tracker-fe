@@ -2,9 +2,7 @@ import {Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} fr
 import {Subscription} from "rxjs";
 import {SubscriptionUtils} from "../../../../util/subscription.utils";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
-import {PaymentModel} from "../../../../models/RequestModels";
-import {PaymentForm} from "../../../../models/FormModels";
-import {ResponseErrorModel} from "../../../../models/ResponseErrorModel";
+import {ResponseModel} from "../../../../models/response.model";
 import {SpinnerSize} from "../../shared/spinner/spinner.component";
 import {HttpResponse} from "@angular/common/http";
 import {HttpService} from "../../../../services/http/http.service";
@@ -12,9 +10,10 @@ import {TimerUtils} from "../../../../util/timer.utils";
 import {ConfigService} from "../../../../services/config/config.service";
 import {AppConfig} from "../../../../models/config/config";
 import {ModalOptions, ModalSize, ModalUtils} from "../../../../util/modal.utils";
-import {Form} from "../../../../models/config/form.config";
+import {Form} from "../../../../models/config/form.model.config";
 import {formatString} from "../../../../util/string.utils";
 import {subtract} from "../../../../util/number.util";
+import {GetPaymentDto, PaymentDto} from "../../../../models/dto/payment.model.dto";
 
 @Component({
   selector: 'app-payment-modal',
@@ -26,13 +25,15 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
   @ViewChild('errorModal') errorModal: any;
   @Input() idBudget: string;
   @Output() refreshPaymentEvent = new EventEmitter<boolean>();
+  protected readonly formatString = formatString;
+  protected readonly subtract = subtract;
   protected readonly ModalUtils = ModalUtils;
   protected readonly SpinnerSize = SpinnerSize;
   protected appConfig: AppConfig;
   protected formConfig: Form;
   protected subscriptions: Subscription[];
-  protected responseErrorModel: ResponseErrorModel;
-  protected paymentForm: PaymentForm;
+  protected responseErrorModel: ResponseModel;
+  protected paymentForm: PaymentDto;
   protected idPayment: string;
   protected isEditing: boolean;
   protected displayLoader: boolean;
@@ -46,7 +47,7 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.subscriptions = [];
-    this.responseErrorModel = new ResponseErrorModel();
+    this.responseErrorModel = new ResponseModel();
     this.displayLoader = false;
     this.isEditing = false;
     this.buttonCopyName = "Copy";
@@ -70,7 +71,7 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
     SubscriptionUtils.unsubscribeAll(this.subscriptions);
   }
 
-  open(paymentData?: PaymentModel): void {
+  open(paymentData?: GetPaymentDto): void {
     this.setDefaultPaymentForm();
     this.isEditing = paymentData != null;
 
@@ -136,15 +137,15 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
 
   private onRequestSuccess(response: HttpResponse<any>): void {
     this.refreshPaymentEvent.emit(true);
-    this.responseErrorModel.responseStatusCode = response.status;
+    this.responseErrorModel.statusCode = response.status;
     this.modalService.dismissAll();
     this.displayLoader = false;
   }
 
   private onRequestFailed(err: any): void {
     this.responseErrorModel.traceId = err.headers.get('X-Trace-Id');
-    this.responseErrorModel.responseStatusCode = err.status;
-    this.responseErrorModel.responseErrorModel = err.error;
+    this.responseErrorModel.statusCode = err.status;
+    this.responseErrorModel.statusCode = err.error;
     this.displayLoader = false;
     this.errorModal.open(this.responseErrorModel);
   }
@@ -154,9 +155,6 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
       name: "",
       isPaid: false,
       comment: ""
-    } as PaymentForm;
+    } as PaymentDto;
   }
-
-  protected readonly formatString = formatString;
-  protected readonly subtract = subtract;
 }

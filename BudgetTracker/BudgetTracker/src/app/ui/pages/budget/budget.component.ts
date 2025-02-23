@@ -1,18 +1,20 @@
-import {Component, HostListener, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {SpinnerSize} from "../../components/shared/spinner/spinner.component";
-import {BudgetModel, IncomeModel, PageModel, PaymentModel} from "../../../models/RequestModels";
 import {Subscription} from "rxjs";
-import {ResponseErrorModel} from "../../../models/ResponseErrorModel";
-import {RequestParamModel} from "../../../models/RequestParamModel";
+import {ResponseModel} from "../../../models/response.model";
+import {RequestModel} from "../../../models/request.model";
 import {DateUtil} from '../../../util/date.util';
 import {HttpService} from "../../../services/http/http.service";
 import {ActivatedRoute, Params, Router} from "@angular/router";
 import {HttpResponse} from "@angular/common/http";
 import {SubscriptionUtils} from "../../../util/subscription.utils";
 import {SortIncome, SortPayment} from "../../../util/sort.utils";
-import {PaymentStatusForm} from "../../../models/FormModels";
 import {ORDER_TYPES} from "../../components/shared/order/order.component";
 import {format, subtract} from "../../../util/number.util";
+import {GetPaymentDto, PaymentStatusDto} from "../../../models/dto/payment.model.dto";
+import {GetIncomeDto} from "../../../models/dto/income.model.dto";
+import {GetBudgetDto} from "../../../models/dto/budget.model.dto";
+import {PageDto} from "../../../models/dto/page.model.dto";
 
 @Component({
   selector: 'app-budget',
@@ -27,14 +29,14 @@ export class BudgetComponent implements OnInit, OnDestroy {
   protected readonly ORDER_TYPES = ORDER_TYPES;
   protected readonly DateUtils = DateUtil;
   protected readonly SpinnerSize = SpinnerSize;
-  protected incomes: IncomeModel[] | null;
-  protected budget: BudgetModel | null;
-  protected payments: PaymentModel[] | null;
+  protected incomes: GetIncomeDto[] | null;
+  protected budget: GetBudgetDto | null;
+  protected payments: GetPaymentDto[] | null;
   protected subscriptions: Subscription[];
-  protected selectedIncome: IncomeModel;
-  protected selectedPayment: PaymentModel;
-  protected requestIncomeParam: RequestParamModel;
-  protected requestPaymentParam: RequestParamModel;
+  protected selectedIncome: GetIncomeDto;
+  protected selectedPayment: GetPaymentDto;
+  protected requestIncomeParam: RequestModel;
+  protected requestPaymentParam: RequestModel;
 
   protected idBudget: string;
   protected loaders: any;
@@ -71,22 +73,22 @@ export class BudgetComponent implements OnInit, OnDestroy {
     };
 
     this.errorModels = {
-      budget: new ResponseErrorModel(),
-      incomes: new ResponseErrorModel(),
-      payments: new ResponseErrorModel(),
-      paymentStatus: new ResponseErrorModel()
+      budget: new ResponseModel(),
+      incomes: new ResponseModel(),
+      payments: new ResponseModel(),
+      paymentStatus: new ResponseModel()
     };
 
     this.commentRows = 1;
     this.innerWidth = window.innerWidth;
     this.subscriptions = [];
 
-    this.requestIncomeParam = new RequestParamModel({
+    this.requestIncomeParam = new RequestModel({
       page: 1,
       pageSize: 6,
     })
 
-    this.requestPaymentParam = new RequestParamModel({
+    this.requestPaymentParam = new RequestModel({
       page: 1,
       pageSize: 6
     })
@@ -100,7 +102,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
 
     this.subscriptions.push(
       this.httpService.getBudget(this.idBudget).subscribe({
-        next: (response: HttpResponse<BudgetModel>): void => {
+        next: (response: HttpResponse<GetBudgetDto>): void => {
           this.budget = response.body;
           this.errorModels.budget.responseStatusCode = response.status;
         },
@@ -171,7 +173,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
       this.httpService.patchPaymentStatus(
         {
           isPaid: isPaid
-        } as PaymentStatusForm,
+        } as PaymentStatusDto,
         idPayment
       ).subscribe({
         next: (): void => {
@@ -189,11 +191,11 @@ export class BudgetComponent implements OnInit, OnDestroy {
     )
   }
 
-  private onRequestFailed(errorModel: ResponseErrorModel, err: any): void {
-    errorModel.traceId = err.headers.get('X-Trace-Id');
-    errorModel.responseStatusCode = err.status;
-    errorModel.responseErrorModel = err.error;
-    this.errorModal.open(errorModel);
+  private onRequestFailed(response: ResponseModel, err: any): void {
+    response.traceId = err.headers.get('X-Trace-Id');
+    response.statusCode = err.status;
+    response.error = err.error;
+    this.errorModal.open(response);
   }
 
   private getBudgetIncomes(): void {
@@ -201,7 +203,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
       this.httpService.getBudgetIncomes(
         this.requestIncomeParam,
         this.idBudget).subscribe({
-        next: (response: HttpResponse<IncomeModel[]>): void => {
+        next: (response: HttpResponse<GetIncomeDto[]>): void => {
           this.incomes = SortIncome.surplusFirst(response.body);
           this.errorModels.incomes.responseStatusCode = response.status;
         },
@@ -222,7 +224,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
       this.httpService.getBudgetPayments(
         this.requestPaymentParam,
         this.idBudget).subscribe({
-        next: (response: HttpResponse<PaymentModel[]>): void => {
+        next: (response: HttpResponse<GetPaymentDto[]>): void => {
           this.payments = SortPayment.paidFirst(response.body);
           this.errorModels.payments.responseStatusCode = response.status;
         },
@@ -243,7 +245,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
       this.httpService.getIncomePages(
         this.requestIncomeParam,
         this.idBudget).subscribe({
-        next: (response: HttpResponse<PageModel>): void => {
+        next: (response: HttpResponse<PageDto>): void => {
           this.incomeTotalPages = response.body?.pages;
         }
       })
@@ -255,7 +257,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
       this.httpService.getPaymentPages(
         this.requestPaymentParam,
         this.idBudget).subscribe({
-        next: (response: HttpResponse<PageModel>): void => {
+        next: (response: HttpResponse<PageDto>): void => {
           this.paymentTotalPages = response.body?.pages;
         }
       })

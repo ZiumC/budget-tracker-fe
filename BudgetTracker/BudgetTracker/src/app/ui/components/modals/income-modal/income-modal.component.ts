@@ -1,15 +1,14 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
-import {IncomeForm} from "../../../../models/FormModels";
-import {IncomeModel} from "../../../../models/RequestModels";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import BigNumber from "bignumber.js";
 import {Subscription} from "rxjs";
 import {HttpService} from "../../../../services/http/http.service";
-import {ResponseErrorModel} from "../../../../models/ResponseErrorModel";
+import {ResponseModel} from "../../../../models/response.model";
 import {SubscriptionUtils} from "../../../../util/subscription.utils";
 import {SpinnerSize} from "../../shared/spinner/spinner.component";
 import {HttpResponse} from "@angular/common/http";
 import {ModalOptions} from "../../../../util/modal.utils";
+import {GetIncomeDto, IncomeDto} from "../../../../models/dto/income.model.dto";
 
 @Component({
   selector: 'app-income-modal',
@@ -23,8 +22,8 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
   @Output() refreshIncomeEvent = new EventEmitter<boolean>();
   protected readonly SpinnerSize = SpinnerSize;
   protected subscriptions: Subscription[];
-  protected errorModel: ResponseErrorModel;
-  protected incomeForm: IncomeForm;
+  protected errorModel: ResponseModel;
+  protected incomeForm: IncomeDto;
   protected displayLoader: boolean;
   protected isEditing: boolean;
   protected buttonCopyName: string;
@@ -41,14 +40,14 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.setDefaultIncomeForm();
-    this.errorModel = new ResponseErrorModel();
+    this.errorModel = new ResponseModel();
     this.subscriptions = [];
     this.displayLoader = false;
     this.isEditing = false;
     this.buttonCopyName = "Copy";
   }
 
-  open(incomeData?: IncomeModel): void {
+  open(incomeData?: GetIncomeDto): void {
     this.setDefaultIncomeForm();
     this.isEditing = incomeData != null;
 
@@ -109,7 +108,7 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
 
   private onRequestSuccess(response: HttpResponse<any>): void {
     this.refreshIncomeEvent.emit(true);
-    this.errorModel.responseStatusCode = response.status;
+    this.errorModel.statusCode = response.status;
     this.modalService.dismissAll();
     setTimeout((): void => {
       this.displayLoader = false;
@@ -118,8 +117,8 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
 
   private onRequestFailed(err: any): void {
     this.errorModel.traceId = err.headers.get('X-Trace-Id');
-    this.errorModel.responseStatusCode = err.status;
-    this.errorModel.responseErrorModel = err.error;
+    this.errorModel.statusCode = err.status;
+    this.errorModel.error = err.error;
     this.displayLoader = false;
     this.errorModal.open(this.errorModel);
   }
@@ -129,6 +128,6 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
       name: "",
       wage: new BigNumber(0.00),
       isSurplus: false
-    } as IncomeModel;
+    } as GetIncomeDto;
   }
 }

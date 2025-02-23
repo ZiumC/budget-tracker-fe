@@ -1,7 +1,7 @@
-import {Animation} from "./animation.config";
-import {Timer} from "./timer.config";
-import {Form} from "./form.config";
-import {Request} from "./request.config";
+import {Animation} from "./animation.model.config";
+import {Timer} from "./timer.model.config";
+import {Form} from "./form.model.config";
+import {Request} from "./request.model.config";
 
 export interface Config {
   app: AppConfig;

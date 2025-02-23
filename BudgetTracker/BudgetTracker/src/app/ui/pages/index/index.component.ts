@@ -1,14 +1,12 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {ResponseErrorModel} from '../../../models/ResponseErrorModel';
-import {BudgetModel} from '../../../models/RequestModels';
 import {HttpService} from '../../../services/http/http.service';
 import {Subscription} from 'rxjs';
 import {HttpResponse} from '@angular/common/http';
 import {SubscriptionUtils} from '../../../util/subscription.utils';
 import {DatePickerUtil, DateUtil, isInvalidDate} from "../../../util/date.util";
-import {RequestParamModel} from "../../../models/RequestParamModel";
+import {RequestModel} from "../../../models/request.model";
 import {SpinnerSize} from "../../components/shared/spinner/spinner.component";
-import {DatePicker} from "../../../models/FormModels";
+import {DatePicker} from "../../../models/datepicker.model";
 import {
   AnimationsConfig,
   AppDictionary,
@@ -20,6 +18,8 @@ import {
 import {TimerUtils} from "../../../util/timer.utils";
 import {NgModel} from "@angular/forms";
 import {getCookie, setCookie} from "../../../util/cookie.utils";
+import {GetBudgetDto} from "../../../models/dto/budget.model.dto";
+import {IndexResponse, ResponseModel} from "../../../models/response.model";
 
 @Component({
   selector: 'app-index',
@@ -32,14 +32,14 @@ export class IndexComponent implements OnInit, OnDestroy {
   protected readonly SpinnerSize = SpinnerSize;
   protected readonly RequestConfig = RequestConfig;
   protected readonly AppDictionary = AppDictionary;
-  protected budgets: BudgetModel[] | null;
-  protected budget: BudgetModel | null;
+  protected budgets: GetBudgetDto[] | null;
+  protected budget: GetBudgetDto | null;
   protected subscriptions: Subscription[];
-  protected requestParams: RequestParamModel;
+  protected requestParams: RequestModel;
   protected fromDatePicker: DatePicker;
   protected toDatePicker: DatePicker;
   protected toCurrentYear: boolean;
-  protected responseErrorModel: any;
+  protected indexResponse: IndexResponse;
   protected loaders: any;
   protected idRefreshBudget: string;
 
@@ -47,7 +47,7 @@ export class IndexComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.requestParams = new RequestParamModel();
+    this.requestParams = new RequestModel();
     this.requestParams.page = RequestConfig.BUDGETS_DEFAULT_PAGE;
     this.requestParams.pageSize = RequestConfig.BUDGETS_DEFAULT_PAGE_SIZE;
 
@@ -74,9 +74,9 @@ export class IndexComponent implements OnInit, OnDestroy {
 
     this.budgets = [];
     this.subscriptions = [];
-    this.responseErrorModel = {
-      budgets: new ResponseErrorModel(),
-      budget: new ResponseErrorModel()
+    this.indexResponse = {
+      budgets: new ResponseModel(),
+      budget: new ResponseModel()
     }
 
     this.loaders = {
@@ -93,7 +93,7 @@ export class IndexComponent implements OnInit, OnDestroy {
 
   protected reloadPage(): void {
     this.markPageAsLoaded(false);
-    this.responseErrorModel.budgets = new ResponseErrorModel();
+    this.indexResponse.budgets = new ResponseModel();
     this.getBudgets(this.requestParams);
   }
 
@@ -101,10 +101,10 @@ export class IndexComponent implements OnInit, OnDestroy {
     if (idBudget) {
       this.markBudgetAsLoaded(false);
       this.idRefreshBudget = idBudget;
-      this.responseErrorModel.budget = new ResponseErrorModel();
+      this.indexResponse.budget = new ResponseModel();
       this.getBudget(idBudget);
     } else {
-      this.errorModal.open(this.responseErrorModel);
+      this.errorModal.open(this.indexResponse);
     }
   }
 
@@ -158,12 +158,12 @@ export class IndexComponent implements OnInit, OnDestroy {
   private getBudget(idBudget: string): void {
     this.subscriptions.push(
       this.httpService.getBudget(idBudget).subscribe({
-        next: (response: HttpResponse<BudgetModel>): void => {
+        next: (response: HttpResponse<GetBudgetDto>): void => {
           this.budget = response.body;
-          this.responseErrorModel.budget.responseStatusCode = response.status
+          this.indexResponse.budget.statusCode = response.status
         },
         error: (err): void => {
-          this.onRequestFailed(this.responseErrorModel.budget, err);
+          this.onRequestFailed(this.indexResponse.budget, err);
           this.markBudgetAsLoaded(true);
         },
         complete: (): void => {
@@ -178,15 +178,15 @@ export class IndexComponent implements OnInit, OnDestroy {
     )
   }
 
-  private getBudgets(requestParamModel: RequestParamModel): void {
+  private getBudgets(requestParamModel: RequestModel): void {
     this.subscriptions.push(
       this.httpService.getBudgets(requestParamModel).subscribe({
-        next: (response: HttpResponse<BudgetModel[]>): void => {
+        next: (response: HttpResponse<GetBudgetDto[]>): void => {
           this.budgets = response.body;
-          this.responseErrorModel.budgets.responseStatusCode = response.status
+          this.indexResponse.budgets.statusCode = response.status
         },
         error: (err): void => {
-          this.onRequestFailed(this.responseErrorModel.budgets, err);
+          this.onRequestFailed(this.indexResponse.budgets, err);
           this.markPageAsLoaded(true);
         },
         complete: (): void => {
@@ -196,10 +196,10 @@ export class IndexComponent implements OnInit, OnDestroy {
     )
   }
 
-  private onRequestFailed(errorModel: ResponseErrorModel, err: any): void {
-    errorModel.traceId = err.headers.get('X-Trace-Id');
-    errorModel.responseStatusCode = err.status;
-    errorModel.responseErrorModel = err.error;
+  private onRequestFailed(response: ResponseModel, err: any): void {
+    response.traceId = err.headers.get('X-Trace-Id');
+    response.statusCode = err.status;
+    response.error = err.error;
   }
 
   private markPageAsLoaded(value: boolean): void {

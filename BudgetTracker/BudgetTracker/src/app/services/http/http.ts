@@ -1,4 +1,4 @@
-import {RequestParamModel} from "../../models/RequestParamModel";
+import {RequestModel} from "../../models/request.model";
 
 export enum TotalPages{
   INCOMES = "incomes",
@@ -22,7 +22,7 @@ export class UrlApi {
     BUDGET: "/budget"
   }
 
-  static budgets(requestParamModel: RequestParamModel): string {
+  static budgets(requestParamModel: RequestModel): string {
     const page = requestParamModel.page;
     const pageSize = requestParamModel.pageSize;
     const fromDate = requestParamModel.fromDate;
@@ -61,7 +61,7 @@ export class UrlApi {
   }
 
   static budgetIncomes(
-    requestParam: RequestParamModel,
+    requestParam: RequestModel,
     idBudget: string): string {
 
     let baseUrl = this.budgetId(idBudget) + this.ACTIONS.INCOMES;
@@ -89,7 +89,7 @@ export class UrlApi {
     return baseUrl;
   }
 
-  static budgetPayments(requestParam: RequestParamModel,
+  static budgetPayments(requestParam: RequestModel,
                         idBudget: string): string {
     const page = requestParam.page;
     const pageSize = requestParam.pageSize;
@@ -135,7 +135,7 @@ export class UrlApi {
     return this.paymentController() + "/" + idPayment + "/status";
   }
 
-  static budgetDataPages(requestParam: RequestParamModel,
+  static budgetDataPages(requestParam: RequestModel,
                          idBudget: string,
                          action: TotalPages): string {
     const pageSize = requestParam.pageSize;

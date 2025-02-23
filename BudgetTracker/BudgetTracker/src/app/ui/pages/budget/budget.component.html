@@ -58,7 +58,7 @@
             </div>
           </ng-template>
           <ng-template #budgetErrorBlock>
-            <app-error [errorModel]="errorModels.budget"
+            <app-error [response]="errorModels.budget"
                        [notFoundErrorText]="'Budget data not found'">
 
             </app-error>
@@ -187,7 +187,7 @@
             }
           </ng-template>
           <ng-template #errorIncomeBlock>
-            <app-error [errorModel]="errorModels.incomes"
+            <app-error [response]="errorModels.incomes"
                        [notFoundErrorText]="'Income data not found'">
 
             </app-error>
@@ -373,7 +373,7 @@
             }
           </ng-template>
           <ng-template #errorPaymentsBlock>
-            <app-error [errorModel]=" errorModels.payments"
+            <app-error [response]=" errorModels.payments"
                        [notFoundErrorText]="'Payment data not found'">
 
             </app-error>

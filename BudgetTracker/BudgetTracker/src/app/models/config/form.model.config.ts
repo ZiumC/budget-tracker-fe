@@ -1,4 +1,4 @@
-import {Regex} from "./regex.config";
+import {Regex} from "./regex.model.config";
 
 export interface Form {
   messages: Messages;

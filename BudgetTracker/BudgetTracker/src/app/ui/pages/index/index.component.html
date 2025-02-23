@@ -163,7 +163,7 @@
       <app-spinner [size]="SpinnerSize.BIG"></app-spinner>
     </ng-template>
     <ng-template #loadedBlock>
-      <ng-template [ngIf]="responseErrorModel.budgets.responseStatusCode == RequestConfig.OK_CODE"
+      <ng-template [ngIf]="indexResponse.budgets.statusCode == RequestConfig.OK_CODE"
                    [ngIfElse]="errorBudgetsBlock">
         <div class="budget-card-container">
           @for (budget of budgets; track budget.id; ) {
@@ -235,7 +235,7 @@
         </div>
       </ng-template>
       <ng-template #errorBudgetsBlock>
-        <app-error [errorModel]="responseErrorModel.budgets"
+        <app-error [response]="indexResponse.budgets"
                    [notFoundErrorText]="AppDictionary.BUDGETS_NOT_FOUND"></app-error>
       </ng-template>
     </ng-template>

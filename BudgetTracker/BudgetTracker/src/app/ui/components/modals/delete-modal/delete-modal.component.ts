@@ -2,12 +2,14 @@ import {Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@an
 import {Subscription} from "rxjs";
 import {SubscriptionUtils} from "../../../../util/subscription.utils";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
-import {BudgetModel, IncomeModel, PaymentModel} from "../../../../models/RequestModels";
 import {HttpService} from "../../../../services/http/http.service";
 import {HttpResponse} from "@angular/common/http";
-import {ResponseErrorModel} from "../../../../models/ResponseErrorModel";
+import {ResponseModel} from "../../../../models/response.model";
 import {SpinnerSize} from "../../shared/spinner/spinner.component";
 import {ModalOptions, ModalSize} from "../../../../util/modal.utils";
+import {GetBudgetDto} from "../../../../models/dto/budget.model.dto";
+import {GetIncomeDto} from "../../../../models/dto/income.model.dto";
+import {GetPaymentDto} from "../../../../models/dto/payment.model.dto";
 
 @Component({
   selector: 'app-delete-modal',
@@ -22,10 +24,10 @@ export class DeleteModalComponent implements OnInit, OnDestroy {
   @Output() refreshPaymentEvent = new EventEmitter<boolean>();
   protected readonly SpinnerSize = SpinnerSize;
   protected subscriptions: Subscription[];
-  private paymentModel: PaymentModel | null;
-  private budgetModel: BudgetModel | null;
-  private incomeModel: IncomeModel | null;
-  protected errorModel: ResponseErrorModel;
+  private paymentModel: GetPaymentDto | null;
+  private budgetModel: GetBudgetDto | null;
+  private incomeModel: GetIncomeDto | null;
+  protected errorModel: ResponseModel;
   protected displayLoader: boolean;
 
   constructor(
@@ -36,34 +38,34 @@ export class DeleteModalComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.displayLoader = false;
     this.subscriptions = [];
-    this.errorModel = new ResponseErrorModel();
+    this.errorModel = new ResponseModel();
   }
 
   ngOnDestroy(): void {
     SubscriptionUtils.unsubscribeAll(this.subscriptions);
   }
 
-  openWithPayment(payment: PaymentModel): void {
+  openWithPayment(payment: GetPaymentDto): void {
     this.displayLoader = false;
-    this.paymentModel = new PaymentModel();
+    this.paymentModel = new GetPaymentDto();
     this.paymentModel = payment;
 
     this.modalService
       .open(this.deleteModal, ModalOptions.default(ModalSize.SMALL))
   }
 
-  openWithIncome(income: IncomeModel): void {
+  openWithIncome(income: GetIncomeDto): void {
     this.displayLoader = false;
-    this.incomeModel = new IncomeModel();
+    this.incomeModel = new GetIncomeDto();
     this.incomeModel = income;
 
     this.modalService
       .open(this.deleteModal, ModalOptions.default(ModalSize.SMALL))
   }
 
-  openWithBudget(budget: BudgetModel): void {
+  openWithBudget(budget: GetBudgetDto): void {
     this.displayLoader = false;
-    this.budgetModel = new BudgetModel();
+    this.budgetModel = new GetBudgetDto();
     this.budgetModel = budget;
 
     this.modalService
@@ -145,7 +147,7 @@ export class DeleteModalComponent implements OnInit, OnDestroy {
   }
 
   private onRequestSuccess(response: HttpResponse<any>): void {
-    this.errorModel.responseStatusCode = response.status;
+    this.errorModel.statusCode = response.status;
     this.modalService.dismissAll();
     setTimeout((): void => {
       this.displayLoader = false;
@@ -154,8 +156,8 @@ export class DeleteModalComponent implements OnInit, OnDestroy {
 
   private onRequestFailed(err: any): void {
     this.errorModel.traceId = err.headers.get('X-Trace-Id');
-    this.errorModel.responseStatusCode = err.status;
-    this.errorModel.responseErrorModel = err.error;
+    this.errorModel.statusCode = err.status;
+    this.errorModel.error = err.error;
     this.displayLoader = false;
     this.errorModal.open(this.errorModel);
   }

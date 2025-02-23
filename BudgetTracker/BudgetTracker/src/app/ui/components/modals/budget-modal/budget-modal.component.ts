@@ -1,19 +1,19 @@
 import {Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {Subscription} from "rxjs";
 import {SubscriptionUtils} from "../../../../util/subscription.utils";
-import {BudgetModel} from "../../../../models/RequestModels";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
-import {BudgetDateForm, BudgetPickerForm, DatePicker} from "../../../../models/FormModels";
+import {DatePicker} from "../../../../models/datepicker.model";
 import {DatePickerUtil, DateUtil, isInvalidDate} from "../../../../util/date.util";
 import {SpinnerSize} from "../../shared/spinner/spinner.component";
 import {HttpResponse} from "@angular/common/http";
 import {HttpService} from "../../../../services/http/http.service";
-import {BudgetStatus} from "../../../../models/modal-models/BudgetStatusModel";
+import {BudgetDatePicker, BudgetStatus} from "../../../../models/modal/budget.model.modal";
 import {ModalOptions, ModalUtils} from "../../../../util/modal.utils";
 import {AbstractControl, NgForm, NgModel} from "@angular/forms";
-import {ResponseErrorModel} from "../../../../models/ResponseErrorModel";
+import {ResponseModel} from "../../../../models/response.model";
 import {TimerUtils} from "../../../../util/timer.utils";
 import {AnimationsConfig, DateConfig, DateMessageConfig, DatePickerConfig, LoadersConfig} from "../../../../app-config";
+import {BudgetDto, GetBudgetDto} from "../../../../models/dto/budget.model.dto";
 
 @Component({
   selector: 'app-budget-modal',
@@ -26,15 +26,14 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
   @Output() refreshPageEvent = new EventEmitter<boolean>();
   @Output() updateBudgetEvent = new EventEmitter<string>();
   protected readonly DatePickerUtil = DatePickerUtil;
-  protected readonly DateUtil = DateUtil;
   protected readonly ModalUtils = ModalUtils;
   protected readonly SpinnerSize = SpinnerSize;
   protected readonly LoadersConfig = LoadersConfig;
   protected subscriptions: Subscription[];
-  protected budgetPickerForm: BudgetPickerForm;
+  protected budgetDatePicker: BudgetDatePicker;
   protected budgetPicker: DatePicker;
   protected budgetStatusIcon: BudgetStatus;
-  protected responseErrorModel: ResponseErrorModel;
+  protected responseErrorModel: ResponseModel;
   protected isEditing: boolean;
   protected displayTimer: boolean;
   protected displayLoader: boolean;
@@ -52,26 +51,26 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.subscriptions = [];
-    this.responseErrorModel = new ResponseErrorModel();
+    this.responseErrorModel = new ResponseModel();
     this.resetBudgetStatus();
     this.resetDatePicker();
     this.resetModalOptions();
   }
 
-  open(budgetData?: BudgetModel): void {
+  open(budgetData?: GetBudgetDto): void {
     this.resetBudgetStatus();
     this.resetDatePicker();
     this.resetModalOptions();
 
-    this.responseErrorModel = new ResponseErrorModel();
+    this.responseErrorModel = new ResponseModel();
     this.isEditing = budgetData != null;
 
     if (budgetData) {
       this.idBudget = budgetData.id;
-      this.budgetPickerForm.name = budgetData.name;
-      this.budgetPickerForm.dateStart = DatePickerUtil
+      this.budgetDatePicker.name = budgetData.name;
+      this.budgetDatePicker.dateStart = DatePickerUtil
         .convertToDatePicker(budgetData.dateStart);
-      this.budgetPickerForm.dateEnd = DatePickerUtil
+      this.budgetDatePicker.dateEnd = DatePickerUtil
         .convertToDatePicker(budgetData.dateEnd);
     }
 
@@ -79,8 +78,8 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
   }
 
   protected onDatesChanged(dateStartInput: NgModel, dateEndInput: NgModel): void {
-    const datePickerStart = this.budgetPickerForm.dateStart;
-    const datePickerEnd = this.budgetPickerForm.dateEnd;
+    const datePickerStart = this.budgetDatePicker.dateStart;
+    const datePickerEnd = this.budgetDatePicker.dateEnd;
 
     const isInvalidStartDate = isInvalidDate(datePickerStart);
     const isInvalidEndDate = isInvalidDate(datePickerEnd);
@@ -146,14 +145,14 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
     this.displayLoader = true;
 
     //need to convert to number because days and months are -1
-    this.budgetPickerForm.dateStart.day++;
-    this.budgetPickerForm.dateEnd.day++;
+    this.budgetDatePicker.dateStart.day++;
+    this.budgetDatePicker.dateEnd.day++;
 
     const budgetForm = {
-      name: this.budgetPickerForm.name,
-      dateStart: DatePickerUtil.convertToDate(this.budgetPickerForm.dateStart),
-      dateEnd: DatePickerUtil.convertToDate(this.budgetPickerForm.dateEnd)
-    } as BudgetDateForm;
+      name: this.budgetDatePicker.name,
+      dateStart: DatePickerUtil.convertToDate(this.budgetDatePicker.dateStart),
+      dateEnd: DatePickerUtil.convertToDate(this.budgetDatePicker.dateEnd)
+    } as BudgetDto;
 
     this.subscriptions.push(
       this.httpService.updateBudget(
@@ -208,13 +207,13 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
     } as BudgetStatus;
   }
 
-  private onRequestFailed(err: any, control: AbstractControl | ResponseErrorModel): void {
+  private onRequestFailed(err: any, control: AbstractControl | ResponseModel): void {
     if (control instanceof AbstractControl) {
       control.setErrors({'responseMessage': err.error["message"]})
     } else {
       this.responseErrorModel.traceId = err.headers.get('X-Trace-Id');
-      this.responseErrorModel.responseStatusCode = err.status;
-      this.responseErrorModel.responseErrorModel = err.error;
+      this.responseErrorModel.statusCode = err.status;
+      this.responseErrorModel.error = err.error;
       this.errorModal.open(this.responseErrorModel);
     }
 
@@ -227,7 +226,7 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
   }
 
   private resetDatePicker(): void {
-    this.budgetPickerForm = DatePickerConfig.DEFAULT_FORM_PICKER;
+    this.budgetDatePicker = DatePickerConfig.DEFAULT_FORM_PICKER;
     this.budgetPicker = DatePickerUtil
       .convertToDatePicker(DateConfig.FIRST_DAY_OF_CURRENT_MONTH);
   }

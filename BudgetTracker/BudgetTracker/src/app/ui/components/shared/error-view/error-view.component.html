@@ -1,16 +1,16 @@
-@if (errorModel.responseStatusCode || errorModel.responseErrorModel) {
-  @if (errorModel.responseStatusCode == 409) {
+@if (errorModel.statusCode || errorModel.statusCode) {
+  @if (errorModel.statusCode == 409) {
     <div class="text-center">
       <p>Unable to create data because resource already exist.</p>
     </div>
   } @else {
-    @if (errorModel.responseStatusCode == 0) {
+    @if (errorModel.statusCode == 0) {
       <p>Unable process request due to cors errors.</p>
     } @else {
       <p>Unable process request due to errors.</p>
       <ul>
         <li>
-          Status code: <span class="text-danger">{{ errorModel.responseStatusCode }}</span>
+          Status code: <span class="text-danger">{{ errorModel.statusCode }}</span>
         </li>
       </ul>
       @if (errorModel.traceId) {

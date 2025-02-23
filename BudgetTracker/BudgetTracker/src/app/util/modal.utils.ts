@@ -1,4 +1,4 @@
-import {BudgetStatus} from "../models/modal-models/BudgetStatusModel";
+import {BudgetStatus} from "../models/modal/budget.model.modal";
 import {NgModel} from "@angular/forms";
 import {NgbModalOptions} from "@ng-bootstrap/ng-bootstrap/modal/modal-config";
 

@@ -35,7 +35,7 @@
                 id="budget-name"
                 name="budget-name"
                 class="form-control"
-                [(ngModel)]="budgetPickerForm.name"
+                [(ngModel)]="budgetDatePicker.name"
                 required
                 minlength="3"
                 maxlength="150"
@@ -72,7 +72,7 @@
                   id="budget-date-start"
                   name="budget-date-start"
                   class="form-control"
-                  [(ngModel)]="budgetPickerForm.dateStart"
+                  [(ngModel)]="budgetDatePicker.dateStart"
                   required
                   #dateStartInput="ngModel"
                   (ngModelChange)="onDatesChanged(dateStartInput, dateEndInput)"
@@ -123,7 +123,7 @@
                   id="budget-date-end"
                   name="budget-date-end"
                   class="form-control"
-                  [(ngModel)]="budgetPickerForm.dateEnd"
+                  [(ngModel)]="budgetDatePicker.dateEnd"
                   container="body"
                   placement="bottom-end"
                   required

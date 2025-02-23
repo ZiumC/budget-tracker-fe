@@ -1,5 +1,5 @@
-import {BudgetPickerForm} from "./models/FormModels";
-import {DatePickerUtil, DateUtil} from "./util/date.util";
+import {DatePickerUtil} from "./util/date.util";
+import {BudgetDatePicker} from "./models/modal/budget.model.modal";
 
 export class AnimationsConfig {
   public static DEFAULT_DURATION = 500;
@@ -19,7 +19,7 @@ export class DateConfig {
 }
 
 export class DatePickerConfig {
-  public static DEFAULT_FORM_PICKER: BudgetPickerForm = {
+  public static DEFAULT_FORM_PICKER: BudgetDatePicker = {
     name: "",
     dateStart: DatePickerUtil.convertToDatePicker(DateConfig.FIRST_DAY_OF_CURRENT_MONTH),
     dateEnd: DatePickerUtil.convertToDatePicker(DateConfig.LAST_DAY_OF_CURRENT_MONTH)

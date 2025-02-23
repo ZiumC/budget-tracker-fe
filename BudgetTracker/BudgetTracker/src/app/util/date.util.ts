@@ -1,5 +1,5 @@
 import {formatDate} from "@angular/common";
-import {DatePicker} from "../models/FormModels";
+import {DatePicker} from "../models/datepicker.model";
 import {Injectable} from "@angular/core";
 import {NgbDateParserFormatter, NgbDateStruct} from "@ng-bootstrap/ng-bootstrap";
 
