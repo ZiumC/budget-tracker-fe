@@ -1,14 +1,18 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
-import BigNumber from "bignumber.js";
 import {Subscription} from "rxjs";
 import {HttpService} from "../../../../services/http/http.service";
 import {ResponseModel} from "../../../../models/response.model";
 import {SubscriptionUtils} from "../../../../util/subscription.utils";
 import {SpinnerSize} from "../../shared/spinner/spinner.component";
 import {HttpResponse} from "@angular/common/http";
-import {ModalOptions} from "../../../../util/modal.utils";
+import {ModalOptions, ModalUtils} from "../../../../util/modal.utils";
 import {GetIncomeDto, IncomeDto} from "../../../../models/dto/income.model.dto";
+import {AppConfig} from "../../../../models/config/config";
+import {FormConfig} from "../../../../models/config/form.model.config";
+import {ConfigService} from "../../../../services/config/config.service";
+import {formatString} from "../../../../util/string.utils";
+import {TimerUtils} from "../../../../util/timer.utils";
 
 @Component({
   selector: 'app-income-modal',
@@ -21,17 +25,21 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
   @Input() idBudget: string;
   @Output() refreshIncomeEvent = new EventEmitter<boolean>();
   protected readonly SpinnerSize = SpinnerSize;
+  protected readonly ModalUtils = ModalUtils;
+  protected readonly formatString = formatString;
+  protected appConfig: AppConfig;
+  protected formConfig: FormConfig;
   protected subscriptions: Subscription[];
-  protected errorModel: ResponseModel;
-  protected incomeForm: IncomeDto;
+  protected responseModel: ResponseModel;
+  protected incomeDto: IncomeDto;
   protected displayLoader: boolean;
   protected isEditing: boolean;
-  protected buttonCopyName: string;
   private idIncome: string;
 
   constructor(
     private modalService: NgbModal,
-    private httpService: HttpService) {
+    private httpService: HttpService,
+    private configService: ConfigService) {
   }
 
   ngOnDestroy(): void {
@@ -40,11 +48,23 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.setDefaultIncomeForm();
-    this.errorModel = new ResponseModel();
+    this.responseModel = new ResponseModel();
     this.subscriptions = [];
     this.displayLoader = false;
     this.isEditing = false;
-    this.buttonCopyName = "Copy";
+
+    this.configService.config.subscribe(config => {
+      if (config) {
+        this.appConfig = config.app;
+        if (config.app.form) {
+          this.formConfig = config.app.form;
+        } else {
+          throw Error("Form config not defined");
+        }
+      } else {
+        throw Error("Config not defined");
+      }
+    })
   }
 
   open(incomeData?: GetIncomeDto): void {
@@ -53,9 +73,9 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
 
     if (incomeData) {
       this.idIncome = incomeData.id;
-      this.incomeForm.name = incomeData.name;
-      this.incomeForm.wage = incomeData.wage;
-      this.incomeForm.isSurplus = incomeData.isSurplus;
+      this.incomeDto.name = incomeData.name;
+      this.incomeDto.wage = incomeData.wage;
+      this.incomeDto.isSurplus = incomeData.isSurplus;
     }
 
     this.modalService.open(this.incomeModal, ModalOptions.default());
@@ -64,22 +84,25 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
   protected saveIncome(): void {
     this.displayLoader = true;
 
-    const surplus = String(this.incomeForm.isSurplus);
-    this.incomeForm.isSurplus = JSON.parse(surplus);
+    const surplus = String(this.incomeDto.isSurplus);
+    this.incomeDto.isSurplus = JSON.parse(surplus);
 
-    setTimeout((): void => {
-      if (this.isEditing) {
-        this.updateIncome()
-      } else {
-        this.createIncome();
-      }
-    }, 500);
+    new TimerUtils(this.appConfig.animation.duration.default).start()
+      .subscribe(finished =>{
+        if (finished){
+          if (this.isEditing) {
+            this.updateIncome()
+          } else {
+            this.createIncome();
+          }
+        }
+      })
   }
 
   private updateIncome(): void {
     this.subscriptions.push(
       this.httpService.updateIncome(
-        this.incomeForm,
+        this.incomeDto,
         this.idIncome).subscribe({
         next: (response: HttpResponse<any>): void => {
           this.onRequestSuccess(response);
@@ -94,7 +117,7 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
   private createIncome(): void {
     this.subscriptions.push(
       this.httpService.createBudgetIncome(
-        this.incomeForm,
+        this.incomeDto,
         this.idBudget).subscribe({
         next: (response: HttpResponse<any>): void => {
           this.onRequestSuccess(response);
@@ -108,25 +131,22 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
 
   private onRequestSuccess(response: HttpResponse<any>): void {
     this.refreshIncomeEvent.emit(true);
-    this.errorModel.statusCode = response.status;
+    this.responseModel.statusCode = response.status;
     this.modalService.dismissAll();
-    setTimeout((): void => {
-      this.displayLoader = false;
-    }, 500)
+    this.displayLoader = false;
   }
 
   private onRequestFailed(err: any): void {
-    this.errorModel.traceId = err.headers.get('X-Trace-Id');
-    this.errorModel.statusCode = err.status;
-    this.errorModel.error = err.error;
+    this.responseModel.traceId = err.headers.get('X-Trace-Id');
+    this.responseModel.statusCode = err.status;
+    this.responseModel.error = err.error;
     this.displayLoader = false;
-    this.errorModal.open(this.errorModel);
+    this.errorModal.open(this.responseModel);
   }
 
   private setDefaultIncomeForm(): void {
-    this.incomeForm = {
+    this.incomeDto = {
       name: "",
-      wage: new BigNumber(0.00),
       isSurplus: false
     } as GetIncomeDto;
   }

@@ -44,6 +44,17 @@
           "maxLength": "512"
         }
       },
+      "incomeModal": {
+        "placeholder": "0.00",
+        "name": {
+          "minLength": "3",
+          "maxLength": "150"
+        },
+        "wage": {
+          "minValue": "0",
+          "maxLength": "8"
+        }
+      },
       "regex": {
         "money": "^[0-9]*\\.[0-9]{1,2}$|^[0-9]{1,}"
       }

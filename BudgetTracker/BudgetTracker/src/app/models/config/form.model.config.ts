@@ -1,8 +1,7 @@
-import {Regex} from "./regex.model.config";
-
-export interface Form {
+export interface FormConfig {
   messages: Messages;
   paymentModal: PaymentModal;
+  incomeModal: IncomeModal;
   regex: Regex;
 }
 
@@ -19,12 +18,18 @@ export interface Messages {
   alreadyDefined: string;
 }
 
-export interface PaymentModal{
+export interface PaymentModal {
   placeholder: string;
   name: MinMaxLength;
   price: MinValueMaxLength;
   refund: MinValueMaxLength;
   comment: MinMaxLength;
+}
+
+export interface IncomeModal {
+  placeholder: string;
+  name: MinMaxLength;
+  wage: MinValueMaxLength;
 }
 
 export interface MinMaxLength {
@@ -37,3 +42,6 @@ export interface MinValueMaxLength {
   maxLength: string;
 }
 
+export interface Regex {
+  money: string;
+}

@@ -10,7 +10,7 @@ import {TimerUtils} from "../../../../util/timer.utils";
 import {ConfigService} from "../../../../services/config/config.service";
 import {AppConfig} from "../../../../models/config/config";
 import {ModalOptions, ModalSize, ModalUtils} from "../../../../util/modal.utils";
-import {Form} from "../../../../models/config/form.model.config";
+import {FormConfig} from "../../../../models/config/form.model.config";
 import {formatString} from "../../../../util/string.utils";
 import {subtract} from "../../../../util/number.util";
 import {GetPaymentDto, PaymentDto} from "../../../../models/dto/payment.model.dto";
@@ -30,10 +30,10 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
   protected readonly ModalUtils = ModalUtils;
   protected readonly SpinnerSize = SpinnerSize;
   protected appConfig: AppConfig;
-  protected formConfig: Form;
+  protected formConfig: FormConfig;
   protected subscriptions: Subscription[];
-  protected responseErrorModel: ResponseModel;
-  protected paymentForm: PaymentDto;
+  protected responseModel: ResponseModel;
+  protected paymentDto: PaymentDto;
   protected idPayment: string;
   protected isEditing: boolean;
   protected displayLoader: boolean;
@@ -47,7 +47,7 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.subscriptions = [];
-    this.responseErrorModel = new ResponseModel();
+    this.responseModel = new ResponseModel();
     this.displayLoader = false;
     this.isEditing = false;
     this.buttonCopyName = "Copy";
@@ -64,7 +64,6 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
         throw Error("Config not defined");
       }
     })
-
   }
 
   ngOnDestroy(): void {
@@ -77,11 +76,11 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
 
     if (paymentData) {
       this.idPayment = paymentData.id;
-      this.paymentForm.name = paymentData.name;
-      this.paymentForm.price = paymentData.price;
-      this.paymentForm.refund = paymentData.refund;
-      this.paymentForm.isPaid = paymentData.isPaid;
-      this.paymentForm.comment = paymentData.comment;
+      this.paymentDto.name = paymentData.name;
+      this.paymentDto.price = paymentData.price;
+      this.paymentDto.refund = paymentData.refund;
+      this.paymentDto.isPaid = paymentData.isPaid;
+      this.paymentDto.comment = paymentData.comment;
     }
 
     this.modalService.open(this.paymentModal, ModalOptions.default(ModalSize.BIG));
@@ -90,8 +89,8 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
   protected savePayment(): void {
     this.displayLoader = true;
 
-    const isPaid = String(this.paymentForm.isPaid);
-    this.paymentForm.isPaid = JSON.parse(isPaid)
+    const isPaid = String(this.paymentDto.isPaid);
+    this.paymentDto.isPaid = JSON.parse(isPaid)
 
     new TimerUtils(this.appConfig.animation.duration.default).start()
       .subscribe(finished => {
@@ -108,7 +107,7 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
   private updatePayment(): void {
     this.subscriptions.push(
       this.httpService.updatePayment(
-        this.paymentForm,
+        this.paymentDto,
         this.idPayment).subscribe({
         next: (response: HttpResponse<any>): void => {
           this.onRequestSuccess(response);
@@ -123,7 +122,7 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
   private createBudgetPayment(): void {
     this.subscriptions.push(
       this.httpService.createBudgetPayment(
-        this.paymentForm,
+        this.paymentDto,
         this.idBudget).subscribe({
         next: (response: HttpResponse<any>): void => {
           this.onRequestSuccess(response);
@@ -137,21 +136,21 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
 
   private onRequestSuccess(response: HttpResponse<any>): void {
     this.refreshPaymentEvent.emit(true);
-    this.responseErrorModel.statusCode = response.status;
+    this.responseModel.statusCode = response.status;
     this.modalService.dismissAll();
     this.displayLoader = false;
   }
 
   private onRequestFailed(err: any): void {
-    this.responseErrorModel.traceId = err.headers.get('X-Trace-Id');
-    this.responseErrorModel.statusCode = err.status;
-    this.responseErrorModel.statusCode = err.error;
+    this.responseModel.traceId = err.headers.get('X-Trace-Id');
+    this.responseModel.statusCode = err.status;
+    this.responseModel.statusCode = err.error;
     this.displayLoader = false;
-    this.errorModal.open(this.responseErrorModel);
+    this.errorModal.open(this.responseModel);
   }
 
   private setDefaultPaymentForm(): void {
-    this.paymentForm = {
+    this.paymentDto = {
       name: "",
       isPaid: false,
       comment: ""

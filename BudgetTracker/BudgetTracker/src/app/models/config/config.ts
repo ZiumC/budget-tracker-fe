@@ -1,15 +1,15 @@
-import {Animation} from "./animation.model.config";
-import {Timer} from "./timer.model.config";
-import {Form} from "./form.model.config";
-import {Request} from "./request.model.config";
+import {AnimationConfig} from "./animation.model.config";
+import {TimerConfig} from "./timer.model.config";
+import {FormConfig} from "./form.model.config";
+import {RequestConfig} from "./request.model.config";
 
 export interface Config {
   app: AppConfig;
 }
 
 export interface AppConfig {
-  animation: Animation;
-  timer: Timer;
-  form: Form;
-  request: Request;
+  animation: AnimationConfig;
+  timer: TimerConfig;
+  form: FormConfig;
+  request: RequestConfig;
 }

@@ -29,7 +29,7 @@
     <div class="modal-body">
       <form ngbAutofocus #form="ngForm">
         <div class="col-mx">
-          <div class="mb-2">
+          <div [className]="ModalUtils.displayMarginFor(incomeNameInput)">
             <label for="income-name">Name</label>
             <span class="text-danger">*</span>
             <input
@@ -37,86 +37,78 @@
               id="income-name"
               name="income-name"
               class="form-control"
-              [(ngModel)]="incomeForm.name"
+              [(ngModel)]="incomeDto.name"
               required
-              minlength="3"
-              maxlength="150"
+              minlength="{{ formConfig.incomeModal.name.minLength }}"
+              maxlength="{{ formConfig.incomeModal.name.maxLength }}"
               #incomeNameInput="ngModel"
               [ngClass]="{
-            'is-invalid':
-              incomeNameInput.invalid &&
-              (incomeNameInput.dirty || incomeNameInput.touched),
-            'is-valid': incomeNameInput.valid }"/>
+              'is-invalid': incomeNameInput.invalid &&
+                (incomeNameInput.dirty || incomeNameInput.touched),
+              'is-valid': incomeNameInput.valid }"/>
             @if (incomeNameInput.invalid &&
             (incomeNameInput.dirty || incomeNameInput.touched)) {
               <div class="invalid-feedback">
                 <label *ngIf="incomeNameInput.errors?.['required']">
-                  Field is required.
+                  {{ formConfig.messages.required }}
                 </label>
                 <label *ngIf="incomeNameInput.errors?.['minlength']">
-                  Minimum length are 3 characters.
+                  {{ formatString(formConfig.messages.minLength, formConfig.incomeModal.name.minLength) }}
                 </label>
                 <label *ngIf="incomeNameInput.errors?.['maxlength']">
-                  Maximum length are 150 characters.
+                  {{ formatString(formConfig.messages.maxLength, formConfig.incomeModal.name.maxLength) }}
                 </label>
               </div>
-            } @else if (incomeNameInput.valid) {
-              <div class="valid-feedback pb-3">
-              </div>
-            } @else {
-              <div class="pb-4"></div>
             }
           </div>
-          <div class="mb-2">
+          <div [className]="ModalUtils.displayMarginFor(incomeWageInput)">
             <label for="income-wage">Wage</label>
             <span class="text-danger">*</span>
             <input
-              type="number"
+              type="text"
               id="income-wage"
               name="income-wage"
               class="form-control"
-              [(ngModel)]="incomeForm.wage"
+              [(ngModel)]="incomeDto.wage"
               required
-              min="0"
+              min="{{ formConfig.incomeModal.wage.minValue }}"
+              maxlength="{{ formConfig.incomeModal.wage.maxLength }}"
+              placeholder="{{ formConfig.incomeModal.placeholder }}"
+              pattern="{{ formConfig.regex.money }}"
               #incomeWageInput="ngModel"
               [ngClass]="{
-            'is-invalid':
-              incomeWageInput.invalid &&
-              (incomeWageInput.dirty || incomeWageInput.touched),
-            'is-valid': incomeWageInput.valid }"/>
+              'is-invalid':incomeWageInput.invalid &&
+                (incomeWageInput.dirty || incomeWageInput.touched),
+              'is-valid': incomeWageInput.valid }"/>
             @if (incomeWageInput.invalid &&
             (incomeWageInput.dirty || incomeWageInput.touched)) {
               <div class="invalid-feedback">
                 <label *ngIf="incomeWageInput.errors?.['required']">
-                  Field is required.
+                  {{ formConfig.messages.required }}
                 </label>
                 <label *ngIf="incomeWageInput.errors?.['min']">
-                  Minimum value is 0
+                  {{ formatString(formConfig.messages.minValue, formConfig.incomeModal.wage.minValue) }}
+                </label>
+                <label *ngIf="incomeWageInput.errors?.['pattern']">
+                  {{ formatString(formConfig.messages.invalidFormat, "number") }}
                 </label>
               </div>
-            } @else if (incomeWageInput.valid) {
-              <div class="valid-feedback pb-3">
-              </div>
-            } @else {
-              <div class="pb-4"></div>
             }
           </div>
-          <div class="mb-2">
+          <div [className]="ModalUtils.displayMarginFor(incomeSurplusSelect)">
             <label for="income-surplus">Status</label>
             <span class="text-danger">*</span>
             <select
               id="income-surplus"
               name="income-surplus"
               class="form-control"
-              [(ngModel)]="incomeForm.isSurplus"
+              [(ngModel)]="incomeDto.isSurplus"
               required
               #incomeSurplusSelect="ngModel"
               [ngClass]="{
-            'is-invalid':
-              incomeSurplusSelect.invalid &&
-              (incomeSurplusSelect.dirty || incomeSurplusSelect.touched),
-            'is-valid': incomeSurplusSelect.valid,
-            }">
+              'is-invalid': incomeSurplusSelect.invalid &&
+                (incomeSurplusSelect.dirty || incomeSurplusSelect.touched),
+              'is-valid': incomeSurplusSelect.valid }">
               <option value=false>Income isn't surplus</option>
               <option value=true>Income is surplus</option>
             </select>
@@ -124,7 +116,7 @@
             (incomeSurplusSelect.dirty || incomeSurplusSelect.touched)) {
               <div class="invalid-feedback">
                 <label *ngIf="incomeSurplusSelect.errors?.['required']">
-                  This field is required.
+                  {{ formConfig.messages.required }}
                 </label>
               </div>
             } @else {

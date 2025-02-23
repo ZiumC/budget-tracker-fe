@@ -1,4 +1,4 @@
-export interface Request {
+export interface RequestConfig {
   status: Status;
   pagination: Pagination;
   cookies: Cookies;

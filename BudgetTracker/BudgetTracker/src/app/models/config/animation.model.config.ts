@@ -1,4 +1,4 @@
-export interface Animation {
+export interface AnimationConfig {
   duration: Duration;
 }
 

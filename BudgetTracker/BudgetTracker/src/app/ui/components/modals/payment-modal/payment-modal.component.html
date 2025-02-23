@@ -38,7 +38,7 @@
                 id="payment-name"
                 name="payment-name"
                 class="form-control"
-                [(ngModel)]="paymentForm.name"
+                [(ngModel)]="paymentDto.name"
                 required
                 minlength="{{ formConfig.paymentModal.name.minLength }}"
                 maxlength="{{ formConfig.paymentModal.name.maxLength }}"
@@ -71,7 +71,7 @@
                   id="payment-price"
                   name="payment-price"
                   class="form-control"
-                  [(ngModel)]="paymentForm.price"
+                  [(ngModel)]="paymentDto.price"
                   required
                   min="{{ formConfig.paymentModal.price.minValue }}"
                   maxlength="{{ formConfig.paymentModal.price.maxLength }}"
@@ -110,7 +110,7 @@
                   id="payment-refund"
                   name="payment-refund"
                   class="form-control"
-                  [(ngModel)]="paymentForm.refund"
+                  [(ngModel)]="paymentDto.refund"
                   min="{{ formConfig.paymentModal.refund.minValue }}"
                   maxlength="{{ formConfig.paymentModal.refund.maxLength }}"
                   placeholder="{{formConfig.paymentModal.placeholder}}"
@@ -142,7 +142,7 @@
                 type="number"
                 class="form-control"
                 disabled
-                value="{{ subtract(this.paymentForm.price, this.paymentForm.refund) }}"/>
+                value="{{ subtract(this.paymentDto.price, this.paymentDto.refund) }}"/>
               <div class="input-group-append">
                 <span class="input-group-text">PLN</span>
               </div>
@@ -156,7 +156,7 @@
                 id="payment-paid"
                 name="payment-paid"
                 class="form-control"
-                [(ngModel)]="paymentForm.isPaid"
+                [(ngModel)]="paymentDto.isPaid"
                 required
                 #paymentPaidSelect="ngModel"
                 [ngClass]="{
@@ -185,7 +185,7 @@
                 minlength="{{ formConfig.paymentModal.comment.minLength }}"
                 maxlength="{{ formConfig.paymentModal.comment.maxLength }}"
                 #paymentCommentInput="ngModel"
-                [(ngModel)]="paymentForm.comment"
+                [(ngModel)]="paymentDto.comment"
                 [ngClass]="{
                 'is-invalid': paymentCommentInput.invalid &&
                   (paymentCommentInput.dirty || paymentCommentInput.touched),
