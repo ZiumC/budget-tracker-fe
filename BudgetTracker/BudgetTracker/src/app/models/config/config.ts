@@ -1,6 +1,6 @@
 import {Animation} from "./animation.config";
 import {Timer} from "./timer.config";
-import {Messages} from "./messages.config";
+import {Form} from "./form.config";
 import {Request} from "./request.config";
 
 export interface Config {
@@ -10,6 +10,6 @@ export interface Config {
 export interface AppConfig {
   animation: Animation;
   timer: Timer;
-  messages: Messages;
+  form: Form;
   request: Request;
 }

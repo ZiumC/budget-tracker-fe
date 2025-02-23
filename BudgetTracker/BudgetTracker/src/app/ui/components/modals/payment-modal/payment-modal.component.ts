@@ -6,7 +6,6 @@ import {PaymentModel} from "../../../../models/RequestModels";
 import {ModalOptions, ModalSize} from "../../../../util/modal-options.utils";
 import {PaymentForm} from "../../../../models/FormModels";
 import {ResponseErrorModel} from "../../../../models/ResponseErrorModel";
-import BigNumber from "bignumber.js";
 import {NumberUtils} from "../../../../util/number.utils";
 import {SpinnerSize} from "../../shared/spinner/spinner.component";
 import {HttpResponse} from "@angular/common/http";
@@ -14,6 +13,9 @@ import {HttpService} from "../../../../services/http/http.service";
 import {TimerUtils} from "../../../../util/timer.utils";
 import {ConfigService} from "../../../../services/config/config.service";
 import {AppConfig} from "../../../../models/config/config";
+import {ModalUtils} from "../../../../util/modal.utils";
+import {formatString} from "../../../../util/string.utils";
+import {Form} from "../../../../models/config/form.config";
 
 @Component({
   selector: 'app-payment-modal',
@@ -28,6 +30,7 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
   protected readonly SpinnerSize = SpinnerSize;
   protected readonly NumberUtils = NumberUtils;
   protected appConfig: AppConfig;
+  protected formConfig: Form;
   protected subscriptions: Subscription[];
   protected responseErrorModel: ResponseErrorModel;
   protected paymentForm: PaymentForm;
@@ -51,10 +54,14 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
 
     this.configService.config.subscribe(config => {
       if (config) {
-        console.log(config);
         this.appConfig = config.app;
+        if (config.app.form) {
+          this.formConfig = config.app.form;
+        } else {
+          throw Error("Form config not defined");
+        }
       } else {
-        throw Error("Timer config not defined");
+        throw Error("Config not defined");
       }
     })
 
@@ -146,10 +153,11 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
   private setDefaultPaymentForm(): void {
     this.paymentForm = {
       name: "",
-      price: BigNumber(0.00),
-      refund: BigNumber(0.00),
       isPaid: false,
       comment: ""
     } as PaymentForm;
   }
+
+  protected readonly ModalUtils = ModalUtils;
+  protected readonly formatString = formatString;
 }

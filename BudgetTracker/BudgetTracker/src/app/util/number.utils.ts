@@ -22,8 +22,14 @@ export class NumberUtils {
     let bigNum1 = new BigNumber(num1);
     let bigNum2 = new BigNumber(num2);
 
+    if ((num1 && isNaN(bigNum1.toNumber())) || (num2 && isNaN(bigNum2.toNumber()))) {
+      return result;
+    }
+
     if (bigNum1.gte(0) && bigNum2.gte(0)) {
       result = bigNum1.minus(bigNum2);
+    } else if (num1) {
+      result = bigNum1;
     }
 
     return new BigNumber(result);
