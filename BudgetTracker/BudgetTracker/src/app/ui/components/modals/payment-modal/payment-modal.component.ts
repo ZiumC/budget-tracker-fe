@@ -14,6 +14,7 @@ import {FormConfig} from "../../../../models/config/form.model.config";
 import {formatString} from "../../../../util/string.utils";
 import {subtract} from "../../../../util/number.util";
 import {GetPaymentDto, PaymentDto} from "../../../../models/dto/payment.model.dto";
+import {generateErrorModel} from "../../../../util/http.util";
 
 @Component({
   selector: 'app-payment-modal',
@@ -31,13 +32,12 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
   protected readonly SpinnerSize = SpinnerSize;
   protected appConfig: AppConfig;
   protected formConfig: FormConfig;
-  protected subscriptions: Subscription[];
+  protected subscriptions: Subscription[] = [];
   protected responseModel: ResponseModel;
   protected paymentDto: PaymentDto;
   protected idPayment: string;
   protected isEditing: boolean;
   protected displayLoader: boolean;
-  protected buttonCopyName: string;
 
   constructor(
     private modalService: NgbModal,
@@ -46,24 +46,17 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.subscriptions = [];
+    this.setDefaultPaymentForm();
     this.responseModel = new ResponseModel();
-    this.displayLoader = false;
-    this.isEditing = false;
-    this.buttonCopyName = "Copy";
+    ModalUtils.defaultSettings(this.displayLoader, this.isEditing);
 
-    this.configService.config.subscribe(config => {
-      if (config) {
-        this.appConfig = config.app;
-        if (config.app.form) {
-          this.formConfig = config.app.form;
-        } else {
-          throw Error("Form config not defined");
-        }
-      } else {
-        throw Error("Config not defined");
-      }
-    })
+    const appCfg = this.configService.getAppConfig();
+    if (appCfg) {
+      this.appConfig = appCfg;
+      this.formConfig = appCfg.form;
+    } else {
+      throw Error("Config not provided")
+    }
   }
 
   ngOnDestroy(): void {
@@ -142,9 +135,7 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
   }
 
   private onRequestFailed(err: any): void {
-    this.responseModel.traceId = err.headers.get('X-Trace-Id');
-    this.responseModel.statusCode = err.status;
-    this.responseModel.statusCode = err.error;
+    this.responseModel = generateErrorModel(err);
     this.displayLoader = false;
     this.errorModal.open(this.responseModel);
   }

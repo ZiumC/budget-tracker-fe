@@ -3,7 +3,8 @@
     "animation": {
       "duration": {
         "default": 500,
-        "short": 300
+        "short": 300,
+        "long": 1500
       }
     },
     "timer": {

@@ -13,6 +13,7 @@ import {FormConfig} from "../../../../models/config/form.model.config";
 import {ConfigService} from "../../../../services/config/config.service";
 import {formatString} from "../../../../util/string.utils";
 import {TimerUtils} from "../../../../util/timer.utils";
+import {generateErrorModel} from "../../../../util/http.util";
 
 @Component({
   selector: 'app-income-modal',
@@ -29,7 +30,7 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
   protected readonly formatString = formatString;
   protected appConfig: AppConfig;
   protected formConfig: FormConfig;
-  protected subscriptions: Subscription[];
+  protected subscriptions: Subscription[] = [];
   protected responseModel: ResponseModel;
   protected incomeDto: IncomeDto;
   protected displayLoader: boolean;
@@ -48,23 +49,16 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.setDefaultIncomeForm();
+    ModalUtils.defaultSettings(this.displayLoader, this.isEditing);
     this.responseModel = new ResponseModel();
-    this.subscriptions = [];
-    this.displayLoader = false;
-    this.isEditing = false;
 
-    this.configService.config.subscribe(config => {
-      if (config) {
-        this.appConfig = config.app;
-        if (config.app.form) {
-          this.formConfig = config.app.form;
-        } else {
-          throw Error("Form config not defined");
-        }
-      } else {
-        throw Error("Config not defined");
-      }
-    })
+    const appCfg = this.configService.getAppConfig();
+    if (appCfg) {
+      this.appConfig = appCfg;
+      this.formConfig = appCfg.form;
+    } else {
+      throw Error("Config not provided")
+    }
   }
 
   open(incomeData?: GetIncomeDto): void {
@@ -85,11 +79,11 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
     this.displayLoader = true;
 
     const surplus = String(this.incomeDto.isSurplus);
-    this.incomeDto.isSurplus = JSON.parse(surplus);
+    // this.incomeDto.isSurplus = JSON.parse(surplus);
 
     new TimerUtils(this.appConfig.animation.duration.default).start()
-      .subscribe(finished =>{
-        if (finished){
+      .subscribe(finished => {
+        if (finished) {
           if (this.isEditing) {
             this.updateIncome()
           } else {
@@ -137,9 +131,7 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
   }
 
   private onRequestFailed(err: any): void {
-    this.responseModel.traceId = err.headers.get('X-Trace-Id');
-    this.responseModel.statusCode = err.status;
-    this.responseModel.error = err.error;
+    this.responseModel = generateErrorModel(err);
     this.displayLoader = false;
     this.errorModal.open(this.responseModel);
   }

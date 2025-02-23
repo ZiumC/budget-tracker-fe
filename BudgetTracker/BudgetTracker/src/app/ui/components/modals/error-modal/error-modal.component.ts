@@ -1,4 +1,4 @@
-import {Component, Input, ViewChild} from '@angular/core';
+import {Component, ViewChild} from '@angular/core';
 import {ResponseModel} from "../../../../models/response.model";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {ModalOptions, ModalSize} from "../../../../util/modal.utils";
@@ -10,13 +10,13 @@ import {ModalOptions, ModalSize} from "../../../../util/modal.utils";
 })
 export class ErrorModalComponent {
   @ViewChild('errorModal') errorModal: any;
-  protected errorModel: ResponseModel;
+  protected responseModel: ResponseModel;
 
   constructor(private modalService: NgbModal) {
   }
 
-  open(errorModel: ResponseModel): void {
-    this.errorModel = errorModel;
+  open(responseErrorModel: ResponseModel): void {
+    this.responseModel = responseErrorModel;
     this.modalService.open(
       this.errorModal,
       ModalOptions.default(ModalSize.SMALL));

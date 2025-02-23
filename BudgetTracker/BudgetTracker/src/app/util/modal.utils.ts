@@ -17,6 +17,12 @@ export class ModalUtils {
       return 'mb-4 pb-2'
     }
   }
+
+  public static defaultSettings(...val: boolean[]): void {
+    for (let index = 0; index < val.length; index++) {
+      val[index] = false;
+    }
+  }
 }
 
 export class ModalOptions {

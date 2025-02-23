@@ -1,25 +1,25 @@
-@if (errorModel.statusCode || errorModel.statusCode) {
-  @if (errorModel.statusCode == 409) {
+@if (responseModel.statusCode || responseModel.statusCode) {
+  @if (responseModel.statusCode == 409) {
     <div class="text-center">
       <p>Unable to create data because resource already exist.</p>
     </div>
   } @else {
-    @if (errorModel.statusCode == 0) {
+    @if (responseModel.statusCode == 0) {
       <p>Unable process request due to cors errors.</p>
     } @else {
       <p>Unable process request due to errors.</p>
       <ul>
         <li>
-          Status code: <span class="text-danger">{{ errorModel.statusCode }}</span>
+          Status code: <span class="text-danger">{{ responseModel.statusCode }}</span>
         </li>
       </ul>
-      @if (errorModel.traceId) {
+      @if (responseModel.traceId) {
         <div class="input-group mb-3">
           <input #traceInput
                  type="text"
                  class="form-control text-danger"
                  readonly="readonly"
-                 value="{{ errorModel.traceId }}">
+                 value="{{ responseModel.traceId }}">
           <div class="input-group-append">
             <button class="btn btn-outline-secondary"
                     type="button"

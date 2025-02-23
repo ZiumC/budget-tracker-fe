@@ -10,6 +10,10 @@ import {ModalOptions, ModalSize} from "../../../../util/modal.utils";
 import {GetBudgetDto} from "../../../../models/dto/budget.model.dto";
 import {GetIncomeDto} from "../../../../models/dto/income.model.dto";
 import {GetPaymentDto} from "../../../../models/dto/payment.model.dto";
+import {ConfigService} from "../../../../services/config/config.service";
+import {AppConfig} from "../../../../models/config/config";
+import {TimerUtils} from "../../../../util/timer.utils";
+import {generateErrorModel} from "../../../../util/http.util";
 
 @Component({
   selector: 'app-delete-modal',
@@ -23,22 +27,31 @@ export class DeleteModalComponent implements OnInit, OnDestroy {
   @Output() refreshIncomeEvent = new EventEmitter<boolean>();
   @Output() refreshPaymentEvent = new EventEmitter<boolean>();
   protected readonly SpinnerSize = SpinnerSize;
+  protected appConfig: AppConfig;
   protected subscriptions: Subscription[];
+  protected responseModel: ResponseModel;
+  protected displayLoader: boolean;
   private paymentModel: GetPaymentDto | null;
   private budgetModel: GetBudgetDto | null;
   private incomeModel: GetIncomeDto | null;
-  protected errorModel: ResponseModel;
-  protected displayLoader: boolean;
 
   constructor(
     private modalService: NgbModal,
-    private httpService: HttpService) {
+    private httpService: HttpService,
+    private configService: ConfigService) {
   }
 
   ngOnInit(): void {
     this.displayLoader = false;
     this.subscriptions = [];
-    this.errorModel = new ResponseModel();
+    this.responseModel = new ResponseModel();
+
+    const appCfg = this.configService.getAppConfig();
+    if (appCfg) {
+      this.appConfig = appCfg;
+    } else {
+      throw Error("Config not provided")
+    }
   }
 
   ngOnDestroy(): void {
@@ -78,17 +91,20 @@ export class DeleteModalComponent implements OnInit, OnDestroy {
     const idIncome = this.incomeModel?.id;
     const idPayment = this.paymentModel?.id;
 
-    setTimeout((): void => {
-      if (idBudget) {
-        this.deleteBudget(idBudget);
-      } else if (idIncome) {
-        this.deleteIncome(idIncome);
-      } else if (idPayment) {
-        this.deletePayment(idPayment);
-      } else {
-        this.displayLoader = false;
-      }
-    }, 500)
+    new TimerUtils(this.appConfig.animation.duration.default).start()
+      .subscribe(finished => {
+        if (finished) {
+          if (idBudget) {
+            this.deleteBudget(idBudget);
+          } else if (idIncome) {
+            this.deleteIncome(idIncome);
+          } else if (idPayment) {
+            this.deletePayment(idPayment);
+          } else {
+            this.displayLoader = false;
+          }
+        }
+      })
 
     this.removeReferences();
   }
@@ -147,18 +163,14 @@ export class DeleteModalComponent implements OnInit, OnDestroy {
   }
 
   private onRequestSuccess(response: HttpResponse<any>): void {
-    this.errorModel.statusCode = response.status;
+    this.responseModel.statusCode = response.status;
     this.modalService.dismissAll();
-    setTimeout((): void => {
-      this.displayLoader = false;
-    }, 500)
+    this.displayLoader = false;
   }
 
   private onRequestFailed(err: any): void {
-    this.errorModel.traceId = err.headers.get('X-Trace-Id');
-    this.errorModel.statusCode = err.status;
-    this.errorModel.error = err.error;
     this.displayLoader = false;
-    this.errorModal.open(this.errorModel);
+    this.responseModel = generateErrorModel(err);
+    this.errorModal.open(this.responseModel);
   }
 }

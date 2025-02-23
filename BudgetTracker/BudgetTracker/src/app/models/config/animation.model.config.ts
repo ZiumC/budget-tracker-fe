@@ -5,4 +5,5 @@ export interface AnimationConfig {
 export interface Duration {
   default: number;
   short: number;
+  long: number;
 }
