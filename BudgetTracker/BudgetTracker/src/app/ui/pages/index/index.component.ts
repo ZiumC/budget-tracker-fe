@@ -1,15 +1,23 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {ResponseErrorModel} from '../../../models/ResponseErrorModel';
-import {BudgetModel} from '../../../models/RequestModels';
-import {HttpService} from '../../../services/http/httpService';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {HttpService} from '../../../services/http/http.service';
 import {Subscription} from 'rxjs';
 import {HttpResponse} from '@angular/common/http';
 import {SubscriptionUtils} from '../../../util/subscription.utils';
-import {DateUtils} from "../../../util/date.utils";
-import {RequestParamModel} from "../../../models/RequestParamModel";
+import {DatePickerUtil, DateUtil, isInvalidDate} from "../../../util/date.util";
+import {RequestModel} from "../../../models/request.model";
 import {SpinnerSize} from "../../components/shared/spinner/spinner.component";
-import {DatePicker} from "../../../models/FormModels";
-import {CookieUtils} from "../../../util/cookie.utils";
+import {DatePicker} from "../../../models/datepicker.model";
+import {TimerUtils} from "../../../util/timer.utils";
+import {NgModel} from "@angular/forms";
+import {getCookie, setCookie} from "../../../util/cookie.utils";
+import {GetBudgetDto} from "../../../models/dto/budget.model.dto";
+import {IndexResponse, ResponseModel} from "../../../models/response.model";
+import {AppConfig} from "../../../models/config/config";
+import {FormConfig} from "../../../models/config/form.model.config";
+import {ConfigService} from "../../../services/config/config.service";
+import {RequestConfig} from "../../../models/config/request.model.config";
+import {formatString} from "../../../util/string.utils";
+import {ModalUtils} from "../../../util/modal.utils";
 
 @Component({
   selector: 'app-index',
@@ -17,57 +25,67 @@ import {CookieUtils} from "../../../util/cookie.utils";
   styleUrl: './index.component.css'
 })
 export class IndexComponent implements OnInit, OnDestroy {
-  private readonly currentYear = new Date().getFullYear();
-  private readonly firstDayOfYear = new Date(this.currentYear, 0, 1);
-  private readonly lastDayOfYear = new Date(this.currentYear, 11, 31);
-  private readonly cookieUtils = new CookieUtils();
-  protected readonly DateUtils = DateUtils;
+  @ViewChild('errorModal') errorModal: any;
+  protected readonly DateUtils = DateUtil;
   protected readonly SpinnerSize = SpinnerSize;
-  protected readonly fromDateName: string = "from-date"
-  protected readonly toDateName: string = "to-date"
-  protected requiredStatusCode: number = 200;
-  protected budgets: BudgetModel[] | null;
-  protected budget: BudgetModel | null;
+  protected appConfig: AppConfig;
+  protected formConfig: FormConfig;
+  protected requestConfig: RequestConfig;
+  protected budgets: GetBudgetDto[] | null;
+  protected budget: GetBudgetDto | null;
   protected subscriptions: Subscription[];
-  protected requestParams: RequestParamModel;
+  protected requestModel: RequestModel;
   protected fromDatePicker: DatePicker;
   protected toDatePicker: DatePicker;
-
-  protected displayNowButton: boolean;
-  protected errorModels: any;
+  protected toCurrentYear: boolean;
+  protected indexResponse: IndexResponse;
   protected loaders: any;
   protected idRefreshBudget: string;
 
-  constructor(private httpService: HttpService) {
+  constructor(private httpService: HttpService,
+              private configService: ConfigService) {
   }
 
   ngOnInit(): void {
-    this.displayNowButton = this.isCurrentYear();
-
-    this.requestParams = new RequestParamModel();
-    this.requestParams.page = 1;
-    this.requestParams.pageSize = 36;
-
-    const fromDatePickerCookie = this.readDateFromCookie(this.fromDateName);
-    const toDatePickerCookie = this.readDateFromCookie(this.toDateName);
-
-    if (fromDatePickerCookie) {
-      this.setFromDate(DateUtils.convertToDate(fromDatePickerCookie));
+    const appCfg = this.configService.getAppConfig();
+    if (appCfg) {
+      this.appConfig = appCfg;
+      this.formConfig = appCfg.form;
+      this.requestConfig = appCfg.request;
     } else {
-      this.setFromDate(this.firstDayOfYear);
+      throw Error("Config not provided")
     }
 
-    if (toDatePickerCookie) {
-      this.setToDate(DateUtils.convertToDate(toDatePickerCookie));
+    this.requestModel = new RequestModel();
+    this.requestModel.page = this.requestConfig.pagination.defaultPage;
+    this.requestModel.pageSize = this.requestConfig.pagination.defaultBudgetsPageSize;
+
+    const dateFromCookie = this.readDateCookie(this.requestConfig.cookies.names.fromDate);
+    const dateToCookie = this.readDateCookie(this.requestConfig.cookies.names.toDate);
+
+    if (dateFromCookie) {
+      this.fromDatePicker = DatePickerUtil.convertToDatePicker(dateFromCookie);
     } else {
-      this.setToDate(this.lastDayOfYear);
+      this.fromDatePicker =
+        DatePickerUtil.firstDayOfCurrentYear();
     }
+
+    if (dateToCookie) {
+      this.toDatePicker = DatePickerUtil.convertToDatePicker(dateToCookie);
+    } else {
+      this.toDatePicker =
+        DatePickerUtil.lastDayOfCurrentYear();
+    }
+
+    this.requestModel.fromDate = DatePickerUtil.formatDatePicker(this.fromDatePicker);
+    this.requestModel.toDate = DatePickerUtil.formatDatePicker(this.toDatePicker);
+    this.toCurrentYear = this.isCurrentYear();
 
     this.budgets = [];
     this.subscriptions = [];
-    this.errorModels = {
-      budgets: new ResponseErrorModel(),
-      budget: new ResponseErrorModel()
+    this.indexResponse = {
+      budgets: new ResponseModel(),
+      budget: new ResponseModel()
     }
 
     this.loaders = {
@@ -75,76 +93,86 @@ export class IndexComponent implements OnInit, OnDestroy {
       budget: false,
     }
 
-    this.getBudgets(this.requestParams);
+    this.getBudgets(this.requestModel);
   }
 
   ngOnDestroy(): void {
     SubscriptionUtils.unsubscribeAll(this.subscriptions);
   }
 
-  protected onPageReload(reload: boolean): void {
-    if (reload) {
-      this.markPageAsLoaded(false);
-      this.errorModels.budgets = new ResponseErrorModel();
-      this.getBudgets(this.requestParams);
-    }
+  protected reloadPage(): void {
+    this.markPageAsLoaded(false);
+    this.indexResponse.budgets = new ResponseModel();
+    this.getBudgets(this.requestModel);
   }
 
-  protected onBudgetUpdate(idBudget: string): void {
+  protected updateBudget(idBudget: string): void {
     if (idBudget) {
       this.markBudgetAsLoaded(false);
       this.idRefreshBudget = idBudget;
-      this.errorModels.budget = new ResponseErrorModel();
+      this.indexResponse.budget = new ResponseModel();
       this.getBudget(idBudget);
-    }
-  }
-
-  protected onBudgetsSearch(): void {
-    const fromDate = DateUtils.convertToDate(this.fromDatePicker);
-    const toDate = DateUtils.convertToDate(this.toDatePicker);
-
-    this.requestParams.fromDate = DateUtils.format(fromDate);
-    this.requestParams.toDate = DateUtils.format(toDate);
-
-    this.saveDateToCookie(this.fromDateName, fromDate);
-    this.saveDateToCookie(this.toDateName, toDate);
-
-    this.displayNowButton = this.isCurrentYear();
-
-    this.onPageReload(true);
-  }
-
-  protected validateDate(input1: any, input2: any): void {
-    const fromDate = DateUtils.convertToDate(this.fromDatePicker);
-    const toDate = DateUtils.convertToDate(this.toDatePicker);
-
-    if (toDate <= fromDate) {
-      input1.control.setErrors({invalidDateRange: 'Invalid date'});
-      input2.control.setErrors({invalidDateRange: 'Invalid date'});
     } else {
-      input1.control.setErrors(null);
-      input2.control.setErrors(null);
+      this.errorModal.open(this.indexResponse);
     }
   }
 
-  protected toCurrentDate(): void {
-    this.displayNowButton = false;
-    this.saveDateToCookie(this.fromDateName, this.firstDayOfYear);
-    this.saveDateToCookie(this.toDateName, this.lastDayOfYear);
-    this.setFromDate(this.firstDayOfYear);
-    this.setToDate(this.lastDayOfYear);
-    this.onPageReload(true);
+  protected searchBudgets(toCurrentDate: boolean): void {
+    let fromDate: Date;
+    let toDate: Date;
+
+    if (toCurrentDate) {
+      fromDate = DateUtil.firstDayOfCurrentYear();
+      toDate = DateUtil.lastDayOfCurrentYear();
+      this.fromDatePicker = DatePickerUtil.convertToDatePicker(fromDate);
+      this.toDatePicker = DatePickerUtil.convertToDatePicker(toDate);
+    } else {
+      fromDate = DatePickerUtil.convertToDate(this.fromDatePicker);
+      toDate = DatePickerUtil.convertToDate(this.toDatePicker);
+    }
+
+    this.requestModel.fromDate = DateUtil.format(fromDate);
+    this.requestModel.toDate = DateUtil.format(toDate);
+
+    this.saveDateCookie(this.requestConfig.cookies.names.fromDate, fromDate);
+    this.saveDateCookie(this.requestConfig.cookies.names.toDate, toDate);
+
+    this.toCurrentYear = this.isCurrentYear();
+
+    this.reloadPage();
+  }
+
+  protected onDatesChanged(fromDateInput: NgModel, toDateInput: NgModel): void {
+    const isInvalidFromDate = isInvalidDate(this.fromDatePicker);
+    const isInvalidToDate = isInvalidDate(this.toDatePicker);
+
+    if (isInvalidFromDate) {
+      fromDateInput.control.setErrors({ngbDate: true});
+    } else if (isInvalidToDate) {
+      toDateInput.control.setErrors({ngbDate: true});
+    } else {
+      const fromDate = DatePickerUtil.convertToDate(this.fromDatePicker);
+      const toDate = DatePickerUtil.convertToDate(this.toDatePicker);
+
+      if (toDate <= fromDate) {
+        fromDateInput.control.setErrors({invalidRange: true});
+        toDateInput.control.setErrors({invalidRange: true});
+      } else {
+        fromDateInput.control.setErrors(null);
+        toDateInput.control.setErrors(null);
+      }
+    }
   }
 
   private getBudget(idBudget: string): void {
     this.subscriptions.push(
       this.httpService.getBudget(idBudget).subscribe({
-        next: (response: HttpResponse<BudgetModel>): void => {
+        next: (response: HttpResponse<GetBudgetDto>): void => {
           this.budget = response.body;
-          this.errorModels.budget.responseStatusCode = response.status
+          this.indexResponse.budget.statusCode = response.status
         },
         error: (err): void => {
-          this.onRequestFailed(this.errorModels.budget, err);
+          this.onRequestFailed(this.indexResponse.budget, err);
           this.markBudgetAsLoaded(true);
         },
         complete: (): void => {
@@ -159,15 +187,15 @@ export class IndexComponent implements OnInit, OnDestroy {
     )
   }
 
-  private getBudgets(requestParamModel: RequestParamModel): void {
+  private getBudgets(requestParamModel: RequestModel): void {
     this.subscriptions.push(
       this.httpService.getBudgets(requestParamModel).subscribe({
-        next: (response: HttpResponse<BudgetModel[]>): void => {
+        next: (response: HttpResponse<GetBudgetDto[]>): void => {
           this.budgets = response.body;
-          this.errorModels.budgets.responseStatusCode = response.status
+          this.indexResponse.budgets.statusCode = response.status
         },
         error: (err): void => {
-          this.onRequestFailed(this.errorModels.budgets, err);
+          this.onRequestFailed(this.indexResponse.budgets, err);
           this.markPageAsLoaded(true);
         },
         complete: (): void => {
@@ -177,52 +205,53 @@ export class IndexComponent implements OnInit, OnDestroy {
     )
   }
 
-  private onRequestFailed(errorModel: ResponseErrorModel, err: any): void {
-    errorModel.traceId = err.headers.get('X-Trace-Id');
-    errorModel.responseStatusCode = err.status;
-    errorModel.responseErrorModel = err.error;
+  private onRequestFailed(response: ResponseModel, err: any): void {
+    response.traceId = err.headers.get('X-Trace-Id');
+    response.statusCode = err.status;
+    response.error = err.error;
   }
 
   private markPageAsLoaded(value: boolean): void {
-    setTimeout((): void => {
+    if (value) {
+      new TimerUtils(this.appConfig.timer.duration.default).start()
+        .subscribe(finished => {
+          if (finished) {
+            this.loaders.page = value;
+          }
+        });
+    } else {
       this.loaders.page = value;
-    }, value ? 500 : 0)
+    }
   }
 
   private markBudgetAsLoaded(value: boolean): void {
-    setTimeout((): void => {
+    if (value) {
+      new TimerUtils(this.appConfig.timer.duration.default).start()
+        .subscribe(finished => {
+          if (finished) {
+            this.loaders.budget = value;
+          }
+        });
+    } else {
       this.loaders.budget = value;
-    }, value ? 500 : 0)
+    }
   }
 
-  private saveDateToCookie(dateName: string,
-                           date: Date): void {
-    this.cookieUtils.setCookie(dateName, date.toString());
+  private saveDateCookie(dateName: string, date: Date): void {
+    setCookie(dateName, date.toString());
   }
 
-  private readDateFromCookie(dateName: string): DatePicker | null {
-    const cookieDate = this.cookieUtils.getCookie(dateName);
-    return cookieDate ? DateUtils.convertToDatePicker(new Date(cookieDate)) : null;
-  }
-
-  private setFromDate(date: Date): void {
-    this.fromDatePicker = DateUtils.convertToDatePicker(date);
-    this.requestParams.fromDate = DateUtils.format(date);
-  }
-
-  private setToDate(date: Date): void {
-    this.toDatePicker = DateUtils.convertToDatePicker(date);
-    this.requestParams.toDate = DateUtils.format(date);
+  private readDateCookie(dateName: string): Date | null {
+    const cookieDate = getCookie(dateName);
+    return cookieDate ? new Date(cookieDate) : null;
   }
 
   private isCurrentYear(): boolean {
-    const fromDatePickerCookie = this.readDateFromCookie(this.fromDateName);
-    const toDatePickerCookie = this.readDateFromCookie(this.toDateName);
-
-    const firstDayDatePicker = DateUtils.convertToDatePicker(this.firstDayOfYear);
-    const lastDayDatePicker = DateUtils.convertToDatePicker(this.lastDayOfYear);
-
-    return fromDatePickerCookie?.year != firstDayDatePicker.year ||
-      toDatePickerCookie?.year != lastDayDatePicker.year;
+    const currentYear = new Date().getFullYear();
+    return !(this.fromDatePicker.year == currentYear &&
+      this.toDatePicker.year == currentYear);
   }
+
+  protected readonly formatString = formatString;
+  protected readonly ModalUtils = ModalUtils;
 }

@@ -1,24 +1,24 @@
-import {Component, Input, ViewChild} from '@angular/core';
-import {ResponseErrorModel} from "../../../../models/ResponseErrorModel";
+import {Component, ViewChild} from '@angular/core';
+import {ResponseModel} from "../../../../models/response.model";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
-import {ModalOptions, ModalSize} from "../../../../util/modal-options.utils";
+import {ModalOptions, ModalSize} from "../../../../util/modal.utils";
 
 @Component({
-    selector: 'app-error-modal',
-    templateUrl: './error-modal.component.html',
-    styleUrl: './error-modal.component.css'
+  selector: 'app-error-modal',
+  templateUrl: './error-modal.component.html',
+  styleUrl: './error-modal.component.css'
 })
 export class ErrorModalComponent {
-    @ViewChild('errorModal') errorModal: any;
-    @Input() errorModel: ResponseErrorModel;
+  @ViewChild('errorModal') errorModal: any;
+  protected responseModel: ResponseModel;
 
-    constructor(private modalService: NgbModal) {
-    }
+  constructor(private modalService: NgbModal) {
+  }
 
-    open(errorModel: ResponseErrorModel): void {
-        this.errorModel = errorModel;
-        this.modalService.open(
-            this.errorModal,
-            ModalOptions.default(ModalSize.SMALL));
-    }
+  open(responseErrorModel: ResponseModel): void {
+    this.responseModel = responseErrorModel;
+    this.modalService.open(
+      this.errorModal,
+      ModalOptions.default(ModalSize.SMALL));
+  }
 }

@@ -1,7 +1,7 @@
 <div class="error-container">
   <div class="my-5">
-    @if (errorModel.responseStatusCode > 0 && errorModel.responseStatusCode != 200) {
-      @if (errorModel.responseStatusCode == 404) {
+    @if (response.statusCode > 0 && response.statusCode != 200) {
+      @if (response.statusCode == 404) {
         <div class="text-center d-flex justify-content-center">
           <h1 class="text-secondary mx-3">
             <i class="bi bi-file-earmark-excel"></i>
@@ -19,21 +19,21 @@
           <li>
             Status code:
             <span class="text-danger">
-            {{ errorModel.responseStatusCode }} {{ errorModel.responseErrorModel['Title'] }}
+            {{ response.statusCode }} {{ response.error.title }}
           </span>
           </li>
           <li>
             Trace id:
-            <span class="text-danger"> {{ errorModel.traceId }} </span>
+            <span class="text-danger"> {{ response.traceId }} </span>
           </li>
           <li>
             Message:
-            <span class="text-secondary"> {{ errorModel.responseErrorModel['Message'] }} </span>
+            <span class="text-secondary"> {{ response.error.message }} </span>
           </li>
           <li>
             Type:
             <span class="text-secondary"> <a
-              href="{{ errorModel.responseErrorModel['Type'] }}">{{ errorModel.responseErrorModel['Type'] }}</a> </span>
+              href="{{ response.error.type }}">{{ response.error.type }}</a> </span>
           </li>
         </ul>
       }

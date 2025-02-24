@@ -1,5 +1,5 @@
 import {Component, Input} from '@angular/core';
-import {ResponseErrorModel} from "../../../../models/ResponseErrorModel";
+import {ResponseModel} from "../../../../models/response.model";
 
 @Component({
   selector: 'app-error',
@@ -7,6 +7,6 @@ import {ResponseErrorModel} from "../../../../models/ResponseErrorModel";
   styleUrl: './error.component.css'
 })
 export class ErrorComponent {
-  @Input() errorModel: ResponseErrorModel;
+  @Input() response: ResponseModel;
   @Input() notFoundErrorText: string = "Data not found";
 }

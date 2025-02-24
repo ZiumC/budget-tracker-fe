@@ -1,0 +1,100 @@
+{
+  "app": {
+    "animation": {
+      "duration": {
+        "default": 500,
+        "short": 300,
+        "long": 1500
+      }
+    },
+    "timer": {
+      "duration": {
+        "default": 25,
+        "short": 12
+      }
+    },
+    "form": {
+      "messages": {
+        "required": "Field is required",
+        "minValue": "Minimum value is {0}",
+        "minLength": "Minimum length are {0} characters",
+        "maxLength": "Maximum length are {0} characters",
+        "invalid": "{0} is invalid",
+        "invalidFormat": "Invalid {0} format",
+        "notFound": "{0} not found",
+        "range": "{0} range is invalid",
+        "equal": "{0} in both dates should be equal",
+        "alreadyDefined": "Month already defined"
+      },
+      "paymentModal": {
+        "placeholder": "0.00",
+        "name": {
+          "minLength": "3",
+          "maxLength": "150"
+        },
+        "price": {
+          "minValue": "0",
+          "maxLength": "8"
+        },
+        "refund": {
+          "minValue": "0",
+          "maxLength": "8"
+        },
+        "comment": {
+          "minLength": "3",
+          "maxLength": "512"
+        }
+      },
+      "incomeModal": {
+        "placeholder": "0.00",
+        "name": {
+          "minLength": "3",
+          "maxLength": "150"
+        },
+        "wage": {
+          "minValue": "0",
+          "maxLength": "8"
+        }
+      },
+      "budgetModal": {
+        "name": {
+          "minLength": "3",
+          "maxLength": "150"
+        }
+      },
+      "regex": {
+        "money": "^[0-9]*\\.[0-9]{1,2}$|^[0-9]{1,}"
+      }
+    },
+    "request": {
+      "pagination": {
+        "defaultPage": 1,
+        "defaultBudgetsPageSize": 36,
+        "defaultPageSizeOptions": [
+          6,
+          9,
+          12
+        ],
+        "incomesPageSize": 8,
+        "paymentsPageSize": 8
+      },
+      "cookies": {
+        "names": {
+          "fromDate": "from-date",
+          "toDate": "to-date"
+        }
+      }
+    },
+    "response": {
+      "required": {
+        "budgetStatus": 200,
+        "incomeStatus": 200,
+        "paymentStatus": 200
+      }
+    },
+    "budgetLimit": 6,
+    "mobileWidth": 770
+  },
+  "api": {
+  }
+}

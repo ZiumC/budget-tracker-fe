@@ -1,5 +1,8 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {ResponseErrorModel} from "../../../../models/ResponseErrorModel";
+import {ResponseModel} from "../../../../models/response.model";
+import {TimerUtils} from "../../../../util/timer.utils";
+import {ConfigService} from "../../../../services/config/config.service";
+import {AppConfig} from "../../../../models/config/config";
 
 @Component({
   selector: 'app-error-view',
@@ -7,13 +10,25 @@ import {ResponseErrorModel} from "../../../../models/ResponseErrorModel";
   styleUrl: './error-view.component.css'
 })
 export class ErrorViewComponent implements OnInit {
-  @Input() errorModel: ResponseErrorModel;
+  @Input() responseModel: ResponseModel;
   protected buttonCopyName: string;
+  private appConfig: AppConfig;
+
+  constructor(private configService: ConfigService) {
+  }
 
   ngOnInit(): void {
-    if (!this.errorModel) {
-      this.errorModel = new ResponseErrorModel();
+    if (!this.responseModel) {
+      this.responseModel = new ResponseModel();
     }
+
+    const appCfg = this.configService.getAppConfig();
+    if (appCfg) {
+      this.appConfig = appCfg;
+    } else {
+      throw Error("Config not provided")
+    }
+
     this.buttonCopyName = "Copy";
   }
 
@@ -24,8 +39,11 @@ export class ErrorViewComponent implements OnInit {
     //there is no any best alternatives for now
     document.execCommand('copy');
     inputElement.setSelectionRange(0, 0);
-    setTimeout((): void => {
-      this.buttonCopyName = "Copy";
-    }, 2500)
+    new TimerUtils(this.appConfig.animation.duration.default).start()
+      .subscribe(finished => {
+        if (finished) {
+          this.buttonCopyName = "Copy";
+        }
+      });
   }
 }

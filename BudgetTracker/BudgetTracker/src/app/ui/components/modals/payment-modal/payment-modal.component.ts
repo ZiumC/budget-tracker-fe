@@ -1,16 +1,20 @@
-import {Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {Subscription} from "rxjs";
 import {SubscriptionUtils} from "../../../../util/subscription.utils";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
-import {PaymentModel} from "../../../../models/RequestModels";
-import {ModalOptions, ModalSize} from "../../../../util/modal-options.utils";
-import {PaymentForm} from "../../../../models/FormModels";
-import {ResponseErrorModel} from "../../../../models/ResponseErrorModel";
-import BigNumber from "bignumber.js";
-import {NumberUtils} from "../../../../util/number.utils";
+import {ResponseModel} from "../../../../models/response.model";
 import {SpinnerSize} from "../../shared/spinner/spinner.component";
 import {HttpResponse} from "@angular/common/http";
-import {HttpService} from "../../../../services/http/httpService";
+import {HttpService} from "../../../../services/http/http.service";
+import {TimerUtils} from "../../../../util/timer.utils";
+import {ConfigService} from "../../../../services/config/config.service";
+import {AppConfig} from "../../../../models/config/config";
+import {ModalOptions, ModalSize, ModalUtils} from "../../../../util/modal.utils";
+import {FormConfig} from "../../../../models/config/form.model.config";
+import {formatString} from "../../../../util/string.utils";
+import {subtract} from "../../../../util/number.util";
+import {GetPaymentDto, PaymentDto} from "../../../../models/dto/payment.model.dto";
+import {generateErrorModel} from "../../../../util/http.util";
 
 @Component({
   selector: 'app-payment-modal',
@@ -22,68 +26,89 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
   @ViewChild('errorModal') errorModal: any;
   @Input() idBudget: string;
   @Output() refreshPaymentEvent = new EventEmitter<boolean>();
+  protected readonly formatString = formatString;
+  protected readonly subtract = subtract;
+  protected readonly ModalUtils = ModalUtils;
   protected readonly SpinnerSize = SpinnerSize;
-  protected readonly NumberUtils = NumberUtils;
-  protected subscriptions: Subscription[];
-  protected errorModel: ResponseErrorModel;
-  protected paymentForm: PaymentForm;
+  protected appConfig: AppConfig;
+  protected formConfig: FormConfig;
+  protected subscriptions: Subscription[] = [];
+  protected responseModel: ResponseModel;
+  protected paymentDto: PaymentDto;
   protected idPayment: string;
   protected isEditing: boolean;
   protected displayLoader: boolean;
-  protected buttonCopyName: string;
+  protected innerWidth: any;
 
   constructor(
     private modalService: NgbModal,
-    private httpService: HttpService) {
+    private httpService: HttpService,
+    private configService: ConfigService) {
   }
 
   ngOnInit(): void {
-    this.subscriptions = [];
-    this.errorModel = new ResponseErrorModel();
-    this.displayLoader = false;
-    this.isEditing = false;
-    this.buttonCopyName = "Copy";
+    this.setDefaultPaymentForm();
+    this.responseModel = new ResponseModel();
+    ModalUtils.defaultSettings(this.displayLoader, this.isEditing);
+
+    this.innerWidth = window.innerWidth;
+
+    const appCfg = this.configService.getAppConfig();
+    if (appCfg) {
+      this.appConfig = appCfg;
+      this.formConfig = appCfg.form;
+    } else {
+      throw Error("Config not provided")
+    }
   }
 
   ngOnDestroy(): void {
     SubscriptionUtils.unsubscribeAll(this.subscriptions);
   }
 
-  open(paymentData?: PaymentModel): void {
+  open(paymentData?: GetPaymentDto): void {
     this.setDefaultPaymentForm();
     this.isEditing = paymentData != null;
 
     if (paymentData) {
       this.idPayment = paymentData.id;
-      this.paymentForm.name = paymentData.name;
-      this.paymentForm.price = paymentData.price;
-      this.paymentForm.refund = paymentData.refund;
-      this.paymentForm.isPaid = paymentData.isPaid;
-      this.paymentForm.comment = paymentData.comment;
+      this.paymentDto.name = paymentData.name;
+      this.paymentDto.price = paymentData.price;
+      this.paymentDto.refund = paymentData.refund;
+      this.paymentDto.isPaid = paymentData.isPaid;
+      this.paymentDto.comment = paymentData.comment;
     }
 
     this.modalService.open(this.paymentModal, ModalOptions.default(ModalSize.BIG));
   }
 
+  @HostListener('window:resize', ['$event'])
+  onResize(): void {
+    this.innerWidth = window.innerWidth;
+  }
+
   protected savePayment(): void {
     this.displayLoader = true;
 
-    const isPaid = String(this.paymentForm.isPaid);
-    this.paymentForm.isPaid = JSON.parse(isPaid)
+    const isPaid = String(this.paymentDto.isPaid);
+    this.paymentDto.isPaid = JSON.parse(isPaid)
 
-    setTimeout((): void => {
-      if (this.isEditing) {
-        this.updatePayment();
-      } else {
-        this.createBudgetPayment();
-      }
-    }, 500);
+    new TimerUtils(this.appConfig.animation.duration.default).start()
+      .subscribe(finished => {
+        if (finished) {
+          if (this.isEditing) {
+            this.updatePayment();
+          } else {
+            this.createBudgetPayment();
+          }
+        }
+      });
   }
 
   private updatePayment(): void {
     this.subscriptions.push(
       this.httpService.updatePayment(
-        this.paymentForm,
+        this.paymentDto,
         this.idPayment).subscribe({
         next: (response: HttpResponse<any>): void => {
           this.onRequestSuccess(response);
@@ -98,7 +123,7 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
   private createBudgetPayment(): void {
     this.subscriptions.push(
       this.httpService.createBudgetPayment(
-        this.paymentForm,
+        this.paymentDto,
         this.idBudget).subscribe({
         next: (response: HttpResponse<any>): void => {
           this.onRequestSuccess(response);
@@ -112,28 +137,22 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
 
   private onRequestSuccess(response: HttpResponse<any>): void {
     this.refreshPaymentEvent.emit(true);
-    this.errorModel.responseStatusCode = response.status;
+    this.responseModel.statusCode = response.status;
     this.modalService.dismissAll();
-    setTimeout((): void => {
-      this.displayLoader = false;
-    }, 500)
+    this.displayLoader = false;
   }
 
   private onRequestFailed(err: any): void {
-    this.errorModel.traceId = err.headers.get('X-Trace-Id');
-    this.errorModel.responseStatusCode = err.status;
-    this.errorModel.responseErrorModel = err.error;
+    this.responseModel = generateErrorModel(err);
     this.displayLoader = false;
-    this.errorModal.open();
+    this.errorModal.open(this.responseModel);
   }
 
   private setDefaultPaymentForm(): void {
-    this.paymentForm = {
+    this.paymentDto = {
       name: "",
-      price: BigNumber(0.00),
-      refund: BigNumber(0.00),
       isPaid: false,
       comment: ""
-    } as PaymentForm;
+    } as PaymentDto;
   }
 }

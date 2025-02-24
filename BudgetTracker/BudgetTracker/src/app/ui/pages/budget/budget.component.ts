@@ -1,18 +1,25 @@
-import {Component, HostListener, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {SpinnerSize} from "../../components/shared/spinner/spinner.component";
-import {BudgetModel, IncomeModel, PageModel, PaymentModel} from "../../../models/RequestModels";
 import {Subscription} from "rxjs";
-import {ResponseErrorModel} from "../../../models/ResponseErrorModel";
-import {RequestParamModel} from "../../../models/RequestParamModel";
-import {DateUtils} from '../../../util/date.utils';
-import {HttpService} from "../../../services/http/httpService";
+import {BudgetResponse, ResponseModel} from "../../../models/response.model";
+import {RequestModel} from "../../../models/request.model";
+import {DateUtil} from '../../../util/date.util';
+import {HttpService} from "../../../services/http/http.service";
 import {ActivatedRoute, Params, Router} from "@angular/router";
 import {HttpResponse} from "@angular/common/http";
 import {SubscriptionUtils} from "../../../util/subscription.utils";
-import {NumberUtils} from "../../../util/number.utils";
-import {SortIncome, SortPayment} from "../../../util/sort-model.utils";
-import {PaymentStatusForm} from "../../../models/FormModels";
+import {SortIncome, SortPayment} from "../../../util/sort.utils";
 import {ORDER_TYPES} from "../../components/shared/order/order.component";
+import {format, subtract} from "../../../util/number.util";
+import {GetPaymentDto, PaymentStatusDto} from "../../../models/dto/payment.model.dto";
+import {GetIncomeDto} from "../../../models/dto/income.model.dto";
+import {GetBudgetDto} from "../../../models/dto/budget.model.dto";
+import {PageDto} from "../../../models/dto/page.model.dto";
+import {AppConfig} from "../../../models/config/config";
+import {ConfigService} from "../../../services/config/config.service";
+import {formatString} from "../../../util/string.utils";
+import {generateErrorModel} from "../../../util/http.util";
+import {TimerUtils} from "../../../util/timer.utils";
 
 @Component({
   selector: 'app-budget',
@@ -21,25 +28,25 @@ import {ORDER_TYPES} from "../../components/shared/order/order.component";
 })
 export class BudgetComponent implements OnInit, OnDestroy {
   @ViewChild('errorModal') errorModal: any;
-  public readonly mobileWidth: number = 770;
+  protected readonly format = format;
+  protected readonly subtract = subtract;
+  protected readonly formatString = formatString;
   protected readonly ORDER_TYPES = ORDER_TYPES;
-  protected readonly DateUtils = DateUtils;
-  protected readonly NumberUtils = NumberUtils;
+  protected readonly DateUtils = DateUtil;
   protected readonly SpinnerSize = SpinnerSize;
-  protected incomes: IncomeModel[] | null;
-  protected budget: BudgetModel | null;
-  protected payments: PaymentModel[] | null;
+  protected appConfig: AppConfig;
+  protected incomesDto: GetIncomeDto[] | null;
+  protected paymentsDto: GetPaymentDto[] | null;
+  protected budgetDto: GetBudgetDto | null;
   protected subscriptions: Subscription[];
-  protected selectedIncome: IncomeModel;
-  protected selectedPayment: PaymentModel;
-  protected requestIncomeParam: RequestParamModel;
-  protected requestPaymentParam: RequestParamModel;
-
+  protected selectedIncome: GetIncomeDto;
+  protected selectedPayment: GetPaymentDto;
+  protected incomeRequestModel: RequestModel;
+  protected paymentRequestModel: RequestModel;
+  protected responseModels: BudgetResponse;
   protected idBudget: string;
+
   protected loaders: any;
-  protected requiredStatusCode: any;
-  protected errorModels: any;
-  protected commentRows: number;
   protected incomeTotalPages: number | undefined;
   protected paymentTotalPages: number | undefined;
 
@@ -48,6 +55,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
   constructor(
     private httpService: HttpService,
     private activatedRoute: ActivatedRoute,
+    private configService: ConfigService,
     private router: Router) {
   }
 
@@ -56,11 +64,12 @@ export class BudgetComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.requiredStatusCode = {
-      budget: 200,
-      incomes: 200,
-      payments: 200
-    };
+    const appCfg = this.configService.getAppConfig();
+    if (appCfg) {
+      this.appConfig = appCfg;
+    } else {
+      throw Error("Config not provided")
+    }
 
     this.loaders = {
       budget: false,
@@ -69,25 +78,24 @@ export class BudgetComponent implements OnInit, OnDestroy {
       paymentStatusBtn: false
     };
 
-    this.errorModels = {
-      budget: new ResponseErrorModel(),
-      incomes: new ResponseErrorModel(),
-      payments: new ResponseErrorModel(),
-      paymentStatus: new ResponseErrorModel()
+    this.responseModels = {
+      budget: new ResponseModel(),
+      incomes: new ResponseModel(),
+      payments: new ResponseModel(),
+      paymentStatus: new ResponseModel()
     };
 
-    this.commentRows = 1;
     this.innerWidth = window.innerWidth;
     this.subscriptions = [];
 
-    this.requestIncomeParam = new RequestParamModel({
-      page: 1,
-      pageSize: 6,
+    this.incomeRequestModel = new RequestModel({
+      page: this.appConfig.request.pagination.defaultPage,
+      pageSize: this.appConfig.request.pagination.incomesPageSize,
     })
 
-    this.requestPaymentParam = new RequestParamModel({
-      page: 1,
-      pageSize: 6
+    this.paymentRequestModel = new RequestModel({
+      page: this.appConfig.request.pagination.defaultPage,
+      pageSize: this.appConfig.request.pagination.paymentsPageSize,
     })
 
     this.incomeTotalPages = 0;
@@ -99,12 +107,12 @@ export class BudgetComponent implements OnInit, OnDestroy {
 
     this.subscriptions.push(
       this.httpService.getBudget(this.idBudget).subscribe({
-        next: (response: HttpResponse<BudgetModel>): void => {
-          this.budget = response.body;
-          this.errorModels.budget.responseStatusCode = response.status;
+        next: (response: HttpResponse<GetBudgetDto>): void => {
+          this.budgetDto = response.body;
+          this.responseModels.budget.statusCode = response.status;
         },
         error: (err): void => {
-          this.onRequestFailed(this.errorModels.budget, err);
+          this.onRequestFailed(this.responseModels.budget, err);
           this.markBudgetAsLoaded(true);
         },
         complete: (): void => {
@@ -122,45 +130,39 @@ export class BudgetComponent implements OnInit, OnDestroy {
     this.innerWidth = window.innerWidth;
   }
 
-  protected onRefreshIncome(refresh: boolean): void {
-    if (refresh) {
-      this.markIncomesAsLoaded(false);
-      this.getBudgetIncomes();
-    }
+  protected onRefreshIncome(): void {
+    this.markIncomesAsLoaded(false);
+    this.getBudgetIncomes();
   }
 
-  protected onRefreshPayment(refresh: boolean): void {
-    if (refresh) {
-      this.markPaymentsAsLoaded(false);
-      this.getBudgetPayments();
-    }
+  protected onRefreshPayment(): void {
+    this.markPaymentsAsLoaded(false);
+    this.getBudgetPayments();
   }
 
-  protected onRedirectToIndex(redirect: boolean): void {
-    if (redirect) {
-      this.router.navigate(['/']);
-    }
+  protected onRedirectToIndex(): void {
+    this.router.navigate(['/']);
   }
 
   protected onPageSizeEvent(pageSize: number, isIncome: boolean): void {
     if (isIncome) {
-      this.requestIncomeParam.pageSize = pageSize;
-      this.requestIncomeParam.page = 1;
-      this.onRefreshIncome(true);
+      this.incomeRequestModel.pageSize = pageSize;
+      this.incomeRequestModel.page = this.appConfig.request.pagination.defaultPage;
+      this.onRefreshIncome();
     } else {
-      this.requestPaymentParam.pageSize = pageSize;
-      this.requestPaymentParam.page = 1;
-      this.onRefreshPayment(true);
+      this.paymentRequestModel.pageSize = pageSize;
+      this.paymentRequestModel.page = this.appConfig.request.pagination.defaultPage;
+      this.onRefreshPayment();
     }
   }
 
   protected onPageEvent(page: number, isIncome: boolean): void {
     if (isIncome) {
-      this.requestIncomeParam.page = page;
-      this.onRefreshIncome(true);
+      this.incomeRequestModel.page = page;
+      this.onRefreshIncome();
     } else {
-      this.requestPaymentParam.page = page;
-      this.onRefreshPayment(true);
+      this.paymentRequestModel.page = page;
+      this.onRefreshPayment();
     }
   }
 
@@ -170,15 +172,15 @@ export class BudgetComponent implements OnInit, OnDestroy {
       this.httpService.patchPaymentStatus(
         {
           isPaid: isPaid
-        } as PaymentStatusForm,
+        } as PaymentStatusDto,
         idPayment
       ).subscribe({
         next: (): void => {
-          this.payments!.find((payment): boolean => payment.id == idPayment)!.isPaid! = isPaid;
-          this.loaders.paymentStatusBtn = false;
+          this.paymentsDto!
+            .find((payment): boolean => payment.id == idPayment)!.isPaid! = isPaid;
         },
         error: (err): void => {
-          this.onRequestFailed(this.errorModels.paymentStatus, err);
+          this.onRequestFailed(this.responseModels.paymentStatus, err);
           this.loaders.paymentStatusBtn = false;
         },
         complete: (): void => {
@@ -188,24 +190,22 @@ export class BudgetComponent implements OnInit, OnDestroy {
     )
   }
 
-  private onRequestFailed(errorModel: ResponseErrorModel, err: any): void {
-    errorModel.traceId = err.headers.get('X-Trace-Id');
-    errorModel.responseStatusCode = err.status;
-    errorModel.responseErrorModel = err.error;
-    this.errorModal.open(errorModel);
+  private onRequestFailed(responseModel: ResponseModel, err: any): void {
+    responseModel = generateErrorModel(err);
+    this.errorModal.open(responseModel);
   }
 
   private getBudgetIncomes(): void {
     this.subscriptions.push(
       this.httpService.getBudgetIncomes(
-        this.requestIncomeParam,
+        this.incomeRequestModel,
         this.idBudget).subscribe({
-        next: (response: HttpResponse<IncomeModel[]>): void => {
-          this.incomes = SortIncome.surplusFirst(response.body);
-          this.errorModels.incomes.responseStatusCode = response.status;
+        next: (response: HttpResponse<GetIncomeDto[]>): void => {
+          this.incomesDto = SortIncome.surplusFirst(response.body);
+          this.responseModels.incomes.statusCode = response.status;
         },
         error: (err): void => {
-          this.onRequestFailed(this.errorModels.incomes, err);
+          this.onRequestFailed(this.responseModels.incomes, err);
           this.markIncomesAsLoaded(true);
         },
         complete: (): void => {
@@ -219,14 +219,14 @@ export class BudgetComponent implements OnInit, OnDestroy {
   private getBudgetPayments(): void {
     this.subscriptions.push(
       this.httpService.getBudgetPayments(
-        this.requestPaymentParam,
+        this.paymentRequestModel,
         this.idBudget).subscribe({
-        next: (response: HttpResponse<PaymentModel[]>): void => {
-          this.payments = SortPayment.paidFirst(response.body);
-          this.errorModels.payments.responseStatusCode = response.status;
+        next: (response: HttpResponse<GetPaymentDto[]>): void => {
+          this.paymentsDto = SortPayment.paidFirst(response.body);
+          this.responseModels.payments.statusCode = response.status;
         },
         error: (err): void => {
-          this.onRequestFailed(this.errorModels.payments, err);
+          this.onRequestFailed(this.responseModels.payments, err);
           this.markPaymentsAsLoaded(true);
         },
         complete: (): void => {
@@ -240,10 +240,10 @@ export class BudgetComponent implements OnInit, OnDestroy {
   private getIncomeTotalPages(): void {
     this.subscriptions.push(
       this.httpService.getIncomePages(
-        this.requestIncomeParam,
+        this.incomeRequestModel,
         this.idBudget).subscribe({
-        next: (response: HttpResponse<PageModel>): void => {
-          this.incomeTotalPages = response.body?.pages;
+        next: (response: HttpResponse<PageDto>): void => {
+          this.incomeTotalPages = response.body!.pages;
         }
       })
     )
@@ -252,30 +252,51 @@ export class BudgetComponent implements OnInit, OnDestroy {
   private getPaymentTotalPages(): void {
     this.subscriptions.push(
       this.httpService.getPaymentPages(
-        this.requestPaymentParam,
+        this.paymentRequestModel,
         this.idBudget).subscribe({
-        next: (response: HttpResponse<PageModel>): void => {
-          this.paymentTotalPages = response.body?.pages;
+        next: (response: HttpResponse<PageDto>): void => {
+          this.paymentTotalPages = response.body!.pages;
         }
       })
     )
   }
 
-  private markPaymentsAsLoaded(value: boolean): void {
-    setTimeout((): void => {
-      this.loaders.payments = value;
-    }, value ? 500 : 0)
+  private markPaymentsAsLoaded(isLoaded: boolean): void {
+    if (isLoaded) {
+      new TimerUtils(this.appConfig.animation.duration.default).start()
+        .subscribe(finished => {
+          if (finished) {
+            this.loaders.payments = isLoaded;
+          }
+        })
+    } else {
+      this.loaders.payments = isLoaded;
+    }
   }
 
-  private markIncomesAsLoaded(value: boolean): void {
-    setTimeout((): void => {
-      this.loaders.incomes = value;
-    }, value ? 500 : 0)
+  private markIncomesAsLoaded(isLoaded: boolean): void {
+    if (isLoaded) {
+      new TimerUtils(this.appConfig.animation.duration.default).start()
+        .subscribe(finished => {
+          if (finished) {
+            this.loaders.incomes = isLoaded;
+          }
+        });
+    } else {
+      this.loaders.incomes = isLoaded;
+    }
   }
 
-  private markBudgetAsLoaded(value: boolean): void {
-    setTimeout((): void => {
-      this.loaders.budget = value;
-    }, value ? 500 : 0)
+  private markBudgetAsLoaded(isLoaded: boolean): void {
+    if (isLoaded) {
+      new TimerUtils(this.appConfig.animation.duration.default).start()
+        .subscribe(finished => {
+          if (finished) {
+            this.loaders.budget = isLoaded;
+          }
+        });
+    } else {
+      this.loaders.budget = isLoaded;
+    }
   }
 }

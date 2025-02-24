@@ -1,15 +1,19 @@
 import {Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
-import {ModalOptions} from "../../../../util/modal-options.utils";
-import {DatePicker} from "../../../../models/FormModels";
-import {DateUtils} from "../../../../util/date.utils";
-import {HttpService} from "../../../../services/http/httpService";
-import {catchError, forkJoin, interval, Observable, of, Subscription, takeWhile} from "rxjs";
+import {DatePicker} from "../../../../models/datepicker.model";
+import {DatePickerUtil, isInvalidDate} from "../../../../util/date.util";
+import {HttpService} from "../../../../services/http/http.service";
+import {catchError, forkJoin, Observable, of, Subscription} from "rxjs";
 import {HttpResponse} from "@angular/common/http";
 import {SubscriptionUtils} from "../../../../util/subscription.utils";
-import {BudgetStatus} from "../../../../models/modal-models/BudgetStatusModel";
-import {ModalUtils} from "../../../../util/modal.utils";
-
+import {BudgetStatus} from "../../../../models/modal/budget.model.modal";
+import {ModalOptions, ModalUtils} from "../../../../util/modal.utils";
+import {AbstractControl, NgForm, NgModel} from "@angular/forms";
+import {AppConfig} from "../../../../models/config/config";
+import {FormConfig} from "../../../../models/config/form.model.config";
+import {ConfigService} from "../../../../services/config/config.service";
+import {isSuccess} from "../../../../util/http.util";
+import {formatString} from "../../../../util/string.utils";
 
 @Component({
   selector: 'app-budgets-modal',
@@ -18,33 +22,39 @@ import {ModalUtils} from "../../../../util/modal.utils";
 })
 export class BudgetsModalComponent implements OnInit, OnDestroy {
   @ViewChild('budgetsModal') budgetsModal: any;
-  @Output() indexPageEvent = new EventEmitter<boolean>();
-  protected readonly budgetsLimit: number = 6;
-  protected readonly maxTime = 25;
-  protected readonly DateUtils = DateUtils;
+  @Output() refreshPageEvent = new EventEmitter<boolean>();
+  protected readonly formatString = formatString;
+  protected readonly DatePickerUtil = DatePickerUtil;
   protected readonly ModalUtils = ModalUtils;
+  protected budgetsLimit: number;
+  protected appConfig: AppConfig;
+  protected formConfig: FormConfig;
   protected subscriptions: Subscription[];
-  protected budgetDateFields: DatePicker[];
-  protected budgetResponses: BudgetStatus[];
-  protected disableForm: boolean;
-  protected autoCloseModal: boolean;
+  protected budgetPickers: DatePicker[];
+  protected budgetStatusIcons: BudgetStatus[];
+  protected displayTimer: boolean;
   protected disableTimer: boolean;
-  protected lastDate: Date;
-  protected timeLeft: number;
 
   constructor(private modalService: NgbModal,
-              private httpService: HttpService) {
+              private httpService: HttpService,
+              private configService: ConfigService) {
   }
 
   ngOnInit(): void {
     this.subscriptions = [];
+    this.budgetPickers = [];
     this.resetBudgetStatus();
-    this.budgetDateFields = [];
-    this.lastDate = new Date();
-    this.disableForm = false;
-    this.autoCloseModal = false;
-    this.disableTimer = false;
-    this.timeLeft = this.maxTime;
+    this.resetModalOptions();
+
+    const appCfg = this.configService.getAppConfig();
+    if (appCfg) {
+      this.appConfig = appCfg;
+      this.formConfig = appCfg.form;
+      this.budgetsLimit = appCfg.budgetLimit;
+    } else {
+      throw Error("Config not provided")
+    }
+
     this.add();
   }
 
@@ -53,72 +63,64 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
   }
 
   open(): void {
+    this.budgetPickers = [];
     this.resetBudgetStatus();
-    this.budgetDateFields = [];
-    this.lastDate = new Date();
-    this.timeLeft = this.maxTime;
-    this.disableTimer = false;
-    this.autoCloseModal = false;
-    this.disableForm = false;
+    this.resetModalOptions();
     this.add();
     this.modalService.open(this.budgetsModal, ModalOptions.default());
   }
 
   protected add(): void {
-    if (this.budgetDateFields.length == 0) {
-      this.lastDate = new Date();
-    }
+    if (this.budgetPickers.length < this.budgetsLimit) {
+      let maxDate = this.getMaxDate();
 
-    if (this.budgetDateFields.length < this.budgetsLimit) {
-      this.budgetDateFields.push(DateUtils.convertToDatePicker(this.lastDate));
-      this.lastDate = new Date(this.lastDate.setMonth(this.lastDate.getMonth() + 1));
+      if (this.budgetPickers.length > 0) {
+        maxDate.setMonth(maxDate.getMonth() + 1);
+      }
+
+      this.budgetPickers.push(DatePickerUtil.convertToDatePicker(maxDate));
+      this.budgetStatusIcons.push(new BudgetStatus());
     }
   }
 
-  protected remove(index: number): void {
-    const budgetToRemove = DateUtils.convertToDate(this.budgetDateFields[index]);
-    this.budgetDateFields = this.budgetDateFields.filter((_, i) => i !== index);
-    if (this.lastDate > budgetToRemove) {
-      this.lastDate = new Date(this.lastDate.setMonth(this.lastDate.getMonth() + 1));
-    }
-    this.lastDate = new Date(this.lastDate.setMonth(this.lastDate.getMonth() - 1));
-  }
+  protected remove(index: number, formControls: NgForm): void {
+    this.budgetPickers = this.budgetPickers.filter((_, i) => i !== index);
+    this.budgetStatusIcons = this.budgetStatusIcons.filter((_, i) => i !== index);
 
-  protected validateMonthsOccurs(index: number, ngModel: any): void {
-    const changedField = this.budgetDateFields[index];
-
-    for (let i = 0; i < this.budgetDateFields.length; i++) {
-      const field = this.budgetDateFields[i];
-      if (field.month == changedField.month && i != index) {
-        ngModel.control.setErrors({invalidMonth: 'Invalid month'});
-        i = this.budgetDateFields.length;
-      } else {
-        ngModel.control.setErrors(null);
+    if (!this.hasDuplicatedMonths()) {
+      for (let i = 0; i < this.budgetPickers.length; i++) {
+        let fieldControl = formControls.controls['budget-date' + i];
+        if (fieldControl) {
+          fieldControl.setErrors(null);
+        }
       }
     }
 
-    let maxDate: Date = DateUtils.convertToDate(changedField);
-    for (const date of this.budgetDateFields) {
-      const convertedDate = DateUtils.convertToDate(date);
-      if (convertedDate > maxDate) {
-        maxDate = convertedDate;
-      }
+    if (this.budgetStatusIcons.length > 0 && this.allSuccessIcons()) {
+      this.displayTimer = true;
     }
-
-    this.lastDate = new Date(maxDate.setMonth(maxDate.getMonth() + 1));
   }
 
-  protected saveBudgets(): void {
-    this.disableForm = true;
-    this.autoCloseModal = false;
+  protected onDateChanged(index: number, ngModel: NgModel): void {
+    const changedPicker = this.budgetPickers[index];
 
+    if (this.hasDuplicatedMonths()) {
+      ngModel.control.setErrors({alreadyExist: true});
+    } else if (isInvalidDate(changedPicker)) {
+      ngModel.control.setErrors({ngbDate: true});
+    } else {
+      ngModel.control.setErrors(null);
+      this.budgetStatusIcons[index] = new BudgetStatus();
+    }
+  }
+
+  protected saveBudgets(formControls: NgForm): void {
     const budgetRequests = [];
-
-    for (let i = 0; i < this.budgetDateFields.length; i++) {
-      const field = this.budgetDateFields[i];
-      const formatedDate = DateUtils.formatDatePicker(field);
-      if (!this.budgetResponses[i].status ||
-        ModalUtils.isUndefinedBudgetStatus(this.budgetResponses[i])) {
+    for (let i = 0; i < this.budgetPickers.length; i++) {
+      const field = this.budgetPickers[i];
+      const formatedDate = DatePickerUtil.formatDatePicker(field);
+      if (!this.budgetStatusIcons[i].status ||
+        ModalUtils.isUndefinedBudgetStatus(this.budgetStatusIcons[i])) {
         budgetRequests.push(this.httpService.createBudget(formatedDate).pipe(
           catchError((err): Observable<HttpResponse<any>> => {
             return of(err);
@@ -133,8 +135,8 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
           let newRequestIndex = 0;
           //iterate through last requests
           //that was made by clicking save btn
-          for (let i = 0; i < this.budgetResponses.length; i++) {
-            let budgetResponse = this.budgetResponses[i];
+          for (let i = 0; i < this.budgetStatusIcons.length; i++) {
+            let budgetResponse = this.budgetStatusIcons[i];
             //when previous request status was invalid
             // - retry that request. All success requests
             // are skipping
@@ -143,82 +145,89 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
               if (response.status >= 200 && response.status <= 299) {
                 this.onRequestSuccess(i, response);
               } else {
-                this.onRequestFailed(i, response);
+                this.onRequestFailed(i, response, formControls.controls['budget-date-' + newRequestIndex]);
               }
               newRequestIndex++;
             }
           }
         },
         complete: (): void => {
-          this.autoCloseModal = true;
-          this.budgetResponses.forEach((value): void => {
-            if (!ModalUtils.isUndefinedBudgetStatus(value) &&
-              !value.status) {
-              this.autoCloseModal = false;
-            }
-          });
-          if (this.autoCloseModal) {
-            this.startTimer();
+          if (this.allSuccessIcons()) {
+            this.displayTimer = true;
           }
         }
       }));
-
-    this.disableForm = false;
   }
 
   protected close(modal: any): void {
-    let pageReload = false;
-    for (const budgetResponse of this.budgetResponses) {
-      if (!ModalUtils.isUndefinedBudgetStatus(budgetResponse) &&
-        budgetResponse.status) {
-        pageReload = true;
-      }
-    }
-
-    if (pageReload) {
+    if (this.atLeastSuccessIcon()) {
       this.disableTimer = true;
-      this.indexPageEvent.emit(true);
+      this.refreshPageEvent.emit(true);
     }
 
     modal.close();
   }
 
-  protected startTimer(): void {
-    this.subscriptions
-      .push(interval(100)
-        .pipe(takeWhile((): boolean => this.timeLeft > 0))
-        .subscribe((): void => {
-          this.timeLeft--;
-          if (this.disableTimer) {
-            this.timeLeft = 0;
-          }
-          if (this.timeLeft == 0) {
-            this.modalService.dismissAll();
-            this.indexPageEvent.emit(true);
-          }
-        }));
+  protected onTimerFinishedEvent(modal: any): void {
+    this.refreshPageEvent.emit(true);
+    modal.close();
+  }
+
+  private getMaxDate(): Date {
+    let maxDate: Date = new Date();
+    for (const datePicker of this.budgetPickers) {
+      const convertedDate = DatePickerUtil.convertToDate(datePicker);
+      if (convertedDate > maxDate) {
+        maxDate = convertedDate;
+      }
+    }
+    return maxDate;
+  }
+
+  private hasDuplicatedMonths(): boolean {
+    const months: number[] = [];
+
+    this.budgetPickers.forEach(b => {
+      if (b) {
+        months.push(b.month);
+      }
+    })
+
+    return new Set(months).size < months.length;
+  }
+
+  private allSuccessIcons(): boolean {
+    return this.budgetStatusIcons.every(s => s && s.status);
+  }
+
+  private atLeastSuccessIcon(): boolean {
+    return this.budgetStatusIcons.some(s => s && s.status);
   }
 
   private resetBudgetStatus(): void {
-    this.budgetResponses = [];
-    for (let i = 0; i < this.budgetsLimit; i++) {
-      this.budgetResponses.push(new BudgetStatus());
+    this.budgetStatusIcons = [];
+    for (let i = 0; i < this.budgetPickers.length; i++) {
+      this.budgetStatusIcons.push(new BudgetStatus());
     }
   }
 
   private onRequestSuccess(index: number, response: HttpResponse<any>): void {
-    const status = response.status;
-    const isSuccess = status >= 200 && status <= 299;
-    this.budgetResponses[index] = {
-      status: isSuccess,
-      message: status + " - Ok"
+    this.budgetStatusIcons[index] = {
+      status: isSuccess(response),
+      message: "Ok"
     } as BudgetStatus;
   }
 
-  private onRequestFailed(index: number, err: any) {
-    this.budgetResponses[index] = {
+  private onRequestFailed(index: number, err: any, control: AbstractControl): void {
+    control.setErrors({'responseMessage': err.error["message"]});
+    this.budgetStatusIcons[index] = {
       status: false,
-      message: err.status + " - " + err.error["title"]
+      message: err.error["title"]
     } as BudgetStatus;
+  }
+
+  private resetModalOptions(): void {
+    this.disableTimer = false;
+    this.displayTimer = false;
   }
 }
