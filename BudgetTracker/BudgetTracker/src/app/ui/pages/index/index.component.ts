@@ -238,7 +238,6 @@ export class IndexComponent implements OnInit, OnDestroy {
   }
 
   private saveDateCookie(dateName: string, date: Date): void {
-    console.log(date.toString())
     setCookie(dateName, date.toString());
   }
 

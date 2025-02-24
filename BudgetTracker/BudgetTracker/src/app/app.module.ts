@@ -4,7 +4,7 @@ import '@angular/common/locales/global/pl';
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 import {HeaderComponent} from './ui/components/shared/header/header.component';
-import {NgbDateParserFormatter, NgbModule} from '@ng-bootstrap/ng-bootstrap';
+import {NgbDateParserFormatter, NgbModal, NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {HttpClientModule} from '@angular/common/http';
 import {CommonModule} from '@angular/common';
 import {IndexComponent} from './ui/pages/index/index.component';
@@ -63,7 +63,8 @@ export function loadConfig(configService: ConfigService): () => Promise<Config> 
     FormsModule,
     ReactiveFormsModule,
   ],
-  providers: [{provide: NgbDateParserFormatter, useClass: DatepickerFormatter},
+  providers: [
+    {provide: NgbDateParserFormatter, useClass: DatepickerFormatter},
     {provide: APP_INITIALIZER, useFactory: loadConfig, deps: [ConfigService], multi: true}
   ],
   bootstrap: [AppComponent],

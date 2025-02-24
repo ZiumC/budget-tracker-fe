@@ -29,7 +29,7 @@
     <div class="modal-body">
       <form ngbAutofocus #form="ngForm">
         <div class="row">
-          <div class="col-md-6">
+          <div [className]="innerWidth > appConfig.mobileWidth ? 'col-md-6': 'col-md-6  mb-4 pb-2'">
             <div [className]="ModalUtils.displayMarginFor(paymentNameInput)">
               <label for="payment-name">Name</label>
               <span class="text-danger">*</span>

@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {Subscription} from "rxjs";
 import {SubscriptionUtils} from "../../../../util/subscription.utils";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
@@ -38,6 +38,7 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
   protected idPayment: string;
   protected isEditing: boolean;
   protected displayLoader: boolean;
+  protected innerWidth: any;
 
   constructor(
     private modalService: NgbModal,
@@ -49,6 +50,8 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
     this.setDefaultPaymentForm();
     this.responseModel = new ResponseModel();
     ModalUtils.defaultSettings(this.displayLoader, this.isEditing);
+
+    this.innerWidth = window.innerWidth;
 
     const appCfg = this.configService.getAppConfig();
     if (appCfg) {
@@ -77,6 +80,11 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
     }
 
     this.modalService.open(this.paymentModal, ModalOptions.default(ModalSize.BIG));
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(): void {
+    this.innerWidth = window.innerWidth;
   }
 
   protected savePayment(): void {
