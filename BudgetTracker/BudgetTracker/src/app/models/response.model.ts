@@ -16,3 +16,10 @@ export class IndexResponse {
   budgets: ResponseModel;
   budget: ResponseModel;
 }
+
+export class BudgetResponse {
+  budget: ResponseModel;
+  incomes: ResponseModel;
+  payments: ResponseModel;
+  paymentStatus: ResponseModel;
+}

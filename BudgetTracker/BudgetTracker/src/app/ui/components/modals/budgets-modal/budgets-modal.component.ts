@@ -23,6 +23,7 @@ import {formatString} from "../../../../util/string.utils";
 export class BudgetsModalComponent implements OnInit, OnDestroy {
   @ViewChild('budgetsModal') budgetsModal: any;
   @Output() refreshPageEvent = new EventEmitter<boolean>();
+  protected readonly formatString = formatString;
   protected readonly DatePickerUtil = DatePickerUtil;
   protected readonly ModalUtils = ModalUtils;
   protected budgetsLimit: number;
@@ -229,6 +230,4 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
     this.disableTimer = false;
     this.displayTimer = false;
   }
-
-  protected readonly formatString = formatString;
 }

@@ -9,7 +9,7 @@ export function generateErrorModel(err: any): ResponseModel {
   } as ResponseModel;
 }
 
-export function isSuccess(response: HttpResponse<any>): boolean{
+export function isSuccess(response: HttpResponse<any>): boolean {
   return response.status >= 200 && response.status <= 299
 }
 

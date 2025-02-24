@@ -4,4 +4,6 @@ export interface ResponseConfig {
 
 export interface RequiredStatus {
   budgetStatus: number;
+  incomeStatus: number;
+  paymentStatus: number;
 }

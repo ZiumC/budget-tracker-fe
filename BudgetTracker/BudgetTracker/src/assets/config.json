@@ -69,7 +69,14 @@
     "request": {
       "pagination": {
         "defaultPage": 1,
-        "defaultBudgetsPageSize": 36
+        "defaultBudgetsPageSize": 36,
+        "defaultPageSizeOptions": [
+          6,
+          9,
+          12
+        ],
+        "incomesPageSize": 8,
+        "paymentsPageSize": 8
       },
       "cookies": {
         "names": {
@@ -80,10 +87,13 @@
     },
     "response": {
       "required": {
-        "budgetStatus": 200
+        "budgetStatus": 200,
+        "incomeStatus": 200,
+        "paymentStatus": 200
       }
     },
-    "budgetLimit": 6
+    "budgetLimit": 6,
+    "mobileWidth": 770
   },
   "api": {
   }
