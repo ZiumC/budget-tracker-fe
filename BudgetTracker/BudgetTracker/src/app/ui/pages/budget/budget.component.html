@@ -76,7 +76,7 @@
           <app-spinner-grow></app-spinner-grow>
         </ng-template>
         <ng-template #loadedIncomesBlock>
-          <ng-template [ngIf]="responseModels.incomes.statusCode == responseModels.incomes.statusCode"
+          <ng-template [ngIf]="responseModels.incomes.statusCode == appConfig.response.required.incomeStatus"
                        [ngIfElse]="errorIncomesBlock">
             <div class="mb-3">
               <app-order [name]="'income-order'"
@@ -205,7 +205,7 @@
           <app-spinner-grow></app-spinner-grow>
         </ng-template>
         <ng-template #loadedPaymentsBlock>
-          <ng-template [ngIf]="responseModels.payments.statusCode == responseModels.payments.statusCode"
+          <ng-template [ngIf]="responseModels.payments.statusCode == appConfig.response.required.paymentStatus"
                        [ngIfElse]="errorPaymentsBlock">
             <div class="mb-3">
               <app-order [name]="'payment-order'"
