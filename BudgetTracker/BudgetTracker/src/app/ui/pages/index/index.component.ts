@@ -18,6 +18,7 @@ import {ConfigService} from "../../../services/config/config.service";
 import {RequestConfig} from "../../../models/config/request.model.config";
 import {formatString} from "../../../util/string.utils";
 import {ModalUtils} from "../../../util/modal.utils";
+import {generateErrorModel} from "../../../util/http.util";
 
 @Component({
   selector: 'app-index',
@@ -174,6 +175,26 @@ export class IndexComponent implements OnInit, OnDestroy {
     }
   }
 
+  protected buttonOptionsClass(): string {
+    const isMobileView = innerWidth <= this.appConfig.mobileWidth;
+
+    if (isMobileView) {
+      return "budget-button-options-rows";
+    } else {
+      if (this.isCurrentYear()) {
+        return "budget-button-options-2-cols";
+      } else {
+        return "budget-button-options-3-cols";
+      }
+    }
+  }
+
+  protected isCurrentYear(): boolean {
+    const currentYear = new Date().getFullYear();
+    return this.fromDatePicker.year == currentYear &&
+      this.toDatePicker.year == currentYear;
+  }
+
   private getBudget(idBudget: string): void {
     this.subscriptions.push(
       this.httpService.getBudget(idBudget).subscribe({
@@ -182,7 +203,7 @@ export class IndexComponent implements OnInit, OnDestroy {
           this.indexResponse.budget.statusCode = response.status
         },
         error: (err): void => {
-          this.onRequestFailed(this.indexResponse.budget, err);
+          this.indexResponse.budget = generateErrorModel(err);
           this.markBudgetAsLoaded(true);
         },
         complete: (): void => {
@@ -205,7 +226,7 @@ export class IndexComponent implements OnInit, OnDestroy {
           this.indexResponse.budgets.statusCode = response.status
         },
         error: (err): void => {
-          this.onRequestFailed(this.indexResponse.budgets, err);
+          this.indexResponse.budgets = generateErrorModel(err);
           this.markPageAsLoaded(true);
         },
         complete: (): void => {
@@ -213,12 +234,6 @@ export class IndexComponent implements OnInit, OnDestroy {
         }
       })
     )
-  }
-
-  private onRequestFailed(response: ResponseModel, err: any): void {
-    response.traceId = err.headers.get('X-Trace-Id');
-    response.statusCode = err.status;
-    response.error = err.error;
   }
 
   private markPageAsLoaded(value: boolean): void {
@@ -254,11 +269,5 @@ export class IndexComponent implements OnInit, OnDestroy {
   private readDateCookie(dateName: string): Date | null {
     const cookieDate = getCookie(dateName);
     return cookieDate ? new Date(cookieDate) : null;
-  }
-
-  private isCurrentYear(): boolean {
-    const currentYear = new Date().getFullYear();
-    return !(this.fromDatePicker.year == currentYear &&
-      this.toDatePicker.year == currentYear);
   }
 }

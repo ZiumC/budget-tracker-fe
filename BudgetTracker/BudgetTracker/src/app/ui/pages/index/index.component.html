@@ -119,9 +119,7 @@
           </div>
         </form>
         <div class="mt-3 mb-1 text-center"
-             [className]=" toCurrentYear ?
-               (innerWidth > appConfig.mobileWidth ? 'budget-button-options-3-cols' : 'budget-button-options-row') :
-               (innerWidth > appConfig.mobileWidth ? 'budget-button-options-2-cols' : 'budget-button-options-row')">
+             [className]="buttonOptionsClass()">
           <div class="px-5">
             <button type="button"
                     [className]="innerWidth > appConfig.mobileWidth ? 'btn btn-success' : 'btn btn-success width-ex-20'"
@@ -142,7 +140,7 @@
               <i class="bi bi-boxes"></i> Multiple
             </button>
           </div>
-          @if (toCurrentYear) {
+          @if (!isCurrentYear()) {
             <div class="px-5">
               <button type="button"
                       [className]="innerWidth > appConfig.mobileWidth ? 'btn btn-primary' : 'btn btn-primary width-ex-20'"
