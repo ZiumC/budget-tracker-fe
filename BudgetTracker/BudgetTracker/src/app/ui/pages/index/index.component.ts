@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {HttpService} from '../../../services/http/http.service';
 import {Subscription} from 'rxjs';
 import {HttpResponse} from '@angular/common/http';
@@ -26,6 +26,8 @@ import {ModalUtils} from "../../../util/modal.utils";
 })
 export class IndexComponent implements OnInit, OnDestroy {
   @ViewChild('errorModal') errorModal: any;
+  protected readonly formatString = formatString;
+  protected readonly ModalUtils = ModalUtils;
   protected readonly DateUtils = DateUtil;
   protected readonly SpinnerSize = SpinnerSize;
   protected appConfig: AppConfig;
@@ -39,8 +41,9 @@ export class IndexComponent implements OnInit, OnDestroy {
   protected toDatePicker: DatePicker;
   protected toCurrentYear: boolean;
   protected indexResponse: IndexResponse;
-  protected loaders: any;
   protected idRefreshBudget: string;
+  protected loaders: any;
+  public innerWidth: any;
 
   constructor(private httpService: HttpService,
               private configService: ConfigService) {
@@ -94,11 +97,18 @@ export class IndexComponent implements OnInit, OnDestroy {
     }
 
     this.getBudgets(this.requestModel);
+    this.onResize();
   }
 
   ngOnDestroy(): void {
     SubscriptionUtils.unsubscribeAll(this.subscriptions);
   }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(): void {
+    this.innerWidth = window.innerWidth;
+  }
+
 
   protected reloadPage(): void {
     this.markPageAsLoaded(false);
@@ -251,7 +261,4 @@ export class IndexComponent implements OnInit, OnDestroy {
     return !(this.fromDatePicker.year == currentYear &&
       this.toDatePicker.year == currentYear);
   }
-
-  protected readonly formatString = formatString;
-  protected readonly ModalUtils = ModalUtils;
 }

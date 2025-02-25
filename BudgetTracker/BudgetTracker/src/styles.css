@@ -94,6 +94,16 @@ table tr th {
   grid-auto-flow: row;
 }
 
+.budget-button-options-row {
+  display: grid;
+  grid-template-rows: auto;
+  justify-items: center;
+  justify-content: center;
+  gap: 2ex;
+  grid-auto-flow: row;
+}
+
+
 .input-group-append button {
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
