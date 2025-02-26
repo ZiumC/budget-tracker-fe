@@ -45,11 +45,9 @@ export class BudgetComponent implements OnInit, OnDestroy {
   protected paymentRequestModel: RequestModel;
   protected responseModels: BudgetResponse;
   protected idBudget: string;
-
-  protected loaders: any;
   protected incomeTotalPages: number | undefined;
   protected paymentTotalPages: number | undefined;
-
+  protected loaders: any;
   public innerWidth: any;
 
   constructor(
@@ -112,7 +110,11 @@ export class BudgetComponent implements OnInit, OnDestroy {
           this.responseModels.budget.statusCode = response.status;
         },
         error: (err): void => {
-          this.onRequestFailed(this.responseModels.budget, err);
+          const response = generateErrorModel(err);
+          this.responseModels.budget = response;
+          if (response.statusCode != 404) {
+            this.errorModal.open(response);
+          }
           this.markBudgetAsLoaded(true);
         },
         complete: (): void => {
@@ -180,7 +182,9 @@ export class BudgetComponent implements OnInit, OnDestroy {
             .find((payment): boolean => payment.id == idPayment)!.isPaid! = isPaid;
         },
         error: (err): void => {
-          this.onRequestFailed(this.responseModels.paymentStatus, err);
+          const response = generateErrorModel(err);
+          this.responseModels.paymentStatus = response;
+          this.errorModal.open(response);
           this.loaders.paymentStatusBtn = false;
         },
         complete: (): void => {
@@ -188,11 +192,6 @@ export class BudgetComponent implements OnInit, OnDestroy {
         }
       })
     )
-  }
-
-  private onRequestFailed(responseModel: ResponseModel, err: any): void {
-    responseModel = generateErrorModel(err);
-    this.errorModal.open(responseModel);
   }
 
   private getBudgetIncomes(): void {
@@ -205,7 +204,11 @@ export class BudgetComponent implements OnInit, OnDestroy {
           this.responseModels.incomes.statusCode = response.status;
         },
         error: (err): void => {
-          this.onRequestFailed(this.responseModels.incomes, err);
+          const response = generateErrorModel(err);
+          this.responseModels.incomes = response;
+          if (response.statusCode != 404) {
+            this.errorModal.open(response);
+          }
           this.markIncomesAsLoaded(true);
         },
         complete: (): void => {
@@ -226,7 +229,11 @@ export class BudgetComponent implements OnInit, OnDestroy {
           this.responseModels.payments.statusCode = response.status;
         },
         error: (err): void => {
-          this.onRequestFailed(this.responseModels.payments, err);
+          const response = generateErrorModel(err);
+          this.responseModels.payments = response;
+          if (response.statusCode != 404) {
+            this.errorModal.open(response);
+          }
           this.markPaymentsAsLoaded(true);
         },
         complete: (): void => {

@@ -4,7 +4,7 @@ export class ResponseModel {
   error: ErrorModel;
 }
 
-export interface ErrorModel {
+export class ErrorModel {
   title: string;
   type: string;
   path: string;

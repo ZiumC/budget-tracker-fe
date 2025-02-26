@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {HttpService} from '../../../services/http/http.service';
 import {Subscription} from 'rxjs';
 import {HttpResponse} from '@angular/common/http';
@@ -18,6 +18,7 @@ import {ConfigService} from "../../../services/config/config.service";
 import {RequestConfig} from "../../../models/config/request.model.config";
 import {formatString} from "../../../util/string.utils";
 import {ModalUtils} from "../../../util/modal.utils";
+import {generateErrorModel} from "../../../util/http.util";
 
 @Component({
   selector: 'app-index',
@@ -26,6 +27,8 @@ import {ModalUtils} from "../../../util/modal.utils";
 })
 export class IndexComponent implements OnInit, OnDestroy {
   @ViewChild('errorModal') errorModal: any;
+  protected readonly formatString = formatString;
+  protected readonly ModalUtils = ModalUtils;
   protected readonly DateUtils = DateUtil;
   protected readonly SpinnerSize = SpinnerSize;
   protected appConfig: AppConfig;
@@ -39,8 +42,9 @@ export class IndexComponent implements OnInit, OnDestroy {
   protected toDatePicker: DatePicker;
   protected toCurrentYear: boolean;
   protected indexResponse: IndexResponse;
-  protected loaders: any;
   protected idRefreshBudget: string;
+  protected loaders: any;
+  public innerWidth: any;
 
   constructor(private httpService: HttpService,
               private configService: ConfigService) {
@@ -79,7 +83,7 @@ export class IndexComponent implements OnInit, OnDestroy {
 
     this.requestModel.fromDate = DatePickerUtil.formatDatePicker(this.fromDatePicker);
     this.requestModel.toDate = DatePickerUtil.formatDatePicker(this.toDatePicker);
-    this.toCurrentYear = this.isCurrentYear();
+    this.toCurrentYear = !this.isCurrentYear();
 
     this.budgets = [];
     this.subscriptions = [];
@@ -94,11 +98,18 @@ export class IndexComponent implements OnInit, OnDestroy {
     }
 
     this.getBudgets(this.requestModel);
+    this.onResize();
   }
 
   ngOnDestroy(): void {
     SubscriptionUtils.unsubscribeAll(this.subscriptions);
   }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(): void {
+    this.innerWidth = window.innerWidth;
+  }
+
 
   protected reloadPage(): void {
     this.markPageAsLoaded(false);
@@ -137,7 +148,7 @@ export class IndexComponent implements OnInit, OnDestroy {
     this.saveDateCookie(this.requestConfig.cookies.names.fromDate, fromDate);
     this.saveDateCookie(this.requestConfig.cookies.names.toDate, toDate);
 
-    this.toCurrentYear = this.isCurrentYear();
+    this.toCurrentYear = !this.isCurrentYear();
 
     this.reloadPage();
   }
@@ -164,6 +175,49 @@ export class IndexComponent implements OnInit, OnDestroy {
     }
   }
 
+  protected buttonOptionsClass(): string {
+    const isMobileView = innerWidth <= this.appConfig.mobileWidth;
+
+    if (isMobileView) {
+      return "budget-button-options-rows";
+    }
+
+    if (!this.toCurrentYear) {
+      return "budget-button-options-2-cols";
+    } else {
+      return "budget-button-options-3-cols";
+    }
+  }
+
+  protected budgetCardContainerClass(): string {
+    const isMobileView = innerWidth <= this.appConfig.mobileWidth;
+    const budgetsLength = this.budgets!.length;
+
+    if (isMobileView) {
+      return "budget-card-container-rows";
+    }
+
+    if (budgetsLength < 3) {
+      if (budgetsLength % 3 == 1) {
+        return "budget-card-container-1-cols";
+      } else {
+        return "budget-card-container-2-cols";
+      }
+    } else {
+      if (innerWidth <= this.appConfig.mediumWidth) {
+        return "budget-card-container-2-cols";
+      } else {
+        return "budget-card-container-3-cols";
+      }
+    }
+  }
+
+  private isCurrentYear(): boolean {
+    const currentYear = new Date().getFullYear();
+    return this.fromDatePicker.year == currentYear &&
+      this.toDatePicker.year == currentYear;
+  }
+
   private getBudget(idBudget: string): void {
     this.subscriptions.push(
       this.httpService.getBudget(idBudget).subscribe({
@@ -172,7 +226,7 @@ export class IndexComponent implements OnInit, OnDestroy {
           this.indexResponse.budget.statusCode = response.status
         },
         error: (err): void => {
-          this.onRequestFailed(this.indexResponse.budget, err);
+          this.indexResponse.budget = generateErrorModel(err);
           this.markBudgetAsLoaded(true);
         },
         complete: (): void => {
@@ -195,7 +249,7 @@ export class IndexComponent implements OnInit, OnDestroy {
           this.indexResponse.budgets.statusCode = response.status
         },
         error: (err): void => {
-          this.onRequestFailed(this.indexResponse.budgets, err);
+          this.indexResponse.budgets = generateErrorModel(err);
           this.markPageAsLoaded(true);
         },
         complete: (): void => {
@@ -203,12 +257,6 @@ export class IndexComponent implements OnInit, OnDestroy {
         }
       })
     )
-  }
-
-  private onRequestFailed(response: ResponseModel, err: any): void {
-    response.traceId = err.headers.get('X-Trace-Id');
-    response.statusCode = err.status;
-    response.error = err.error;
   }
 
   private markPageAsLoaded(value: boolean): void {
@@ -245,13 +293,4 @@ export class IndexComponent implements OnInit, OnDestroy {
     const cookieDate = getCookie(dateName);
     return cookieDate ? new Date(cookieDate) : null;
   }
-
-  private isCurrentYear(): boolean {
-    const currentYear = new Date().getFullYear();
-    return !(this.fromDatePicker.year == currentYear &&
-      this.toDatePicker.year == currentYear);
-  }
-
-  protected readonly formatString = formatString;
-  protected readonly ModalUtils = ModalUtils;
 }
