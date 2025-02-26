@@ -16,4 +16,5 @@ export interface AppConfig {
   response: ResponseConfig;
   budgetLimit: number;
   mobileWidth: number;
+  mediumWidth: number;
 }

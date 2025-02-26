@@ -5,13 +5,39 @@
   margin-right: auto;
 }
 
-.budget-card-container {
+.budget-card-container-rows {
+  width: 100%;
+  box-sizing: border-box;
+  display: grid;
+  gap: 2ex;
+  grid-template-rows: auto;
+  grid-auto-flow: row;
+}
+
+.budget-card-container-1-cols {
+  width: 100%;
+  box-sizing: border-box;
+  display: grid;
+  gap: 1ex;
+  grid-template-columns: auto;
+  grid-auto-flow: row;
+}
+
+.budget-card-container-2-cols {
+  width: 100%;
+  box-sizing: border-box;
+  display: grid;
+  gap: 1ex;
+  grid-template-columns: auto auto;
+  grid-auto-flow: row;
+}
+
+.budget-card-container-3-cols {
   width: 100%;
   box-sizing: border-box;
   display: grid;
   gap: 1ex;
   grid-template-columns: auto auto auto;
-  grid-template-rows: auto auto;
   grid-auto-flow: row;
 }
 

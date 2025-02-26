@@ -140,7 +140,7 @@
               <i class="bi bi-boxes"></i> Multiple
             </button>
           </div>
-          @if (!isCurrentYear()) {
+          @if (toCurrentYear) {
             <div class="px-5">
               <button type="button"
                       [className]="innerWidth > appConfig.mobileWidth ? 'btn btn-primary' : 'btn btn-primary width-ex-20'"
@@ -163,7 +163,7 @@
     <ng-template #loadedBlock>
       <ng-template [ngIf]="indexResponse.budgets.statusCode == appConfig.response.required.budgetStatus"
                    [ngIfElse]="errorBudgetsBlock">
-        <div class="budget-card-container">
+        <div [className]="budgetCardContainerClass()">
           @for (budget of budgets; track budget.id; ) {
             <div class="card border-dark my-3 budget-card">
               <ng-template [ngIf]="!loaders.budget && budget.id == idRefreshBudget"

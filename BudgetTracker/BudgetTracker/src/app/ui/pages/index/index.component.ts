@@ -83,7 +83,7 @@ export class IndexComponent implements OnInit, OnDestroy {
 
     this.requestModel.fromDate = DatePickerUtil.formatDatePicker(this.fromDatePicker);
     this.requestModel.toDate = DatePickerUtil.formatDatePicker(this.toDatePicker);
-    this.toCurrentYear = this.isCurrentYear();
+    this.toCurrentYear = !this.isCurrentYear();
 
     this.budgets = [];
     this.subscriptions = [];
@@ -148,7 +148,7 @@ export class IndexComponent implements OnInit, OnDestroy {
     this.saveDateCookie(this.requestConfig.cookies.names.fromDate, fromDate);
     this.saveDateCookie(this.requestConfig.cookies.names.toDate, toDate);
 
-    this.toCurrentYear = this.isCurrentYear();
+    this.toCurrentYear = !this.isCurrentYear();
 
     this.reloadPage();
   }
@@ -180,16 +180,39 @@ export class IndexComponent implements OnInit, OnDestroy {
 
     if (isMobileView) {
       return "budget-button-options-rows";
+    }
+
+    if (!this.toCurrentYear) {
+      return "budget-button-options-2-cols";
     } else {
-      if (this.isCurrentYear()) {
-        return "budget-button-options-2-cols";
+      return "budget-button-options-3-cols";
+    }
+  }
+
+  protected budgetCardContainerClass(): string {
+    const isMobileView = innerWidth <= this.appConfig.mobileWidth;
+    const budgetsLength = this.budgets!.length;
+
+    if (isMobileView) {
+      return "budget-card-container-rows";
+    }
+
+    if (budgetsLength < 3) {
+      if (budgetsLength % 3 == 1) {
+        return "budget-card-container-1-cols";
       } else {
-        return "budget-button-options-3-cols";
+        return "budget-card-container-2-cols";
+      }
+    } else {
+      if (innerWidth <= this.appConfig.mediumWidth) {
+        return "budget-card-container-2-cols";
+      } else {
+        return "budget-card-container-3-cols";
       }
     }
   }
 
-  protected isCurrentYear(): boolean {
+  private isCurrentYear(): boolean {
     const currentYear = new Date().getFullYear();
     return this.fromDatePicker.year == currentYear &&
       this.toDatePicker.year == currentYear;
