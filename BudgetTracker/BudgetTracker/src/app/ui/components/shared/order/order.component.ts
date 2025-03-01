@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 
 @Component({
   selector: 'app-order',
@@ -6,16 +6,18 @@ import {Component, Input, OnInit} from '@angular/core';
   styleUrl: './order.component.css'
 })
 export class OrderComponent implements OnInit {
-  @Input() orderTypes: ORDER_TYPES[];
+  @Input() orderTypes: ORDER_BY[];
   @Input() name: string;
-  protected orderOptions: ORDER_OPTIONS[];
-  protected selectedOrderType: ORDER_TYPES;
-  protected selectedOrderOption: ORDER_OPTIONS;
+  @Output() orderByEvent = new EventEmitter<OrderOptions>();
+  @Output() orderDirectionEvent = new EventEmitter<OrderOptions>();
+  protected orderOptions: ORDER_DIRECTIONS[];
+  protected selectedOrderBy: ORDER_BY;
+  protected selectedOrderDirection: ORDER_DIRECTIONS;
   protected displayOrderOption: boolean;
-  protected excludedTypes: ORDER_TYPES[];
+  protected excludedTypes: ORDER_BY[];
 
-  private orderTypeName: string;
-  private orderOptionName: string;
+  private orderByName: string;
+  private orderDirectionName: string;
 
   ngOnInit(): void {
     if (!this.orderTypes) {
@@ -26,33 +28,43 @@ export class OrderComponent implements OnInit {
       throw new Error('Name is required');
     }
 
-    this.orderTypeName = this.name + "-type";
-    this.orderOptionName = this.name + "-option";
+    this.orderByName = this.name + "-by";
+    this.orderDirectionName = this.name + "-direction";
 
     this.excludedTypes = [
-      ORDER_TYPES.PAID_FIRST,
-      ORDER_TYPES.SURPLUS_FIRST
+      ORDER_BY.PAID_FIRST,
+      ORDER_BY.SURPLUS_FIRST
     ];
 
     this.orderOptions = [
-      ORDER_OPTIONS.ASCENDING,
-      ORDER_OPTIONS.DESCENDING,
+      ORDER_DIRECTIONS.ASCENDING,
+      ORDER_DIRECTIONS.DESCENDING,
     ]
 
-    const orderType = this.getFromLocalStorage(this.orderTypeName);
-    const orderOption = this.getFromLocalStorage(this.orderOptionName);
+    const orderBy = this.getFromLocalStorage(this.orderByName);
+    const orderDirection = this.getFromLocalStorage(this.orderDirectionName);
 
-    this.selectedOrderType = this.orderTypes[this.orderTypesIndex(orderType)];
-    this.selectedOrderOption = this.orderOptions[this.orderOptionsIndex(orderOption)];
+    this.selectedOrderBy = this.orderTypes[this.orderTypesIndex(orderBy)];
+    this.selectedOrderDirection = this.orderOptions[this.orderOptionsIndex(orderDirection)];
     this.displayOrderOption = true;
   }
 
-  protected onOrderTypeChanged(): void {
-    this.saveToLocalStorage(this.orderTypeName, this.selectedOrderType);
+  protected onOrderByChanged(): void {
+    this.orderByEvent.emit(this.createOrderOption());
+    this.saveToLocalStorage(this.orderByName, this.selectedOrderBy);
   }
 
-  protected onOrderOptionChanged(): void {
-    this.saveToLocalStorage(this.orderOptionName, this.selectedOrderOption);
+  protected onOrderTypeChanged(): void {
+    this.orderDirectionEvent.emit(this.createOrderOption());
+    this.saveToLocalStorage(this.orderDirectionName, this.selectedOrderDirection);
+  }
+
+  private createOrderOption(): OrderOptions {
+    return {
+      orderBy: this.selectedOrderBy,
+      orderDirection: this.excludedTypes
+        .includes(this.selectedOrderBy) ? null : this.selectedOrderDirection
+    } as OrderOptions;
   }
 
   private getFromLocalStorage(name: string): string | null {
@@ -74,7 +86,7 @@ export class OrderComponent implements OnInit {
   }
 }
 
-export enum ORDER_TYPES {
+export enum ORDER_BY {
   DATE_UPDATED = 'date updated',
   PRICE = 'price',
   REFUND = 'refund',
@@ -84,7 +96,12 @@ export enum ORDER_TYPES {
   SURPLUS_FIRST = 'surplus first'
 }
 
-export enum ORDER_OPTIONS {
+export enum ORDER_DIRECTIONS {
   ASCENDING = 'ascending',
   DESCENDING = 'descending'
+}
+
+export class OrderOptions {
+  orderBy: ORDER_BY;
+  orderDirection: ORDER_DIRECTIONS | null;
 }

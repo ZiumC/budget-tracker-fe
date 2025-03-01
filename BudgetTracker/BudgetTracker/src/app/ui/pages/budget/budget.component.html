@@ -214,8 +214,9 @@
                             ORDER_TYPES.PRICE,
                             ORDER_TYPES.REFUND,
                             ORDER_TYPES.REAL_COST,
-                            ORDER_TYPES.PAID_FIRST]">
-
+                            ORDER_TYPES.PAID_FIRST]"
+                         (orderByEvent)="onOrderByEvent($event)"
+                         (orderDirectionEvent)="onOrderDirectionEvent($event)">
               </app-order>
             </div>
             @for (payment of paymentsDto; track payment) {

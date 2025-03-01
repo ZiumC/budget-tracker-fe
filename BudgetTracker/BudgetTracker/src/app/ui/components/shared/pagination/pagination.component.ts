@@ -11,7 +11,7 @@ export class PaginationComponent implements OnInit {
   @Input() displayPageSize: boolean;
   @Input() pageSizeOptions: number[];
   @Input() disableFully: boolean;
-  @Output() pageSizeEvent = new EventEmitter<number>;
+  @Output() pageSizeEvent = new EventEmitter<number>();
   @Output() pageEvent = new EventEmitter<number>();
   protected page: number;
   protected pageSize: number;

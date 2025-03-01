@@ -7,22 +7,22 @@
                 id="orderType"
                 name="orderType"
                 class="form-control"
-                [(ngModel)]="selectedOrderType"
-                (ngModelChange)="onOrderTypeChanged()"
+                [(ngModel)]="selectedOrderBy"
+                (ngModelChange)="onOrderByChanged()"
                 required>
           @for (orderType of orderTypes; track $index) {
             <option [value]="orderType">{{ orderType }}</option>
           }
         </select>
       </div>
-      @if (!this.excludedTypes.includes(this.selectedOrderType)) {
+      @if (!this.excludedTypes.includes(this.selectedOrderBy)) {
         <div class="mx-2 my-auto">
           <select type="text"
                   id="orderOption"
                   name="orderOption"
                   class="form-control"
-                  [(ngModel)]="selectedOrderOption"
-                  (ngModelChange)="onOrderOptionChanged()"
+                  [(ngModel)]="selectedOrderDirection"
+                  (ngModelChange)="onOrderTypeChanged()"
                   required>
             @for (orderOption of orderOptions; track $index) {
               <option [value]="orderOption">{{ orderOption }}</option>
