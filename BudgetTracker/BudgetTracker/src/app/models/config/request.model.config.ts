@@ -1,5 +1,6 @@
 export interface RequestConfig {
   pagination: Pagination;
+  order: Order;
   cookies: Cookies;
 }
 
@@ -19,3 +20,22 @@ export interface Names {
   fromDate: string;
   toDate: string;
 }
+
+export interface Order {
+  incomeTypes: OrderType[];
+  paymentTypes: OrderType[];
+  excludedTypes: OrderType[];
+  orderDirections: OrderDirection[];
+}
+
+export interface OrderType {
+  name: string;
+  displayDirections: boolean;
+}
+
+export interface OrderDirection {
+  name: string;
+  value: string;
+}
+
+

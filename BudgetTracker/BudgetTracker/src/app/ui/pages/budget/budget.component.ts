@@ -9,7 +9,7 @@ import {ActivatedRoute, Params, Router} from "@angular/router";
 import {HttpResponse} from "@angular/common/http";
 import {SubscriptionUtils} from "../../../util/subscription.utils";
 import {SortIncome, SortPayment} from "../../../util/sort.utils";
-import {ORDER_BY, ORDER_DIRECTIONS, OrderOptions} from "../../components/shared/order/order.component";
+import {OrderOptions} from "../../components/shared/order/order.component";
 import {format, subtract} from "../../../util/number.util";
 import {GetPaymentDto, PaymentStatusDto} from "../../../models/dto/payment.model.dto";
 import {GetIncomeDto} from "../../../models/dto/income.model.dto";
@@ -31,7 +31,6 @@ export class BudgetComponent implements OnInit, OnDestroy {
   protected readonly format = format;
   protected readonly subtract = subtract;
   protected readonly formatString = formatString;
-  protected readonly ORDER_TYPES = ORDER_BY;
   protected readonly DateUtils = DateUtil;
   protected readonly SpinnerSize = SpinnerSize;
   protected appConfig: AppConfig;
@@ -147,37 +146,33 @@ export class BudgetComponent implements OnInit, OnDestroy {
   }
 
   protected onPageSizeEvent(pageSize: number, isIncome: boolean): void {
+    this.incomeRequestModel.pageSize = pageSize;
+    this.incomeRequestModel.page = this.appConfig.request.pagination.defaultPage;
     if (isIncome) {
-      this.incomeRequestModel.pageSize = pageSize;
-      this.incomeRequestModel.page = this.appConfig.request.pagination.defaultPage;
       this.onRefreshIncome();
     } else {
-      this.paymentRequestModel.pageSize = pageSize;
-      this.paymentRequestModel.page = this.appConfig.request.pagination.defaultPage;
       this.onRefreshPayment();
     }
   }
 
   protected onPageEvent(page: number, isIncome: boolean): void {
+    this.incomeRequestModel.page = page;
     if (isIncome) {
-      this.incomeRequestModel.page = page;
       this.onRefreshIncome();
     } else {
-      this.paymentRequestModel.page = page;
       this.onRefreshPayment();
     }
   }
 
-  protected onOrderByEvent(orderBy: OrderOptions): void {
+  protected onOrderByEvent(orderBy: OrderOptions, isIncome: boolean): void {
     console.log(orderBy)
   }
 
-  protected onOrderDirectionEvent(orderDirection: OrderOptions): void {
+  protected onOrderDirectionEvent(orderDirection: OrderOptions, isIncome: boolean): void {
     console.log(orderDirection)
     if (!orderDirection) {
       return;
     }
-
   }
 
   protected patchPaymentStatus(isPaid: boolean, idPayment: string): void {

@@ -1,4 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {OrderDirection, OrderType} from "../../../../models/config/request.model.config";
 
 @Component({
   selector: 'app-order',
@@ -6,15 +7,16 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
   styleUrl: './order.component.css'
 })
 export class OrderComponent implements OnInit {
-  @Input() orderTypes: ORDER_BY[];
+  @Input() orderTypes: OrderType[];
+  @Input() orderDirections: OrderDirection[];
+  @Input() excludedOrderTypes: OrderType[];
   @Input() name: string;
   @Output() orderByEvent = new EventEmitter<OrderOptions>();
   @Output() orderDirectionEvent = new EventEmitter<OrderOptions>();
-  protected orderOptions: ORDER_DIRECTIONS[];
-  protected selectedOrderBy: ORDER_BY;
-  protected selectedOrderDirection: ORDER_DIRECTIONS;
-  protected displayOrderOption: boolean;
-  protected excludedTypes: ORDER_BY[];
+  protected selectedOrderBy: string;
+  protected selectedOrderDirection: string;
+  protected selectedOrderByIndex: number;
+  protected selectedOrderDirectionIndex: number;
 
   private orderByName: string;
   private orderDirectionName: string;
@@ -24,6 +26,14 @@ export class OrderComponent implements OnInit {
       throw new Error('Order options are empty');
     }
 
+    if (!this.orderDirections) {
+      throw new Error('Order directions are empty');
+    }
+
+    if (!this.excludedOrderTypes) {
+      throw new Error('Excluded order types are empty');
+    }
+
     if (!this.name) {
       throw new Error('Name is required');
     }
@@ -31,43 +41,44 @@ export class OrderComponent implements OnInit {
     this.orderByName = this.name + "-by";
     this.orderDirectionName = this.name + "-direction";
 
-    this.excludedTypes = [
-      ORDER_BY.PAID_FIRST,
-      ORDER_BY.SURPLUS_FIRST
-    ];
+    this.selectedOrderByIndex = this.orderTypesIndex(
+      this.getValueLocalStorage(this.orderByName)
+    );
 
-    this.orderOptions = [
-      ORDER_DIRECTIONS.ASCENDING,
-      ORDER_DIRECTIONS.DESCENDING,
-    ]
-
-    const orderBy = this.getFromLocalStorage(this.orderByName);
-    const orderDirection = this.getFromLocalStorage(this.orderDirectionName);
-
-    this.selectedOrderBy = this.orderTypes[this.orderTypesIndex(orderBy)];
-    this.selectedOrderDirection = this.orderOptions[this.orderOptionsIndex(orderDirection)];
-    this.displayOrderOption = true;
+    this.selectedOrderBy = this.orderTypes[this.selectedOrderByIndex].name;
+    this.selectedOrderDirection =
+      this.orderDirections[this.orderOptionsIndex(
+        this.getValueLocalStorage(this.orderDirectionName)
+      )].name;
   }
 
-  protected onOrderByChanged(): void {
+  protected onOrderByChanged(event: Event): void {
+    const selectElement = event.target as HTMLSelectElement;
+    this.selectedOrderByIndex = selectElement.selectedIndex;
+
     this.orderByEvent.emit(this.createOrderOption());
     this.saveToLocalStorage(this.orderByName, this.selectedOrderBy);
   }
 
-  protected onOrderTypeChanged(): void {
+  protected onOrderTypeChanged(event: Event): void {
+    const selectElement = event.target as HTMLSelectElement;
+    this.selectedOrderDirectionIndex = selectElement.selectedIndex;
+
     this.orderDirectionEvent.emit(this.createOrderOption());
     this.saveToLocalStorage(this.orderDirectionName, this.selectedOrderDirection);
   }
 
   private createOrderOption(): OrderOptions {
+    const selectedOrderType = this.orderTypes[this.selectedOrderByIndex];
+    const selectedOrderDirection = this.orderDirections[this.selectedOrderDirectionIndex];
     return {
-      orderBy: this.selectedOrderBy,
-      orderDirection: this.excludedTypes
-        .includes(this.selectedOrderBy) ? null : this.selectedOrderDirection
+      orderType: selectedOrderType,
+      orderDirection: selectedOrderType.displayDirections
+        ? selectedOrderDirection : null
     } as OrderOptions;
   }
 
-  private getFromLocalStorage(name: string): string | null {
+  private getValueLocalStorage(name: string): string | null {
     return localStorage.getItem(name);
   }
 
@@ -76,32 +87,17 @@ export class OrderComponent implements OnInit {
   }
 
   private orderTypesIndex(value: string | null): number {
-    const foundIndex = this.orderTypes.findIndex(x => x === value);
+    const foundIndex = this.orderTypes.findIndex(x => x.name === value);
     return foundIndex > -1 ? foundIndex : 0;
   }
 
   private orderOptionsIndex(value: string | null): number {
-    const foundIndex = this.orderOptions.findIndex(x => x === value);
+    const foundIndex = this.orderDirections.findIndex(x => x.name === value);
     return foundIndex > -1 ? foundIndex : 0;
   }
 }
 
-export enum ORDER_BY {
-  DATE_UPDATED = 'date updated',
-  PRICE = 'price',
-  REFUND = 'refund',
-  WAGE = 'wage',
-  REAL_COST = 'real cost',
-  PAID_FIRST = 'paid first',
-  SURPLUS_FIRST = 'surplus first'
-}
-
-export enum ORDER_DIRECTIONS {
-  ASCENDING = 'ascending',
-  DESCENDING = 'descending'
-}
-
 export class OrderOptions {
-  orderBy: ORDER_BY;
-  orderDirection: ORDER_DIRECTIONS | null;
+  orderType: OrderType;
+  orderDirection: OrderDirection | null;
 }

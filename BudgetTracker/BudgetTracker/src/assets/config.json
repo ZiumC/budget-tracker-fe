@@ -71,12 +71,70 @@
         "defaultPage": 1,
         "defaultBudgetsPageSize": 36,
         "defaultPageSizeOptions": [
-          6,
           9,
-          12
+          12,
+          15
         ],
         "incomesPageSize": 8,
         "paymentsPageSize": 8
+      },
+      "order": {
+        "incomeTypes": [
+          {
+            "name": "date updated",
+            "displayDirections": true
+          },
+          {
+            "name": "wage",
+            "displayDirections": true
+          },
+          {
+            "name": "surplus first",
+            "displayDirections": false
+          }
+        ],
+        "paymentTypes": [
+          {
+            "name": "date updated",
+            "displayDirections": true
+          },
+          {
+            "name": "price",
+            "displayDirections": true
+          },
+          {
+            "name": "refund",
+            "displayDirections": true
+          },
+          {
+            "name": "paid first",
+            "displayDirections": false
+          },
+          {
+            "name": "real cost",
+            "displayDirections": true
+          }
+        ],
+        "excludedTypes": [
+          {
+            "name": "paid first",
+            "displayDirections": false
+          },
+          {
+            "name": "surplus first",
+            "displayDirections": false
+          }
+        ],
+        "orderDirections": [
+          {
+            "name": "ascending",
+            "value": "ASC"
+          },
+          {
+            "name": "descending",
+            "value": "DESC"
+          }
+        ]
       },
       "cookies": {
         "names": {
