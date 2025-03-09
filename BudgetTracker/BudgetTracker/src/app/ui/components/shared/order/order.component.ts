@@ -16,7 +16,6 @@ export class OrderComponent implements OnInit {
   protected selectedOrderBy: string;
   protected selectedOrderDirection: string;
   protected selectedOrderByIndex: number;
-  protected selectedOrderDirectionIndex: number;
 
   private orderByName: string;
   private orderDirectionName: string;

@@ -87,16 +87,13 @@ export class BudgetComponent implements OnInit, OnDestroy {
 
     this.incomeRequestModel = new RequestModel({
       page: this.appConfig.request.pagination.defaultPage,
-      pageSize: this.appConfig.request.pagination.incomesPageSize,
+      pageSize: this.appConfig.request.pagination.defaultPageSizeOptions[0],
     })
 
     this.paymentRequestModel = new RequestModel({
       page: this.appConfig.request.pagination.defaultPage,
-      pageSize: this.appConfig.request.pagination.paymentsPageSize,
+      pageSize: this.appConfig.request.pagination.defaultPageSizeOptions[0],
     })
-
-    this.incomeTotalPages = 0;
-    this.paymentTotalPages = 0;
 
     this.activatedRoute.queryParams.subscribe((params: Params): void => {
       this.idBudget = params['id'];
@@ -122,6 +119,9 @@ export class BudgetComponent implements OnInit, OnDestroy {
       })
     )
     this.defaultOrderParams();
+    this.getIncomeTotalPages();
+    this.getPaymentTotalPages();
+
     this.getBudgetIncomes();
     this.getBudgetPayments();
   }
@@ -146,20 +146,23 @@ export class BudgetComponent implements OnInit, OnDestroy {
   }
 
   protected onPageSizeEvent(pageSize: number, isIncome: boolean): void {
-    this.incomeRequestModel.pageSize = pageSize;
-    this.incomeRequestModel.page = this.appConfig.request.pagination.defaultPage;
     if (isIncome) {
+      this.incomeRequestModel.page = this.appConfig.request.pagination.defaultPage;
+      this.incomeRequestModel.pageSize = pageSize;
       this.onRefreshIncome();
     } else {
+      this.paymentRequestModel.page = this.appConfig.request.pagination.defaultPage;
+      this.paymentRequestModel.pageSize = pageSize;
       this.onRefreshPayment();
     }
   }
 
   protected onPageEvent(page: number, isIncome: boolean): void {
-    this.incomeRequestModel.page = page;
     if (isIncome) {
+      this.incomeRequestModel.page = page;
       this.onRefreshIncome();
     } else {
+      this.paymentRequestModel.page = page;
       this.onRefreshPayment();
     }
   }

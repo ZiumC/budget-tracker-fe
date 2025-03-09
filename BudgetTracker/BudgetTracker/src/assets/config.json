@@ -74,9 +74,7 @@
           9,
           12,
           15
-        ],
-        "incomesPageSize": 8,
-        "paymentsPageSize": 8
+        ]
       },
       "order": {
         "incomeTypes": [

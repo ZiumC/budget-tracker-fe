@@ -8,8 +8,6 @@ export interface Pagination {
   defaultPage: number;
   defaultBudgetsPageSize: number;
   defaultPageSizeOptions: number[];
-  incomesPageSize: number;
-  paymentsPageSize: number;
 }
 
 export interface Cookies {
