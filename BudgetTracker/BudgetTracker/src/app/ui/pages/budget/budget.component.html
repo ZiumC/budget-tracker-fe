@@ -83,8 +83,8 @@
                          [orderTypes]="appConfig.request.order.incomeTypes"
                          [excludedOrderTypes]="appConfig.request.order.excludedTypes"
                          [orderDirections]="appConfig.request.order.orderDirections"
-                         (orderByEvent)="onOrderByEvent($event, true)"
-                         (orderDirectionEvent)="onOrderDirectionEvent($event, true)">
+                         (orderByEvent)="onOrderEvent($event, true)"
+                         (orderDirectionEvent)="onOrderEvent($event, true)">
 
               </app-order>
             </div>
@@ -213,8 +213,8 @@
                          [orderTypes]="appConfig.request.order.paymentTypes"
                          [excludedOrderTypes]="appConfig.request.order.excludedTypes"
                          [orderDirections]="appConfig.request.order.orderDirections"
-                         (orderByEvent)="onOrderByEvent($event, false)"
-                         (orderDirectionEvent)="onOrderDirectionEvent($event, false)">
+                         (orderByEvent)="onOrderEvent($event, false)"
+                         (orderDirectionEvent)="onOrderEvent($event, false)">
               </app-order>
             </div>
             @for (payment of paymentsDto; track payment) {

@@ -1,27 +1,18 @@
-import {GetIncomeDto} from "../models/dto/income.model.dto";
 import {GetPaymentDto} from "../models/dto/payment.model.dto";
-
-export class SortIncome {
-  static surplusFirst(items: GetIncomeDto[] | null): GetIncomeDto[] | null {
-    if (items) {
-      return items.sort(
-        ({isSurplus: stateA = false}, {isSurplus: stateB = false}) =>
-          Number(stateB) - Number(stateA)
-      )
-    } else {
-      return null;
-    }
-  }
-
-}
+import {subtract} from "./number.util";
 
 export class SortPayment {
-  static paidFirst(items: GetPaymentDto[] | null): GetPaymentDto[] | null {
+  static realCost(items: GetPaymentDto[] | null, ascending: boolean): GetPaymentDto[] | null {
     if (items) {
-      return items.sort(
-        ({isPaid: stateA = false}, {isPaid: stateB = false}): number =>
-          Number(stateB) - Number(stateA)
-      )
+      return items.sort((prev, next): number => {
+        if (ascending){
+          return subtract(prev.price, prev.refund).toNumber() -
+            subtract(next.price, next.refund).toNumber()
+        } else {
+          return subtract(next.price, next.refund).toNumber() -
+            subtract(prev.price, prev.refund).toNumber()
+        }
+      })
     } else {
       return null;
     }

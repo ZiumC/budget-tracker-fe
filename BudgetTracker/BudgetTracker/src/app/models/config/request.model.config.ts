@@ -30,7 +30,9 @@ export interface Order {
 
 export interface OrderType {
   name: string;
+  value: string;
   displayDirections: boolean;
+  applyForApi: boolean;
 }
 
 export interface OrderDirection {

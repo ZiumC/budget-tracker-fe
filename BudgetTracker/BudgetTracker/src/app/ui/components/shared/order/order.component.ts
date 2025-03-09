@@ -41,40 +41,37 @@ export class OrderComponent implements OnInit {
     this.orderByName = this.name + "-by";
     this.orderDirectionName = this.name + "-direction";
 
-    this.selectedOrderByIndex = this.orderTypesIndex(
+    this.selectedOrderByIndex = this.orderTypeIndex(
       this.getValueLocalStorage(this.orderByName)
     );
 
     this.selectedOrderBy = this.orderTypes[this.selectedOrderByIndex].name;
     this.selectedOrderDirection =
-      this.orderDirections[this.orderOptionsIndex(
+      this.orderDirections[this.orderDirectionIndex(
         this.getValueLocalStorage(this.orderDirectionName)
       )].name;
   }
 
-  protected onOrderByChanged(event: Event): void {
-    const selectElement = event.target as HTMLSelectElement;
-    this.selectedOrderByIndex = selectElement.selectedIndex;
-
+  protected onOrderByChanged(): void {
     this.orderByEvent.emit(this.createOrderOption());
     this.saveToLocalStorage(this.orderByName, this.selectedOrderBy);
   }
 
-  protected onOrderTypeChanged(event: Event): void {
-    const selectElement = event.target as HTMLSelectElement;
-    this.selectedOrderDirectionIndex = selectElement.selectedIndex;
-
+  protected onOrderDirectionChanged(): void {
     this.orderDirectionEvent.emit(this.createOrderOption());
     this.saveToLocalStorage(this.orderDirectionName, this.selectedOrderDirection);
   }
 
   private createOrderOption(): OrderOptions {
-    const selectedOrderType = this.orderTypes[this.selectedOrderByIndex];
-    const selectedOrderDirection = this.orderDirections[this.selectedOrderDirectionIndex];
+    const orderByIndex = this.orderTypeIndex(this.selectedOrderBy);
+    const orderDirectionIndex = this.orderDirectionIndex(this.selectedOrderDirection);
+
+    const selectedOrderType = this.orderTypes[orderByIndex];
+    const selectedOrderDirection = this.orderDirections[orderDirectionIndex];
+
     return {
       orderType: selectedOrderType,
-      orderDirection: selectedOrderType.displayDirections
-        ? selectedOrderDirection : null
+      orderDirection: selectedOrderDirection
     } as OrderOptions;
   }
 
@@ -86,12 +83,12 @@ export class OrderComponent implements OnInit {
     localStorage.setItem(name, value);
   }
 
-  private orderTypesIndex(value: string | null): number {
+  private orderTypeIndex(value: string | null): number {
     const foundIndex = this.orderTypes.findIndex(x => x.name === value);
     return foundIndex > -1 ? foundIndex : 0;
   }
 
-  private orderOptionsIndex(value: string | null): number {
+  private orderDirectionIndex(value: string | null): number {
     const foundIndex = this.orderDirections.findIndex(x => x.name === value);
     return foundIndex > -1 ? foundIndex : 0;
   }
@@ -99,5 +96,5 @@ export class OrderComponent implements OnInit {
 
 export class OrderOptions {
   orderType: OrderType;
-  orderDirection: OrderDirection | null;
+  orderDirection: OrderDirection;
 }

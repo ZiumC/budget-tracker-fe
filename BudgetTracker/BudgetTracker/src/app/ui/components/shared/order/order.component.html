@@ -8,7 +8,7 @@
                 name="orderType"
                 class="form-control"
                 [(ngModel)]="selectedOrderBy"
-                (change)="onOrderByChanged($event)"
+                (change)="onOrderByChanged()"
                 required>
           @for (orderType of orderTypes; track $index) {
             <option [value]="orderType.name">{{ orderType.name }}</option>
@@ -22,10 +22,10 @@
                   name="orderOption"
                   class="form-control"
                   [(ngModel)]="selectedOrderDirection"
-                  (change)="onOrderTypeChanged($event)"
+                  (change)="onOrderDirectionChanged()"
                   required>
-            @for (orderOption of orderDirections; track $index) {
-              <option [value]="orderOption.name">{{ orderOption.name }}</option>
+            @for (orderDirection of orderDirections; track $index) {
+              <option [value]="orderDirection.name">{{ orderDirection.name }}</option>
             }
           </select>
         </div>

@@ -82,37 +82,53 @@
         "incomeTypes": [
           {
             "name": "date updated",
-            "displayDirections": true
+            "value": "dateUpdated",
+            "displayDirections": true,
+            "applyForApi": true
           },
           {
             "name": "wage",
-            "displayDirections": true
+            "value": "wage",
+            "displayDirections": true,
+            "applyForApi": true
           },
           {
             "name": "surplus first",
-            "displayDirections": false
+            "value": "surplusFirst",
+            "displayDirections": false,
+            "applyForApi": true
           }
         ],
         "paymentTypes": [
           {
             "name": "date updated",
-            "displayDirections": true
+            "value": "dateUpdated",
+            "displayDirections": true,
+            "applyForApi": true
           },
           {
             "name": "price",
-            "displayDirections": true
+            "value": "price",
+            "displayDirections": true,
+            "applyForApi": true
           },
           {
             "name": "refund",
-            "displayDirections": true
+            "value": "refund",
+            "displayDirections": true,
+            "applyForApi": true
           },
           {
             "name": "paid first",
-            "displayDirections": false
+            "value": "paidFirst",
+            "displayDirections": false,
+            "applyForApi": true
           },
           {
             "name": "real cost",
-            "displayDirections": true
+            "value": "realCost",
+            "displayDirections": true,
+            "applyForApi": false
           }
         ],
         "excludedTypes": [
