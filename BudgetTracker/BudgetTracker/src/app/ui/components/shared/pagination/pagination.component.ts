@@ -47,6 +47,7 @@ export class PaginationComponent implements OnInit {
     this.page = this.getPage();
     this.disablePrevious = this.page <= 1;
     this.disableNext = this.page == this.pageCount;
+    this.disableFully = this.disablePrevious && this.disableNext;
   }
 
   protected onPageChanged(): void {

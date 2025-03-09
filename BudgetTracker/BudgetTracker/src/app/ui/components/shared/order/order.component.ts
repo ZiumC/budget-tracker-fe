@@ -68,6 +68,7 @@ export class OrderComponent implements OnInit {
     const selectedOrderType = this.orderTypes[orderByIndex];
     const selectedOrderDirection = this.orderDirections[orderDirectionIndex];
 
+    this.selectedOrderByIndex = orderByIndex;
     return {
       orderType: selectedOrderType,
       orderDirection: selectedOrderDirection
