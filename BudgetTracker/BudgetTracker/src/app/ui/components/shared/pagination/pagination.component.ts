@@ -11,7 +11,7 @@ export class PaginationComponent implements OnInit {
   @Input() displayPageSize: boolean;
   @Input() pageSizeOptions: number[];
   @Input() disableFully: boolean;
-  @Output() pageSizeEvent = new EventEmitter<number>;
+  @Output() pageSizeEvent = new EventEmitter<number>();
   @Output() pageEvent = new EventEmitter<number>();
   protected page: number;
   protected pageSize: number;
@@ -44,9 +44,10 @@ export class PaginationComponent implements OnInit {
       this.disableFully = false;
     }
 
+    this.page = this.getPage();
     this.disablePrevious = this.page <= 1;
     this.disableNext = this.page == this.pageCount;
-    this.page = this.getPage();
+    this.disableFully = this.disablePrevious && this.disableNext;
   }
 
   protected onPageChanged(): void {

@@ -4,6 +4,7 @@ export class RequestModel {
   fromDate: string | null;
   toDate: string | null;
   orderBy: string | null;
+  order: string | null;
 
   public constructor(init?: Partial<RequestModel>) {
     Object.assign(this, init);

@@ -80,10 +80,11 @@
                        [ngIfElse]="errorIncomesBlock">
             <div class="mb-3">
               <app-order [name]="'income-order'"
-                         [orderTypes]="[
-                            ORDER_TYPES.DATE_UPDATED,
-                            ORDER_TYPES.WAGE,
-                            ORDER_TYPES.SURPLUS_FIRST]">
+                         [orderTypes]="appConfig.request.order.incomeTypes"
+                         [excludedOrderTypes]="appConfig.request.order.excludedTypes"
+                         [orderDirections]="appConfig.request.order.orderDirections"
+                         (orderByEvent)="onOrderEvent($event, true)"
+                         (orderDirectionEvent)="onOrderEvent($event, true)">
 
               </app-order>
             </div>
@@ -209,13 +210,11 @@
                        [ngIfElse]="errorPaymentsBlock">
             <div class="mb-3">
               <app-order [name]="'payment-order'"
-                         [orderTypes]="[
-                            ORDER_TYPES.DATE_UPDATED,
-                            ORDER_TYPES.PRICE,
-                            ORDER_TYPES.REFUND,
-                            ORDER_TYPES.REAL_COST,
-                            ORDER_TYPES.PAID_FIRST]">
-
+                         [orderTypes]="appConfig.request.order.paymentTypes"
+                         [excludedOrderTypes]="appConfig.request.order.excludedTypes"
+                         [orderDirections]="appConfig.request.order.orderDirections"
+                         (orderByEvent)="onOrderEvent($event, false)"
+                         (orderDirectionEvent)="onOrderEvent($event, false)">
               </app-order>
             </div>
             @for (payment of paymentsDto; track payment) {

@@ -71,12 +71,84 @@
         "defaultPage": 1,
         "defaultBudgetsPageSize": 36,
         "defaultPageSizeOptions": [
-          6,
           9,
-          12
+          12,
+          15
+        ]
+      },
+      "order": {
+        "incomeTypes": [
+          {
+            "name": "date updated",
+            "value": "dateUpdated",
+            "displayDirections": true,
+            "applyForApi": true
+          },
+          {
+            "name": "wage",
+            "value": "wage",
+            "displayDirections": true,
+            "applyForApi": true
+          },
+          {
+            "name": "surplus first",
+            "value": "surplusFirst",
+            "displayDirections": false,
+            "applyForApi": true
+          }
         ],
-        "incomesPageSize": 8,
-        "paymentsPageSize": 8
+        "paymentTypes": [
+          {
+            "name": "date updated",
+            "value": "dateUpdated",
+            "displayDirections": true,
+            "applyForApi": true
+          },
+          {
+            "name": "price",
+            "value": "price",
+            "displayDirections": true,
+            "applyForApi": true
+          },
+          {
+            "name": "refund",
+            "value": "refund",
+            "displayDirections": true,
+            "applyForApi": true
+          },
+          {
+            "name": "paid first",
+            "value": "paidFirst",
+            "displayDirections": false,
+            "applyForApi": true
+          },
+          {
+            "name": "real cost",
+            "value": "realCost",
+            "displayDirections": true,
+            "applyForApi": false
+          }
+        ],
+        "excludedTypes": [
+          {
+            "name": "paid first",
+            "displayDirections": false
+          },
+          {
+            "name": "surplus first",
+            "displayDirections": false
+          }
+        ],
+        "orderDirections": [
+          {
+            "name": "ascending",
+            "value": "ASC"
+          },
+          {
+            "name": "descending",
+            "value": "DESC"
+          }
+        ]
       },
       "cookies": {
         "names": {

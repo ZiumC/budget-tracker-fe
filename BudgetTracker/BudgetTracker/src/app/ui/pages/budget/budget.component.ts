@@ -8,8 +8,8 @@ import {HttpService} from "../../../services/http/http.service";
 import {ActivatedRoute, Params, Router} from "@angular/router";
 import {HttpResponse} from "@angular/common/http";
 import {SubscriptionUtils} from "../../../util/subscription.utils";
-import {SortIncome, SortPayment} from "../../../util/sort.utils";
-import {ORDER_TYPES} from "../../components/shared/order/order.component";
+import {SortPayment} from "../../../util/sort.utils";
+import {OrderOptions} from "../../components/shared/order/order.component";
 import {format, subtract} from "../../../util/number.util";
 import {GetPaymentDto, PaymentStatusDto} from "../../../models/dto/payment.model.dto";
 import {GetIncomeDto} from "../../../models/dto/income.model.dto";
@@ -31,7 +31,6 @@ export class BudgetComponent implements OnInit, OnDestroy {
   protected readonly format = format;
   protected readonly subtract = subtract;
   protected readonly formatString = formatString;
-  protected readonly ORDER_TYPES = ORDER_TYPES;
   protected readonly DateUtils = DateUtil;
   protected readonly SpinnerSize = SpinnerSize;
   protected appConfig: AppConfig;
@@ -88,16 +87,13 @@ export class BudgetComponent implements OnInit, OnDestroy {
 
     this.incomeRequestModel = new RequestModel({
       page: this.appConfig.request.pagination.defaultPage,
-      pageSize: this.appConfig.request.pagination.incomesPageSize,
+      pageSize: this.appConfig.request.pagination.defaultPageSizeOptions[0],
     })
 
     this.paymentRequestModel = new RequestModel({
       page: this.appConfig.request.pagination.defaultPage,
-      pageSize: this.appConfig.request.pagination.paymentsPageSize,
+      pageSize: this.appConfig.request.pagination.defaultPageSizeOptions[0],
     })
-
-    this.incomeTotalPages = 0;
-    this.paymentTotalPages = 0;
 
     this.activatedRoute.queryParams.subscribe((params: Params): void => {
       this.idBudget = params['id'];
@@ -122,6 +118,9 @@ export class BudgetComponent implements OnInit, OnDestroy {
         }
       })
     )
+    this.defaultOrderParams();
+    this.getIncomeTotalPages();
+    this.getPaymentTotalPages();
 
     this.getBudgetIncomes();
     this.getBudgetPayments();
@@ -148,12 +147,12 @@ export class BudgetComponent implements OnInit, OnDestroy {
 
   protected onPageSizeEvent(pageSize: number, isIncome: boolean): void {
     if (isIncome) {
-      this.incomeRequestModel.pageSize = pageSize;
       this.incomeRequestModel.page = this.appConfig.request.pagination.defaultPage;
+      this.incomeRequestModel.pageSize = pageSize;
       this.onRefreshIncome();
     } else {
-      this.paymentRequestModel.pageSize = pageSize;
       this.paymentRequestModel.page = this.appConfig.request.pagination.defaultPage;
+      this.paymentRequestModel.pageSize = pageSize;
       this.onRefreshPayment();
     }
   }
@@ -165,6 +164,35 @@ export class BudgetComponent implements OnInit, OnDestroy {
     } else {
       this.paymentRequestModel.page = page;
       this.onRefreshPayment();
+    }
+  }
+
+  protected onOrderEvent(orderOptions: OrderOptions, isIncome: boolean): void {
+    if (isIncome) {
+      if (orderOptions.orderType.applyForApi) {
+        this.incomeRequestModel.orderBy = orderOptions.orderType.value;
+        if (orderOptions.orderType.displayDirections) {
+          this.incomeRequestModel.order = orderOptions.orderDirection.value;
+        } else {
+          this.incomeRequestModel.order = null;
+        }
+        this.onRefreshIncome();
+      }
+    } else {
+      if (orderOptions.orderType.applyForApi) {
+        this.paymentRequestModel.orderBy = orderOptions.orderType.value;
+        if (orderOptions.orderType.displayDirections) {
+          this.paymentRequestModel.order = orderOptions.orderDirection!.value;
+        } else {
+          this.paymentRequestModel.order = null;
+        }
+        this.onRefreshPayment();
+      } else {
+        const isAscending = orderOptions.orderDirection.value ==
+          this.appConfig.request.order.orderDirections[0].value;
+
+        this.paymentsDto = SortPayment.realCost(this.paymentsDto, isAscending);
+      }
     }
   }
 
@@ -200,7 +228,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
         this.incomeRequestModel,
         this.idBudget).subscribe({
         next: (response: HttpResponse<GetIncomeDto[]>): void => {
-          this.incomesDto = SortIncome.surplusFirst(response.body);
+          this.incomesDto = response.body;
           this.responseModels.incomes.statusCode = response.status;
         },
         error: (err): void => {
@@ -225,7 +253,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
         this.paymentRequestModel,
         this.idBudget).subscribe({
         next: (response: HttpResponse<GetPaymentDto[]>): void => {
-          this.paymentsDto = SortPayment.paidFirst(response.body);
+          this.paymentsDto = response.body;
           this.responseModels.payments.statusCode = response.status;
         },
         error: (err): void => {
@@ -305,5 +333,17 @@ export class BudgetComponent implements OnInit, OnDestroy {
     } else {
       this.loaders.budget = isLoaded;
     }
+  }
+
+  private defaultOrderParams(): void {
+    this.incomeRequestModel.orderBy =
+      this.appConfig.request.order.incomeTypes[0].value;
+    this.incomeRequestModel.order =
+      this.appConfig.request.order.orderDirections[0].value;
+
+    this.paymentRequestModel.orderBy =
+      this.appConfig.request.order.paymentTypes[0].value;
+    this.paymentRequestModel.order =
+      this.appConfig.request.order.orderDirections[0].value;
   }
 }

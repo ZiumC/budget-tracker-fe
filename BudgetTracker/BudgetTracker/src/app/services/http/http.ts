@@ -28,6 +28,7 @@ export class UrlApi {
     const fromDate = requestParamModel.fromDate;
     const toDate = requestParamModel.toDate;
     const orderBy = requestParamModel.orderBy;
+    const order = requestParamModel.order;
 
     let urlResult = this.budgetController() +
       "?page=" + page + "&pageSize=" + pageSize;
@@ -42,6 +43,10 @@ export class UrlApi {
 
     if (orderBy) {
       urlResult = urlResult + "&orderBy=" + orderBy;
+    }
+
+    if (order) {
+      urlResult = urlResult + "&order=" + order;
     }
 
     return urlResult;
@@ -71,6 +76,7 @@ export class UrlApi {
     const fromDate = requestParam.fromDate;
     const toDate = requestParam.toDate;
     const orderBy = requestParam.orderBy;
+    const order = requestParam.order;
 
     baseUrl = baseUrl + "?page=" + page + "&pageSize=" + pageSize;
 
@@ -86,6 +92,10 @@ export class UrlApi {
       baseUrl = baseUrl + "&orderBy=" + orderBy;
     }
 
+    if (order) {
+      baseUrl = baseUrl + "&order=" + order;
+    }
+
     return baseUrl;
   }
 
@@ -96,6 +106,7 @@ export class UrlApi {
     const fromDate = requestParam.fromDate;
     const toDate = requestParam.toDate;
     const orderBy = requestParam.orderBy;
+    const order = requestParam.order;
 
     let urlResult = this.budgetId(idBudget) + this.ACTIONS.PAYMENTS +
       "?page=" + page + "&pageSize=" + pageSize;
@@ -110,6 +121,10 @@ export class UrlApi {
 
     if (orderBy) {
       urlResult = urlResult + "&orderBy=" + orderBy;
+    }
+
+    if (order) {
+      urlResult = urlResult + "&order=" + order;
     }
 
     return urlResult;
