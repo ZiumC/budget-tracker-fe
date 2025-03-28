@@ -48,6 +48,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
   protected paymentTotalPages: number | undefined;
   protected loaders: any;
   public innerWidth: any;
+  protected refreshIncomes: boolean;
 
   constructor(
     private httpService: HttpService,
@@ -119,10 +120,10 @@ export class BudgetComponent implements OnInit, OnDestroy {
       })
     )
     this.defaultOrderParams();
-    this.getIncomeTotalPages();
+    // this.getIncomeTotalPages();
     this.getPaymentTotalPages();
 
-    this.getBudgetIncomes();
+    // this.getBudgetIncomes();
     this.getBudgetPayments();
   }
 
@@ -132,8 +133,8 @@ export class BudgetComponent implements OnInit, OnDestroy {
   }
 
   protected onRefreshIncome(): void {
-    this.markIncomesAsLoaded(false);
-    this.getBudgetIncomes();
+    // this.markIncomesAsLoaded(false);
+    // this.getBudgetIncomes();
   }
 
   protected onRefreshPayment(): void {

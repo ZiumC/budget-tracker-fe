@@ -28,6 +28,7 @@ import {ConfigService} from "./services/config/config.service";
 import {firstValueFrom} from "rxjs";
 import {Config} from "./models/config/config";
 import {DatepickerFormatter} from "./util/date.util";
+import { IncomeComponent } from './ui/components/page/budget/income/income.component';
 
 export function loadConfig(configService: ConfigService): () => Promise<Config> {
   return (): Promise<Config> => firstValueFrom(configService.loadConfig());
@@ -53,6 +54,7 @@ export function loadConfig(configService: ConfigService): () => Promise<Config> 
     ErrorModalComponent,
     OrderComponent,
     TimerComponent,
+    IncomeComponent,
   ],
   imports: [
     BrowserModule,
