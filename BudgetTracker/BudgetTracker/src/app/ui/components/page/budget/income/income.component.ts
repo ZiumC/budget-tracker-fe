@@ -1,4 +1,7 @@
-import {Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {
+  Component, EventEmitter, Input, OnDestroy, OnInit, Output,
+  ViewChild
+} from '@angular/core';
 import {formatString} from "../../../../../util/string.utils";
 import {DateUtil} from "../../../../../util/date.util";
 import {format} from "../../../../../util/number.util";
@@ -24,8 +27,9 @@ import {PageDto} from "../../../../../models/dto/page.model.dto";
 })
 export class IncomeComponent implements OnInit, OnDestroy {
   @ViewChild('errorModal') errorModal: any;
+  @ViewChild('incomeModal') incomeModal: any;
   @Input() idBudget: string;
-  @Input() refreshIncomes: boolean;
+  @Input() refreshIncomesEvent: boolean;
   @Output() deleteIncomeEvent = new EventEmitter<boolean>();
   protected readonly formatString = formatString;
   protected readonly DateUtils = DateUtil;
@@ -67,6 +71,10 @@ export class IncomeComponent implements OnInit, OnDestroy {
     this.getIncomes();
     this.defaultOrderParams();
     this.getIncomeTotalPages();
+  }
+
+  openModal(): void {
+    this.incomeModal.open();
   }
 
   ngOnDestroy(): void {

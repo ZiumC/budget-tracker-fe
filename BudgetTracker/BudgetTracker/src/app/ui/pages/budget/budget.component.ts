@@ -48,7 +48,6 @@ export class BudgetComponent implements OnInit, OnDestroy {
   protected paymentTotalPages: number | undefined;
   protected loaders: any;
   public innerWidth: any;
-  protected refreshIncomes: boolean;
 
   constructor(
     private httpService: HttpService,

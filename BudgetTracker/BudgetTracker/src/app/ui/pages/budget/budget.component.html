@@ -39,14 +39,14 @@
                       (click)="paymentModal.open()">
                 <i class="bi bi-coin"></i> Payment
               </button>
-                            <button type="button"
-                                    class="btn btn-success"
-                                    data-bs-toggle="tooltip"
-                                    data-bs-placement="bottom"
-                                    title="Add income"
-                                    (click)="incomeModal.open()">
-                              <i class="bi bi-cash-coin"></i> Income
-                            </button>
+              <button type="button"
+                      class="btn btn-success"
+                      data-bs-toggle="tooltip"
+                      data-bs-placement="bottom"
+                      title="Add income"
+                      (click)="appIncome.openModal()">
+                <i class="bi bi-cash-coin"></i> Income
+              </button>
               <button type="button"
                       class="btn btn-danger"
                       data-bs-toggle="tooltip"
@@ -71,133 +71,11 @@
         Incomes
       </div>
       <div id="incomes-card" class="card-body">
-        <!--        <ng-template [ngIf]="!loaders.incomes"-->
-        <!--                     [ngIfElse]="loadedIncomesBlock">-->
-        <!--          <app-spinner-grow></app-spinner-grow>-->
-        <!--        </ng-template>-->
-        <!--        <ng-template #loadedIncomesBlock>-->
-        <app-income [idBudget]="idBudget"
+        <app-income #appIncome
+                    [idBudget]="idBudget"
                     (deleteIncomeEvent)="onRedirectToIndex()">
 
         </app-income>
-        <!--          <ng-template [ngIf]="responseModels.incomes.statusCode == appConfig.response.required.incomeStatus"-->
-        <!--                       [ngIfElse]="errorIncomesBlock">-->
-        <!--            <div class="mb-3">-->
-        <!--              <app-order [name]="'income-order'"-->
-        <!--                         [orderTypes]="appConfig.request.order.incomeTypes"-->
-        <!--                         [excludedOrderTypes]="appConfig.request.order.excludedTypes"-->
-        <!--                         [orderDirections]="appConfig.request.order.orderDirections"-->
-        <!--                         (orderByEvent)="onOrderEvent($event, true)"-->
-        <!--                         (orderDirectionEvent)="onOrderEvent($event, true)">-->
-
-        <!--              </app-order>-->
-        <!--            </div>-->
-        <!--            @for (income of incomesDto; track income) {-->
-        <!--              <div ngbAccordion>-->
-        <!--                <div ngbAccordionItem-->
-        <!--                     [collapsed]="selectedIncome !== income"-->
-        <!--                     [class.surplus-border]="income.isSurplus">-->
-        <!--                  <h2 ngbAccordionHeader>-->
-        <!--                    <button ngbAccordionButton-->
-        <!--                            (click)="selectedIncome = income"-->
-        <!--                            class="light-gray-bg accordion-button-header">-->
-        <!--                      <table>-->
-        <!--                        <tr class="table-header">-->
-        <!--                          <th>Name</th>-->
-        <!--                          <th>Income (PLN)</th>-->
-        <!--                          <th [style.display]="innerWidth > appConfig.mobileWidth ? '' : 'none'">-->
-        <!--                            Appropriation-->
-        <!--                          </th>-->
-        <!--                          <th [style.display]="innerWidth > appConfig.mobileWidth ? '' : 'none'">-->
-        <!--                            Date created-->
-        <!--                          </th>-->
-        <!--                        </tr>-->
-        <!--                        <tr>-->
-        <!--                          <td>{{ income.name }}</td>-->
-        <!--                          <td>{{ format(income.wage) }}</td>-->
-        <!--                          <td [style.display]="innerWidth > appConfig.mobileWidth ? '' : 'none'">-->
-        <!--                            #Category-->
-        <!--                          </td>-->
-        <!--                          <td [style.display]="innerWidth > appConfig.mobileWidth ? '' : 'none'">-->
-        <!--                            {{ DateUtils.format(income.dateUpdated) }}-->
-        <!--                          </td>-->
-        <!--                        </tr>-->
-        <!--                      </table>-->
-        <!--                    </button>-->
-        <!--                  </h2>-->
-        <!--                  <div ngbAccordionCollapse>-->
-        <!--                    <div ngbAccordionBody class="text-center">-->
-        <!--                      <div class="row">-->
-        <!--                        <div [style.display]="income.isSurplus ? 'block' : 'none'"-->
-        <!--                             class="col-lg-6 mb-2 condition-container">-->
-        <!--                          <p>Income is surplus</p>-->
-        <!--                        </div>-->
-        <!--                        <div [style.display]="innerWidth > appConfig.mobileWidth ? 'none' : ''"-->
-        <!--                             class="mb-3 condition-container">-->
-        <!--                          <div class="form-group">-->
-        <!--                            <label for="payment-date-updated">Category-->
-        <!--                            </label>-->
-        <!--                            <input type="text"-->
-        <!--                                   id="income-category"-->
-        <!--                                   class="form-control mb-2"-->
-        <!--                                   value="#category"-->
-        <!--                                   disabled>-->
-        <!--                            <label for="payment-date-updated">Date updated-->
-        <!--                            </label>-->
-        <!--                            <input type="text"-->
-        <!--                                   id="income-date-updated"-->
-        <!--                                   class="form-control mb-2"-->
-        <!--                                   value="{{DateUtils.formatWithTime(income.dateUpdated)}}"-->
-        <!--                                   disabled>-->
-        <!--                          </div>-->
-        <!--                        </div>-->
-        <!--                        <div [class.col-lg-6]="income.isSurplus"-->
-        <!--                             class="buttons-container">-->
-        <!--                          <div class="income-buttons text-center">-->
-        <!--                            <button-->
-        <!--                              type="button"-->
-        <!--                              class="btn btn-warning"-->
-        <!--                              data-bs-toggle="tooltip"-->
-        <!--                              data-bs-placement="bottom"-->
-        <!--                              title="Edit income"-->
-        <!--                              (click)="incomeModal.open(income)">-->
-        <!--                              <i class="bi bi-pencil-square"></i> Edit-->
-        <!--                            </button>-->
-        <!--                            <button-->
-        <!--                              type="button"-->
-        <!--                              class="btn btn-danger"-->
-        <!--                              data-bs-toggle="tooltip"-->
-        <!--                              data-bs-placement="bottom"-->
-        <!--                              title="Delete income"-->
-        <!--                              (click)="deleteModal.openWithIncome(income)">-->
-        <!--                              <i class="bi bi-trash3-fill"></i> Delete-->
-        <!--                            </button>-->
-        <!--                          </div>-->
-        <!--                        </div>-->
-        <!--                      </div>-->
-        <!--                    </div>-->
-        <!--                  </div>-->
-        <!--                </div>-->
-        <!--              </div>-->
-        <!--            }-->
-        <!--            @if (incomeTotalPages! > 0) {-->
-        <!--              <app-pagination [name]="'income-paginate'"-->
-        <!--                              [pageCount]="incomeTotalPages!"-->
-        <!--                              [displayPageSize]="true"-->
-        <!--                              [pageSizeOptions]="appConfig.request.pagination.defaultPageSizeOptions"-->
-        <!--                              (pageSizeEvent)="onPageSizeEvent($event, true)"-->
-        <!--                              (pageEvent)="onPageEvent($event, true)">-->
-
-        <!--              </app-pagination>-->
-        <!--            }-->
-        <!--          </ng-template>-->
-        <!--          <ng-template #errorIncomesBlock>-->
-        <!--            <app-error [response]="responseModels.incomes"-->
-        <!--                       [notFoundErrorText]="formatString(appConfig.form.messages.notFound,'Incomes data')">-->
-
-        <!--            </app-error>-->
-        <!--          </ng-template>-->
-        <!--        </ng-template>-->
       </div>
     </div>
     <div class="card text-center mb-lg-3">
@@ -382,11 +260,6 @@
         </ng-template>
       </div>
     </div>
-        <app-income-modal #incomeModal
-                          [idBudget]="idBudget"
-                          (refreshIncomeEvent)="onRefreshIncome()">
-
-        </app-income-modal>
     <app-payment-modal #paymentModal
                        [idBudget]="idBudget"
                        (refreshPaymentEvent)="onRefreshPayment()">
