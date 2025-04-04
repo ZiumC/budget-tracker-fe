@@ -1,5 +1,5 @@
 import {
-  Component, Input, OnDestroy, OnInit,
+  Component, HostListener, Input, OnDestroy, OnInit,
   ViewChild
 } from '@angular/core';
 import {formatString} from "../../../../../util/string.utils";
@@ -73,6 +73,11 @@ export class IncomeComponent implements OnInit, OnDestroy {
 
   openModal(): void {
     this.incomeModal.open();
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(): void {
+    this.innerWidth = window.innerWidth;
   }
 
   ngOnDestroy(): void {

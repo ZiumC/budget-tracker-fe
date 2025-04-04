@@ -1,4 +1,4 @@
-import {Component, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, HostListener, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {format, subtract} from "../../../../../util/number.util";
 import {DateUtil} from "../../../../../util/date.util";
 import {formatString} from "../../../../../util/string.utils";
@@ -71,6 +71,11 @@ export class PaymentComponent implements OnInit, OnDestroy {
 
   openModal(): void {
     this.paymentModal.open();
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(): void {
+    this.innerWidth = window.innerWidth;
   }
 
   ngOnDestroy(): void {
