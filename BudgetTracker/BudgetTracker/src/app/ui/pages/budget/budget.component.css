@@ -1,13 +1,3 @@
-.surplus-border {
-  border: 0.2ex solid #3d8bfd;
-  border-radius: 0.5ex;
-}
-
-.payment-border {
-  border: 0.2ex solid #479f76;
-  border-radius: 0.5ex;
-}
-
 .condition-container {
   margin-top: auto;
   margin-bottom: auto;
@@ -26,35 +16,8 @@
   justify-items: center;
 }
 
-.payment-buttons {
-  display: grid;
-  justify-items: center;
-  grid-template-columns: auto auto auto;
-  gap: 3ex;
-  grid-auto-flow: row;
-}
-
 label {
   display: table-row;
-}
-
-#incomes-card, #payments-card {
-  background-color: var(--bs-card-cap-bg);
-}
-
-@media only screen and (max-width: 770px) {
-  table tr th:first-child {
-    width: 60%;
-    min-width: 60%;
-  }
-
-  .table-header {
-    font-size: 1.3ex;
-  }
-
-  tr td {
-    font-size: 1.75ex;
-  }
 }
 
 @media only screen and (max-width: 475px) {
@@ -62,23 +25,7 @@ label {
     gap: 0;
   }
 
-  .payment-buttons {
-    gap: 0;
-  }
-
-  .income-buttons {
-    gap: 0;
-  }
-
   .budget-buttons button {
-    font-size: 1.75ex;
-  }
-
-  .payment-buttons button {
-    font-size: 1.75ex;
-  }
-
-  .income-buttons button {
     font-size: 1.75ex;
   }
 }

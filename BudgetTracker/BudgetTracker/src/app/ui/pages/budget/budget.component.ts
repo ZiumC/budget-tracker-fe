@@ -118,22 +118,14 @@ export class BudgetComponent implements OnInit, OnDestroy {
         }
       })
     )
-    this.defaultOrderParams();
-    // this.getIncomeTotalPages();
     this.getPaymentTotalPages();
 
-    // this.getBudgetIncomes();
     this.getBudgetPayments();
   }
 
   @HostListener('window:resize', ['$event'])
   onResize(): void {
     this.innerWidth = window.innerWidth;
-  }
-
-  protected onRefreshIncome(): void {
-    // this.markIncomesAsLoaded(false);
-    // this.getBudgetIncomes();
   }
 
   protected onRefreshPayment(): void {
@@ -143,108 +135,6 @@ export class BudgetComponent implements OnInit, OnDestroy {
 
   protected onRedirectToIndex(): void {
     this.router.navigate(['/']);
-  }
-
-  protected onPageSizeEvent(pageSize: number, isIncome: boolean): void {
-    if (isIncome) {
-      this.incomeRequestModel.page = this.appConfig.request.pagination.defaultPage;
-      this.incomeRequestModel.pageSize = pageSize;
-      this.onRefreshIncome();
-    } else {
-      this.paymentRequestModel.page = this.appConfig.request.pagination.defaultPage;
-      this.paymentRequestModel.pageSize = pageSize;
-      this.onRefreshPayment();
-    }
-  }
-
-  protected onPageEvent(page: number, isIncome: boolean): void {
-    if (isIncome) {
-      this.incomeRequestModel.page = page;
-      this.onRefreshIncome();
-    } else {
-      this.paymentRequestModel.page = page;
-      this.onRefreshPayment();
-    }
-  }
-
-  protected onOrderEvent(orderOptions: OrderOptions, isIncome: boolean): void {
-    if (isIncome) {
-      if (orderOptions.orderType.applyForApi) {
-        this.incomeRequestModel.orderBy = orderOptions.orderType.value;
-        if (orderOptions.orderType.displayDirections) {
-          this.incomeRequestModel.order = orderOptions.orderDirection.value;
-        } else {
-          this.incomeRequestModel.order = null;
-        }
-        this.onRefreshIncome();
-      }
-    } else {
-      if (orderOptions.orderType.applyForApi) {
-        this.paymentRequestModel.orderBy = orderOptions.orderType.value;
-        if (orderOptions.orderType.displayDirections) {
-          this.paymentRequestModel.order = orderOptions.orderDirection!.value;
-        } else {
-          this.paymentRequestModel.order = null;
-        }
-        this.onRefreshPayment();
-      } else {
-        const isAscending = orderOptions.orderDirection.value ==
-          this.appConfig.request.order.orderDirections[0].value;
-
-        this.paymentsDto = SortPayment.realCost(this.paymentsDto, isAscending);
-      }
-    }
-  }
-
-  protected patchPaymentStatus(isPaid: boolean, idPayment: string): void {
-    this.loaders.paymentStatusBtn = true;
-    this.subscriptions.push(
-      this.httpService.patchPaymentStatus(
-        {
-          isPaid: isPaid
-        } as PaymentStatusDto,
-        idPayment
-      ).subscribe({
-        next: (): void => {
-          this.paymentsDto!
-            .find((payment): boolean => payment.id == idPayment)!.isPaid! = isPaid;
-        },
-        error: (err): void => {
-          const response = generateErrorModel(err);
-          this.responseModels.paymentStatus = response;
-          this.errorModal.open(response);
-          this.loaders.paymentStatusBtn = false;
-        },
-        complete: (): void => {
-          this.loaders.paymentStatusBtn = false;
-        }
-      })
-    )
-  }
-
-  private getBudgetIncomes(): void {
-    this.subscriptions.push(
-      this.httpService.getBudgetIncomes(
-        this.incomeRequestModel,
-        this.idBudget).subscribe({
-        next: (response: HttpResponse<GetIncomeDto[]>): void => {
-          this.incomesDto = response.body;
-          this.responseModels.incomes.statusCode = response.status;
-        },
-        error: (err): void => {
-          const response = generateErrorModel(err);
-          this.responseModels.incomes = response;
-          if (response.statusCode != 404) {
-            this.errorModal.open(response);
-          }
-          this.markIncomesAsLoaded(true);
-        },
-        complete: (): void => {
-          this.getIncomeTotalPages();
-          this.markIncomesAsLoaded(true);
-        }
-      })
-    )
   }
 
   private getBudgetPayments(): void {
@@ -267,18 +157,6 @@ export class BudgetComponent implements OnInit, OnDestroy {
         complete: (): void => {
           this.getPaymentTotalPages();
           this.markPaymentsAsLoaded(true);
-        }
-      })
-    )
-  }
-
-  private getIncomeTotalPages(): void {
-    this.subscriptions.push(
-      this.httpService.getIncomePages(
-        this.incomeRequestModel,
-        this.idBudget).subscribe({
-        next: (response: HttpResponse<PageDto>): void => {
-          this.incomeTotalPages = response.body!.pages;
         }
       })
     )
@@ -309,19 +187,6 @@ export class BudgetComponent implements OnInit, OnDestroy {
     }
   }
 
-  private markIncomesAsLoaded(isLoaded: boolean): void {
-    if (isLoaded) {
-      new TimerUtils(this.appConfig.animation.duration.default).start()
-        .subscribe(finished => {
-          if (finished) {
-            this.loaders.incomes = isLoaded;
-          }
-        });
-    } else {
-      this.loaders.incomes = isLoaded;
-    }
-  }
-
   private markBudgetAsLoaded(isLoaded: boolean): void {
     if (isLoaded) {
       new TimerUtils(this.appConfig.animation.duration.default).start()
@@ -333,17 +198,5 @@ export class BudgetComponent implements OnInit, OnDestroy {
     } else {
       this.loaders.budget = isLoaded;
     }
-  }
-
-  private defaultOrderParams(): void {
-    this.incomeRequestModel.orderBy =
-      this.appConfig.request.order.incomeTypes[0].value;
-    this.incomeRequestModel.order =
-      this.appConfig.request.order.orderDirections[0].value;
-
-    this.paymentRequestModel.orderBy =
-      this.appConfig.request.order.paymentTypes[0].value;
-    this.paymentRequestModel.order =
-      this.appConfig.request.order.orderDirections[0].value;
   }
 }

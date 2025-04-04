@@ -1,5 +1,5 @@
 import {
-  Component, EventEmitter, Input, OnDestroy, OnInit, Output,
+  Component, Input, OnDestroy, OnInit,
   ViewChild
 } from '@angular/core';
 import {formatString} from "../../../../../util/string.utils";
@@ -29,8 +29,6 @@ export class IncomeComponent implements OnInit, OnDestroy {
   @ViewChild('errorModal') errorModal: any;
   @ViewChild('incomeModal') incomeModal: any;
   @Input() idBudget: string;
-  @Input() refreshIncomesEvent: boolean;
-  @Output() deleteIncomeEvent = new EventEmitter<boolean>();
   protected readonly formatString = formatString;
   protected readonly DateUtils = DateUtil;
   protected readonly format = format;
@@ -166,9 +164,3 @@ export class IncomeComponent implements OnInit, OnDestroy {
       this.appConfig.request.order.orderDirections[0].value;
   }
 }
-
-
-/*
-need to figure out how to send event
-from PARENT to CHILD component
- */
