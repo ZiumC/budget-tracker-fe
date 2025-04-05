@@ -77,6 +77,17 @@
         </app-income>
       </div>
     </div>
+    <div class="card text-center mb-3">
+      <div class="card-header">
+        Planned payments
+      </div>
+      <div id="planned-payments-card" class="card-body">
+        <app-planned-payment #appPlannedPayment
+                    [idBudget]="idBudget">
+
+        </app-planned-payment>
+      </div>
+    </div>
     <div class="card text-center mb-lg-3">
       <div class="card-header">
         Payments
