@@ -111,4 +111,6 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy {
       this.plannedPaymentLoader = isLoaded;
     }
   }
+
+  protected readonly subtract = subtract;
 }

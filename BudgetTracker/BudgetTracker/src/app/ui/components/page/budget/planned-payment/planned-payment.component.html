@@ -20,8 +20,9 @@
                   <th [style.display]="innerWidth > appConfig.mobileWidth ? '' : 'none'">
                     Estimated (PLN)
                   </th>
+                  <th> Real price (PLN)</th>
                   <th [style.display]="innerWidth > appConfig.mobileWidth ? '' : 'none'">
-                    Real price (PLN)
+                    Deviation (PLN)
                   </th>
                 </tr>
                 <tr>
@@ -29,8 +30,9 @@
                   <td [style.display]="innerWidth > appConfig.mobileWidth ? '' : 'none'">
                     {{ format(plannedPayment.estimated) }}
                   </td>
+                  <td> {{ format(plannedPayment.realPrice) }}</td>
                   <td [style.display]="innerWidth > appConfig.mobileWidth ? '' : 'none'">
-                    {{ format(plannedPayment.realPrice) }}
+                    {{ format(subtract(plannedPayment.estimated, plannedPayment.realPrice)) }}
                   </td>
                 </tr>
               </table>
@@ -42,43 +44,43 @@
                 <div class="col-lg-6">
                   <div [style.display]="plannedPayment.isPaid ? 'block' : 'none'"
                        class="mb-2 condition-container text-center">
-                    <h6>Payment is paid</h6>
+                    <h6>Planned payment is paid</h6>
                   </div>
                   <div class="mb-3 condition-container">
                     <div class="form-group">
                       <div [style.display]="innerWidth > appConfig.mobileWidth ? 'none' : ''">
-                        <label for="payment-price">Estimated (PLN)
+                        <label for="planned-payment-estimated">Estimated (PLN)
                         </label>
                         <input type="text"
-                               id="payment-price"
+                               id="planned-payment-estimated"
                                class="form-control mb-2"
                                value="{{ format(plannedPayment.estimated) }}"
                                disabled>
-                        <label for="payment-refund">Real price (PLN)
+                        <label for="planned-payment-real">Deviation (PLN)
                         </label>
                         <input type="text"
-                               id="payment-refund"
+                               id="planned-payment-real"
                                class="form-control mb-2"
-                               value="{{ format(plannedPayment.realPrice) }}"
+                               value="{{ format(subtract(plannedPayment.estimated, plannedPayment.realPrice)) }}"
                                disabled>
                       </div>
-                      <label for="payment-date-updated">Category
+                      <label for="planned-payment-category">Category
                       </label>
                       <input type="text"
-                             id="payment-category"
+                             id="planned-payment-category"
                              class="form-control mb-2"
                              value="#category"
                              disabled>
-                      <label for="payment-date-updated">Date updated
+                      <label for="planned-payment-date-updated">Date updated
                       </label>
                       <input type="text"
-                             id="payment-date-updated"
+                             id="planned-payment-date-updated"
                              class="form-control mb-2"
                              value="{{DateUtils.formatWithTime(plannedPayment.dateUpdated)}}"
                              disabled>
-                      <label for="payment-comment">Comment</label>
+                      <label for="planned-payment-comment">Comment</label>
                       <textarea type="text"
-                                id="payment-comment"
+                                id="planned-payment-comment"
                                 class="form-control"
                                 value="{{ plannedPayment.comment }}"
                                 disabled>
@@ -87,7 +89,7 @@
                   </div>
                 </div>
                 <div class="col-lg-6 buttons-container">
-                  <div class="payment-buttons text-center">
+                  <div class="planned-payment-buttons text-center">
                   </div>
                 </div>
               </div>
