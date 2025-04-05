@@ -2,11 +2,12 @@ import {HttpClient, HttpResponse} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {TotalPages, UrlApi} from "./http";
 import {Injectable} from "@angular/core";
-import {RequestModel} from "../../models/request.model";
+import {RequestParams} from "../../models/requestParams";
 import {GetIncomeDto, IncomeDto} from "../../models/dto/income.model.dto";
 import {PaymentStatusDto, PaymentDto, GetPaymentDto} from "../../models/dto/payment.model.dto";
 import {BudgetDto, GetBudgetDto} from "../../models/dto/budget.model.dto";
 import {PageDto} from "../../models/dto/page.model.dto";
+import {GetPlannedPaymentDto} from "../../models/dto/planned-payment.model.dto";
 
 @Injectable({
   providedIn: 'root',
@@ -16,7 +17,7 @@ export class HttpService {
   constructor(private httpClient: HttpClient) {
   }
 
-  public getBudgets(requestModel: RequestModel):
+  public getBudgets(requestModel: RequestParams):
     Observable<HttpResponse<GetBudgetDto[]>> {
     return this.httpClient.get<GetBudgetDto[]>(
       UrlApi.budgets(requestModel),
@@ -66,7 +67,7 @@ export class HttpService {
     )
   }
 
-  public getBudgetIncomes(requestParams: RequestModel, idBudget: string):
+  public getBudgetIncomes(requestParams: RequestParams, idBudget: string):
     Observable<HttpResponse<GetIncomeDto[]>> {
     return this.httpClient.get<GetIncomeDto[]>(
       UrlApi.budgetIncomes(requestParams, idBudget),
@@ -74,7 +75,7 @@ export class HttpService {
     );
   }
 
-  public getBudgetPayments(requestParams: RequestModel, idBudget: string):
+  public getBudgetPayments(requestParams: RequestParams, idBudget: string):
     Observable<HttpResponse<GetPaymentDto[]>> {
     return this.httpClient.get<GetPaymentDto[]>(
       UrlApi.budgetPayments(requestParams, idBudget),
@@ -117,7 +118,7 @@ export class HttpService {
     )
   }
 
-  public getIncomePages(requestParams: RequestModel, idBudget: string):
+  public getIncomePages(requestParams: RequestParams, idBudget: string):
     Observable<HttpResponse<PageDto>> {
     return this.httpClient.get<PageDto>(
       UrlApi.budgetDataPages(requestParams, idBudget, TotalPages.INCOMES),
@@ -151,10 +152,18 @@ export class HttpService {
     )
   }
 
-  public getPaymentPages(requestParams: RequestModel, idBudget: string):
+  public getPaymentPages(requestParams: RequestParams, idBudget: string):
     Observable<HttpResponse<PageDto>> {
     return this.httpClient.get<PageDto>(
       UrlApi.budgetDataPages(requestParams, idBudget, TotalPages.PAYMENTS),
+      {observe: 'response'}
+    )
+  }
+
+  public getPlannedPayment(requestParams: RequestParams, idBudget: string):
+    Observable<HttpResponse<GetPlannedPaymentDto[]>> {
+    return this.httpClient.get<GetPlannedPaymentDto[]>(
+      UrlApi.budgetPlannedPayment(requestParams, idBudget),
       {observe: 'response'}
     )
   }

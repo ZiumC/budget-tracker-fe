@@ -4,7 +4,7 @@ import {Subscription} from 'rxjs';
 import {HttpResponse} from '@angular/common/http';
 import {SubscriptionUtils} from '../../../util/subscription.utils';
 import {DatePickerUtil, DateUtil, isInvalidDate} from "../../../util/date.util";
-import {RequestModel} from "../../../models/request.model";
+import {RequestParams} from "../../../models/requestParams";
 import {SpinnerSize} from "../../components/shared/spinner/spinner.component";
 import {DatePicker} from "../../../models/datepicker.model";
 import {TimerUtils} from "../../../util/timer.utils";
@@ -37,7 +37,7 @@ export class IndexComponent implements OnInit, OnDestroy {
   protected budgets: GetBudgetDto[] | null;
   protected budget: GetBudgetDto | null;
   protected subscriptions: Subscription[];
-  protected requestModel: RequestModel;
+  protected requestModel: RequestParams;
   protected fromDatePicker: DatePicker;
   protected toDatePicker: DatePicker;
   protected toCurrentYear: boolean;
@@ -60,7 +60,7 @@ export class IndexComponent implements OnInit, OnDestroy {
       throw Error("Config not provided")
     }
 
-    this.requestModel = new RequestModel();
+    this.requestModel = new RequestParams();
     this.requestModel.page = this.requestConfig.pagination.defaultPage;
     this.requestModel.pageSize = this.requestConfig.pagination.defaultBudgetsPageSize;
 
@@ -241,7 +241,7 @@ export class IndexComponent implements OnInit, OnDestroy {
     )
   }
 
-  private getBudgets(requestParamModel: RequestModel): void {
+  private getBudgets(requestParamModel: RequestParams): void {
     this.subscriptions.push(
       this.httpService.getBudgets(requestParamModel).subscribe({
         next: (response: HttpResponse<GetBudgetDto[]>): void => {
