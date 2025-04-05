@@ -1,4 +1,4 @@
-import {Component, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, HostListener, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {HttpService} from "../../../../../services/http/http.service";
 import {ConfigService} from "../../../../../services/config/config.service";
 import {Subscription} from "rxjs";
@@ -11,6 +11,8 @@ import {ResponseModel} from "../../../../../models/response.model";
 import {generateErrorModel} from "../../../../../util/http.util";
 import {formatString} from "../../../../../util/string.utils";
 import {TimerUtils} from "../../../../../util/timer.utils";
+import {format, subtract} from "../../../../../util/number.util";
+import {DateUtil} from "../../../../../util/date.util";
 
 @Component({
   selector: 'app-planned-payment',
@@ -21,12 +23,17 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy {
   @ViewChild('errorModal') errorModal: any;
   @Input() idBudget: string;
   protected readonly formatString = formatString;
+  protected readonly DateUtils = DateUtil;
+  protected readonly format = format;
   protected subscriptions: Subscription[];
   protected appConfig: AppConfig;
   protected plannedPaymentsDto: GetPlannedPaymentDto[] | null;
+  protected selectedPlannedPayment: GetPlannedPaymentDto;
   protected requestParams: RequestParams;
   protected responseModel: ResponseModel;
+  protected requiredStatusCode: number;
   protected plannedPaymentLoader: boolean;
+  public innerWidth: any;
 
   constructor(
     private httpService: HttpService,
@@ -37,10 +44,12 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy {
     const appCfg = this.configService.getAppConfig();
     if (appCfg) {
       this.appConfig = appCfg;
+      this.requiredStatusCode = appCfg.response.required.plannedPaymentStatus
     } else {
       throw Error("Config not provided")
     }
 
+    this.innerWidth = window.innerWidth;
     this.responseModel = new ResponseModel();
     this.subscriptions = [];
 
@@ -50,6 +59,11 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy {
     })
 
     this.getPlannedPayments();
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(): void {
+    this.innerWidth = window.innerWidth;
   }
 
   ngOnDestroy(): void {

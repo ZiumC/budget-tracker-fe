@@ -3,9 +3,99 @@
   <app-spinner-grow></app-spinner-grow>
 </ng-template>
 <ng-template #loadedPlannedPaymentsBlock>
-  <ng-template [ngIf]="responseModel.statusCode == appConfig.response.required.plannedPaymentStatus"
+  <ng-template [ngIf]="responseModel.statusCode == requiredStatusCode"
                [ngIfElse]="errorPlannedPaymentsBlock">
-    <p>planned payment works!</p>
+    @for (plannedPayment of plannedPaymentsDto; track plannedPayment) {
+      <div ngbAccordion>
+        <div ngbAccordionItem
+             [collapsed]="selectedPlannedPayment !== plannedPayment"
+             [class.payment-border]="plannedPayment.isPaid">
+          <h2 ngbAccordionHeader>
+            <button ngbAccordionButton
+                    (click)="selectedPlannedPayment = plannedPayment"
+                    class="light-gray-bg accordion-button-header">
+              <table>
+                <tr class="table-header">
+                  <th>Name</th>
+                  <th [style.display]="innerWidth > appConfig.mobileWidth ? '' : 'none'">
+                    Estimated (PLN)
+                  </th>
+                  <th [style.display]="innerWidth > appConfig.mobileWidth ? '' : 'none'">
+                    Real price (PLN)
+                  </th>
+                </tr>
+                <tr>
+                  <td>{{ plannedPayment.name }}</td>
+                  <td [style.display]="innerWidth > appConfig.mobileWidth ? '' : 'none'">
+                    {{ format(plannedPayment.estimated) }}
+                  </td>
+                  <td [style.display]="innerWidth > appConfig.mobileWidth ? '' : 'none'">
+                    {{ format(plannedPayment.realPrice) }}
+                  </td>
+                </tr>
+              </table>
+            </button>
+          </h2>
+          <div ngbAccordionCollapse>
+            <div ngbAccordionBody>
+              <div class="row">
+                <div class="col-lg-6">
+                  <div [style.display]="plannedPayment.isPaid ? 'block' : 'none'"
+                       class="mb-2 condition-container text-center">
+                    <h6>Payment is paid</h6>
+                  </div>
+                  <div class="mb-3 condition-container">
+                    <div class="form-group">
+                      <div [style.display]="innerWidth > appConfig.mobileWidth ? 'none' : ''">
+                        <label for="payment-price">Estimated (PLN)
+                        </label>
+                        <input type="text"
+                               id="payment-price"
+                               class="form-control mb-2"
+                               value="{{ format(plannedPayment.estimated) }}"
+                               disabled>
+                        <label for="payment-refund">Real price (PLN)
+                        </label>
+                        <input type="text"
+                               id="payment-refund"
+                               class="form-control mb-2"
+                               value="{{ format(plannedPayment.realPrice) }}"
+                               disabled>
+                      </div>
+                      <label for="payment-date-updated">Category
+                      </label>
+                      <input type="text"
+                             id="payment-category"
+                             class="form-control mb-2"
+                             value="#category"
+                             disabled>
+                      <label for="payment-date-updated">Date updated
+                      </label>
+                      <input type="text"
+                             id="payment-date-updated"
+                             class="form-control mb-2"
+                             value="{{DateUtils.formatWithTime(plannedPayment.dateUpdated)}}"
+                             disabled>
+                      <label for="payment-comment">Comment</label>
+                      <textarea type="text"
+                                id="payment-comment"
+                                class="form-control"
+                                value="{{ plannedPayment.comment }}"
+                                disabled>
+                                </textarea>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-6 buttons-container">
+                  <div class="payment-buttons text-center">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
   </ng-template>
   <ng-template #errorPlannedPaymentsBlock>
     <app-error [response]="responseModel"

@@ -1,0 +1,13 @@
+#payments-card {
+  background-color: var(--bs-card-cap-bg);
+}
+
+.payment-border {
+  border: 0.2ex solid #50479f;
+  border-radius: 0.5ex;
+}
+
+.buttons-container {
+  margin-top: auto;
+  margin-bottom: auto;
+}
