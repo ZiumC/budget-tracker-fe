@@ -161,7 +161,8 @@
       "required": {
         "budgetStatus": 200,
         "incomeStatus": 200,
-        "paymentStatus": 200
+        "paymentStatus": 200,
+        "plannedPaymentStatus": 200
       }
     },
     "budgetLimit": 6,

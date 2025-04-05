@@ -8,7 +8,7 @@ import {HttpService} from "../../../../../services/http/http.service";
 import {ConfigService} from "../../../../../services/config/config.service";
 import {AppConfig} from "../../../../../models/config/config";
 import {ResponseModel} from "../../../../../models/response.model";
-import {RequestModel} from "../../../../../models/request.model";
+import {RequestParams} from "../../../../../models/requestParams";
 import {GetPaymentDto, PaymentStatusDto} from "../../../../../models/dto/payment.model.dto";
 import {generateErrorModel} from "../../../../../util/http.util";
 import {TimerUtils} from "../../../../../util/timer.utils";
@@ -32,7 +32,7 @@ export class PaymentComponent implements OnInit, OnDestroy {
   protected readonly subtract = subtract;
   protected subscriptions: Subscription[];
   protected appConfig: AppConfig;
-  protected paymentRequestModel: RequestModel;
+  protected paymentRequestModel: RequestParams;
   protected paymentResponseModel: ResponseModel;
   protected paymentsDto: GetPaymentDto[] | null;
   protected selectedPayment: GetPaymentDto;
@@ -59,7 +59,7 @@ export class PaymentComponent implements OnInit, OnDestroy {
     this.innerWidth = window.innerWidth;
     this.subscriptions = [];
 
-    this.paymentRequestModel = new RequestModel({
+    this.paymentRequestModel = new RequestParams({
       page: this.appConfig.request.pagination.defaultPage,
       pageSize: this.appConfig.request.pagination.defaultPageSizeOptions[0],
     })

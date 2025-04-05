@@ -1,6 +1,6 @@
-import {RequestModel} from "../../models/request.model";
+import {RequestParams} from "../../models/requestParams";
 
-export enum TotalPages{
+export enum TotalPages {
   INCOMES = "incomes",
   PAYMENTS = "payments"
 }
@@ -19,10 +19,11 @@ export class UrlApi {
     INCOMES: "/incomes",
     INCOME: "/income",
     BUDGETS: "/budgets",
-    BUDGET: "/budget"
+    BUDGET: "/budget",
+    PLANNED: "/planned"
   }
 
-  static budgets(requestParamModel: RequestModel): string {
+  static budgets(requestParamModel: RequestParams): string {
     const page = requestParamModel.page;
     const pageSize = requestParamModel.pageSize;
     const fromDate = requestParamModel.fromDate;
@@ -66,7 +67,7 @@ export class UrlApi {
   }
 
   static budgetIncomes(
-    requestParam: RequestModel,
+    requestParam: RequestParams,
     idBudget: string): string {
 
     let baseUrl = this.budgetId(idBudget) + this.ACTIONS.INCOMES;
@@ -99,7 +100,7 @@ export class UrlApi {
     return baseUrl;
   }
 
-  static budgetPayments(requestParam: RequestModel,
+  static budgetPayments(requestParam: RequestParams,
                         idBudget: string): string {
     const page = requestParam.page;
     const pageSize = requestParam.pageSize;
@@ -110,6 +111,37 @@ export class UrlApi {
 
     let urlResult = this.budgetId(idBudget) + this.ACTIONS.PAYMENTS +
       "?page=" + page + "&pageSize=" + pageSize;
+
+    if (fromDate) {
+      urlResult = urlResult + "&fromDate=" + fromDate;
+    }
+
+    if (toDate) {
+      urlResult = urlResult + "&toDate=" + toDate;
+    }
+
+    if (orderBy) {
+      urlResult = urlResult + "&orderBy=" + orderBy;
+    }
+
+    if (order) {
+      urlResult = urlResult + "&order=" + order;
+    }
+
+    return urlResult;
+  }
+
+  static budgetPlannedPayment(requestParam: RequestParams,
+                              idBudget: string): string {
+    const page = requestParam.page;
+    const pageSize = requestParam.pageSize;
+    const fromDate = requestParam.fromDate;
+    const toDate = requestParam.toDate;
+    const orderBy = requestParam.orderBy;
+    const order = requestParam.order;
+
+    let urlResult = this.budgetId(idBudget) + this.ACTIONS.PAYMENTS + this.ACTIONS.PLANNED +
+    "?page=" + page + "&pageSize=" + pageSize;
 
     if (fromDate) {
       urlResult = urlResult + "&fromDate=" + fromDate;
@@ -150,7 +182,7 @@ export class UrlApi {
     return this.paymentController() + "/" + idPayment + "/status";
   }
 
-  static budgetDataPages(requestParam: RequestModel,
+  static budgetDataPages(requestParam: RequestParams,
                          idBudget: string,
                          action: TotalPages): string {
     const pageSize = requestParam.pageSize;

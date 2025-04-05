@@ -1,1 +1,16 @@
-<p>planned-payment works!</p>
+<ng-template [ngIf]="!plannedPaymentLoader"
+             [ngIfElse]="loadedPlannedPaymentsBlock">
+  <app-spinner-grow></app-spinner-grow>
+</ng-template>
+<ng-template #loadedPlannedPaymentsBlock>
+  <ng-template [ngIf]="responseModel.statusCode == appConfig.response.required.plannedPaymentStatus"
+               [ngIfElse]="errorPlannedPaymentsBlock">
+    <p>planned payment works!</p>
+  </ng-template>
+  <ng-template #errorPlannedPaymentsBlock>
+    <app-error [response]="responseModel"
+               [notFoundErrorText]="formatString(appConfig.form.messages.notFound,'Planned payments data')">
+
+    </app-error>
+  </ng-template>
+</ng-template>

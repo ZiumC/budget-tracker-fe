@@ -11,7 +11,7 @@ import {Subscription} from "rxjs";
 import {SubscriptionUtils} from "../../../../../util/subscription.utils";
 import {AppConfig} from "../../../../../models/config/config";
 import {GetIncomeDto} from "../../../../../models/dto/income.model.dto";
-import {RequestModel} from "../../../../../models/request.model";
+import {RequestParams} from "../../../../../models/requestParams";
 import {ResponseModel} from "../../../../../models/response.model";
 import {SpinnerSize} from '../../../shared/spinner/spinner.component';
 import {HttpResponse} from "@angular/common/http";
@@ -38,7 +38,7 @@ export class IncomeComponent implements OnInit, OnDestroy {
   protected incomesDto: GetIncomeDto[] | null;
   protected selectedIncome: GetIncomeDto;
   protected incomeTotalPages: number | undefined;
-  protected incomeRequestModel: RequestModel;
+  protected incomeRequestModel: RequestParams;
   protected incomeResponseModel: ResponseModel;
   protected incomeLoader: boolean;
   public innerWidth: any;
@@ -61,7 +61,7 @@ export class IncomeComponent implements OnInit, OnDestroy {
     this.innerWidth = window.innerWidth;
     this.subscriptions = [];
 
-    this.incomeRequestModel = new RequestModel({
+    this.incomeRequestModel = new RequestParams({
       page: this.appConfig.request.pagination.defaultPage,
       pageSize: this.appConfig.request.pagination.defaultPageSizeOptions[0],
     })
