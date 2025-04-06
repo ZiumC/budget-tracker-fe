@@ -1,0 +1,222 @@
+<ng-template #plannedPaymentModal let-modal>
+  @if (!displayLoader) {
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">
+        @if (isEditing) {
+          Edit planned payment
+        } @else {
+          Add planned payment
+        }
+      </h4>
+      <button
+        type="button"
+        class="btn-close"
+        aria-label="Close"
+        (click)="modal.close()">
+      </button>
+    </div>
+  }
+  <ng-template [ngIf]="displayLoader"
+               [ngIfElse]="loadedBody">
+    <div class="my-5"></div>
+    <app-spinner [size]="SpinnerSize.MEDIUM"></app-spinner>
+    <div class="mt-5 text-center">
+      <p>Payment is saving...</p>
+    </div>
+    <div class="mb-3"></div>
+  </ng-template>
+  <ng-template #loadedBody>
+    <div class="modal-body">
+      <form ngbAutofocus #form="ngForm">
+        <div class="row">
+          <div [className]="innerWidth > appConfig.mobileWidth ? 'col-md-6': 'col-md-6  mb-4 pb-2'">
+            <div [className]="ModalUtils.displayMarginFor(paymentNameInput)">
+              <label for="payment-name">Name</label>
+              <span class="text-danger">*</span>
+              <input
+                type="text"
+                id="payment-name"
+                name="payment-name"
+                class="form-control"
+                [(ngModel)]="plannedPaymentDto.name"
+                required
+                minlength="{{ formConfig.paymentModal.name.minLength }}"
+                maxlength="{{ formConfig.paymentModal.name.maxLength }}"
+                #paymentNameInput="ngModel"
+                [ngClass]="{
+                'is-invalid': paymentNameInput.invalid &&
+                  (paymentNameInput.dirty || paymentNameInput.touched),
+                'is-valid': paymentNameInput.valid }"/>
+              @if (paymentNameInput.invalid &&
+              (paymentNameInput.dirty || paymentNameInput.touched)) {
+                <div class="invalid-feedback">
+                  <label *ngIf="paymentNameInput.errors?.['required']">
+                    {{ formConfig.messages.required }}
+                  </label>
+                  <label *ngIf="paymentNameInput.errors?.['minlength']">
+                    {{ formatString(formConfig.messages.minLength, formConfig.paymentModal.name.minLength) }}
+                  </label>
+                  <label *ngIf="paymentNameInput.errors?.['maxlength']">
+                    {{ formatString(formConfig.messages.maxLength, formConfig.paymentModal.name.maxLength) }}
+                  </label>
+                </div>
+              }
+            </div>
+            <div [className]="ModalUtils.displayMarginFor(plannedPaymentEstimatedInput)">
+              <label for="planned-payment-estimated">Estimated</label>
+              <span class="text-danger">*</span>
+              <div class="input-group">
+                <input
+                  type="text"
+                  id="planned-payment-estimated"
+                  name="planned-payment-estimated"
+                  class="form-control"
+                  [(ngModel)]="plannedPaymentDto.estimated"
+                  required
+                  min="{{ formConfig.paymentModal.price.minValue }}"
+                  maxlength="{{ formConfig.paymentModal.price.maxLength }}"
+                  placeholder="{{ formConfig.paymentModal.placeholder }}"
+                  pattern="{{ formConfig.regex.money }}"
+                  #plannedPaymentEstimatedInput="ngModel"
+                  [ngClass]="{
+                  'is-invalid': plannedPaymentEstimatedInput.invalid &&
+                    (plannedPaymentEstimatedInput.dirty || plannedPaymentEstimatedInput.touched),
+                  'is-valid': plannedPaymentEstimatedInput.valid }"/>
+                <div class="input-group-append">
+                  <span class="input-group-text">PLN</span>
+                </div>
+                @if (plannedPaymentEstimatedInput.invalid &&
+                (plannedPaymentEstimatedInput.dirty || plannedPaymentEstimatedInput.touched)) {
+                  <div class="invalid-feedback">
+                    <label *ngIf="plannedPaymentEstimatedInput.errors?.['required']">
+                      {{ formConfig.messages.required }}
+                    </label>
+                    <label *ngIf="plannedPaymentEstimatedInput.errors?.['min']">
+                      {{ formatString(formConfig.messages.minValue, formConfig.paymentModal.price.minValue) }}
+                    </label>
+                    <label *ngIf="plannedPaymentEstimatedInput.errors?.['pattern']">
+                      {{ formatString(formConfig.messages.invalidFormat, "number") }}
+                    </label>
+                  </div>
+                }
+              </div>
+            </div>
+            <div [className]="ModalUtils.displayMarginFor(plannedPaymentRealPriceInput)">
+              <label for="planned-payment-real-price">Real price</label>
+              <span class="text-danger">*</span>
+              <div class="input-group">
+                <input
+                  type="text"
+                  id="planned-payment-real-price"
+                  name="payment-refund"
+                  class="form-control"
+                  [(ngModel)]="plannedPaymentDto.realPrice"
+                  min="{{ formConfig.paymentModal.refund.minValue }}"
+                  maxlength="{{ formConfig.paymentModal.refund.maxLength }}"
+                  placeholder="{{formConfig.paymentModal.placeholder}}"
+                  pattern="{{formConfig.regex.money}}"
+                  #plannedPaymentRealPriceInput="ngModel"
+                  [ngClass]="{
+                  'is-invalid': plannedPaymentRealPriceInput.invalid &&
+                    (plannedPaymentRealPriceInput.dirty || plannedPaymentRealPriceInput.touched),
+                  'is-valid': plannedPaymentRealPriceInput.valid }"/>
+                <div class="input-group-append">
+                  <span class="input-group-text">PLN</span>
+                </div>
+                @if (plannedPaymentRealPriceInput.invalid &&
+                (plannedPaymentRealPriceInput.dirty || plannedPaymentRealPriceInput.touched)) {
+                  <div class="invalid-feedback">
+                    <label *ngIf="plannedPaymentRealPriceInput.errors?.['min']">
+                      {{ formatString(formConfig.messages.minValue, appConfig.form.paymentModal.refund.minValue) }}
+                    </label>
+                    <label *ngIf="plannedPaymentRealPriceInput.errors?.['pattern']">
+                      {{ formatString(formConfig.messages.invalidFormat, "number") }}
+                    </label>
+                  </div>
+                }
+              </div>
+            </div>
+<!--            <label for="payment-refund">Real</label>-->
+<!--            <div class="input-group">-->
+<!--              <input-->
+<!--                type="number"-->
+<!--                class="form-control"-->
+<!--                disabled-->
+<!--                value="{{ subtract(this.paymentDto.price, this.paymentDto.refund) }}"/>-->
+<!--              <div class="input-group-append">-->
+<!--                <span class="input-group-text">PLN</span>-->
+<!--              </div>-->
+<!--            </div>-->
+          </div>
+          <div class="col-md-6">
+            <div [className]="ModalUtils.displayMarginFor(paymentPaidSelect)">
+              <label for="payment-paid">Status</label>
+              <span class="text-danger">*</span>
+              <select
+                id="payment-paid"
+                name="payment-paid"
+                class="form-control"
+                [(ngModel)]="plannedPaymentDto.isPaid"
+                required
+                #paymentPaidSelect="ngModel"
+                [ngClass]="{
+                'is-invalid': paymentPaidSelect.invalid &&
+                  (paymentPaidSelect.dirty || paymentPaidSelect.touched),
+                'is-valid': paymentPaidSelect.valid }">
+                <option value=false>Payment not paid</option>
+                <option value=true>Payment paid</option>
+              </select>
+              @if (paymentPaidSelect.invalid &&
+              (paymentPaidSelect.dirty || paymentPaidSelect.touched)) {
+                <div class="invalid-feedback">
+                  <label *ngIf="paymentPaidSelect.errors?.['required']">
+                    {{ formConfig.messages.required }}
+                  </label>
+                </div>
+              }
+            </div>
+            <div [className]="ModalUtils.displayMarginFor(paymentCommentInput)">
+              <label for="payment-comment">Comment</label>
+              <textarea
+                id="payment-comment"
+                class="form-control"
+                name="payment-comment"
+                rows="8"
+                minlength="{{ formConfig.paymentModal.comment.minLength }}"
+                maxlength="{{ formConfig.paymentModal.comment.maxLength }}"
+                #paymentCommentInput="ngModel"
+                [(ngModel)]="plannedPaymentDto.comment"
+                [ngClass]="{
+                'is-invalid': paymentCommentInput.invalid &&
+                  (paymentCommentInput.dirty || paymentCommentInput.touched),
+                'is-valid': paymentCommentInput.valid }">
+              </textarea>
+              @if (paymentCommentInput.invalid &&
+              (paymentCommentInput.dirty || paymentCommentInput.touched)) {
+                <div class="invalid-feedback">
+                  <label *ngIf="paymentCommentInput.errors?.['minlength']">
+                    {{ formatString(formConfig.messages.minLength, formConfig.paymentModal.comment.minLength) }}
+                  </label>
+                  <label *ngIf="paymentCommentInput.errors?.['maxlength']">
+                    {{ formatString(formConfig.messages.maxLength, formConfig.paymentModal.comment.maxLength) }}
+                  </label>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button
+        [disabled]="form.invalid"
+        type="button"
+        class="btn btn-outline-secondary"
+        (click)="savePayment()">
+        Save
+      </button>
+    </div>
+  </ng-template>
+</ng-template>
+<app-error-modal #errorModal>
+</app-error-modal>

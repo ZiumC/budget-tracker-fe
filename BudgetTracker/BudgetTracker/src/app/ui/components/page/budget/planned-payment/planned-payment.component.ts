@@ -22,6 +22,7 @@ import {PageDto} from "../../../../../models/dto/page.model.dto";
   styleUrl: './planned-payment.component.css'
 })
 export class PlannedPaymentComponent implements OnInit, OnDestroy {
+  @ViewChild('plannedPaymentModal') plannedPaymentModal: any;
   @ViewChild('errorModal') errorModal: any;
   @Input() idBudget: string;
   protected readonly formatString = formatString;
@@ -70,6 +71,10 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy {
   @HostListener('window:resize', ['$event'])
   onResize(): void {
     this.innerWidth = window.innerWidth;
+  }
+
+  openModal(): void {
+    this.plannedPaymentModal.open();
   }
 
   ngOnDestroy(): void {

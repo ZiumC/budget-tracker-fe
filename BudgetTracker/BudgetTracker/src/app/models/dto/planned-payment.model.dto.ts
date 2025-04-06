@@ -9,3 +9,11 @@ export class GetPlannedPaymentDto {
   comment: string;
   dateUpdated: Date;
 }
+
+export class PlannedPaymentDto {
+  name: string;
+  estimated: BigNumber;
+  realPrice: BigNumber;
+  isPaid: boolean;
+  comment: string;
+}
