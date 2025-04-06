@@ -144,6 +144,15 @@
                       (click)="plannedPaymentModal.open(plannedPayment)">
                       <i class="bi bi-pencil-square"></i> Edit
                     </button>
+                    <button
+                      type="button"
+                      class="btn btn-danger"
+                      data-bs-toggle="tooltip"
+                      data-bs-placement="bottom"
+                      title="Delete payment"
+                      (click)="deleteModal.openWithPlannedPayment(plannedPayment)">
+                      <i class="bi bi-trash3-fill"></i> Delete
+                    </button>
                   </div>
                 </div>
               </div>
@@ -174,5 +183,9 @@
                             [idBudget]="idBudget"
                             (refreshEvent)=onRefreshPlannedPayment()>
 </app-planned-payments-modal>
+<app-delete-modal #deleteModal
+                  (refreshPlannedPaymentEvent)="onRefreshPlannedPayment()">
+
+</app-delete-modal>
 <app-error-modal #errorModal>
 </app-error-modal>
