@@ -49,11 +49,6 @@ div.card-header h5 {
   margin: 0;
 }
 
-.width-ex-20 {
-  width: 20ex;
-}
-
-
 @media only screen and (max-width: 1015px) {
   .budget-card-container {
     grid-template-columns: auto auto;

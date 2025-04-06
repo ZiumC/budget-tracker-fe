@@ -97,6 +97,11 @@ export class BudgetComponent implements OnInit, OnDestroy {
     this.router.navigate(['/']);
   }
 
+  protected buttonOptionsClass(): string {
+    const isMobileView = innerWidth <= this.appConfig.mobileWidth;
+    return isMobileView ? "budget-button-options-rows" : "budget-button-options-4-cols";
+  }
+
   private markBudgetAsLoaded(isLoaded: boolean): void {
     if (isLoaded) {
       new TimerUtils(this.appConfig.animation.duration.default).start()

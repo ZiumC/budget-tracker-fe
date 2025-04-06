@@ -20,6 +20,10 @@ label {
   display: table-row;
 }
 
+.budget-button-options-4-cols {
+  justify-content: normal;
+}
+
 @media only screen and (max-width: 475px) {
   .budget-buttons {
     gap: 0;
