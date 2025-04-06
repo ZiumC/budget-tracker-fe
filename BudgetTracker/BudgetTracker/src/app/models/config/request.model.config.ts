@@ -22,6 +22,7 @@ export interface Names {
 export interface Order {
   incomeTypes: OrderType[];
   paymentTypes: OrderType[];
+  plannedPaymentTypes: OrderType[];
   excludedTypes: OrderType[];
   orderDirections: OrderDirection[];
 }

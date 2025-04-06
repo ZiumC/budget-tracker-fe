@@ -13,6 +13,7 @@ import {formatString} from "../../../../../util/string.utils";
 import {TimerUtils} from "../../../../../util/timer.utils";
 import {format, subtract} from "../../../../../util/number.util";
 import {DateUtil} from "../../../../../util/date.util";
+import {OrderOptions} from "../../../shared/order/order.component";
 
 @Component({
   selector: 'app-planned-payment',
@@ -25,6 +26,7 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy {
   protected readonly formatString = formatString;
   protected readonly DateUtils = DateUtil;
   protected readonly format = format;
+  protected readonly subtract = subtract;
   protected subscriptions: Subscription[];
   protected appConfig: AppConfig;
   protected plannedPaymentsDto: GetPlannedPaymentDto[] | null;
@@ -70,6 +72,18 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy {
     SubscriptionUtils.unsubscribeAll(this.subscriptions);
   }
 
+  protected onOrderEvent(orderOptions: OrderOptions): void {
+    if (orderOptions.orderType.applyForApi) {
+      this.requestParams.orderBy = orderOptions.orderType.value;
+      if (orderOptions.orderType.displayDirections) {
+        this.requestParams.order = orderOptions.orderDirection!.value;
+      } else {
+        this.requestParams.order = null;
+      }
+      this.onRefreshPlannedPayment();
+    }
+  }
+
   protected onRefreshPlannedPayment(): void {
     this.markPlannedPaymentsAsLoaded(false);
     this.getPlannedPayments();
@@ -111,6 +125,4 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy {
       this.plannedPaymentLoader = isLoaded;
     }
   }
-
-  protected readonly subtract = subtract;
 }
