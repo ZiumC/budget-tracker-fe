@@ -2,7 +2,8 @@ import {RequestParams} from "../../models/requestParams";
 
 export enum TotalPages {
   INCOMES = "incomes",
-  PAYMENTS = "payments"
+  PAYMENTS = "payments",
+  PLANNED_PAYMENTS = "payments/planned"
 }
 
 export class UrlApi {

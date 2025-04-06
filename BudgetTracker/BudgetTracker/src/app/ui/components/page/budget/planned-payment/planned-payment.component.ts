@@ -14,6 +14,7 @@ import {TimerUtils} from "../../../../../util/timer.utils";
 import {format, subtract} from "../../../../../util/number.util";
 import {DateUtil} from "../../../../../util/date.util";
 import {OrderOptions} from "../../../shared/order/order.component";
+import {PageDto} from "../../../../../models/dto/page.model.dto";
 
 @Component({
   selector: 'app-planned-payment',
@@ -34,7 +35,8 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy {
   protected requestParams: RequestParams;
   protected responseModel: ResponseModel;
   protected requiredStatusCode: number;
-  protected plannedPaymentLoader: boolean;
+  protected plannedPaymentsLoader: boolean;
+  protected totalPages: number;
   public innerWidth: any;
 
   constructor(
@@ -61,6 +63,8 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy {
     })
 
     this.getPlannedPayments();
+    this.defaultOrderParams();
+    this.getPlannedPaymentTotalPages();
   }
 
   @HostListener('window:resize', ['$event'])
@@ -70,6 +74,17 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     SubscriptionUtils.unsubscribeAll(this.subscriptions);
+  }
+
+  protected onPageSizeEvent(pageSize: number): void {
+    this.requestParams.page = this.appConfig.request.pagination.defaultPage;
+    this.requestParams.pageSize = pageSize;
+    this.onRefreshPlannedPayment();
+  }
+
+  protected onPageEvent(page: number): void {
+    this.requestParams.page = page;
+    this.onRefreshPlannedPayment();
   }
 
   protected onOrderEvent(orderOptions: OrderOptions): void {
@@ -118,11 +133,30 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy {
       new TimerUtils(this.appConfig.animation.duration.default).start()
         .subscribe(finished => {
           if (finished) {
-            this.plannedPaymentLoader = isLoaded;
+            this.plannedPaymentsLoader = isLoaded;
           }
         })
     } else {
-      this.plannedPaymentLoader = isLoaded;
+      this.plannedPaymentsLoader = isLoaded;
     }
+  }
+
+  private getPlannedPaymentTotalPages(): void {
+    this.subscriptions.push(
+      this.httpService.getPlannedPaymentPages(
+        this.requestParams,
+        this.idBudget).subscribe({
+        next: (response: HttpResponse<PageDto>): void => {
+          this.totalPages = response.body!.pages;
+        }
+      })
+    )
+  }
+
+  private defaultOrderParams(): void {
+    this.requestParams.orderBy =
+      this.appConfig.request.order.plannedPaymentTypes[0].value;
+    this.requestParams.order =
+      this.appConfig.request.order.orderDirections[0].value;
   }
 }
