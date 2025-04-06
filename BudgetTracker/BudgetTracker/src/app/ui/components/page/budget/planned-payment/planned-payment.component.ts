@@ -15,6 +15,8 @@ import {format, subtract} from "../../../../../util/number.util";
 import {DateUtil} from "../../../../../util/date.util";
 import {OrderOptions} from "../../../shared/order/order.component";
 import {PageDto} from "../../../../../models/dto/page.model.dto";
+import BigNumber from "bignumber.js";
+import {PaymentStatusDto} from "../../../../../models/dto/payment.model.dto";
 
 @Component({
   selector: 'app-planned-payment',
@@ -22,6 +24,7 @@ import {PageDto} from "../../../../../models/dto/page.model.dto";
   styleUrl: './planned-payment.component.css'
 })
 export class PlannedPaymentComponent implements OnInit, OnDestroy {
+  @ViewChild('plannedPaymentModal') plannedPaymentModal: any;
   @ViewChild('errorModal') errorModal: any;
   @Input() idBudget: string;
   protected readonly formatString = formatString;
@@ -36,6 +39,7 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy {
   protected responseModel: ResponseModel;
   protected requiredStatusCode: number;
   protected plannedPaymentsLoader: boolean;
+  protected plannedPaymentStatusLoader: boolean;
   protected totalPages: number;
   public innerWidth: any;
 
@@ -72,6 +76,10 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy {
     this.innerWidth = window.innerWidth;
   }
 
+  openModal(): void {
+    this.plannedPaymentModal.open();
+  }
+
   ngOnDestroy(): void {
     SubscriptionUtils.unsubscribeAll(this.subscriptions);
   }
@@ -102,6 +110,33 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy {
   protected onRefreshPlannedPayment(): void {
     this.markPlannedPaymentsAsLoaded(false);
     this.getPlannedPayments();
+  }
+
+  protected patchPlannedPaymentStatus(isPaid: boolean, idPlannedPayment: string): void {
+    this.plannedPaymentStatusLoader = true;
+    this.subscriptions.push(
+      this.httpService.patchPaymentStatus(
+        {
+          isPaid: isPaid
+        } as PaymentStatusDto,
+        idPlannedPayment,
+        true
+      ).subscribe({
+        next: (): void => {
+          this.plannedPaymentsDto!
+            .find((payment): boolean => payment.id == idPlannedPayment)!.isPaid! = isPaid;
+        },
+        error: (err): void => {
+          const response = generateErrorModel(err);
+          this.responseModel = response;
+          this.errorModal.open(response);
+          this.plannedPaymentStatusLoader = false;
+        },
+        complete: (): void => {
+          this.plannedPaymentStatusLoader = false;
+        }
+      })
+    )
   }
 
   private getPlannedPayments(): void {
@@ -159,4 +194,6 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy {
     this.requestParams.order =
       this.appConfig.request.order.orderDirections[0].value;
   }
+
+  protected readonly BigNumber = BigNumber;
 }

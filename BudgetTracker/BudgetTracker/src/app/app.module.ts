@@ -31,6 +31,7 @@ import {DatepickerFormatter} from "./util/date.util";
 import { IncomeComponent } from './ui/components/page/budget/income/income.component';
 import { PaymentComponent } from './ui/components/page/budget/payment/payment.component';
 import { PlannedPaymentComponent } from './ui/components/page/budget/planned-payment/planned-payment.component';
+import { PlannedPaymentsModalComponent } from './ui/components/modals/planned-payments-modal/planned-payments-modal.component';
 
 export function loadConfig(configService: ConfigService): () => Promise<Config> {
   return (): Promise<Config> => firstValueFrom(configService.loadConfig());
@@ -59,6 +60,7 @@ export function loadConfig(configService: ConfigService): () => Promise<Config> 
     IncomeComponent,
     PaymentComponent,
     PlannedPaymentComponent,
+    PlannedPaymentsModalComponent,
   ],
   imports: [
     BrowserModule,

@@ -122,7 +122,8 @@ export class PaymentComponent implements OnInit, OnDestroy {
         {
           isPaid: isPaid
         } as PaymentStatusDto,
-        idPayment
+        idPayment,
+        false
       ).subscribe({
         next: (): void => {
           this.paymentsDto!
