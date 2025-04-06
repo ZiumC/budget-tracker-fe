@@ -167,4 +167,12 @@ export class HttpService {
       {observe: 'response'}
     )
   }
+
+  public getPlannedPaymentPages(requestParams: RequestParams, idBudget: string):
+    Observable<HttpResponse<PageDto>> {
+    return this.httpClient.get<PageDto>(
+      UrlApi.budgetDataPages(requestParams, idBudget, TotalPages.PLANNED_PAYMENTS),
+      {observe: 'response'}
+    )
+  }
 }

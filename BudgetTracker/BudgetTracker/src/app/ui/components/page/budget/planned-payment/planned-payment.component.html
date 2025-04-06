@@ -1,4 +1,4 @@
-<ng-template [ngIf]="!plannedPaymentLoader"
+<ng-template [ngIf]="!plannedPaymentsLoader"
              [ngIfElse]="loadedPlannedPaymentsBlock">
   <app-spinner-grow></app-spinner-grow>
 </ng-template>
@@ -106,6 +106,16 @@
           </div>
         </div>
       </div>
+    }
+    @if (totalPages! > 0) {
+      <app-pagination [name]="'planned-payment-paginate'"
+                      [pageCount]="totalPages!"
+                      [displayPageSize]="true"
+                      [pageSizeOptions]="appConfig.request.pagination.defaultPageSizeOptions"
+                      (pageSizeEvent)="onPageSizeEvent($event)"
+                      (pageEvent)="onPageEvent($event)">
+
+      </app-pagination>
     }
   </ng-template>
   <ng-template #errorPlannedPaymentsBlock>
