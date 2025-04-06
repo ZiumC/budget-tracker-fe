@@ -132,8 +132,8 @@ export class UrlApi {
     return urlResult;
   }
 
-  static budgetPlannedPayment(requestParam: RequestParams,
-                              idBudget: string): string {
+  static budgetPlannedPayments(requestParam: RequestParams,
+                               idBudget: string): string {
     const page = requestParam.page;
     const pageSize = requestParam.pageSize;
     const fromDate = requestParam.fromDate;
@@ -142,7 +142,7 @@ export class UrlApi {
     const order = requestParam.order;
 
     let urlResult = this.budgetId(idBudget) + this.ACTIONS.PAYMENTS + this.ACTIONS.PLANNED +
-    "?page=" + page + "&pageSize=" + pageSize;
+      "?page=" + page + "&pageSize=" + pageSize;
 
     if (fromDate) {
       urlResult = urlResult + "&fromDate=" + fromDate;
@@ -175,8 +175,16 @@ export class UrlApi {
     return this.budgetId(idBudget) + this.ACTIONS.PAYMENT;
   }
 
+  static budgetPlannedPayment(idBudget: string): string {
+    return this.budgetId(idBudget) + this.ACTIONS.PAYMENTS + this.ACTIONS.PLANNED;
+  }
+
   static paymentId(idPayment: string): string {
     return this.paymentController() + "/" + idPayment;
+  }
+
+  static plannedPaymentId(idPayment: string): string {
+    return this.paymentController() + "/" + idPayment + "/planned";
   }
 
   static paymentStatus(idPayment: string): string {

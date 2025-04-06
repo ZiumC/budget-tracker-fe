@@ -15,6 +15,7 @@ import {format, subtract} from "../../../../../util/number.util";
 import {DateUtil} from "../../../../../util/date.util";
 import {OrderOptions} from "../../../shared/order/order.component";
 import {PageDto} from "../../../../../models/dto/page.model.dto";
+import BigNumber from "bignumber.js";
 
 @Component({
   selector: 'app-planned-payment',
@@ -164,4 +165,6 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy {
     this.requestParams.order =
       this.appConfig.request.order.orderDirections[0].value;
   }
+
+  protected readonly BigNumber = BigNumber;
 }

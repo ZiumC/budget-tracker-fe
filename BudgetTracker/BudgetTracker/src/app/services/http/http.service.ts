@@ -7,7 +7,7 @@ import {GetIncomeDto, IncomeDto} from "../../models/dto/income.model.dto";
 import {PaymentStatusDto, PaymentDto, GetPaymentDto} from "../../models/dto/payment.model.dto";
 import {BudgetDto, GetBudgetDto} from "../../models/dto/budget.model.dto";
 import {PageDto} from "../../models/dto/page.model.dto";
-import {GetPlannedPaymentDto} from "../../models/dto/planned-payment.model.dto";
+import {GetPlannedPaymentDto, PlannedPaymentDto} from "../../models/dto/planned-payment.model.dto";
 
 @Injectable({
   providedIn: 'root',
@@ -163,7 +163,7 @@ export class HttpService {
   public getPlannedPayment(requestParams: RequestParams, idBudget: string):
     Observable<HttpResponse<GetPlannedPaymentDto[]>> {
     return this.httpClient.get<GetPlannedPaymentDto[]>(
-      UrlApi.budgetPlannedPayment(requestParams, idBudget),
+      UrlApi.budgetPlannedPayments(requestParams, idBudget),
       {observe: 'response'}
     )
   }
@@ -172,6 +172,24 @@ export class HttpService {
     Observable<HttpResponse<PageDto>> {
     return this.httpClient.get<PageDto>(
       UrlApi.budgetDataPages(requestParams, idBudget, TotalPages.PLANNED_PAYMENTS),
+      {observe: 'response'}
+    )
+  }
+
+  public updatePlannedPayment(plannedPaymentDto: PlannedPaymentDto, idPayment: string):
+    Observable<HttpResponse<{}>> {
+    return this.httpClient.put(
+      UrlApi.plannedPaymentId(idPayment),
+      plannedPaymentDto,
+      {observe: 'response'}
+    )
+  }
+
+  public createBudgetPlannedPayment(plannedPaymentDto: PlannedPaymentDto, idBudget: string):
+    Observable<HttpResponse<{}>> {
+    return this.httpClient.post(
+      UrlApi.budgetPlannedPayment(idBudget),
+      plannedPaymentDto,
       {observe: 'response'}
     )
   }

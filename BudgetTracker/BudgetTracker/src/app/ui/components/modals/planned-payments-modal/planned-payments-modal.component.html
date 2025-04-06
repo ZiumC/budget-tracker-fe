@@ -103,7 +103,6 @@
             </div>
             <div [className]="ModalUtils.displayMarginFor(plannedPaymentRealPriceInput)">
               <label for="planned-payment-real-price">Real price</label>
-              <span class="text-danger">*</span>
               <div class="input-group">
                 <input
                   type="text"
@@ -136,17 +135,6 @@
                 }
               </div>
             </div>
-<!--            <label for="payment-refund">Real</label>-->
-<!--            <div class="input-group">-->
-<!--              <input-->
-<!--                type="number"-->
-<!--                class="form-control"-->
-<!--                disabled-->
-<!--                value="{{ subtract(this.paymentDto.price, this.paymentDto.refund) }}"/>-->
-<!--              <div class="input-group-append">-->
-<!--                <span class="input-group-text">PLN</span>-->
-<!--              </div>-->
-<!--            </div>-->
           </div>
           <div class="col-md-6">
             <div [className]="ModalUtils.displayMarginFor(paymentPaidSelect)">
@@ -212,7 +200,7 @@
         [disabled]="form.invalid"
         type="button"
         class="btn btn-outline-secondary"
-        (click)="savePayment()">
+        (click)="savePlannedPayment()">
         Save
       </button>
     </div>

@@ -1,4 +1,4 @@
-import {Component, HostListener, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {AppConfig} from "../../../../models/config/config";
 import {Subscription} from "rxjs";
 import {ResponseModel} from "../../../../models/response.model";
@@ -12,6 +12,9 @@ import {SpinnerSize} from "../../shared/spinner/spinner.component";
 import {formatString} from "../../../../util/string.utils";
 import {subtract} from "../../../../util/number.util";
 import {FormConfig} from "../../../../models/config/form.model.config";
+import {HttpResponse} from "@angular/common/http";
+import {generateErrorModel} from "../../../../util/http.util";
+import {TimerUtils} from "../../../../util/timer.utils";
 
 @Component({
   selector: 'app-planned-payments-modal',
@@ -22,6 +25,7 @@ export class PlannedPaymentsModalComponent implements OnInit, OnDestroy {
   @ViewChild('plannedPaymentModal') plannedPaymentModal: any;
   @ViewChild('errorModal') errorModal: any;
   @Input() idBudget: string;
+  @Output() refreshEvent = new EventEmitter<boolean>();
   protected readonly SpinnerSize = SpinnerSize;
   protected readonly ModalUtils = ModalUtils;
   protected readonly formatString = formatString;
@@ -81,8 +85,65 @@ export class PlannedPaymentsModalComponent implements OnInit, OnDestroy {
     this.modalService.open(this.plannedPaymentModal, ModalOptions.default(ModalSize.BIG));
   }
 
-  protected savePayment(): void {
+  protected savePlannedPayment(): void {
+    this.displayLoader = true;
 
+    const isPaid = String(this.plannedPaymentDto.isPaid);
+    this.plannedPaymentDto.isPaid = JSON.parse(isPaid)
+
+    new TimerUtils(this.appConfig.animation.duration.default).start()
+      .subscribe(finished => {
+        if (finished) {
+          if (this.isEditing) {
+            this.updatePayment();
+          } else {
+            this.createBudgetPayment();
+          }
+        }
+      });
+  }
+
+  private updatePayment(): void {
+    this.subscriptions.push(
+      this.httpService.updatePlannedPayment(
+        this.plannedPaymentDto,
+        this.idPlannedPayment).subscribe({
+        next: (response: HttpResponse<any>): void => {
+          this.onRequestSuccess(response);
+        },
+        error: (err): void => {
+          this.onRequestFailed(err);
+        }
+      })
+    )
+  }
+
+  private createBudgetPayment(): void {
+    this.subscriptions.push(
+      this.httpService.createBudgetPlannedPayment(
+        this.plannedPaymentDto,
+        this.idBudget).subscribe({
+        next: (response: HttpResponse<any>): void => {
+          this.onRequestSuccess(response);
+        },
+        error: (err): void => {
+          this.onRequestFailed(err);
+        }
+      })
+    )
+  }
+
+  private onRequestSuccess(response: HttpResponse<any>): void {
+    this.refreshEvent.emit(true);
+    this.responseModel.statusCode = response.status;
+    this.modalService.dismissAll();
+    this.displayLoader = false;
+  }
+
+  private onRequestFailed(err: any): void {
+    this.responseModel = generateErrorModel(err);
+    this.displayLoader = false;
+    this.errorModal.open(this.responseModel);
   }
 
   private setDefaultPlannedPaymentForm(): void {
