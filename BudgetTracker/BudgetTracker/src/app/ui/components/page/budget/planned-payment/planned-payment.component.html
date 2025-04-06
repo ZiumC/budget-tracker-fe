@@ -5,6 +5,15 @@
 <ng-template #loadedPlannedPaymentsBlock>
   <ng-template [ngIf]="responseModel.statusCode == requiredStatusCode"
                [ngIfElse]="errorPlannedPaymentsBlock">
+    <div class="mb-3">
+      <app-order [name]="'planned-payment-order'"
+                 [orderTypes]="appConfig.request.order.plannedPaymentTypes"
+                 [excludedOrderTypes]="appConfig.request.order.excludedTypes"
+                 [orderDirections]="appConfig.request.order.orderDirections"
+                 (orderByEvent)="onOrderEvent($event)"
+                 (orderDirectionEvent)="onOrderEvent($event)">
+      </app-order>
+    </div>
     @for (plannedPayment of plannedPaymentsDto; track plannedPayment) {
       <div ngbAccordion>
         <div ngbAccordionItem

@@ -129,6 +129,32 @@
             "applyForApi": false
           }
         ],
+        "plannedPaymentTypes": [
+          {
+            "name": "date updated",
+            "value": "dateUpdated",
+            "displayDirections": true,
+            "applyForApi": true
+          },
+          {
+            "name": "estimated",
+            "value": "estimated",
+            "displayDirections": true,
+            "applyForApi": true
+          },
+          {
+            "name": "real price",
+            "value": "realPrice",
+            "displayDirections": true,
+            "applyForApi": true
+          },
+          {
+            "name": "paid first",
+            "value": "paidFirst",
+            "displayDirections": false,
+            "applyForApi": true
+          }
+        ],
         "excludedTypes": [
           {
             "name": "paid first",
