@@ -74,7 +74,9 @@
                         <input type="text"
                                id="planned-payment-real"
                                class="form-control mb-2"
-                               [value]="BigNumber(plannedPayment.realPrice).gt(0) ? format(subtract(plannedPayment.estimated, plannedPayment.realPrice)) : '-'"
+                               [value]="BigNumber(plannedPayment.realPrice).gt(0) ?
+                                 format(subtract(plannedPayment.estimated, plannedPayment.realPrice)) :
+                                 '-'"
                                disabled>
                       </div>
                       <label for="planned-payment-category">Category
