@@ -106,6 +106,36 @@
                 <div class="col-lg-6 buttons-container">
                   <div class="planned-payment-buttons text-center">
                     <button
+                      [style.display]="plannedPayment.isPaid ? 'block' : 'none'"
+                      type="button"
+                      class="btn btn-primary"
+                      data-bs-toggle="tooltip"
+                      data-bs-placement="bottom"
+                      title="Switch to not paid status"
+                      (click)="patchPlannedPaymentStatus(false, plannedPayment.id)">
+                      @if (plannedPaymentStatusLoader) {
+                        <div class="spinner-border spinner-border-sm text-light" role="status">
+                        </div>
+                      } @else {
+                        <i class="bi bi-bag-x-fill"></i> Unpaid
+                      }
+                    </button>
+                    <button
+                      [style.display]="!plannedPayment.isPaid ? 'block' : 'none'"
+                      type="button"
+                      class="btn btn-secondary"
+                      data-bs-toggle="tooltip"
+                      data-bs-placement="bottom"
+                      title="Switch to paid status"
+                      (click)="patchPlannedPaymentStatus(true, plannedPayment.id)">
+                      @if (plannedPaymentStatusLoader) {
+                        <div class="spinner-border spinner-border-sm text-light" role="status">
+                        </div>
+                      } @else {
+                        <i class="bi bi-bag-check-fill"></i> Paid
+                      }
+                    </button>
+                    <button
                       type="button"
                       class="btn btn-warning"
                       data-bs-toggle="tooltip"

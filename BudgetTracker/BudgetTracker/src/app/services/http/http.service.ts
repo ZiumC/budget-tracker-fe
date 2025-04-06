@@ -135,10 +135,16 @@ export class HttpService {
     )
   }
 
-  public patchPaymentStatus(paymentStatusForm: PaymentStatusDto, idPayment: string):
+  public patchPaymentStatus(paymentStatusForm: PaymentStatusDto, idPayment: string, isPlanned: boolean):
     Observable<HttpResponse<{}>> {
+
+    let paymentStatusUrl = UrlApi.paymentStatus(idPayment);
+    if (isPlanned) {
+      paymentStatusUrl = UrlApi.plannedPaymentStatus(idPayment)
+    }
+
     return this.httpClient.patch(
-      UrlApi.paymentStatus(idPayment),
+      paymentStatusUrl,
       paymentStatusForm,
       {observe: 'response'}
     )
