@@ -71,7 +71,16 @@ table tr th {
 
 .budget-buttons {
   display: grid;
+  grid-template-columns: auto auto auto;
+  gap: 3ex;
+  grid-auto-flow: row;
+}
+
+.budget-button-options-4-cols {
+  display: grid;
+  justify-items: center;
   grid-template-columns: auto auto auto auto;
+  justify-content: center;
   gap: 3ex;
   grid-auto-flow: row;
 }
@@ -103,6 +112,9 @@ table tr th {
   grid-auto-flow: row;
 }
 
+.width-ex-20 {
+  width: 20ex;
+}
 
 .input-group-append button {
   border-top-left-radius: 0;
