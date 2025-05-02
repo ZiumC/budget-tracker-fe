@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
 })
 export class HeaderComponent {
   protected isMenuCollapsed: boolean = true;
-  protected loggedIn: boolean = false;
+  protected loggedIn: boolean = true;
 
   constructor(private router: Router) { }
 
@@ -18,5 +18,9 @@ export class HeaderComponent {
 
   navigateToLogin(): void {
     this.router.navigate(['/login']);
+  }
+
+  navigateToCategories(): void{
+    this.router.navigate(['/categories'])
   }
 }

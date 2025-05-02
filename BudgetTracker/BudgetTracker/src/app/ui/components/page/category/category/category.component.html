@@ -1,0 +1,113 @@
+<div class="card text-center mb-3">
+    <div class="card-header">
+        {{ displayName }}
+    </div>
+    <div id="{{id}}-card" class="card-body">
+        <ng-template [ngIf]="!categoriesLoader"
+                     [ngIfElse]="loadedPaymentsBlock">
+            <app-spinner-grow></app-spinner-grow>
+        </ng-template>
+        <ng-template #loadedPaymentsBlock>
+            <ng-template [ngIf]="categoryResponseModel.statusCode == appConfig.response.required.paymentStatus"
+                         [ngIfElse]="errorPaymentsBlock">
+                <!--    <div class="mb-3">-->
+                <!--      <app-order [name]="'payment-order'"-->
+                <!--                 [orderTypes]="appConfig.request.order.paymentTypes"-->
+                <!--                 [excludedOrderTypes]="appConfig.request.order.excludedTypes"-->
+                <!--                 [orderDirections]="appConfig.request.order.orderDirections"-->
+                <!--                 (orderByEvent)="onOrderEvent($event)"-->
+                <!--                 (orderDirectionEvent)="onOrderEvent($event)">-->
+                <!--      </app-order>-->
+                <!--    </div>-->
+                @for (category of categoriesDto; track category) {
+                    <div ngbAccordion>
+                        <div ngbAccordionItem
+                             [collapsed]="selectedCategory !== category">
+                            <h2 ngbAccordionHeader>
+                                <button ngbAccordionButton
+                                        (click)="selectedCategory = category"
+                                        class="light-gray-bg accordion-button-header">
+                                    <table>
+                                        <tr class="table-header">
+                                            <th>Name</th>
+                                        </tr>
+                                        <tr>
+                                            <td>{{ category.name }}</td>
+                                        </tr>
+                                    </table>
+                                </button>
+                            </h2>
+                            <div ngbAccordionCollapse>
+                                <div ngbAccordionBody>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <label for="category-date-updated">Date updated
+                                            </label>
+                                            <input type="text"
+                                                   id="category-date-updated"
+                                                   class="form-control mb-2"
+                                                   [value]="DateUtil.formatWithTime(category.dateUpdated)"
+                                                   disabled>
+                                            <label for="category-comment">Description</label>
+                                            <textarea type="text"
+                                                      id="category-comment"
+                                                      class="form-control"
+                                                      [value]="category.description"
+                                                      disabled>
+                                            </textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <button
+                                            type="button"
+                                            class="btn btn-warning mx-2"
+                                            data-bs-toggle="tooltip"
+                                            data-bs-placement="bottom"
+                                            title="Edit category">
+                                        <i class="bi bi-pencil-square"></i> Edit
+                                    </button>
+                                    <button
+                                            type="button"
+                                            class="btn btn-danger mx-2"
+                                            data-bs-toggle="tooltip"
+                                            data-bs-placement="bottom"
+                                            title="Delete category">
+                                        <i class="bi bi-trash3-fill"></i> Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+                <!--    @if (categoriesTotalPages! > 0) {-->
+                <!--      <app-pagination [name]="'payment-paginate'"-->
+                <!--                      [pageCount]="categoriesTotalPages!"-->
+                <!--                      [displayPageSize]="true"-->
+                <!--                      [pageSizeOptions]="appConfig.request.pagination.defaultPageSizeOptions"-->
+                <!--                      (pageSizeEvent)="onPageSizeEvent($event)"-->
+                <!--                      (pageEvent)="onPageEvent($event)">-->
+
+                <!--      </app-pagination>-->
+                <!--    }-->
+            </ng-template>
+            <ng-template #errorPaymentsBlock>
+                <app-error [response]=" categoryResponseModel"
+                           [notFoundErrorText]="formatString(appConfig.form.messages.notFound,'Categories data')">
+
+                </app-error>
+            </ng-template>
+        </ng-template>
+        <!--<app-payment-modal #paymentModal-->
+        <!--                   [idBudget]="idBudget"-->
+        <!--                   (refreshPaymentEvent)="onRefreshPayment()">-->
+
+        <!--</app-payment-modal>-->
+        <!--<app-delete-modal #deleteModal-->
+        <!--                  (refreshPaymentEvent)="onRefreshPayment()">-->
+
+        <!--</app-delete-modal>-->
+        <app-error-modal #errorModal>
+        </app-error-modal>
+    </div>
+</div>

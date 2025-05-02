@@ -7,7 +7,7 @@ import {HttpService} from "../../../services/http/http.service";
 import {ActivatedRoute, Params, Router} from "@angular/router";
 import {HttpResponse} from "@angular/common/http";
 import {SubscriptionUtils} from "../../../util/subscription.utils";
-import {format, subtract} from "../../../util/number.util";
+import {format} from "../../../util/number.util";
 import {GetBudgetDto} from "../../../models/dto/budget.model.dto";
 import {AppConfig} from "../../../models/config/config";
 import {ConfigService} from "../../../services/config/config.service";
