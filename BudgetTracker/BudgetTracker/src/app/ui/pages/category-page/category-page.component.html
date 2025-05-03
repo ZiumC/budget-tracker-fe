@@ -1,25 +1,40 @@
-<div class="height-wrapper width-wrapper">
+<div class="width-wrapper">
   <div class="component-wrapper component-bg">
-    <div class="container">
-      <div class="row">
-        <div class="col">
-          <app-category [displayName]="'Needs category'"
-                        [id]="'needs'">
+    <div class="input-group mt-3 mb-5">
+      <input type="text"
+             class="form-control"
+             placeholder="Search phrase..."
+             aria-label="Search phrase..."
+             aria-describedby="basic-addon2">
+      <div class="input-group-append">
+        <button id="clear-btn"
+                class="btn btn-outline-danger"
+                type="button"
+                data-bs-toggle="tooltip"
+                data-bs-placement="bottom"
+                title="Clear">
+          <i class="bi bi-x-circle"></i>
+        </button>
+      </div>
+    </div>
+    <div class="row">
+      <div id="needs-column" class="col mb-3">
+        <app-category [displayName]="'Needs category'"
+                      [id]="'needs'">
 
-          </app-category>
-        </div>
-        <div class="col">
-          <app-category [displayName]="'Wants category'"
-                        [id]="'wants'">
+        </app-category>
+      </div>
+      <div id="wants-column" class="col mb-3">
+        <app-category [displayName]="'Wants category'"
+                      [id]="'wants'">
 
-          </app-category>
-        </div>
-        <div class="col">
-          <app-category [displayName]="'Savings category'"
-                        [id]="'savings'">
+        </app-category>
+      </div>
+      <div id="savings-column" class="col mb-3">
+        <app-category [displayName]="'Savings category'"
+                      [id]="'savings'">
 
-          </app-category>
-        </div>
+        </app-category>
       </div>
     </div>
   </div>

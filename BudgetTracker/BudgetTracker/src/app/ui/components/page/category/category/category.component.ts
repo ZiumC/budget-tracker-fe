@@ -9,6 +9,7 @@ import {ConfigService} from "../../../../../services/config/config.service";
 import {formatString} from "../../../../../util/string.utils";
 import {TimerUtils} from "../../../../../util/timer.utils";
 import {DateUtil} from "../../../../../util/date.util";
+import {OrderOptions} from "../../../shared/order/order.component";
 
 @Component({
     selector: 'app-category',
@@ -16,9 +17,10 @@ import {DateUtil} from "../../../../../util/date.util";
     styleUrl: './category.component.css'
 })
 export class CategoryComponent implements OnInit, OnDestroy {
-    @Input() displayName: string;
     @Input() id: string;
+    @Input() displayName: string;
     protected readonly formatString = formatString;
+    protected readonly DateUtil = DateUtil;
     protected appConfig: AppConfig;
     protected subscriptions: Subscription[];
     protected categoryResponseModel: ResponseModel;
@@ -78,6 +80,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
             } as GetCategoryDto,
         ];
 
+        this.categoriesTotalPages = 2;
         new TimerUtils(this.appConfig.animation.duration.default).start()
             .subscribe(finished => {
                 if (finished) {
@@ -91,5 +94,15 @@ export class CategoryComponent implements OnInit, OnDestroy {
         SubscriptionUtils.unsubscribeAll(this.subscriptions);
     }
 
-    protected readonly DateUtil = DateUtil;
+    onOrderEvent(orderOptions: OrderOptions): void {
+
+    }
+
+    onPageSizeEvent(pageSize: number): void {
+
+    }
+
+    onPageEvent(page: number): void{
+
+    }
 }
