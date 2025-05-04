@@ -74,6 +74,11 @@
           9,
           12,
           15
+        ],
+        "categoriesPageSizeOptions": [
+          12,
+          15,
+          18
         ]
       },
       "order": {
@@ -152,6 +157,20 @@
             "name": "paid first",
             "value": "paidFirst",
             "displayDirections": false,
+            "applyForApi": true
+          }
+        ],
+        "paymentCategoryTypes": [
+          {
+            "name": "date updated",
+            "value": "dateUpdated",
+            "displayDirections": true,
+            "applyForApi": true
+          },
+          {
+            "name": "name",
+            "value": "name",
+            "displayDirections": true,
             "applyForApi": true
           }
         ],

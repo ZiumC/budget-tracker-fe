@@ -2,7 +2,7 @@
     <div class="card-header">
         {{ displayName }}
     </div>
-    <div id="{{id}}-card" class="card-body h-100">
+    <div id="{{type.valueOf()}}-card" class="card-body h-100">
         <ng-template [ngIf]="!categoriesLoader"
                      [ngIfElse]="loadedPaymentsBlock">
             <app-spinner-grow></app-spinner-grow>
@@ -12,7 +12,7 @@
                          [ngIfElse]="errorPaymentsBlock">
                 <div class="mb-3">
                     <app-order [name]="'payment-order'"
-                               [orderTypes]="appConfig.request.order.paymentTypes"
+                               [orderTypes]="appConfig.request.order.paymentCategoryTypes"
                                [excludedOrderTypes]="appConfig.request.order.excludedTypes"
                                [orderDirections]="appConfig.request.order.orderDirections"
                                (orderByEvent)="onOrderEvent($event)"
@@ -82,10 +82,10 @@
                 }
                 @if (categoriesTotalPages! > 0) {
                     <div class="display-bottom mb-3 mx-2">
-                        <app-pagination [name]="'payment-paginate'"
+                        <app-pagination [name]="'category-paginate'"
                                         [pageCount]="categoriesTotalPages!"
                                         [displayPageSize]="true"
-                                        [pageSizeOptions]="appConfig.request.pagination.defaultPageSizeOptions"
+                                        [pageSizeOptions]="appConfig.request.pagination.categoriesPageSizeOptions"
                                         (pageSizeEvent)="onPageSizeEvent($event)"
                                         (pageEvent)="onPageEvent($event)">
 

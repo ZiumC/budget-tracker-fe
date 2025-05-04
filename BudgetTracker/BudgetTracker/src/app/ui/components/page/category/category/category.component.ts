@@ -1,15 +1,19 @@
-import {Component, HostListener, Input, OnDestroy, OnInit} from '@angular/core';
+import {Component, HostListener, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {SubscriptionUtils} from "../../../../../util/subscription.utils";
 import {AppConfig} from "../../../../../models/config/config";
 import {Subscription} from "rxjs";
 import {ResponseModel} from "../../../../../models/response.model";
-import {GetCategoryDto} from "../../../../../models/dto/category.model.dto";
+import {CategoryType, GetCategoryDto} from "../../../../../models/dto/category.model.dto";
 import {HttpService} from "../../../../../services/http/http.service";
 import {ConfigService} from "../../../../../services/config/config.service";
 import {formatString} from "../../../../../util/string.utils";
 import {TimerUtils} from "../../../../../util/timer.utils";
 import {DateUtil} from "../../../../../util/date.util";
 import {OrderOptions} from "../../../shared/order/order.component";
+import {HttpResponse} from "@angular/common/http";
+import {generateErrorModel} from "../../../../../util/http.util";
+import {RequestParams} from "../../../../../models/requestParams";
+import {PageDto} from "../../../../../models/dto/page.model.dto";
 
 @Component({
     selector: 'app-category',
@@ -17,14 +21,16 @@ import {OrderOptions} from "../../../shared/order/order.component";
     styleUrl: './category.component.css'
 })
 export class CategoryComponent implements OnInit, OnDestroy {
-    @Input() id: string;
+    @ViewChild('errorModal') errorModal: any;
+    @Input() type: CategoryType;
     @Input() displayName: string;
     protected readonly formatString = formatString;
     protected readonly DateUtil = DateUtil;
     protected appConfig: AppConfig;
     protected subscriptions: Subscription[];
     protected categoryResponseModel: ResponseModel;
-    protected categoriesDto: GetCategoryDto[];
+    protected categoryRequestParams: RequestParams;
+    protected categoriesDto: GetCategoryDto[] | null;
     protected selectedCategory: GetCategoryDto;
     protected categoriesLoader: boolean;
     protected categoriesTotalPages: number;
@@ -45,49 +51,22 @@ export class CategoryComponent implements OnInit, OnDestroy {
         if (appCfg) {
             this.appConfig = appCfg;
         } else {
-            throw Error("Config not provided")
+            throw Error("Config not provided");
+        }
+
+        if (!this.type) {
+            throw Error("Category type is required");
         }
 
         this.categoryResponseModel = new ResponseModel();
+        this.categoryRequestParams = new RequestParams({
+            page: this.appConfig.request.pagination.defaultPage,
+            pageSize: this.appConfig.request.pagination.defaultPageSizeOptions[0],
+        })
+        this.subscriptions = [];
 
-        this.categoriesDto = [
-            {
-                id: '3b7362f4-e2a2-4c3e-9e90-1c29ce3cacb0',
-                name: "Test name",
-                description: "test description",
-                dateUpdated: new Date(),
-                isNeeds: true,
-                isWants: false,
-                isSavings: false
-            } as GetCategoryDto,
-            {
-                id: '00af9ee9-8dc3-4c96-b6f3-206955f0e45b',
-                name: "Some name",
-                description: "description",
-                dateUpdated: new Date(),
-                isNeeds: false,
-                isWants: true,
-                isSavings: false
-            } as GetCategoryDto,
-            {
-                id: 'bb926e23-4fdb-4bb0-aa70-48ea4c6a129c',
-                name: "name",
-                description: "some description",
-                dateUpdated: new Date(),
-                isNeeds: false,
-                isWants: false,
-                isSavings: true
-            } as GetCategoryDto,
-        ];
-
-        this.categoriesTotalPages = 2;
-        new TimerUtils(this.appConfig.animation.duration.default).start()
-            .subscribe(finished => {
-                if (finished) {
-                    this.categoryResponseModel.statusCode = 200;
-                    this.categoriesLoader = true;
-                }
-            });
+        this.defaultOrderParams();
+        this.getCategories();
     }
 
     ngOnDestroy(): void {
@@ -102,7 +81,64 @@ export class CategoryComponent implements OnInit, OnDestroy {
 
     }
 
-    onPageEvent(page: number): void{
+    onPageEvent(page: number): void {
 
+    }
+
+    private getCategories(): void {
+        this.subscriptions.push(
+            this.httpService.getCategories(
+                this.categoryRequestParams,
+                this.type).subscribe({
+                next: (response: HttpResponse<GetCategoryDto[]>): void => {
+                    this.categoriesDto = response.body;
+                    this.categoryResponseModel.statusCode = response.status;
+                },
+                error: (err): void => {
+                    const response = generateErrorModel(err);
+                    this.categoryResponseModel = response;
+                    if (response.statusCode != 404) {
+                        this.errorModal.open(response);
+                    }
+                    this.markCategoriesAsLoaded(true);
+                },
+                complete: (): void => {
+                    this.getCategoriesTotalPages();
+                    this.markCategoriesAsLoaded(true);
+                }
+            })
+        )
+    }
+
+    private markCategoriesAsLoaded(isLoaded: boolean): void {
+        if (isLoaded) {
+            new TimerUtils(this.appConfig.animation.duration.default).start()
+                .subscribe(finished => {
+                    if (finished) {
+                        this.categoriesLoader = isLoaded;
+                    }
+                });
+        } else {
+            this.categoriesLoader = isLoaded;
+        }
+    }
+
+    private getCategoriesTotalPages(): void {
+        this.subscriptions.push(
+            this.httpService.getCategoryPages(
+                this.categoryRequestParams,
+                this.type).subscribe({
+                next: (response: HttpResponse<PageDto>): void => {
+                    this.categoriesTotalPages = response.body!.pages;
+                }
+            })
+        )
+    }
+
+    private defaultOrderParams(): void {
+        this.categoryRequestParams.orderBy =
+            this.appConfig.request.order.paymentCategoryTypes[0].value;
+        this.categoryRequestParams.order =
+            this.appConfig.request.order.orderDirections[0].value;
     }
 }

@@ -1,4 +1,10 @@
-export class GetCategoryDto{
+export enum CategoryType {
+  NEEDS = "needs",
+  WANTS = "wants",
+  SAVINGS = "savings"
+}
+
+export class GetCategoryDto {
   id: string;
   name: string;
   description: string;

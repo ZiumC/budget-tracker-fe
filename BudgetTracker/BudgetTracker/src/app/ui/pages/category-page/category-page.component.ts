@@ -1,4 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
+import {CategoryType} from "../../../models/dto/category.model.dto";
 
 @Component({
   selector: 'app-category-page',
@@ -10,4 +11,6 @@ export class CategoryPageComponent implements OnInit, OnDestroy {
     }
     ngOnInit(): void {
     }
+
+  protected readonly CategoryType = CategoryType;
 }
