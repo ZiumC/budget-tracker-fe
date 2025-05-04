@@ -5,13 +5,30 @@
              class="form-control"
              placeholder="Search phrase..."
              aria-label="Search phrase..."
-             aria-describedby="basic-addon2">
+             aria-describedby="basic-addon2"
+             [(ngModel)]="searchBox"
+             (change)="emitSearchSubject()"
+             maxlength="{{ formConfig.budgetModal.name.maxLength }}"
+             #searchBoxNameInput="ngModel"
+             [ngClass]="{
+                'is-invalid': searchBoxNameInput.invalid &&
+                  (searchBoxNameInput.dirty || searchBoxNameInput.touched),
+                'is-valid': '' }">
+      @if (searchBoxNameInput.invalid &&
+      (searchBoxNameInput.dirty || searchBoxNameInput.touched)) {
+        <div class="invalid-feedback">
+          <label *ngIf="searchBoxNameInput.errors?.['maxlength']">
+            {{ formatString(formConfig.messages.maxLength, formConfig.budgetModal.name.maxLength) }}
+          </label>
+        </div>
+      }
       <div class="input-group-append">
         <button id="clear-btn"
                 class="btn btn-outline-danger"
                 type="button"
                 data-bs-toggle="tooltip"
                 data-bs-placement="bottom"
+                (click)="clearInput()"
                 title="Clear">
           <i class="bi bi-x-circle"></i>
         </button>
@@ -20,19 +37,25 @@
     <div class="row">
       <div id="needs-column" class="col mb-3">
         <app-category [displayName]="'Needs category'"
-                      [type]="CategoryType.NEEDS">
+                      [type]="CategoryType.NEEDS"
+                      [searchEvent]="searchSubject"
+                      [clearEvent]="clearSubject">
 
         </app-category>
       </div>
       <div id="wants-column" class="col mb-3">
         <app-category [displayName]="'Wants category'"
-                      [type]="CategoryType.WANTS">
+                      [type]="CategoryType.WANTS"
+                      [searchEvent]="searchSubject"
+                      [clearEvent]="clearSubject">
 
         </app-category>
       </div>
       <div id="savings-column" class="col mb-3">
         <app-category [displayName]="'Savings category'"
-                      [type]="CategoryType.SAVINGS">
+                      [type]="CategoryType.SAVINGS"
+                      [searchEvent]="searchSubject"
+                      [clearEvent]="clearSubject">
 
         </app-category>
       </div>

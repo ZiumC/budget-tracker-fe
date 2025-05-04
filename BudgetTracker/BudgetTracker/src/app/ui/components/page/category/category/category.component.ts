@@ -1,7 +1,7 @@
-import {Component, HostListener, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {SubscriptionUtils} from "../../../../../util/subscription.utils";
 import {AppConfig} from "../../../../../models/config/config";
-import {Subscription} from "rxjs";
+import {Observable, Subscription} from "rxjs";
 import {ResponseModel} from "../../../../../models/response.model";
 import {CategoryType, GetCategoryDto} from "../../../../../models/dto/category.model.dto";
 import {HttpService} from "../../../../../services/http/http.service";
@@ -14,7 +14,6 @@ import {HttpResponse} from "@angular/common/http";
 import {generateErrorModel} from "../../../../../util/http.util";
 import {RequestParams} from "../../../../../models/requestParams";
 import {PageDto} from "../../../../../models/dto/page.model.dto";
-import {SortPayment} from "../../../../../util/sort.utils";
 
 @Component({
   selector: 'app-category',
@@ -25,6 +24,8 @@ export class CategoryComponent implements OnInit, OnDestroy {
   @ViewChild('errorModal') errorModal: any;
   @Input() type: CategoryType;
   @Input() displayName: string;
+  @Input() searchEvent: Observable<string>;
+  @Input() clearEvent: Observable<boolean>;
   protected readonly formatString = formatString;
   protected readonly DateUtil = DateUtil;
   protected appConfig: AppConfig;
@@ -35,16 +36,10 @@ export class CategoryComponent implements OnInit, OnDestroy {
   protected selectedCategory: GetCategoryDto;
   protected categoriesLoader: boolean;
   protected categoriesTotalPages: number;
-  public innerWidth: any;
 
   constructor(
     private httpService: HttpService,
     private configService: ConfigService) {
-  }
-
-  @HostListener('window:resize', ['$event'])
-  onResize(): void {
-    this.innerWidth = window.innerWidth;
   }
 
   ngOnInit(): void {
@@ -68,6 +63,26 @@ export class CategoryComponent implements OnInit, OnDestroy {
 
     this.defaultOrderParams();
     this.getCategories();
+
+    this.subscriptions.push(
+      this.searchEvent.subscribe((phrase): void => {
+        const filteredResult = this.categoriesDto?.filter(
+          category => category.name.toLowerCase().includes(phrase) ||
+            category.description.toLowerCase().includes(phrase));
+        if (filteredResult) {
+          this.categoriesDto = [];
+          filteredResult.forEach(val => this.categoriesDto?.push(val));
+        }
+      })
+    );
+
+    this.subscriptions.push(
+      this.clearEvent.subscribe(clear => {
+        if (clear) {
+          this.getCategories();
+        }
+      })
+    )
   }
 
   ngOnDestroy(): void {
