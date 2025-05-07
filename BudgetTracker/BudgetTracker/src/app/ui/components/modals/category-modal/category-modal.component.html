@@ -1,0 +1,81 @@
+<ng-template #categoryModal let-modal>
+  @if (!displayLoader) {
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">
+        @if (isEditing) {
+          Edit category
+        } @else {
+          Add category
+        }
+      </h4>
+      <button
+        type="button"
+        class="btn-close"
+        aria-label="Close"
+        (click)="modal.close()">
+      </button>
+    </div>
+  }
+  <ng-template [ngIf]="displayLoader"
+               [ngIfElse]="loadedBody">
+    <div class="my-5"></div>
+    <app-spinner [size]="SpinnerSize.MEDIUM"></app-spinner>
+    <div class="mt-5 text-center">
+      <p>Category is saving...</p>
+    </div>
+    <div class="mb-3"></div>
+  </ng-template>
+  <ng-template #loadedBody>
+    <div class="modal-body">
+      <form ngbAutofocus #form="ngForm">
+        <div class="col-mx">
+          <div [className]="ModalUtils.displayMarginFor(categoryNameInput)">
+            <label for="income-name">Name</label>
+            <span class="text-danger">*</span>
+            <input
+              type="text"
+              id="income-name"
+              name="income-name"
+              class="form-control"
+              [(ngModel)]="categoryDto.name"
+              required
+              minlength="{{ formConfig.incomeModal.name.minLength }}"
+              maxlength="{{ formConfig.incomeModal.name.maxLength }}"
+              #categoryNameInput="ngModel"
+              [ngClass]="{
+              'is-invalid': categoryNameInput.invalid &&
+                (categoryNameInput.dirty || categoryNameInput.touched),
+              'is-valid': categoryNameInput.valid }"/>
+            @if (categoryNameInput.invalid &&
+            (categoryNameInput.dirty || categoryNameInput.touched)) {
+              <div class="invalid-feedback">
+                <label *ngIf="categoryNameInput.errors?.['required']">
+                  {{ formConfig.messages.required }}
+                </label>
+                <label *ngIf="categoryNameInput.errors?.['minlength']">
+                  {{ formatString(formConfig.messages.minLength, formConfig.incomeModal.name.minLength) }}
+                </label>
+                <label *ngIf="categoryNameInput.errors?.['maxlength']">
+                  {{ formatString(formConfig.messages.maxLength, formConfig.incomeModal.name.maxLength) }}
+                </label>
+              </div>
+            } @else {
+              <div class="valid-feedback"></div>
+            }
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button
+        [disabled]="form.invalid"
+        type="button"
+        class="btn btn-outline-secondary"
+        (click)="saveCategory()">
+        Save
+      </button>
+    </div>
+  </ng-template>
+</ng-template>
+<app-error-modal #errorModal>
+</app-error-modal>
