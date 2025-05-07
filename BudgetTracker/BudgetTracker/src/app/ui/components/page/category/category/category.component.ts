@@ -36,6 +36,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
   protected selectedCategory: GetCategoryDto;
   protected categoriesLoader: boolean;
   protected categoriesTotalPages: number;
+  private lastSearchedPhrase: string | undefined;
 
   constructor(
     private httpService: HttpService,
@@ -66,19 +67,15 @@ export class CategoryComponent implements OnInit, OnDestroy {
 
     this.subscriptions.push(
       this.searchEvent.subscribe((phrase): void => {
-        const filteredResult = this.categoriesDto?.filter(
-          category => category.name.toLowerCase().includes(phrase) ||
-            category.description.toLowerCase().includes(phrase));
-        if (filteredResult) {
-          this.categoriesDto = [];
-          filteredResult.forEach(val => this.categoriesDto?.push(val));
-        }
+        this.lastSearchedPhrase = phrase;
+        this.searchInCategories(phrase);
       })
     );
 
     this.subscriptions.push(
       this.clearEvent.subscribe(clear => {
         if (clear) {
+          this.lastSearchedPhrase = undefined;
           this.getCategories();
         }
       })
@@ -135,6 +132,9 @@ export class CategoryComponent implements OnInit, OnDestroy {
           this.markCategoriesAsLoaded(true);
         },
         complete: (): void => {
+          if (this.lastSearchedPhrase){
+            this.searchInCategories(this.lastSearchedPhrase);
+          }
           this.getCategoriesTotalPages();
           this.markCategoriesAsLoaded(true);
         }
@@ -172,5 +172,15 @@ export class CategoryComponent implements OnInit, OnDestroy {
       this.appConfig.request.order.paymentCategoryTypes[0].value;
     this.categoryRequestParams.order =
       this.appConfig.request.order.orderDirections[0].value;
+  }
+
+  private searchInCategories(phrase: string): void {
+    const filteredResult = this.categoriesDto?.filter(
+      category => category.name.toLowerCase().includes(phrase) ||
+        category.description.toLowerCase().includes(phrase));
+    if (filteredResult) {
+      this.categoriesDto = [];
+      filteredResult.forEach(val => this.categoriesDto?.push(val));
+    }
   }
 }
