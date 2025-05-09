@@ -64,6 +64,30 @@
             }
           </div>
         </div>
+        <div [className]="ModalUtils.displayMarginFor(categoryCommentTextarea)">
+          <label for="category-description">Description</label>
+          <textarea
+            id="category-description"
+            class="form-control"
+            name="category-description"
+            rows="8"
+            maxlength="{{ formConfig.paymentModal.comment.maxLength }}"
+            #categoryCommentTextarea="ngModel"
+            [(ngModel)]="categoryDto.description"
+            [ngClass]="{
+                'is-invalid': categoryCommentTextarea.invalid &&
+                  (categoryCommentTextarea.dirty || categoryCommentTextarea.touched),
+                'is-valid': categoryCommentTextarea.valid }">
+              </textarea>
+          @if (categoryCommentTextarea.invalid &&
+          (categoryCommentTextarea.dirty || categoryCommentTextarea.touched)) {
+            <div class="invalid-feedback">
+              <label *ngIf="categoryCommentTextarea.errors?.['maxlength']">
+                {{ formatString(formConfig.messages.maxLength, formConfig.paymentModal.comment.maxLength) }}
+              </label>
+            </div>
+          }
+        </div>
       </form>
     </div>
     <div class="modal-footer">

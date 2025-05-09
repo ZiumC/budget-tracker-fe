@@ -31,7 +31,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
   protected appConfig: AppConfig;
   protected subscriptions: Subscription[];
   protected categoryResponseModel: ResponseModel;
-  protected categoryRequestParams: RequestParams;
+  protected categoryRequestParams: RequestParams = new RequestParams();
   protected categoriesDto: GetCategoryDto[] | null;
   protected selectedCategory: GetCategoryDto;
   protected categoriesLoader: boolean;
@@ -56,10 +56,6 @@ export class CategoryComponent implements OnInit, OnDestroy {
     }
 
     this.categoryResponseModel = new ResponseModel();
-    this.categoryRequestParams = new RequestParams({
-      page: this.appConfig.request.pagination.defaultPage,
-      pageSize: this.appConfig.request.pagination.defaultPageSizeOptions[0],
-    })
     this.subscriptions = [];
 
     this.defaultOrderParams();
@@ -132,7 +128,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
           this.markCategoriesAsLoaded(true);
         },
         complete: (): void => {
-          if (this.lastSearchedPhrase){
+          if (this.lastSearchedPhrase) {
             this.searchInCategories(this.lastSearchedPhrase);
           }
           this.getCategoriesTotalPages();

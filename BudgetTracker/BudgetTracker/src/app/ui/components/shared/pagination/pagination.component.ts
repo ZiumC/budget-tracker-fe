@@ -54,7 +54,7 @@ export class PaginationComponent implements OnInit {
     this.isInvalidRange = this.page < 1 || this.page > this.pageCount;
     if (!this.isInvalidRange) {
       localStorage.setItem(this.pageName, this.page.toString());
-      this.onPageSizeChange();
+      localStorage.setItem(this.pageSizeName, this.pageSize.toString());
       this.pageEvent.emit(this.page);
     }
   }
