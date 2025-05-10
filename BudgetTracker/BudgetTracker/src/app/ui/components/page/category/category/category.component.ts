@@ -26,8 +26,8 @@ export class CategoryComponent implements OnInit, OnDestroy {
   @Input() displayName: string;
   @Input() searchEvent: Observable<string>;
   @Input() clearEvent: Observable<boolean>;
-  @Input() refreshCategoriesEvent: Observable<string[]>;
-  @Output() refreshCategoryTypesEvent = new EventEmitter<string[]>();
+  @Input() refreshCategoryEvent: Observable<string[]>;
+  @Output() categoryChangeTypeEvent = new EventEmitter<string[]>();
   protected readonly formatString = formatString;
   protected readonly DateUtil = DateUtil;
   protected appConfig: AppConfig;
@@ -80,7 +80,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
     )
 
     this.subscriptions.push(
-      this.refreshCategoriesEvent.subscribe(categories => {
+      this.refreshCategoryEvent.subscribe(categories => {
         for (let category of categories){
           if (category == this.type){
             this.onRefreshCategories();
@@ -122,8 +122,8 @@ export class CategoryComponent implements OnInit, OnDestroy {
     this.getCategories();
   }
 
-  protected onRefreshCategoryTypes(types: string[]): void {
-    this.refreshCategoryTypesEvent.emit(types);
+  protected onCategoryChange(types: string[]): void {
+    this.categoryChangeTypeEvent.emit(types);
   }
 
   private getCategories(): void {

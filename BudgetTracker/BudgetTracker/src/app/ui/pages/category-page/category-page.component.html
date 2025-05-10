@@ -40,8 +40,8 @@
                       [type]="CategoryType.NEEDS"
                       [searchEvent]="searchSubject"
                       [clearEvent]="clearSubject"
-                      [refreshCategoriesEvent]="categoriesSubject"
-                      (refreshCategoryTypesEvent)="onRefreshCategoryTypes($event)">
+                      [refreshCategoryEvent]="refreshCategoriesSubject"
+                      (categoryChangeTypeEvent)="onCategoryChange($event)">
 
         </app-category>
       </div>
@@ -50,8 +50,8 @@
                       [type]="CategoryType.WANTS"
                       [searchEvent]="searchSubject"
                       [clearEvent]="clearSubject"
-                      [refreshCategoriesEvent]="categoriesSubject"
-                      (refreshCategoryTypesEvent)="onRefreshCategoryTypes($event)">
+                      [refreshCategoryEvent]="refreshCategoriesSubject"
+                      (categoryChangeTypeEvent)="onCategoryChange($event)">
 
         </app-category>
       </div>
@@ -60,8 +60,8 @@
                       [type]="CategoryType.SAVINGS"
                       [searchEvent]="searchSubject"
                       [clearEvent]="clearSubject"
-                      [refreshCategoriesEvent]="categoriesSubject"
-                      (refreshCategoryTypesEvent)="onRefreshCategoryTypes($event)">
+                      [refreshCategoryEvent]="refreshCategoriesSubject"
+                      (categoryChangeTypeEvent)="onCategoryChange($event)">
 
         </app-category>
       </div>

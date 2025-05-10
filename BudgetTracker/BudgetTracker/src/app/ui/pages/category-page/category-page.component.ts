@@ -16,7 +16,7 @@ export class CategoryPageComponent implements OnInit {
   protected readonly CategoryType = CategoryType;
   protected searchSubject: Subject<string> = new Subject<string>();
   protected clearSubject: Subject<boolean> = new Subject<boolean>();
-  protected categoriesSubject: Subject<string[]> = new Subject<string[]>();
+  protected refreshCategoriesSubject: Subject<string[]> = new Subject<string[]>();
   protected formConfig: FormConfig;
   protected searchBox: string;
 
@@ -44,8 +44,8 @@ export class CategoryPageComponent implements OnInit {
     }
   }
 
-  protected onRefreshCategoryTypes(types: string[]): void {
-    this.categoriesSubject.next(types.filter(Arrays.onlyUnique))
+  protected onCategoryChange(types: string[]): void {
+    this.refreshCategoriesSubject.next(types.filter(Arrays.onlyUnique))
   }
 
   protected emitSearchSubject(): void {

@@ -23,7 +23,7 @@ import {HttpResponse} from "@angular/common/http";
 export class CategoryModalComponent implements OnInit, OnDestroy {
   @ViewChild('categoryModal') categoryModal: any;
   @ViewChild('errorModal') errorModal: any;
-  @Output() refreshCategoryTypesEvent = new EventEmitter<string[]>();
+  @Output() categoryChangeTypeEvent = new EventEmitter<string[]>();
   protected readonly SpinnerSize = SpinnerSize;
   protected readonly ModalUtils = ModalUtils;
   protected readonly formatString = formatString;
@@ -32,8 +32,8 @@ export class CategoryModalComponent implements OnInit, OnDestroy {
   protected appConfig: AppConfig;
   protected formConfig: FormConfig;
   protected categoryDto: GetCategoryDto;
-  protected selectedCategory: string;
   protected categoryType: string;
+  protected selectedCategoryName: string;
   protected displayLoader: boolean;
   protected isEditing: boolean;
 
@@ -66,7 +66,7 @@ export class CategoryModalComponent implements OnInit, OnDestroy {
     this.setDefaultCategoryForm();
     this.isEditing = categoryData != null;
     this.categoryType = categoryType;
-    this.selectedCategory = categoryType;
+    this.selectedCategoryName = categoryType;
 
     if (categoryData) {
       this.categoryDto.id = categoryData.id;
@@ -82,10 +82,10 @@ export class CategoryModalComponent implements OnInit, OnDestroy {
   }
 
   protected saveCategory(): void {
-    const categoryModal = this.formConfig.categoryModal;
-    this.categoryDto.isNeeds = this.selectedCategory == categoryModal.needsName;
-    this.categoryDto.isWants = this.selectedCategory == categoryModal.wantsName;
-    this.categoryDto.isSavings = this.selectedCategory == categoryModal.savingsName;
+    const categoryForm = this.formConfig.categoryModal;
+    this.categoryDto.isNeeds = this.selectedCategoryName == categoryForm.needsName;
+    this.categoryDto.isWants = this.selectedCategoryName == categoryForm.wantsName;
+    this.categoryDto.isSavings = this.selectedCategoryName == categoryForm.savingsName;
 
     const categoryToSave = {
       name: this.categoryDto.name,
@@ -141,8 +141,8 @@ export class CategoryModalComponent implements OnInit, OnDestroy {
   }
 
   private onRequestSuccess(response: HttpResponse<any>): void {
-    const types = [this.categoryType, this.selectedCategory];
-    this.refreshCategoryTypesEvent.emit(types);
+    const types = [this.categoryType, this.selectedCategoryName];
+    this.categoryChangeTypeEvent.emit(types);
     this.responseModel.statusCode = response.status;
     this.modalService.dismissAll();
     this.displayLoader = false;
