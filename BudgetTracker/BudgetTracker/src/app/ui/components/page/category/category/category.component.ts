@@ -1,4 +1,4 @@
-import {Component, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {SubscriptionUtils} from "../../../../../util/subscription.utils";
 import {AppConfig} from "../../../../../models/config/config";
 import {Observable, Subscription} from "rxjs";
@@ -26,6 +26,8 @@ export class CategoryComponent implements OnInit, OnDestroy {
   @Input() displayName: string;
   @Input() searchEvent: Observable<string>;
   @Input() clearEvent: Observable<boolean>;
+  @Input() refreshCategoriesEvent: Observable<string[]>;
+  @Output() refreshCategoryTypesEvent = new EventEmitter<string[]>();
   protected readonly formatString = formatString;
   protected readonly DateUtil = DateUtil;
   protected appConfig: AppConfig;
@@ -76,6 +78,16 @@ export class CategoryComponent implements OnInit, OnDestroy {
         }
       })
     )
+
+    this.subscriptions.push(
+      this.refreshCategoriesEvent.subscribe(categories => {
+        for (let category of categories){
+          if (category == this.type){
+            this.onRefreshCategories();
+          }
+        }
+      })
+    )
   }
 
   ngOnDestroy(): void {
@@ -108,6 +120,10 @@ export class CategoryComponent implements OnInit, OnDestroy {
   protected onRefreshCategories(): void {
     this.markCategoriesAsLoaded(false);
     this.getCategories();
+  }
+
+  protected onRefreshCategoryTypes(types: string[]): void {
+    this.refreshCategoryTypesEvent.emit(types);
   }
 
   private getCategories(): void {

@@ -1,11 +1,10 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {CategoryType} from "../../../models/dto/category.model.dto";
-import {AppConfig} from "../../../models/config/config";
-import {HttpService} from "../../../services/http/http.service";
 import {ConfigService} from "../../../services/config/config.service";
 import {FormConfig} from "../../../models/config/form.model.config";
 import {formatString} from "../../../util/string.utils";
 import {Subject} from "rxjs";
+import {Arrays} from "../../../util/arrays.utils";
 
 @Component({
   selector: 'app-category-page',
@@ -17,6 +16,7 @@ export class CategoryPageComponent implements OnInit {
   protected readonly CategoryType = CategoryType;
   protected searchSubject: Subject<string> = new Subject<string>();
   protected clearSubject: Subject<boolean> = new Subject<boolean>();
+  protected categoriesSubject: Subject<string[]> = new Subject<string[]>();
   protected formConfig: FormConfig;
   protected searchBox: string;
 
@@ -42,6 +42,10 @@ export class CategoryPageComponent implements OnInit {
     } else {
       this.clearSubject.next(false);
     }
+  }
+
+  protected onRefreshCategoryTypes(types: string[]): void {
+    this.categoriesSubject.next(types.filter(Arrays.onlyUnique))
   }
 
   protected emitSearchSubject(): void {

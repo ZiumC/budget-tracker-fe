@@ -39,7 +39,9 @@
         <app-category [displayName]="'Needs category'"
                       [type]="CategoryType.NEEDS"
                       [searchEvent]="searchSubject"
-                      [clearEvent]="clearSubject">
+                      [clearEvent]="clearSubject"
+                      [refreshCategoriesEvent]="categoriesSubject"
+                      (refreshCategoryTypesEvent)="onRefreshCategoryTypes($event)">
 
         </app-category>
       </div>
@@ -47,7 +49,9 @@
         <app-category [displayName]="'Wants category'"
                       [type]="CategoryType.WANTS"
                       [searchEvent]="searchSubject"
-                      [clearEvent]="clearSubject">
+                      [clearEvent]="clearSubject"
+                      [refreshCategoriesEvent]="categoriesSubject"
+                      (refreshCategoryTypesEvent)="onRefreshCategoryTypes($event)">
 
         </app-category>
       </div>
@@ -55,7 +59,9 @@
         <app-category [displayName]="'Savings category'"
                       [type]="CategoryType.SAVINGS"
                       [searchEvent]="searchSubject"
-                      [clearEvent]="clearSubject">
+                      [clearEvent]="clearSubject"
+                      [refreshCategoriesEvent]="categoriesSubject"
+                      (refreshCategoryTypesEvent)="onRefreshCategoryTypes($event)">
 
         </app-category>
       </div>

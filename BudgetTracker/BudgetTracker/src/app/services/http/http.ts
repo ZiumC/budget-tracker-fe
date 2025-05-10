@@ -239,6 +239,10 @@ export class UrlApi {
     return this.HOST + this.CONTROLLERS.CATEGORIES;
   }
 
+  static categoryPayment(): string {
+    return this.categoriesController() + this.ACTIONS.PAYMENT
+  }
+
   static category(requestParam: RequestParams, type: CategoryType): string {
     const page = requestParam.page;
     const pageSize = requestParam.pageSize;

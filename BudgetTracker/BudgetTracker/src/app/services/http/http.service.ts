@@ -8,7 +8,7 @@ import {PaymentStatusDto, PaymentDto, GetPaymentDto} from "../../models/dto/paym
 import {BudgetDto, GetBudgetDto} from "../../models/dto/budget.model.dto";
 import {PageDto} from "../../models/dto/page.model.dto";
 import {GetPlannedPaymentDto, PlannedPaymentDto} from "../../models/dto/planned-payment.model.dto";
-import {CategoryType, GetCategoryDto} from "../../models/dto/category.model.dto";
+import {CategoryDto, CategoryType, GetCategoryDto} from "../../models/dto/category.model.dto";
 
 @Injectable({
   providedIn: 'root',
@@ -210,7 +210,7 @@ export class HttpService {
   }
 
   public getCategories(requestParams: RequestParams, type: CategoryType):
-    Observable<HttpResponse<GetCategoryDto[]>>{
+    Observable<HttpResponse<GetCategoryDto[]>> {
     return this.httpClient.get<GetCategoryDto[]>(
       UrlApi.category(requestParams, type),
       {observe: 'response'}
@@ -218,9 +218,27 @@ export class HttpService {
   }
 
   public getCategoryPages(requestParams: RequestParams, type: CategoryType):
-    Observable<HttpResponse<PageDto>>{
+    Observable<HttpResponse<PageDto>> {
     return this.httpClient.get<PageDto>(
       UrlApi.categoryPages(requestParams.pageSize, type.valueOf()),
+      {observe: 'response'}
+    )
+  }
+
+  public createCategory(categoryDto: CategoryDto):
+    Observable<HttpResponse<{}>> {
+    return this.httpClient.post(
+      UrlApi.categoryPayment(),
+      categoryDto,
+      {observe: 'response'}
+    )
+  }
+
+  public updateCategory(categoryId: string, categoryDto: CategoryDto):
+    Observable<HttpResponse<{}>> {
+    return this.httpClient.put(
+      UrlApi.categoryPayment() + "/" + categoryId,
+      categoryDto,
       {observe: 'response'}
     )
   }

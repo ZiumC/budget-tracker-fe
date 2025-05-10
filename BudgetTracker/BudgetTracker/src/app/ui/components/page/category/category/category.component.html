@@ -27,7 +27,7 @@
               (click)="categoryModal.open(type.valueOf())">
               <i class="bi bi-plus-circle"></i> Create
             </button>
-              <hr class="horizontal">
+            <hr class="horizontal">
           </div>
           @for (category of categoriesDto; track category) {
             <div ngbAccordion>
@@ -119,17 +119,10 @@
         </app-error>
       </ng-template>
     </ng-template>
-    <app-category-modal #categoryModal>
+    <app-category-modal #categoryModal
+                        (refreshCategoryTypesEvent)="onRefreshCategoryTypes($event)">
 
     </app-category-modal>
-    <app-category-modal #categoryModal>
-
-    </app-category-modal>
-    <!--<app-payment-modal #paymentModal-->
-    <!--                   [idBudget]="idBudget"-->
-    <!--                   (refreshPaymentEvent)="onRefreshPayment()">-->
-
-    <!--</app-payment-modal>-->
     <!--<app-delete-modal #deleteModal-->
     <!--                  (refreshPaymentEvent)="onRefreshPayment()">-->
 

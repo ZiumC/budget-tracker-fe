@@ -15,7 +15,7 @@ import {TimerUtils} from "../../../../../util/timer.utils";
 import {HttpResponse} from "@angular/common/http";
 import {PageDto} from "../../../../../models/dto/page.model.dto";
 import {OrderOptions} from "../../../shared/order/order.component";
-import {SortPayment} from "../../../../../util/sort.utils";
+import {SortPayment} from "../../../../../util/arrays.utils";
 
 @Component({
   selector: 'app-payment',

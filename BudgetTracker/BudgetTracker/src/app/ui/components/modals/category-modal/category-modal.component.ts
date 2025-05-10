@@ -1,7 +1,7 @@
-import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {SpinnerSize} from "../../shared/spinner/spinner.component";
 import {ModalOptions, ModalUtils} from "../../../../util/modal.utils";
-import {GetCategoryDto} from "../../../../models/dto/category.model.dto";
+import {CategoryDto, GetCategoryDto} from "../../../../models/dto/category.model.dto";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {HttpService} from "../../../../services/http/http.service";
 import {ConfigService} from "../../../../services/config/config.service";
@@ -11,6 +11,9 @@ import {AppConfig} from "../../../../models/config/config";
 import {FormConfig} from "../../../../models/config/form.model.config";
 import {ResponseModel} from "../../../../models/response.model";
 import {formatString} from "../../../../util/string.utils";
+import {generateErrorModel} from "../../../../util/http.util";
+import {TimerUtils} from "../../../../util/timer.utils";
+import {HttpResponse} from "@angular/common/http";
 
 @Component({
   selector: 'app-category-modal',
@@ -20,6 +23,7 @@ import {formatString} from "../../../../util/string.utils";
 export class CategoryModalComponent implements OnInit, OnDestroy {
   @ViewChild('categoryModal') categoryModal: any;
   @ViewChild('errorModal') errorModal: any;
+  @Output() refreshCategoryTypesEvent = new EventEmitter<string[]>();
   protected readonly SpinnerSize = SpinnerSize;
   protected readonly ModalUtils = ModalUtils;
   protected readonly formatString = formatString;
@@ -27,11 +31,11 @@ export class CategoryModalComponent implements OnInit, OnDestroy {
   protected responseModel: ResponseModel;
   protected appConfig: AppConfig;
   protected formConfig: FormConfig;
-  protected displayLoader: boolean;
-  protected isEditing: boolean;
   protected categoryDto: GetCategoryDto;
   protected selectedCategory: string;
   protected categoryType: string;
+  protected displayLoader: boolean;
+  protected isEditing: boolean;
 
   constructor(
     private modalService: NgbModal,
@@ -82,7 +86,72 @@ export class CategoryModalComponent implements OnInit, OnDestroy {
     this.categoryDto.isNeeds = this.selectedCategory == categoryModal.needsName;
     this.categoryDto.isWants = this.selectedCategory == categoryModal.wantsName;
     this.categoryDto.isSavings = this.selectedCategory == categoryModal.savingsName;
-    console.log(this.categoryDto);
+
+    const categoryToSave = {
+      name: this.categoryDto.name,
+      description: this.categoryDto.description,
+      isNeeds: JSON.parse(String(this.categoryDto.isNeeds)),
+      isWants: JSON.parse(String(this.categoryDto.isWants)),
+      isSavings: JSON.parse(String(this.categoryDto.isSavings)),
+    } as CategoryDto;
+
+    this.displayLoader = true;
+
+    new TimerUtils(this.appConfig.animation.duration.default).start()
+      .subscribe(finished => {
+        if (finished) {
+          if (this.isEditing) {
+            this.updateCategory(this.categoryDto.id, categoryToSave);
+          } else {
+            this.createCategory(categoryToSave);
+          }
+        }
+      });
+  }
+
+  private updateCategory(categoryId: string, categoryToSave: CategoryDto): void {
+    this.subscriptions.push(
+      this.httpService.updateCategory(
+        categoryId,
+        categoryToSave
+      ).subscribe({
+        next: (response: HttpResponse<any>): void => {
+          this.onRequestSuccess(response);
+        },
+        error: (err): void => {
+          this.onRequestFailed(err);
+        }
+      })
+    );
+  }
+
+  private createCategory(categoryToSave: CategoryDto): void {
+    this.subscriptions.push(
+      this.httpService.createCategory(
+        categoryToSave
+      ).subscribe({
+        next: (response: HttpResponse<any>): void => {
+          this.onRequestSuccess(response);
+        },
+        error: (err): void => {
+          this.onRequestFailed(err);
+        }
+      })
+    );
+  }
+
+  private onRequestSuccess(response: HttpResponse<any>): void {
+    const types = [this.categoryType, this.selectedCategory];
+    this.refreshCategoryTypesEvent.emit(types);
+    this.responseModel.statusCode = response.status;
+    this.modalService.dismissAll();
+    this.displayLoader = false;
+  }
+
+  private onRequestFailed(err: any): void {
+    this.responseModel = generateErrorModel(err);
+    this.displayLoader = false;
+    this.errorModal.open(this.responseModel);
   }
 
   private setDefaultCategoryForm(): void {

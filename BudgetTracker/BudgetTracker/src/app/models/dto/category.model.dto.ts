@@ -13,3 +13,11 @@ export class GetCategoryDto {
   isSavings: boolean;
   dateUpdated: Date;
 }
+
+export class CategoryDto {
+  name: string;
+  description: string;
+  isNeeds: boolean;
+  isWants: boolean;
+  isSavings: boolean;
+}
