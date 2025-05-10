@@ -234,11 +234,19 @@ export class HttpService {
     )
   }
 
-  public updateCategory(categoryId: string, categoryDto: CategoryDto):
+  public updateCategory(idCategory: string, categoryDto: CategoryDto):
     Observable<HttpResponse<{}>> {
     return this.httpClient.put(
-      UrlApi.categoryPayment() + "/" + categoryId,
+      UrlApi.categoryId(idCategory),
       categoryDto,
+      {observe: 'response'}
+    )
+  }
+
+  public deleteCategory(idCategory: string):
+    Observable<HttpResponse<{}>> {
+    return this.httpClient.delete(
+      UrlApi.categoryId(idCategory),
       {observe: 'response'}
     )
   }

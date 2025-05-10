@@ -15,6 +15,7 @@ import {AppConfig} from "../../../../models/config/config";
 import {TimerUtils} from "../../../../util/timer.utils";
 import {generateErrorModel} from "../../../../util/http.util";
 import {GetPlannedPaymentDto} from "../../../../models/dto/planned-payment.model.dto";
+import {GetCategoryDto} from "../../../../models/dto/category.model.dto";
 
 @Component({
   selector: 'app-delete-modal',
@@ -28,6 +29,7 @@ export class DeleteModalComponent implements OnInit, OnDestroy {
   @Output() refreshIncomeEvent = new EventEmitter<boolean>();
   @Output() refreshPaymentEvent = new EventEmitter<boolean>();
   @Output() refreshPlannedPaymentEvent = new EventEmitter<boolean>();
+  @Output() refreshCategoryEvent = new EventEmitter<boolean>();
   protected readonly SpinnerSize = SpinnerSize;
   protected appConfig: AppConfig;
   protected subscriptions: Subscription[];
@@ -37,6 +39,7 @@ export class DeleteModalComponent implements OnInit, OnDestroy {
   private plannedPaymentDto: GetPlannedPaymentDto | null;
   private budgetDto: GetBudgetDto | null;
   private incomeDto: GetIncomeDto | null;
+  private categoryDto: GetCategoryDto | null;
 
   constructor(
     private modalService: NgbModal,
@@ -61,13 +64,22 @@ export class DeleteModalComponent implements OnInit, OnDestroy {
     SubscriptionUtils.unsubscribeAll(this.subscriptions);
   }
 
+  openWithCategory(category: GetCategoryDto): void {
+    this.displayLoader = false;
+    this.categoryDto = new GetCategoryDto();
+    this.categoryDto = category;
+
+    this.modalService
+      .open(this.deleteModal, ModalOptions.default(ModalSize.SMALL));
+  }
+
   openWithPayment(payment: GetPaymentDto): void {
     this.displayLoader = false;
     this.paymentDto = new GetPaymentDto();
     this.paymentDto = payment;
 
     this.modalService
-      .open(this.deleteModal, ModalOptions.default(ModalSize.SMALL))
+      .open(this.deleteModal, ModalOptions.default(ModalSize.SMALL));
   }
 
   openWithPlannedPayment(plannedPayment: GetPlannedPaymentDto): void {
@@ -76,7 +88,7 @@ export class DeleteModalComponent implements OnInit, OnDestroy {
     this.plannedPaymentDto = plannedPayment;
 
     this.modalService
-      .open(this.deleteModal, ModalOptions.default(ModalSize.SMALL))
+      .open(this.deleteModal, ModalOptions.default(ModalSize.SMALL));
   }
 
   openWithIncome(income: GetIncomeDto): void {
@@ -85,7 +97,7 @@ export class DeleteModalComponent implements OnInit, OnDestroy {
     this.incomeDto = income;
 
     this.modalService
-      .open(this.deleteModal, ModalOptions.default(ModalSize.SMALL))
+      .open(this.deleteModal, ModalOptions.default(ModalSize.SMALL));
   }
 
   openWithBudget(budget: GetBudgetDto): void {
@@ -94,7 +106,7 @@ export class DeleteModalComponent implements OnInit, OnDestroy {
     this.budgetDto = budget;
 
     this.modalService
-      .open(this.deleteModal, ModalOptions.default(ModalSize.SMALL))
+      .open(this.deleteModal, ModalOptions.default(ModalSize.SMALL));
   }
 
   delete(): void {
@@ -103,6 +115,7 @@ export class DeleteModalComponent implements OnInit, OnDestroy {
     const idIncome = this.incomeDto?.id;
     const idPayment = this.paymentDto?.id;
     const idPlannedPayment = this.plannedPaymentDto?.id;
+    const idCategory = this.categoryDto?.id;
 
     new TimerUtils(this.appConfig.animation.duration.default).start()
       .subscribe(finished => {
@@ -115,6 +128,8 @@ export class DeleteModalComponent implements OnInit, OnDestroy {
             this.deletePayment(idPayment);
           } else if (idPlannedPayment) {
             this.deletePlannedPayment(idPlannedPayment);
+          } else if (idCategory) {
+            this.deleteCategory(idCategory);
           } else {
             this.displayLoader = false;
           }
@@ -134,6 +149,7 @@ export class DeleteModalComponent implements OnInit, OnDestroy {
     this.budgetDto = null;
     this.paymentDto = null;
     this.plannedPaymentDto = null;
+    this.categoryDto = null;
   }
 
   private deletePayment(idPayment: string): void {
@@ -185,6 +201,20 @@ export class DeleteModalComponent implements OnInit, OnDestroy {
         next: (response: HttpResponse<any>): void => {
           this.onRequestSuccess(response);
           this.indexPageEvent.emit(true);
+        },
+        error: (err): void => {
+          this.onRequestFailed(err);
+        }
+      })
+    )
+  }
+
+  private deleteCategory(idCategory: string): void {
+    this.subscriptions.push(
+      this.httpService.deleteCategory(idCategory).subscribe({
+        next: (response: HttpResponse<any>): void => {
+          this.onRequestSuccess(response);
+          this.refreshCategoryEvent.emit(true);
         },
         error: (err): void => {
           this.onRequestFailed(err);

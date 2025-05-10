@@ -263,6 +263,10 @@ export class UrlApi {
     return urlResult;
   }
 
+  static categoryId(idCategory: string): string {
+    return this.categoryPayment() + "/" + idCategory
+  }
+
   static categoryPages(pageSize: number, type: string): string {
     return this.paginationController() +
       this.ACTIONS.CATEGORIES + "?type=" + type + "&pageSize=" + pageSize;
