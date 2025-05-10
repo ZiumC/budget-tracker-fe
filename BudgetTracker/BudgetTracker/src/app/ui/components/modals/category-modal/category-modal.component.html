@@ -3,9 +3,9 @@
     <div class="modal-header">
       <h4 class="modal-title" id="modal-basic-title">
         @if (isEditing) {
-          Edit category
+          Edit {{categoryType}} category
         } @else {
-          Add category
+          Add {{categoryType}} category
         }
       </h4>
       <button
@@ -63,30 +63,72 @@
               <div class="valid-feedback"></div>
             }
           </div>
-        </div>
-        <div [className]="ModalUtils.displayMarginFor(categoryCommentTextarea)">
-          <label for="category-description">Description</label>
-          <textarea
-            id="category-description"
-            class="form-control"
-            name="category-description"
-            rows="8"
-            maxlength="{{ formConfig.paymentModal.comment.maxLength }}"
-            #categoryCommentTextarea="ngModel"
-            [(ngModel)]="categoryDto.description"
-            [ngClass]="{
+          @if (isEditing) {
+            <label for="category-radiobuttons">Category type</label>
+            <span class="text-danger">*</span>
+            <div id="category-radiobuttons" class="mb-4">
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  id="needs-category"
+                  name="category"
+                  value="{{formConfig.categoryModal.needsName}}"
+                  [(ngModel)]="selectedCategory">
+                <label class="form-check-label" for="needs-category">
+                  Needs
+                </label>
+              </div>
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  id="wants-category"
+                  name="category"
+                  value="{{formConfig.categoryModal.wantsName}}"
+                  [(ngModel)]="selectedCategory">
+                <label class="form-check-label" for="wants-category">
+                  Wants
+                </label>
+              </div>
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  id="savings-category"
+                  name="category"
+                  value="{{formConfig.categoryModal.savingsName}}"
+                  [(ngModel)]="selectedCategory">
+                <label class="form-check-label" for="savings-category">
+                  Savings
+                </label>
+              </div>
+            </div>
+          }
+          <div [className]="ModalUtils.displayMarginFor(categoryCommentTextarea)">
+            <label for="category-description">Description</label>
+            <textarea
+              id="category-description"
+              class="form-control"
+              name="category-description"
+              rows="8"
+              maxlength="{{ formConfig.paymentModal.comment.maxLength }}"
+              #categoryCommentTextarea="ngModel"
+              [(ngModel)]="categoryDto.description"
+              [ngClass]="{
                 'is-invalid': categoryCommentTextarea.invalid &&
                   (categoryCommentTextarea.dirty || categoryCommentTextarea.touched),
                 'is-valid': categoryCommentTextarea.valid }">
               </textarea>
-          @if (categoryCommentTextarea.invalid &&
-          (categoryCommentTextarea.dirty || categoryCommentTextarea.touched)) {
-            <div class="invalid-feedback">
-              <label *ngIf="categoryCommentTextarea.errors?.['maxlength']">
-                {{ formatString(formConfig.messages.maxLength, formConfig.paymentModal.comment.maxLength) }}
-              </label>
-            </div>
-          }
+            @if (categoryCommentTextarea.invalid &&
+            (categoryCommentTextarea.dirty || categoryCommentTextarea.touched)) {
+              <div class="invalid-feedback">
+                <label *ngIf="categoryCommentTextarea.errors?.['maxlength']">
+                  {{ formatString(formConfig.messages.maxLength, formConfig.paymentModal.comment.maxLength) }}
+                </label>
+              </div>
+            }
+          </div>
         </div>
       </form>
     </div>

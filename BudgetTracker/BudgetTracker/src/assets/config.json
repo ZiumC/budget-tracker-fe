@@ -26,6 +26,19 @@
         "equal": "{0} in both dates should be equal",
         "alreadyDefined": "Month already defined"
       },
+      "categoryModal": {
+        "name": {
+          "minLength": "3",
+          "maxLength": "30"
+        },
+        "description": {
+          "minLength": "3",
+          "maxLength": "100"
+        },
+        "needsName": "needs",
+        "wantsName": "wants",
+        "savingsName": "savings"
+      },
       "paymentModal": {
         "placeholder": "0.00",
         "name": {

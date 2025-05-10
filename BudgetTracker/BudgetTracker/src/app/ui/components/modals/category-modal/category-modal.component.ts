@@ -30,8 +30,8 @@ export class CategoryModalComponent implements OnInit, OnDestroy {
   protected displayLoader: boolean;
   protected isEditing: boolean;
   protected categoryDto: GetCategoryDto;
-  private categoryId: string;
-
+  protected selectedCategory: string;
+  protected categoryType: string;
 
   constructor(
     private modalService: NgbModal,
@@ -58,12 +58,14 @@ export class CategoryModalComponent implements OnInit, OnDestroy {
     SubscriptionUtils.unsubscribeAll(this.subscriptions);
   }
 
-  open(categoryData?: GetCategoryDto): void {
+  open(categoryType: string, categoryData?: GetCategoryDto): void {
     this.setDefaultCategoryForm();
     this.isEditing = categoryData != null;
+    this.categoryType = categoryType;
+    this.selectedCategory = categoryType;
 
     if (categoryData) {
-      this.categoryId = categoryData.id;
+      this.categoryDto.id = categoryData.id;
       this.categoryDto.name = categoryData.name;
       this.categoryDto.dateUpdated = categoryData.dateUpdated;
       this.categoryDto.description = categoryData.description;
@@ -76,10 +78,14 @@ export class CategoryModalComponent implements OnInit, OnDestroy {
   }
 
   protected saveCategory(): void {
-
+    const categoryModal = this.formConfig.categoryModal;
+    this.categoryDto.isNeeds = this.selectedCategory == categoryModal.needsName;
+    this.categoryDto.isWants = this.selectedCategory == categoryModal.wantsName;
+    this.categoryDto.isSavings = this.selectedCategory == categoryModal.savingsName;
+    console.log(this.categoryDto);
   }
 
   private setDefaultCategoryForm(): void {
-
+    this.categoryDto = new GetCategoryDto();
   }
 }

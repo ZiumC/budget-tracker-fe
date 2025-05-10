@@ -3,6 +3,7 @@ export interface FormConfig {
   paymentModal: PaymentModal;
   incomeModal: IncomeModal;
   budgetModal: BudgetModal;
+  categoryModal: CategoryModal;
   regex: Regex;
 }
 
@@ -17,6 +18,14 @@ export interface Messages {
   range: string;
   equal: string;
   alreadyDefined: string;
+}
+
+export interface CategoryModal {
+  name: MinMaxLength;
+  description: MinMaxLength;
+  needsName: string;
+  wantsName: string;
+  savingsName: string;
 }
 
 export interface PaymentModal {
