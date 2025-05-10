@@ -8,6 +8,7 @@ export interface Pagination {
   defaultPage: number;
   defaultBudgetsPageSize: number;
   defaultPageSizeOptions: number[];
+  categoriesPageSizeOptions: number[];
 }
 
 export interface Cookies {
@@ -23,6 +24,7 @@ export interface Order {
   incomeTypes: OrderType[];
   paymentTypes: OrderType[];
   plannedPaymentTypes: OrderType[];
+  paymentCategoryTypes: OrderType[];
   excludedTypes: OrderType[];
   orderDirections: OrderDirection[];
 }

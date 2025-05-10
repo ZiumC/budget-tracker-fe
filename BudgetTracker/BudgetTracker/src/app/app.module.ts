@@ -32,6 +32,9 @@ import { IncomeComponent } from './ui/components/page/budget/income/income.compo
 import { PaymentComponent } from './ui/components/page/budget/payment/payment.component';
 import { PlannedPaymentComponent } from './ui/components/page/budget/planned-payment/planned-payment.component';
 import { PlannedPaymentsModalComponent } from './ui/components/modals/planned-payments-modal/planned-payments-modal.component';
+import { CategoryPageComponent } from './ui/pages/category-page/category-page.component';
+import { CategoryComponent } from './ui/components/page/category/category/category.component';
+import { CategoryModalComponent } from './ui/components/modals/category-modal/category-modal.component';
 
 export function loadConfig(configService: ConfigService): () => Promise<Config> {
   return (): Promise<Config> => firstValueFrom(configService.loadConfig());
@@ -61,6 +64,9 @@ export function loadConfig(configService: ConfigService): () => Promise<Config> 
     PaymentComponent,
     PlannedPaymentComponent,
     PlannedPaymentsModalComponent,
+    CategoryPageComponent,
+    CategoryComponent,
+    CategoryModalComponent,
   ],
   imports: [
     BrowserModule,

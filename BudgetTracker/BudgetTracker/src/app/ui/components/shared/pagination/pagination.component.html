@@ -13,7 +13,7 @@
         </button>
       </div>
       <div class="row">
-        <div [className]="displayPageSize ? 'col-md-6 my-1' : '' ">
+        <div id="page-col" class="col my-1">
           <div class="d-flex flex-nowrap align-items-center pagination-input">
             <label class="mx-1">Page</label>
             <input
@@ -36,7 +36,7 @@
           </div>
         </div>
         @if (displayPageSize) {
-          <div class="col-md-6 my-1">
+          <div id="size-col" class="col my-1">
             <div class="d-flex pagination-input">
               <span class="col-form-label text-nowrap px-2">Size</span>
               <select type="number"

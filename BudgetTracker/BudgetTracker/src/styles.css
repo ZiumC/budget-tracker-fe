@@ -145,6 +145,16 @@ div.ngb-dp-weekday {
   bottom: 0;
 }
 
+hr.vertical {
+  border-left: 0.75ex solid black;
+  border-radius: 0.5ex;
+}
+
+hr.horizontal {
+  border: 0.15ex solid black;
+  border-radius: 0.5ex;
+}
+
 .icon-big {
   font-size: 2.5ex;
 }

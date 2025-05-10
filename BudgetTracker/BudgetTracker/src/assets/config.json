@@ -26,6 +26,19 @@
         "equal": "{0} in both dates should be equal",
         "alreadyDefined": "Month already defined"
       },
+      "categoryModal": {
+        "name": {
+          "minLength": "3",
+          "maxLength": "30"
+        },
+        "description": {
+          "minLength": "3",
+          "maxLength": "100"
+        },
+        "needsName": "needs",
+        "wantsName": "wants",
+        "savingsName": "savings"
+      },
       "paymentModal": {
         "placeholder": "0.00",
         "name": {
@@ -74,6 +87,11 @@
           9,
           12,
           15
+        ],
+        "categoriesPageSizeOptions": [
+          12,
+          15,
+          18
         ]
       },
       "order": {
@@ -152,6 +170,20 @@
             "name": "paid first",
             "value": "paidFirst",
             "displayDirections": false,
+            "applyForApi": true
+          }
+        ],
+        "paymentCategoryTypes": [
+          {
+            "name": "date updated",
+            "value": "dateUpdated",
+            "displayDirections": true,
+            "applyForApi": true
+          },
+          {
+            "name": "name",
+            "value": "name",
+            "displayDirections": true,
             "applyForApi": true
           }
         ],

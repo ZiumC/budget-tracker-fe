@@ -1,4 +1,5 @@
 import {RequestParams} from "../../models/requestParams";
+import {CategoryType} from "../../models/dto/category.model.dto";
 
 export enum TotalPages {
   INCOMES = "incomes",
@@ -12,7 +13,8 @@ export class UrlApi {
     BUDGETS: "/Budgets",
     PAYMENTS: "/Payments",
     INCOMES: "/Incomes",
-    PAGINATION: "/Pagination"
+    PAGINATION: "/Pagination",
+    CATEGORIES: "/Categories"
   }
   private static ACTIONS = {
     PAYMENTS: "/payments",
@@ -21,7 +23,8 @@ export class UrlApi {
     INCOME: "/income",
     BUDGETS: "/budgets",
     BUDGET: "/budget",
-    PLANNED: "/planned"
+    PLANNED: "/planned",
+    CATEGORIES: "/categories"
   }
 
   static budgets(requestParamModel: RequestParams): string {
@@ -230,5 +233,42 @@ export class UrlApi {
 
   private static paginationController(): string {
     return this.HOST + this.CONTROLLERS.PAGINATION;
+  }
+
+  private static categoriesController(): string {
+    return this.HOST + this.CONTROLLERS.CATEGORIES;
+  }
+
+  static categoryPayment(): string {
+    return this.categoriesController() + this.ACTIONS.PAYMENT
+  }
+
+  static category(requestParam: RequestParams, type: CategoryType): string {
+    const page = requestParam.page;
+    const pageSize = requestParam.pageSize;
+    const orderBy = requestParam.orderBy;
+    const order = requestParam.order;
+
+    let urlResult = this.categoriesController() + this.ACTIONS.PAYMENT +
+      "?page=" + page + "&pageSize=" + pageSize + "&type=" + type.valueOf();
+
+    if (orderBy) {
+      urlResult = urlResult + "&orderBy=" + orderBy;
+    }
+
+    if (order) {
+      urlResult = urlResult + "&order=" + order;
+    }
+
+    return urlResult;
+  }
+
+  static categoryId(idCategory: string): string {
+    return this.categoryPayment() + "/" + idCategory
+  }
+
+  static categoryPages(pageSize: number, type: string): string {
+    return this.paginationController() +
+      this.ACTIONS.CATEGORIES + "?type=" + type + "&pageSize=" + pageSize;
   }
 }
