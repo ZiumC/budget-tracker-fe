@@ -17,6 +17,7 @@ import {OrderOptions} from "../../../shared/order/order.component";
 import {PageDto} from "../../../../../models/dto/page.model.dto";
 import BigNumber from "bignumber.js";
 import {PaymentStatusDto} from "../../../../../models/dto/payment.model.dto";
+import {GetAssignmentDto} from "../../../../../models/dto/assignment.model.dto";
 
 @Component({
   selector: 'app-planned-payment',
@@ -36,9 +37,11 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy {
   protected plannedPaymentsDto: GetPlannedPaymentDto[] | null;
   protected selectedPlannedPayment: GetPlannedPaymentDto;
   protected requestParams: RequestParams;
-  protected responseModel: ResponseModel;
+  protected paymentResponseModel: ResponseModel;
+  protected assignmentResponseModel: ResponseModel;
   protected requiredStatusCode: number;
   protected plannedPaymentsLoader: boolean;
+  protected plannedAssignmentLoader: boolean;
   protected plannedPaymentStatusLoader: boolean;
   protected totalPages: number;
   public innerWidth: any;
@@ -58,7 +61,7 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy {
     }
 
     this.innerWidth = window.innerWidth;
-    this.responseModel = new ResponseModel();
+    this.paymentResponseModel = new ResponseModel();
     this.subscriptions = [];
 
     this.requestParams = new RequestParams({
@@ -128,7 +131,7 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy {
         },
         error: (err): void => {
           const response = generateErrorModel(err);
-          this.responseModel = response;
+          this.paymentResponseModel = response;
           this.errorModal.open(response);
           this.plannedPaymentStatusLoader = false;
         },
@@ -137,6 +140,13 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy {
         }
       })
     )
+  }
+
+  protected onPlannedPaymentSelect(plannedPayment: GetPlannedPaymentDto): void {
+    if (this.selectedPlannedPayment !== plannedPayment) {
+      this.getPlannedPaymentAssignment(plannedPayment.id);
+    }
+    this.selectedPlannedPayment = plannedPayment;
   }
 
   private getPlannedPayments(): void {
@@ -148,10 +158,10 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy {
       ).subscribe({
         next: (response: HttpResponse<GetPlannedPaymentDto[]>): void => {
           this.plannedPaymentsDto = response.body;
-          this.responseModel.statusCode = response.status;
+          this.paymentResponseModel.statusCode = response.status;
         }, error: (err): void => {
           const response = generateErrorModel(err);
-          this.responseModel = response;
+          this.paymentResponseModel = response;
           if (response.statusCode != 404) {
             this.errorModal.open(response);
           }
@@ -184,6 +194,22 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy {
         this.requestParams).subscribe({
         next: (response: HttpResponse<PageDto>): void => {
           this.totalPages = response.body!.pages;
+        }
+      })
+    )
+  }
+
+  private getPlannedPaymentAssignment(idPayment: string): void {
+    this.subscriptions.push(
+      this.httpService.getPaymentAssignment(
+        idPayment,
+        true).subscribe({
+        next: (response: HttpResponse<GetAssignmentDto>): void => {
+          for (let payment of this.plannedPaymentsDto!) {
+            if (payment.id == idPayment) {
+              payment.assignment = response.body;
+            }
+          }
         }
       })
     )

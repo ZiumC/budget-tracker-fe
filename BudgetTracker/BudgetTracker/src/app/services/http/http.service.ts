@@ -9,6 +9,7 @@ import {PageDto} from "../../models/dto/page.model.dto";
 import {CategoryDto, CategoryType, GetCategoryDto} from "../../models/dto/category.model.dto";
 import {BudgetUrls, CategoryUrls, IncomeUrls, PaginationUrls, PaymentUrls} from "./http";
 import {PlannedPaymentDto} from "../../models/dto/planned-payment.model.dto";
+import {GetAssignmentDto} from "../../models/dto/assignment.model.dto";
 
 @Injectable({
   providedIn: 'root',
@@ -220,6 +221,14 @@ export class HttpService {
     Observable<HttpResponse<{}>> {
     return this.httpClient.delete(
       CategoryUrls.paymentId(idCategory),
+      {observe: 'response'}
+    )
+  }
+
+  public getPaymentAssignment(idPayment: string, isPlanned: boolean):
+    Observable<HttpResponse<GetAssignmentDto>> {
+    return this.httpClient.get<GetAssignmentDto>(
+      PaymentUrls.paymentAssignment(idPayment, isPlanned),
       {observe: 'response'}
     )
   }
