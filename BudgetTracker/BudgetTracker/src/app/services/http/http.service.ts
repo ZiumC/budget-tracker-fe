@@ -1,14 +1,14 @@
 import {HttpClient, HttpResponse} from "@angular/common/http";
 import {Observable} from "rxjs";
-import {TotalPages, UrlApi} from "./http";
 import {Injectable} from "@angular/core";
 import {RequestParams} from "../../models/requestParams";
 import {GetIncomeDto, IncomeDto} from "../../models/dto/income.model.dto";
-import {PaymentStatusDto, PaymentDto, GetPaymentDto} from "../../models/dto/payment.model.dto";
+import {PaymentDto, PaymentStatusDto} from "../../models/dto/payment.model.dto";
 import {BudgetDto, GetBudgetDto} from "../../models/dto/budget.model.dto";
 import {PageDto} from "../../models/dto/page.model.dto";
-import {GetPlannedPaymentDto, PlannedPaymentDto} from "../../models/dto/planned-payment.model.dto";
 import {CategoryDto, CategoryType, GetCategoryDto} from "../../models/dto/category.model.dto";
+import {BudgetUrls, CategoryUrls, IncomeUrls, PaginationUrls, PaymentUrls} from "./http";
+import {PlannedPaymentDto} from "../../models/dto/planned-payment.model.dto";
 
 @Injectable({
   providedIn: 'root',
@@ -21,7 +21,7 @@ export class HttpService {
   public getBudgets(requestModel: RequestParams):
     Observable<HttpResponse<GetBudgetDto[]>> {
     return this.httpClient.get<GetBudgetDto[]>(
-      UrlApi.budgets(requestModel),
+      BudgetUrls.budgets(requestModel),
       {observe: 'response'}
     );
   }
@@ -29,23 +29,15 @@ export class HttpService {
   public getBudget(idBudget: string):
     Observable<HttpResponse<GetBudgetDto>> {
     return this.httpClient.get<GetBudgetDto>(
-      UrlApi.budgetId(idBudget),
+      BudgetUrls.budgetId(idBudget),
       {observe: 'response'}
     );
   }
 
-  public getBudgetsTotalPage(pageSize: number):
-    Observable<HttpResponse<PageDto>> {
-    return this.httpClient.get<PageDto>(
-      UrlApi.budgetsPages(pageSize),
-      {observe: 'response'}
-    )
-  }
-
-  public updateBudget(budgetDto: BudgetDto, idBudget: string):
+  public updateBudget(idBudget: string, budgetDto: BudgetDto):
     Observable<HttpResponse<{}>> {
     return this.httpClient.put(
-      UrlApi.budgetId(idBudget),
+      BudgetUrls.budgetId(idBudget),
       budgetDto,
       {observe: 'response'}
     )
@@ -54,7 +46,7 @@ export class HttpService {
   public createBudget(budgetDate: string):
     Observable<HttpResponse<{}>> {
     return this.httpClient.post(
-      UrlApi.budgetDate(budgetDate),
+      BudgetUrls.budgetDate(budgetDate),
       null,
       {observe: 'response'}
     )
@@ -63,49 +55,62 @@ export class HttpService {
   public deleteBudget(idBudget: string):
     Observable<HttpResponse<{}>> {
     return this.httpClient.delete(
-      UrlApi.budgetId(idBudget),
+      BudgetUrls.budgetId(idBudget),
       {observe: 'response'}
     )
   }
 
-  public getBudgetIncomes(requestParams: RequestParams, idBudget: string):
+  public getBudgetIncomes(idBudget: string, requestParams: RequestParams):
     Observable<HttpResponse<GetIncomeDto[]>> {
     return this.httpClient.get<GetIncomeDto[]>(
-      UrlApi.budgetIncomes(requestParams, idBudget),
+      BudgetUrls.budgetIncomes(requestParams, idBudget),
       {observe: 'response'}
     );
   }
 
-  public getBudgetPayments(requestParams: RequestParams, idBudget: string):
-    Observable<HttpResponse<GetPaymentDto[]>> {
-    return this.httpClient.get<GetPaymentDto[]>(
-      UrlApi.budgetPayments(requestParams, idBudget),
+  public getBudgetPayments<T>(
+    idBudget: string,
+    requestParams: RequestParams,
+    isPlanned: boolean): Observable<HttpResponse<T>> {
+    return this.httpClient.get<T>(
+      BudgetUrls.budgetPayments(idBudget, requestParams, isPlanned),
       {observe: 'response'}
     )
   }
 
-  public createBudgetIncome(incomeDto: IncomeDto, idBudget: string):
+  public createBudgetIncome(idBudget: string, incomeDto: IncomeDto):
     Observable<HttpResponse<{}>> {
     return this.httpClient.post(
-      UrlApi.budgetIncome(idBudget),
+      BudgetUrls.budgetIncome(idBudget),
       incomeDto,
       {observe: 'response'}
     )
   }
 
-  public createBudgetPayment(paymentDto: PaymentDto, idBudget: string):
-    Observable<HttpResponse<{}>> {
+  public createBudgetPayment(
+    idBudget: string,
+    paymentDto: PaymentDto): Observable<HttpResponse<{}>> {
     return this.httpClient.post(
-      UrlApi.budgetPayment(idBudget),
+      BudgetUrls.budgetPayment(idBudget),
       paymentDto,
       {observe: 'response'}
     )
   }
 
-  public updateIncome(incomeDto: IncomeDto, idIncome: string):
+  public createBudgetPlannedPayment(
+    idBudget: string,
+    paymentDto: PlannedPaymentDto): Observable<HttpResponse<{}>> {
+    return this.httpClient.post(
+      BudgetUrls.budgetPayments(idBudget, null, true),
+      paymentDto,
+      {observe: 'response'}
+    )
+  }
+
+  public updateIncome(idIncome: string, incomeDto: IncomeDto):
     Observable<HttpResponse<{}>> {
     return this.httpClient.put(
-      UrlApi.incomeId(idIncome),
+      IncomeUrls.incomeId(idIncome),
       incomeDto,
       {observe: 'response'}
     )
@@ -114,113 +119,81 @@ export class HttpService {
   public deleteIncome(idIncome: string):
     Observable<HttpResponse<{}>> {
     return this.httpClient.delete(
-      UrlApi.incomeId(idIncome),
+      IncomeUrls.incomeId(idIncome),
       {observe: 'response'}
     )
   }
 
-  public getIncomePages(requestParams: RequestParams, idBudget: string):
+  public getIncomePages(idBudget: string, requestParams: RequestParams):
     Observable<HttpResponse<PageDto>> {
     return this.httpClient.get<PageDto>(
-      UrlApi.budgetDataPages(requestParams, idBudget, TotalPages.INCOMES),
+      PaginationUrls.incomesPagination(idBudget, requestParams),
       {observe: 'response'}
     )
   }
 
-  public updatePayment(paymentDto: PaymentDto, idPayment: string):
-    Observable<HttpResponse<{}>> {
+  public updatePayment(
+    idPayment: string,
+    paymentDto: PaymentDto | PlannedPaymentDto,
+    isPlanned: boolean): Observable<HttpResponse<{}>> {
     return this.httpClient.put(
-      UrlApi.paymentId(idPayment),
+      PaymentUrls.paymentId(idPayment, isPlanned),
       paymentDto,
       {observe: 'response'}
     )
   }
 
-  public patchPaymentStatus(paymentStatusForm: PaymentStatusDto, idPayment: string, isPlanned: boolean):
-    Observable<HttpResponse<{}>> {
-
-    let paymentStatusUrl = UrlApi.paymentStatus(idPayment);
-    if (isPlanned) {
-      paymentStatusUrl = UrlApi.plannedPaymentStatus(idPayment)
-    }
-
+  public patchPaymentStatus(
+    idPayment: string,
+    paymentStatusForm: PaymentStatusDto,
+    isPlanned: boolean): Observable<HttpResponse<{}>> {
     return this.httpClient.patch(
-      paymentStatusUrl,
+      PaymentUrls.paymentStatus(idPayment, isPlanned),
       paymentStatusForm,
       {observe: 'response'}
     )
   }
 
-  public deletePayment(idPayment: string):
+  public deletePayment(idPayment: string, isPlanned: boolean):
     Observable<HttpResponse<{}>> {
     return this.httpClient.delete(
-      UrlApi.paymentId(idPayment),
+      PaymentUrls.paymentId(idPayment, isPlanned),
       {observe: 'response'}
     )
   }
 
-  public getPaymentPages(requestParams: RequestParams, idBudget: string):
-    Observable<HttpResponse<PageDto>> {
+  public getPaymentPages(
+    idBudget: string,
+    requestParams: RequestParams): Observable<HttpResponse<PageDto>> {
     return this.httpClient.get<PageDto>(
-      UrlApi.budgetDataPages(requestParams, idBudget, TotalPages.PAYMENTS),
+      PaginationUrls.regularPaymentsPagination(idBudget, requestParams),
       {observe: 'response'}
     )
   }
 
-  public getPlannedPayment(requestParams: RequestParams, idBudget: string):
-    Observable<HttpResponse<GetPlannedPaymentDto[]>> {
-    return this.httpClient.get<GetPlannedPaymentDto[]>(
-      UrlApi.budgetPlannedPayments(requestParams, idBudget),
-      {observe: 'response'}
-    )
-  }
-
-  public getPlannedPaymentPages(requestParams: RequestParams, idBudget: string):
-    Observable<HttpResponse<PageDto>> {
+  public getPlannedPaymentPages(
+    idBudget: string,
+    requestParams: RequestParams): Observable<HttpResponse<PageDto>> {
     return this.httpClient.get<PageDto>(
-      UrlApi.budgetDataPages(requestParams, idBudget, TotalPages.PLANNED_PAYMENTS),
+      PaginationUrls.plannedPaymentsPagination(idBudget, requestParams),
       {observe: 'response'}
     )
   }
 
-  public updatePlannedPayment(plannedPaymentDto: PlannedPaymentDto, idPayment: string):
-    Observable<HttpResponse<{}>> {
-    return this.httpClient.put(
-      UrlApi.plannedPaymentId(idPayment),
-      plannedPaymentDto,
-      {observe: 'response'}
-    )
-  }
-
-  public createBudgetPlannedPayment(plannedPaymentDto: PlannedPaymentDto, idBudget: string):
-    Observable<HttpResponse<{}>> {
-    return this.httpClient.post(
-      UrlApi.budgetPlannedPayment(idBudget),
-      plannedPaymentDto,
-      {observe: 'response'}
-    )
-  }
-
-  public deletePlannedPayment(idPayment: string):
-    Observable<HttpResponse<{}>> {
-    return this.httpClient.delete(
-      UrlApi.plannedPaymentId(idPayment),
-      {observe: 'response'}
-    )
-  }
-
-  public getCategories(requestParams: RequestParams, type: CategoryType):
-    Observable<HttpResponse<GetCategoryDto[]>> {
+  public getCategories(
+    type: CategoryType,
+    requestParams: RequestParams): Observable<HttpResponse<GetCategoryDto[]>> {
     return this.httpClient.get<GetCategoryDto[]>(
-      UrlApi.category(requestParams, type),
+      CategoryUrls.paymentCategory(type, requestParams),
       {observe: 'response'}
     )
   }
 
-  public getCategoryPages(requestParams: RequestParams, type: CategoryType):
-    Observable<HttpResponse<PageDto>> {
+  public getCategoryPages(
+    type: CategoryType,
+    requestParams: RequestParams): Observable<HttpResponse<PageDto>> {
     return this.httpClient.get<PageDto>(
-      UrlApi.categoryPages(requestParams.pageSize, type.valueOf()),
+      PaginationUrls.paymentCategories(type, requestParams),
       {observe: 'response'}
     )
   }
@@ -228,7 +201,7 @@ export class HttpService {
   public createCategory(categoryDto: CategoryDto):
     Observable<HttpResponse<{}>> {
     return this.httpClient.post(
-      UrlApi.categoryPayment(),
+      CategoryUrls.paymentCategory(null, null),
       categoryDto,
       {observe: 'response'}
     )
@@ -237,7 +210,7 @@ export class HttpService {
   public updateCategory(idCategory: string, categoryDto: CategoryDto):
     Observable<HttpResponse<{}>> {
     return this.httpClient.put(
-      UrlApi.categoryId(idCategory),
+      CategoryUrls.paymentId(idCategory),
       categoryDto,
       {observe: 'response'}
     )
@@ -246,7 +219,7 @@ export class HttpService {
   public deleteCategory(idCategory: string):
     Observable<HttpResponse<{}>> {
     return this.httpClient.delete(
-      UrlApi.categoryId(idCategory),
+      CategoryUrls.paymentId(idCategory),
       {observe: 'response'}
     )
   }

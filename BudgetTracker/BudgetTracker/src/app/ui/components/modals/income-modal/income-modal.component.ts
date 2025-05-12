@@ -96,8 +96,8 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
   private updateIncome(): void {
     this.subscriptions.push(
       this.httpService.updateIncome(
-        this.incomeDto,
-        this.idIncome).subscribe({
+        this.idIncome,
+        this.incomeDto).subscribe({
         next: (response: HttpResponse<any>): void => {
           this.onRequestSuccess(response);
         },
@@ -111,8 +111,8 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
   private createIncome(): void {
     this.subscriptions.push(
       this.httpService.createBudgetIncome(
-        this.incomeDto,
-        this.idBudget).subscribe({
+        this.idBudget,
+        this.incomeDto).subscribe({
         next: (response: HttpResponse<any>): void => {
           this.onRequestSuccess(response);
         },

@@ -119,10 +119,10 @@ export class PaymentComponent implements OnInit, OnDestroy {
     this.paymentStatusLoader = true;
     this.subscriptions.push(
       this.httpService.patchPaymentStatus(
+        idPayment,
         {
           isPaid: isPaid
         } as PaymentStatusDto,
-        idPayment,
         false
       ).subscribe({
         next: (): void => {
@@ -157,9 +157,10 @@ export class PaymentComponent implements OnInit, OnDestroy {
 
   private getPayments(): void {
     this.subscriptions.push(
-      this.httpService.getBudgetPayments(
+      this.httpService.getBudgetPayments<GetPaymentDto[]>(
+        this.idBudget,
         this.paymentRequestModel,
-        this.idBudget).subscribe({
+        false).subscribe({
         next: (response: HttpResponse<GetPaymentDto[]>): void => {
           this.paymentsDto = response.body;
           this.paymentResponseModel.statusCode = response.status;
@@ -183,8 +184,8 @@ export class PaymentComponent implements OnInit, OnDestroy {
   private getPaymentTotalPages(): void {
     this.subscriptions.push(
       this.httpService.getPaymentPages(
-        this.paymentRequestModel,
-        this.idBudget).subscribe({
+        this.idBudget,
+        this.paymentRequestModel).subscribe({
         next: (response: HttpResponse<PageDto>): void => {
           this.paymentTotalPages = response.body!.pages;
         }

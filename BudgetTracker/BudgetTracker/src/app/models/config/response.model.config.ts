@@ -7,4 +7,5 @@ export interface RequiredStatus {
   incomeStatus: number;
   paymentStatus: number;
   plannedPaymentStatus: number;
+  categoryStatus: number;
 }

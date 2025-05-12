@@ -81,8 +81,8 @@ export class CategoryComponent implements OnInit, OnDestroy {
 
     this.subscriptions.push(
       this.refreshCategoryEvent.subscribe(categories => {
-        for (let category of categories){
-          if (category == this.type){
+        for (let category of categories) {
+          if (category == this.type) {
             this.onRefreshCategories();
           }
         }
@@ -129,8 +129,8 @@ export class CategoryComponent implements OnInit, OnDestroy {
   private getCategories(): void {
     this.subscriptions.push(
       this.httpService.getCategories(
-        this.categoryRequestParams,
-        this.type).subscribe({
+        this.type,
+        this.categoryRequestParams).subscribe({
         next: (response: HttpResponse<GetCategoryDto[]>): void => {
           this.categoriesDto = response.body;
           this.categoryResponseModel.statusCode = response.status;
@@ -170,8 +170,8 @@ export class CategoryComponent implements OnInit, OnDestroy {
   private getCategoriesTotalPages(): void {
     this.subscriptions.push(
       this.httpService.getCategoryPages(
-        this.categoryRequestParams,
-        this.type).subscribe({
+        this.type,
+        this.categoryRequestParams).subscribe({
         next: (response: HttpResponse<PageDto>): void => {
           this.categoriesTotalPages = response.body!.pages;
         }
