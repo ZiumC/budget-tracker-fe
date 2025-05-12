@@ -1,274 +1,294 @@
 import {RequestParams} from "../../models/requestParams";
 import {CategoryType} from "../../models/dto/category.model.dto";
 
-export enum TotalPages {
-  INCOMES = "incomes",
-  PAYMENTS = "payments",
-  PLANNED_PAYMENTS = "payments/planned"
+
+class HostUrl {
+  private static host = 'https://localhost:7139'
+  private static api = '/api'
+
+  static getHostUrl(): string {
+    return HostUrl.host + HostUrl.api;
+  }
 }
 
-export class UrlApi {
-  private static HOST: string = "https://localhost:7139/api"
-  private static CONTROLLERS = {
-    BUDGETS: "/Budgets",
-    PAYMENTS: "/Payments",
-    INCOMES: "/Incomes",
-    PAGINATION: "/Pagination",
-    CATEGORIES: "/Categories"
-  }
-  private static ACTIONS = {
-    PAYMENTS: "/payments",
-    PAYMENT: "/payment",
-    INCOMES: "/incomes",
-    INCOME: "/income",
-    BUDGETS: "/budgets",
-    BUDGET: "/budget",
-    PLANNED: "/planned",
-    CATEGORIES: "/categories"
-  }
-
-  static budgets(requestParamModel: RequestParams): string {
-    const page = requestParamModel.page;
-    const pageSize = requestParamModel.pageSize;
-    const fromDate = requestParamModel.fromDate;
-    const toDate = requestParamModel.toDate;
-    const orderBy = requestParamModel.orderBy;
-    const order = requestParamModel.order;
-
-    let urlResult = this.budgetController() +
-      "?page=" + page + "&pageSize=" + pageSize;
+class ParamsQuery {
+  static getDateRangeQuery(requestParam: RequestParams): string {
+    let queryResult: string = "";
+    const fromDate = requestParam.fromDate;
+    const toDate = requestParam.toDate;
 
     if (fromDate) {
-      urlResult = urlResult + "&fromDate=" + fromDate;
+      queryResult = queryResult + "fromDate=" + fromDate;
     }
 
     if (toDate) {
-      urlResult = urlResult + "&toDate=" + toDate;
+      queryResult = queryResult + "&toDate=" + toDate;
     }
 
+    return queryResult;
+  }
+
+  static getOrderQuery(requestParam: RequestParams): string {
+    let queryResult: string = "";
+    const orderBy = requestParam.orderBy;
+    const order = requestParam.order;
+
     if (orderBy) {
-      urlResult = urlResult + "&orderBy=" + orderBy;
+      queryResult = queryResult + "orderBy=" + orderBy;
     }
 
     if (order) {
-      urlResult = urlResult + "&order=" + order;
+      queryResult = queryResult + "&order=" + order;
     }
 
-    return urlResult;
+    return queryResult;
   }
 
-  static budgetsPages(pageSize: number): string {
-    return this.paginationController() +
-      this.ACTIONS.BUDGETS + "?pageSize=" + pageSize
+  static getPaginationQuery(requestParam: RequestParams): string {
+    let queryResult: string = "";
+    const page = requestParam.page;
+    const pageSize = requestParam.pageSize;
+
+    if (page) {
+      queryResult = queryResult + "page=" + page;
+    }
+
+    if (pageSize) {
+      queryResult = queryResult + "&pageSize=" + pageSize;
+    }
+
+    return queryResult;
+  }
+}
+
+export class BudgetUrls {
+  private static CONTROLLER = '/Budgets';
+  private static ACTIONS = {
+    REGULAR_PAYMENTS: "/payments",
+    PLANNED_PAYMENTS: "/payments/planned",
+    INCOMES: "/incomes",
+    REGULAR_PAYMENT: "/payment",
+    INCOME: "/income"
   }
 
-  static budgetId(idBudget: string): string {
-    return this.budgetController() + "/" + idBudget
-  }
+  static budgetPayments(
+    idBudget: string,
+    requestParam: RequestParams | null,
+    isPlanned: boolean): string {
 
-  static budgetDate(budgetDate: string): string {
-    return this.budgetController() + "?budgetDate=" + budgetDate
+    let result = HostUrl.getHostUrl() + BudgetUrls.CONTROLLER;
+    let actionPart: string = "";
+
+    if (isPlanned) {
+      actionPart = BudgetUrls.ACTIONS.PLANNED_PAYMENTS;
+    } else {
+      actionPart = BudgetUrls.ACTIONS.REGULAR_PAYMENTS;
+    }
+    result = result + "/" + idBudget + actionPart;
+
+    if (requestParam) {
+      result = result + "?";
+      let orderQuery = ParamsQuery.getOrderQuery(requestParam);
+      if (orderQuery) {
+        result = result + orderQuery;
+      }
+      let paginationQuery = ParamsQuery.getPaginationQuery(requestParam);
+      if (paginationQuery) {
+        result = result + "&" + paginationQuery;
+      }
+    }
+
+    return result;
   }
 
   static budgetIncomes(
     requestParam: RequestParams,
     idBudget: string): string {
 
-    let baseUrl = this.budgetId(idBudget) + this.ACTIONS.INCOMES;
+    let result = HostUrl.getHostUrl() + BudgetUrls.CONTROLLER + "/" + idBudget;
+    result = result + BudgetUrls.ACTIONS.INCOMES + "?";
 
-    const page = requestParam.page;
-    const pageSize = requestParam.pageSize;
-    const fromDate = requestParam.fromDate;
-    const toDate = requestParam.toDate;
-    const orderBy = requestParam.orderBy;
-    const order = requestParam.order;
-
-    baseUrl = baseUrl + "?page=" + page + "&pageSize=" + pageSize;
-
-    if (fromDate) {
-      baseUrl = baseUrl + "&fromDate=" + fromDate;
+    let orderQuery = ParamsQuery.getOrderQuery(requestParam);
+    if (orderQuery) {
+      result = result + orderQuery;
     }
 
-    if (toDate) {
-      baseUrl = baseUrl + "&toDate=" + toDate;
+    let paginationQuery = ParamsQuery.getPaginationQuery(requestParam);
+    if (paginationQuery) {
+      result = result + "&" + paginationQuery;
     }
 
-    if (orderBy) {
-      baseUrl = baseUrl + "&orderBy=" + orderBy;
-    }
-
-    if (order) {
-      baseUrl = baseUrl + "&order=" + order;
-    }
-
-    return baseUrl;
+    return result;
   }
 
-  static budgetPayments(requestParam: RequestParams,
-                        idBudget: string): string {
-    const page = requestParam.page;
-    const pageSize = requestParam.pageSize;
-    const fromDate = requestParam.fromDate;
-    const toDate = requestParam.toDate;
-    const orderBy = requestParam.orderBy;
-    const order = requestParam.order;
-
-    let urlResult = this.budgetId(idBudget) + this.ACTIONS.PAYMENTS +
-      "?page=" + page + "&pageSize=" + pageSize;
-
-    if (fromDate) {
-      urlResult = urlResult + "&fromDate=" + fromDate;
-    }
-
-    if (toDate) {
-      urlResult = urlResult + "&toDate=" + toDate;
-    }
-
-    if (orderBy) {
-      urlResult = urlResult + "&orderBy=" + orderBy;
-    }
-
-    if (order) {
-      urlResult = urlResult + "&order=" + order;
-    }
-
-    return urlResult;
+  static budgetId(idBudget: string): string {
+    return HostUrl.getHostUrl() + BudgetUrls.CONTROLLER + "/" + idBudget;
   }
 
-  static budgetPlannedPayments(requestParam: RequestParams,
-                               idBudget: string): string {
-    const page = requestParam.page;
-    const pageSize = requestParam.pageSize;
-    const fromDate = requestParam.fromDate;
-    const toDate = requestParam.toDate;
-    const orderBy = requestParam.orderBy;
-    const order = requestParam.order;
+  static budgets(requestParam: RequestParams): string {
+    let result = HostUrl.getHostUrl() + BudgetUrls.CONTROLLER + "?";
 
-    let urlResult = this.budgetId(idBudget) + this.ACTIONS.PAYMENTS + this.ACTIONS.PLANNED +
-      "?page=" + page + "&pageSize=" + pageSize;
-
-    if (fromDate) {
-      urlResult = urlResult + "&fromDate=" + fromDate;
+    let dateRangeQuery = ParamsQuery.getDateRangeQuery(requestParam);
+    if (dateRangeQuery) {
+      result = result + dateRangeQuery;
     }
 
-    if (toDate) {
-      urlResult = urlResult + "&toDate=" + toDate;
+    let orderQuery = ParamsQuery.getOrderQuery(requestParam);
+    if (orderQuery) {
+      result = result + "&" + orderQuery;
     }
 
-    if (orderBy) {
-      urlResult = urlResult + "&orderBy=" + orderBy;
+    let paginationQuery = ParamsQuery.getPaginationQuery(requestParam);
+    if (paginationQuery) {
+      result = result + "&" + paginationQuery;
     }
 
-    if (order) {
-      urlResult = urlResult + "&order=" + order;
-    }
-
-    return urlResult;
+    return result;
   }
 
   static budgetIncome(idBudget: string): string {
-    return this.budgetId(idBudget) + this.ACTIONS.INCOME;
-  }
-
-  static incomeId(idIncome: string): string {
-    return this.incomeController() + "/" + idIncome;
+    let result = HostUrl.getHostUrl() + BudgetUrls.CONTROLLER + "/" + idBudget;
+    return result + BudgetUrls.ACTIONS.INCOME;
   }
 
   static budgetPayment(idBudget: string): string {
-    return this.budgetId(idBudget) + this.ACTIONS.PAYMENT;
+    let result = HostUrl.getHostUrl() + BudgetUrls.CONTROLLER + "/" + idBudget;
+    return result + BudgetUrls.ACTIONS.REGULAR_PAYMENT;
   }
 
-  static budgetPlannedPayment(idBudget: string): string {
-    return this.budgetId(idBudget) + this.ACTIONS.PAYMENTS + this.ACTIONS.PLANNED;
+  static budgetDate(budgetDate: string): string {
+    let result = HostUrl.getHostUrl() + BudgetUrls.CONTROLLER;
+    return result + "?budgetDate=" + budgetDate
+  }
+}
+
+export class CategoryUrls {
+  private static CONTROLLER = "/Categories";
+  private static ACTIONS = {
+    PAYMENT: "/payment",
+  }
+
+  static paymentCategory(type: string | null, requestParam: RequestParams | null): string {
+    let result = HostUrl.getHostUrl() + CategoryUrls.CONTROLLER;
+    result = result + CategoryUrls.ACTIONS.PAYMENT;
+
+    if (type) {
+      result = result + "?type=" + type;
+    }
+
+    if (requestParam) {
+      let orderQuery = ParamsQuery.getOrderQuery(requestParam);
+      if (orderQuery) {
+        result = result + "&" + orderQuery;
+      }
+
+      let paginationQuery = ParamsQuery.getPaginationQuery(requestParam);
+      if (paginationQuery) {
+        result = result + "&" + paginationQuery;
+      }
+    }
+
+    return result;
   }
 
   static paymentId(idPayment: string): string {
-    return this.paymentController() + "/" + idPayment;
+    let result = HostUrl.getHostUrl() + CategoryUrls.CONTROLLER;
+    return result + CategoryUrls.ACTIONS.PAYMENT + "/" + idPayment;
+  }
+}
+
+export class IncomeUrls {
+  private static CONTROLLER = "/Incomes";
+
+  static incomeId(idIncome: string): string {
+    return HostUrl.getHostUrl() + IncomeUrls.CONTROLLER + "/" + idIncome;
+  }
+}
+
+export class PaginationUrls {
+  private static CONTROLLER = "/Pagination";
+  private static ACTIONS = {
+    BUDGET: "/budget",
+    CATEGORIES: "/categories",
+  }
+  private static SUB_ACTIONS = {
+    REGULAR_PAYMENTS: "/payments",
+    PLANNED_PAYMENTS: "/payments/planned",
+    INCOMES: "/incomes"
   }
 
-  static plannedPaymentId(idPayment: string): string {
-    return this.paymentController() + "/" + idPayment + "/planned";
-  }
+  static regularPaymentsPagination(idBudget: string, requestParam: RequestParams): string {
+    let result = HostUrl.getHostUrl() + PaginationUrls.CONTROLLER;
+    result = result + PaginationUrls.ACTIONS.BUDGET + "/" + idBudget;
+    result = result + PaginationUrls.SUB_ACTIONS.REGULAR_PAYMENTS;
+    result = result + "?pageSize=" + requestParam.pageSize;
 
-  static paymentStatus(idPayment: string): string {
-    return this.paymentController() + "/" + idPayment + "/status";
-  }
-
-  static plannedPaymentStatus(idPlannedPayment: string): string {
-    return this.paymentController() + "/" + idPlannedPayment + "/planned/status";
-  }
-
-  static budgetDataPages(requestParam: RequestParams,
-                         idBudget: string,
-                         action: TotalPages): string {
-    const pageSize = requestParam.pageSize;
-    const fromDate = requestParam.fromDate;
-    const toDate = requestParam.toDate;
-
-    let urlResult = this.paginationController() +
-      this.ACTIONS.BUDGET + "/" + idBudget + "/" + action + "?pageSize=" + pageSize;
-
-    if (fromDate) {
-      urlResult = urlResult + "&fromDate=" + fromDate;
+    let dateRangeQuery = ParamsQuery.getDateRangeQuery(requestParam);
+    if (dateRangeQuery) {
+      result = result + "&" + dateRangeQuery;
     }
 
-    if (toDate) {
-      urlResult = urlResult + "&toDate=" + toDate;
+    return result;
+  }
+
+  static incomesPagination(idBudget: string, requestParam: RequestParams): string {
+    let result = HostUrl.getHostUrl() + PaginationUrls.CONTROLLER;
+    result = result + PaginationUrls.ACTIONS.BUDGET + "/" + idBudget;
+    result = result + PaginationUrls.SUB_ACTIONS.INCOMES;
+    result = result + "?pageSize=" + requestParam.pageSize;
+
+    let dateRangeQuery = ParamsQuery.getDateRangeQuery(requestParam);
+    if (dateRangeQuery) {
+      result = result + "&" + dateRangeQuery;
     }
 
-    return urlResult;
+    return result;
   }
 
-  private static budgetController(): string {
-    return this.HOST + this.CONTROLLERS.BUDGETS;
-  }
+  static plannedPaymentsPagination(idBudget: string, requestParam: RequestParams): string {
+    let result = HostUrl.getHostUrl() + PaginationUrls.CONTROLLER;
+    result = result + PaginationUrls.ACTIONS.BUDGET + "/" + idBudget;
+    result = result + PaginationUrls.SUB_ACTIONS.PLANNED_PAYMENTS;
+    result = result + "?pageSize=" + requestParam.pageSize;
 
-  private static paymentController(): string {
-    return this.HOST + this.CONTROLLERS.PAYMENTS;
-  }
-
-  private static incomeController(): string {
-    return this.HOST + this.CONTROLLERS.INCOMES;
-  }
-
-  private static paginationController(): string {
-    return this.HOST + this.CONTROLLERS.PAGINATION;
-  }
-
-  private static categoriesController(): string {
-    return this.HOST + this.CONTROLLERS.CATEGORIES;
-  }
-
-  static categoryPayment(): string {
-    return this.categoriesController() + this.ACTIONS.PAYMENT
-  }
-
-  static category(requestParam: RequestParams, type: CategoryType): string {
-    const page = requestParam.page;
-    const pageSize = requestParam.pageSize;
-    const orderBy = requestParam.orderBy;
-    const order = requestParam.order;
-
-    let urlResult = this.categoriesController() + this.ACTIONS.PAYMENT +
-      "?page=" + page + "&pageSize=" + pageSize + "&type=" + type.valueOf();
-
-    if (orderBy) {
-      urlResult = urlResult + "&orderBy=" + orderBy;
+    let dateRangeQuery = ParamsQuery.getDateRangeQuery(requestParam);
+    if (dateRangeQuery) {
+      result = result + "&" + dateRangeQuery;
     }
 
-    if (order) {
-      urlResult = urlResult + "&order=" + order;
+    return result;
+  }
+
+  static paymentCategories(type: CategoryType, requestParam: RequestParams): string {
+    let result = HostUrl.getHostUrl() + PaginationUrls.CONTROLLER;
+    result = result + PaginationUrls.ACTIONS.CATEGORIES;
+    return result + "?type=" + type.valueOf() + "&pageSize=" + requestParam.pageSize;
+  }
+}
+
+export class PaymentUrls {
+  private static CONTROLLER = "/Payments";
+  private static ACTIONS = {
+    STATUS: "/status",
+    ASSIGNMENT: "/assignment",
+    PLANNED: "/planned",
+  }
+
+  static paymentId(idPayment: string, isPlanned: boolean): string {
+    let result = HostUrl.getHostUrl() + PaymentUrls.CONTROLLER + "/" + idPayment;
+
+    if (isPlanned) {
+      result = result + PaymentUrls.ACTIONS.PLANNED
     }
 
-    return urlResult;
+    return result;
   }
 
-  static categoryId(idCategory: string): string {
-    return this.categoryPayment() + "/" + idCategory
+  static paymentStatus(idPayment: string, isPlanned: boolean): string {
+    return PaymentUrls.paymentId(idPayment, isPlanned) + PaymentUrls.ACTIONS.STATUS;
   }
 
-  static categoryPages(pageSize: number, type: string): string {
-    return this.paginationController() +
-      this.ACTIONS.CATEGORIES + "?type=" + type + "&pageSize=" + pageSize;
+  static paymentAssignment(idPayment: string, isPlanned: boolean): string {
+    return PaymentUrls.paymentId(idPayment, isPlanned) + PaymentUrls.ACTIONS.ASSIGNMENT;
   }
 }

@@ -116,10 +116,10 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy {
     this.plannedPaymentStatusLoader = true;
     this.subscriptions.push(
       this.httpService.patchPaymentStatus(
+        idPlannedPayment,
         {
           isPaid: isPaid
         } as PaymentStatusDto,
-        idPlannedPayment,
         true
       ).subscribe({
         next: (): void => {
@@ -141,9 +141,10 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy {
 
   private getPlannedPayments(): void {
     this.subscriptions.push(
-      this.httpService.getPlannedPayment(
+      this.httpService.getBudgetPayments<GetPlannedPaymentDto[]>(
+        this.idBudget,
         this.requestParams,
-        this.idBudget
+        true
       ).subscribe({
         next: (response: HttpResponse<GetPlannedPaymentDto[]>): void => {
           this.plannedPaymentsDto = response.body;
@@ -179,8 +180,8 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy {
   private getPlannedPaymentTotalPages(): void {
     this.subscriptions.push(
       this.httpService.getPlannedPaymentPages(
-        this.requestParams,
-        this.idBudget).subscribe({
+        this.idBudget,
+        this.requestParams).subscribe({
         next: (response: HttpResponse<PageDto>): void => {
           this.totalPages = response.body!.pages;
         }

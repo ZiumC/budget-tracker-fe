@@ -154,7 +154,9 @@ export class DeleteModalComponent implements OnInit, OnDestroy {
 
   private deletePayment(idPayment: string): void {
     this.subscriptions.push(
-      this.httpService.deletePayment(idPayment).subscribe({
+      this.httpService.deletePayment(
+        idPayment,
+        false).subscribe({
         next: (response: HttpResponse<any>): void => {
           this.onRequestSuccess(response);
           this.refreshPaymentEvent.emit(true);
@@ -168,16 +170,17 @@ export class DeleteModalComponent implements OnInit, OnDestroy {
 
   private deletePlannedPayment(idPlannedPayment: string): void {
     this.subscriptions.push(
-      this.httpService.deletePlannedPayment(idPlannedPayment)
-        .subscribe({
-          next: (response: HttpResponse<any>): void => {
-            this.onRequestSuccess(response);
-            this.refreshPlannedPaymentEvent.emit(true);
-          },
-          error: (err): void => {
-            this.onRequestFailed(err);
-          }
-        })
+      this.httpService.deletePayment(
+        idPlannedPayment,
+        true).subscribe({
+        next: (response: HttpResponse<any>): void => {
+          this.onRequestSuccess(response);
+          this.refreshPlannedPaymentEvent.emit(true);
+        },
+        error: (err): void => {
+          this.onRequestFailed(err);
+        }
+      })
     )
   }
 

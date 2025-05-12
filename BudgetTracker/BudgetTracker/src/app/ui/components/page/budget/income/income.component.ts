@@ -115,8 +115,8 @@ export class IncomeComponent implements OnInit, OnDestroy {
   private getIncomes(): void {
     this.subscriptions.push(
       this.httpService.getBudgetIncomes(
-        this.incomeRequestModel,
-        this.idBudget).subscribe({
+        this.idBudget,
+        this.incomeRequestModel).subscribe({
         next: (response: HttpResponse<GetIncomeDto[]>): void => {
           this.incomesDto = response.body;
           this.incomeResponseModel.statusCode = response.status;
@@ -140,8 +140,8 @@ export class IncomeComponent implements OnInit, OnDestroy {
   private getIncomeTotalPages(): void {
     this.subscriptions.push(
       this.httpService.getIncomePages(
-        this.incomeRequestModel,
-        this.idBudget).subscribe({
+        this.idBudget,
+        this.incomeRequestModel).subscribe({
         next: (response: HttpResponse<PageDto>): void => {
           this.incomeTotalPages = response.body!.pages;
         }

@@ -3,7 +3,6 @@ import {HttpClient} from '@angular/common/http';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {tap} from 'rxjs/operators';
 import {AppConfig, Config} from "../../models/config/config";
-import {formatString} from "../../util/string.utils";
 
 @Injectable({
   providedIn: 'root',
@@ -21,7 +20,7 @@ export class ConfigService {
     );
   }
 
-  getAppConfig<T extends keyof Config>(): Config[T] | null {
+  getAppConfig(): AppConfig | null {
     let result = null;
     this.config.subscribe(config => {
       if (config) {

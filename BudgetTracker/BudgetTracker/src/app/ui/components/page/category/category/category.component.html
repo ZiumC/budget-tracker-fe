@@ -9,7 +9,7 @@
     </ng-template>
     <ng-template #loadedPaymentsBlock>
       <ng-template
-        [ngIf]="categoryResponseModel.statusCode == appConfig.response.required.paymentStatus"
+        [ngIf]="categoryResponseModel.statusCode == appConfig.response.required.categoryStatus"
         [ngIfElse]="errorPaymentsBlock">
         @if (categoriesDto && categoriesDto!.length > 0) {
           <div class="mb-3">

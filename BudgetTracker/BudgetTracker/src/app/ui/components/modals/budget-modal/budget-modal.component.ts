@@ -171,8 +171,8 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
 
     this.subscriptions.push(
       this.httpService.updateBudget(
-        budgetForm,
-        this.idBudget).subscribe({
+        this.idBudget,
+        budgetForm).subscribe({
         next: (response: HttpResponse<any>): void => {
           this.onRequestSuccess(response);
         },

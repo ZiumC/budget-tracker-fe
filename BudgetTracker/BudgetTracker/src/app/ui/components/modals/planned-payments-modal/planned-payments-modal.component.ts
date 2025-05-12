@@ -105,9 +105,10 @@ export class PlannedPaymentsModalComponent implements OnInit, OnDestroy {
 
   private updatePayment(): void {
     this.subscriptions.push(
-      this.httpService.updatePlannedPayment(
+      this.httpService.updatePayment(
+        this.idPlannedPayment,
         this.plannedPaymentDto,
-        this.idPlannedPayment).subscribe({
+        true).subscribe({
         next: (response: HttpResponse<any>): void => {
           this.onRequestSuccess(response);
         },
@@ -119,10 +120,11 @@ export class PlannedPaymentsModalComponent implements OnInit, OnDestroy {
   }
 
   private createBudgetPayment(): void {
+    debugger
     this.subscriptions.push(
       this.httpService.createBudgetPlannedPayment(
-        this.plannedPaymentDto,
-        this.idBudget).subscribe({
+        this.idBudget,
+        this.plannedPaymentDto).subscribe({
         next: (response: HttpResponse<any>): void => {
           this.onRequestSuccess(response);
         },
