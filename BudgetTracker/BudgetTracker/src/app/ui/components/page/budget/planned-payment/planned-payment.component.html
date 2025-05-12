@@ -55,11 +55,13 @@
           <div ngbAccordionCollapse>
             <div ngbAccordionBody>
               <div class="row">
+                <div [style.display]="plannedPayment.isPaid ? 'block' : 'none'"
+                     class="mb-2 condition-container text-center">
+                  <h6>Planned payment <strong>is paid</strong></h6>
+                </div>
+              </div>
+              <div class="row">
                 <div class="col-lg-6">
-                  <div [style.display]="plannedPayment.isPaid ? 'block' : 'none'"
-                       class="mb-2 condition-container text-center">
-                    <h6>Planned payment is paid</h6>
-                  </div>
                   <div class="mb-3 condition-container">
                     <div class="form-group">
                       <div [style.display]="innerWidth > appConfig.mobileWidth ? 'none' : ''">
@@ -80,13 +82,6 @@
                                  '-'"
                                disabled>
                       </div>
-                      <label for="planned-payment-category">Category
-                      </label>
-                      <input type="text"
-                             id="planned-payment-category"
-                             class="form-control mb-2"
-                             value="#category"
-                             disabled>
                       <label for="planned-payment-date-updated">Date updated
                       </label>
                       <input type="text"
@@ -94,7 +89,7 @@
                              class="form-control mb-2"
                              value="{{DateUtils.formatWithTime(plannedPayment.dateUpdated)}}"
                              disabled>
-                      <label for="planned-payment-comment">Comment</label>
+                      <label for="planned-payment-comment">Payment comment</label>
                       <textarea type="text"
                                 id="planned-payment-comment"
                                 class="form-control"
@@ -104,7 +99,30 @@
                     </div>
                   </div>
                 </div>
-                <div class="col-lg-6 buttons-container">
+                <div class="col-lg-6">
+                  <label for="planned-payment-category">Category
+                  </label>
+                  <div class="input-group mb-3">
+                    <input type="text"
+                           id="planned-payment-category"
+                           class="form-control"
+                           placeholder="Recipient's username"
+                           value="#category"
+                           aria-describedby="basic-addon2"
+                           disabled>
+                    <div class="input-group-append">
+                      <span class="input-group-text" id="basic-addon2">#type</span>
+                    </div>
+                  </div>
+                  <label for="planned-payment-description-assignment">Assignment comment</label>
+                  <textarea type="text"
+                            id="planned-payment-description-assignment"
+                            class="form-control"
+                            value="{{ plannedPayment.comment }}"
+                            disabled>
+                                </textarea>
+                </div>
+                <div class="row mx-auto mt-3">
                   <div class="planned-payment-buttons text-center">
                     <button
                       [style.display]="plannedPayment.isPaid ? 'block' : 'none'"
