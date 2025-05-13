@@ -1,6 +1,6 @@
 import {Component, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {AppConfig} from "../../../../models/config/config";
-import {Subscription} from "rxjs";
+import {debounceTime, distinctUntilChanged, map, Observable, OperatorFunction, Subscription} from "rxjs";
 import {ResponseModel} from "../../../../models/response.model";
 import {SubscriptionUtils} from "../../../../util/subscription.utils";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
@@ -15,6 +15,9 @@ import {FormConfig} from "../../../../models/config/form.model.config";
 import {HttpResponse} from "@angular/common/http";
 import {generateErrorModel} from "../../../../util/http.util";
 import {TimerUtils} from "../../../../util/timer.utils";
+import {GetCategoryDto} from "../../../../models/dto/category.model.dto";
+import {GetAssignmentDto} from "../../../../models/dto/assignment.model.dto";
+import {getPaymentType} from "../../../../util/category.utils";
 
 @Component({
   selector: 'app-planned-payments-modal',
@@ -29,15 +32,17 @@ export class PlannedPaymentsModalComponent implements OnInit, OnDestroy {
   protected readonly SpinnerSize = SpinnerSize;
   protected readonly ModalUtils = ModalUtils;
   protected readonly formatString = formatString;
-  protected readonly subtract = subtract;
   protected subscriptions: Subscription[] = [];
   protected appConfig: AppConfig;
   protected responseModel: ResponseModel;
   protected plannedPaymentDto: PlannedPaymentDto;
+  protected selectedCategory: string;
   protected displayLoader: boolean;
   protected isEditing: boolean;
   protected idPlannedPayment: string;
   protected formConfig: FormConfig;
+  model: string = '';
+  fruits = ['Apple', 'Banana', 'Orange', 'Grape', 'Mango', 'Pineapple'];
   public innerWidth: any;
 
   constructor(
@@ -45,6 +50,14 @@ export class PlannedPaymentsModalComponent implements OnInit, OnDestroy {
     private httpService: HttpService,
     private configService: ConfigService) {
   }
+
+  search = (text$: Observable<string>) =>
+    text$.pipe(
+      debounceTime(200),
+      distinctUntilChanged(),
+      map(term => term.length < 1 ? []
+        : this.fruits.filter(v => v.toLowerCase().includes(term.toLowerCase())).slice(0, 5))
+    );
 
   ngOnInit(): void {
     const appCfg = this.configService.getAppConfig();
@@ -55,6 +68,7 @@ export class PlannedPaymentsModalComponent implements OnInit, OnDestroy {
       throw Error("Config not provided")
     }
 
+    this.selectedCategory = "";
     this.responseModel = new ResponseModel();
     ModalUtils.defaultSettings(this.displayLoader, this.isEditing);
     this.innerWidth = window.innerWidth;
@@ -80,6 +94,7 @@ export class PlannedPaymentsModalComponent implements OnInit, OnDestroy {
       this.plannedPaymentDto.realPrice = plannedPaymentData.realPrice;
       this.plannedPaymentDto.isPaid = plannedPaymentData.isPaid;
       this.plannedPaymentDto.comment = plannedPaymentData.comment;
+      this.selectedCategory = getPaymentType(plannedPaymentData, false, this.appConfig);
     }
 
     this.modalService.open(this.plannedPaymentModal, ModalOptions.default(ModalSize.BIG));
@@ -120,7 +135,6 @@ export class PlannedPaymentsModalComponent implements OnInit, OnDestroy {
   }
 
   private createBudgetPayment(): void {
-    debugger
     this.subscriptions.push(
       this.httpService.createBudgetPlannedPayment(
         this.idBudget,
@@ -155,4 +169,6 @@ export class PlannedPaymentsModalComponent implements OnInit, OnDestroy {
       comment: ""
     } as PlannedPaymentDto;
   }
+
+  protected readonly getPaymentType = getPaymentType;
 }

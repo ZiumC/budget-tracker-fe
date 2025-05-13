@@ -18,6 +18,7 @@ import {PageDto} from "../../../../../models/dto/page.model.dto";
 import BigNumber from "bignumber.js";
 import {PaymentStatusDto} from "../../../../../models/dto/payment.model.dto";
 import {GetAssignmentDto} from "../../../../../models/dto/assignment.model.dto";
+import {getPaymentType} from "../../../../../util/category.utils";
 
 @Component({
   selector: 'app-planned-payment',
@@ -38,10 +39,8 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy {
   protected selectedPlannedPayment: GetPlannedPaymentDto;
   protected requestParams: RequestParams;
   protected paymentResponseModel: ResponseModel;
-  protected assignmentResponseModel: ResponseModel;
   protected requiredStatusCode: number;
   protected plannedPaymentsLoader: boolean;
-  protected plannedAssignmentLoader: boolean;
   protected plannedPaymentStatusLoader: boolean;
   protected totalPages: number;
   public innerWidth: any;
@@ -223,4 +222,5 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy {
   }
 
   protected readonly BigNumber = BigNumber;
+  protected readonly getPaymentType = getPaymentType;
 }

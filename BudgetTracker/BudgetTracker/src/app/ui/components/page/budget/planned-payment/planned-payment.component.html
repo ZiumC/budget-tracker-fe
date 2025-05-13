@@ -112,7 +112,8 @@
                              aria-describedby="basic-addon2"
                              disabled>
                       <div class="input-group-append">
-                        <span class="input-group-text" id="basic-addon2">#type</span>
+                        <span class="input-group-text"
+                              id="basic-addon2">{{ getPaymentType(plannedPayment, true, appConfig) }}</span>
                       </div>
                     </div>
                     <label for="planned-payment-description-assignment">Assignment comment</label>
@@ -130,7 +131,7 @@
                   <button
                     [style.display]="plannedPayment.isPaid ? 'block' : 'none'"
                     type="button"
-                    class="btn btn-primary"
+                    class="btn btn-outline-primary"
                     data-bs-toggle="tooltip"
                     data-bs-placement="bottom"
                     title="Switch to not paid status"
@@ -140,7 +141,7 @@
                   <button
                     [style.display]="!plannedPayment.isPaid ? 'block' : 'none'"
                     type="button"
-                    class="btn btn-secondary"
+                    class="btn btn-outline-secondary"
                     data-bs-toggle="tooltip"
                     data-bs-placement="bottom"
                     title="Switch to paid status"
@@ -149,7 +150,7 @@
                   </button>
                   <button
                     type="button"
-                    class="btn btn-warning"
+                    class="btn btn-outline-warning"
                     data-bs-toggle="tooltip"
                     data-bs-placement="bottom"
                     title="Edit planned payment"
@@ -158,7 +159,7 @@
                   </button>
                   <button
                     type="button"
-                    class="btn btn-danger"
+                    class="btn btn-outline-danger"
                     data-bs-toggle="tooltip"
                     data-bs-placement="bottom"
                     title="Delete payment"
