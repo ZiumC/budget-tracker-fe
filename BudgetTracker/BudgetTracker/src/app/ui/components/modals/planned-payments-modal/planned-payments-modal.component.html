@@ -171,7 +171,7 @@
                 id="payment-comment"
                 class="form-control"
                 name="payment-comment"
-                rows="9"
+                rows="{{ innerWidth <= appConfig.mobileWidth ? 4 : 9 }}"
                 minlength="{{ formConfig.paymentModal.comment.minLength }}"
                 maxlength="{{ formConfig.paymentModal.comment.maxLength }}"
                 #paymentCommentInput="ngModel"
@@ -195,8 +195,10 @@
             </div>
           </div>
         </div>
-        <div id="category" class="form-control text-center">
-          <label for="category" class="mb-2">Planned payment category</label>
+        <div id="category" class="form-control">
+          <div class="text-center">
+            <label for="category" class="mb-2">Planned payment category</label>
+          </div>
           <div class="row mb-2">
             <div class="col text-center">
               <input id="needs"
@@ -204,9 +206,9 @@
                      class="btn-check"
                      name="category"
                      required
-                     (click)="onSelectedCategory(CategoryType.NEEDS)"
+                     (click)="onClickedCategory(CategoryType.NEEDS)"
                      [value]="formConfig.categoryModal.needsName"
-                     [(ngModel)]="selectedCategoryType">
+                     [(ngModel)]="categoryType">
               <label class="btn btn-outline-primary" for="needs">
                 Needs
               </label>
@@ -217,9 +219,9 @@
                      class="btn-check"
                      name="category"
                      required
-                     (click)="onSelectedCategory(CategoryType.WANTS)"
+                     (click)="onClickedCategory(CategoryType.WANTS)"
                      [value]="formConfig.categoryModal.wantsName"
-                     [(ngModel)]="selectedCategoryType">
+                     [(ngModel)]="categoryType">
               <label class="btn btn-outline-primary" for="wants">
                 Wants
               </label>
@@ -230,37 +232,44 @@
                      class="btn-check"
                      name="category"
                      required
-                     (click)="onSelectedCategory(CategoryType.SAVINGS)"
+                     (click)="onClickedCategory(CategoryType.SAVINGS)"
                      [value]="formConfig.categoryModal.savingsName"
-                     [(ngModel)]="selectedCategoryType">
+                     [(ngModel)]="categoryType">
               <label class="btn btn-outline-primary" for="savings">
                 Savings
               </label>
             </div>
           </div>
-          <div class="row"
-               [style]="selectedCategoryType ? '' : 'display: none'">
+          <div class="row mb-2"
+               [style]="categoryType ? '' : 'display: none'">
             <div class="my-1">
-              <input #instance="ngbTypeahead"
+              <label for="category-model">Name</label>
+              <span class="text-danger">*</span>
+              <input #typeahead="ngbTypeahead"
+                     id="category-model"
+                     name="category-model"
                      type="text"
                      class="form-control"
-                     [(ngModel)]="selectedCategoryDto"
-                     [resultFormatter]="formatter"
-                     [inputFormatter]="formatter"
-                     [ngbTypeahead]="search"
+                     [(ngModel)]="categoryDto"
+                     [resultFormatter]="typeaheadFormatter"
+                     [inputFormatter]="typeaheadFormatter"
+                     [ngbTypeahead]="typeaheadSearch"
                      (focus)="focusSubject.next($any($event).target.value)"
                      (click)="clickSubject.next($any($event).target.value)"
                      placeholder="Search for a category..."
                      [ngModelOptions]="{standalone: true}"/>
             </div>
           </div>
-          <div class="row"
-               [style]="selectedCategoryDto.description ? '' : 'display: none'">
+          <div class="row mb-1"
+               [style]="categoryDto.description ? '' : 'display: none'">
             <div class="my-1">
+              <label for="category-description">Description</label>
               <textarea
+                id="category-description"
                 class="form-control"
                 rows="4"
-                [value]="selectedCategoryDto.description"
+                required
+                [value]="categoryDto.description"
                 disabled>
               </textarea>
             </div>
@@ -270,7 +279,7 @@
     </div>
     <div class="modal-footer">
       <button
-        [disabled]="form.invalid"
+        [disabled]="!(form.valid && categoryDto.id)"
         type="button"
         class="btn btn-outline-secondary"
         (click)="savePlannedPayment()">
