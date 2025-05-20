@@ -1,6 +1,27 @@
-import {Component, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  EventEmitter,
+  HostListener,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+  ViewChild
+} from '@angular/core';
 import {AppConfig} from "../../../../models/config/config";
-import {debounceTime, distinctUntilChanged, map, Observable, Subscription} from "rxjs";
+import {
+  debounceTime,
+  distinctUntilChanged,
+  filter,
+  fromEvent,
+  map,
+  merge,
+  Observable,
+  Subject,
+  Subscription
+} from "rxjs";
 import {ResponseModel} from "../../../../models/response.model";
 import {SubscriptionUtils} from "../../../../util/subscription.utils";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
@@ -26,6 +47,7 @@ import {RequestParams} from "../../../../models/requestParams";
 export class PlannedPaymentsModalComponent implements OnInit, OnDestroy {
   @ViewChild('plannedPaymentModal') plannedPaymentModal: any;
   @ViewChild('errorModal') errorModal: any;
+  @ViewChild('instance') instance: any;
   @Input() idBudget: string;
   @Output() refreshEvent = new EventEmitter<boolean>();
   protected readonly SpinnerSize = SpinnerSize;
@@ -37,7 +59,8 @@ export class PlannedPaymentsModalComponent implements OnInit, OnDestroy {
   protected responseModel: ResponseModel;
   protected plannedPaymentDto: PlannedPaymentDto;
   protected selectedCategoryType: CategoryType | null;
-
+  protected focusSubject = new Subject<string>();
+  protected clickSubject = new Subject<string>();
   protected displayLoader: boolean;
   protected isEditing: boolean;
   protected idPlannedPayment: string;
@@ -133,10 +156,9 @@ export class PlannedPaymentsModalComponent implements OnInit, OnDestroy {
 
   protected formatter = (x: GetCategoryDto): string => x.name;
 
-  protected search = (text$: Observable<string>): Observable<GetCategoryDto[]> =>
-    text$.pipe(
-      debounceTime(200),
-      distinctUntilChanged(),
+  protected search = (text$: Observable<string>): Observable<GetCategoryDto[]> => {
+    const debouncedText = text$.pipe(debounceTime(200), distinctUntilChanged());
+    return merge(debouncedText, this.focusSubject, this.clickSubject).pipe(
       map(term => {
         if (this.categoriesDto) {
           return term.length < 1 ?
@@ -145,8 +167,8 @@ export class PlannedPaymentsModalComponent implements OnInit, OnDestroy {
         } else {
           return [];
         }
-      })
-    );
+      }));
+  }
 
   protected onSelectedCategory(type?: CategoryType): void {
     if (type) {

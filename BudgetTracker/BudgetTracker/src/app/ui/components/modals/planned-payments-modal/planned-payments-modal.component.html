@@ -203,6 +203,7 @@
                      type="radio"
                      class="btn-check"
                      name="category"
+                     required
                      (click)="onSelectedCategory(CategoryType.NEEDS)"
                      [value]="formConfig.categoryModal.needsName"
                      [(ngModel)]="selectedCategoryType">
@@ -215,6 +216,7 @@
                      type="radio"
                      class="btn-check"
                      name="category"
+                     required
                      (click)="onSelectedCategory(CategoryType.WANTS)"
                      [value]="formConfig.categoryModal.wantsName"
                      [(ngModel)]="selectedCategoryType">
@@ -227,6 +229,7 @@
                      type="radio"
                      class="btn-check"
                      name="category"
+                     required
                      (click)="onSelectedCategory(CategoryType.SAVINGS)"
                      [value]="formConfig.categoryModal.savingsName"
                      [(ngModel)]="selectedCategoryType">
@@ -238,14 +241,28 @@
           <div class="row"
                [style]="selectedCategoryType ? '' : 'display: none'">
             <div class="my-1">
-              <input type="text"
+              <input #instance="ngbTypeahead"
+                     type="text"
                      class="form-control"
                      [(ngModel)]="selectedCategoryDto"
                      [resultFormatter]="formatter"
                      [inputFormatter]="formatter"
                      [ngbTypeahead]="search"
+                     (focus)="focusSubject.next($any($event).target.value)"
+                     (click)="clickSubject.next($any($event).target.value)"
                      placeholder="Search for a category..."
                      [ngModelOptions]="{standalone: true}"/>
+            </div>
+          </div>
+          <div class="row"
+               [style]="selectedCategoryDto.description ? '' : 'display: none'">
+            <div class="my-1">
+              <textarea
+                class="form-control"
+                rows="4"
+                [value]="selectedCategoryDto.description"
+                disabled>
+              </textarea>
             </div>
           </div>
         </div>
