@@ -195,50 +195,58 @@
             </div>
           </div>
         </div>
-        <div class="row">
-          <label for="category" class="text-center mb-2">Planned payment category</label>
-          <div id="category" class="col text-center">
-            <input id="needs"
-                   type="radio"
-                   class="btn-check"
-                   name="category"
-                   [value]="formConfig.categoryModal.needsName"
-                   [(ngModel)]="selectedCategory">
-            <label class="btn btn-outline-primary" for="needs">
-              Needs
-            </label>
+        <div id="category" class="form-control text-center">
+          <label for="category" class="mb-2">Planned payment category</label>
+          <div class="row mb-2">
+            <div class="col text-center">
+              <input id="needs"
+                     type="radio"
+                     class="btn-check"
+                     name="category"
+                     (click)="onSelectedCategory(CategoryType.NEEDS)"
+                     [value]="formConfig.categoryModal.needsName"
+                     [(ngModel)]="selectedCategoryType">
+              <label class="btn btn-outline-primary" for="needs">
+                Needs
+              </label>
+            </div>
+            <div class="col text-center">
+              <input id="wants"
+                     type="radio"
+                     class="btn-check"
+                     name="category"
+                     (click)="onSelectedCategory(CategoryType.WANTS)"
+                     [value]="formConfig.categoryModal.wantsName"
+                     [(ngModel)]="selectedCategoryType">
+              <label class="btn btn-outline-primary" for="wants">
+                Wants
+              </label>
+            </div>
+            <div class="col text-center">
+              <input id="savings"
+                     type="radio"
+                     class="btn-check"
+                     name="category"
+                     (click)="onSelectedCategory(CategoryType.SAVINGS)"
+                     [value]="formConfig.categoryModal.savingsName"
+                     [(ngModel)]="selectedCategoryType">
+              <label class="btn btn-outline-primary" for="savings">
+                Savings
+              </label>
+            </div>
           </div>
-          <div class="col text-center">
-            <input id="wants"
-                   type="radio"
-                   class="btn-check"
-                   name="category"
-                   [value]="formConfig.categoryModal.wantsName"
-                   [(ngModel)]="selectedCategory">
-            <label class="btn btn-outline-primary" for="wants">
-              Wants
-            </label>
-          </div>
-          <div class="col text-center">
-            <input id="savings"
-                   type="radio"
-                   class="btn-check"
-                   name="category"
-                   [value]="formConfig.categoryModal.savingsName"
-                   [(ngModel)]="selectedCategory">
-            <label class="btn btn-outline-primary" for="savings">
-              Savings
-            </label>
-          </div>
-        </div>
-        <div class="row">
-          <div class="form-control mt-2">
-            <input type="text"
-                   class="form-control"
-                   [(ngModel)]="model"
-                   [ngbTypeahead]="search"
-                   placeholder="Search for a fruit..."
-                   [ngModelOptions]="{standalone: true}"/>
+          <div class="row"
+               [style]="selectedCategoryType ? '' : 'display: none'">
+            <div class="my-1">
+              <input type="text"
+                     class="form-control"
+                     [(ngModel)]="selectedCategoryDto"
+                     [resultFormatter]="formatter"
+                     [inputFormatter]="formatter"
+                     [ngbTypeahead]="search"
+                     placeholder="Search for a category..."
+                     [ngModelOptions]="{standalone: true}"/>
+            </div>
           </div>
         </div>
       </form>
