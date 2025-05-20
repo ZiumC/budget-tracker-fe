@@ -33,6 +33,8 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy {
   protected readonly DateUtils = DateUtil;
   protected readonly format = format;
   protected readonly subtract = subtract;
+  protected readonly BigNumber = BigNumber;
+  protected readonly getPaymentType = getPaymentType;
   protected subscriptions: Subscription[];
   protected appConfig: AppConfig;
   protected plannedPaymentsDto: GetPlannedPaymentDto[] | null;
@@ -220,7 +222,4 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy {
     this.requestParams.order =
       this.appConfig.request.order.orderDirections[0].value;
   }
-
-  protected readonly BigNumber = BigNumber;
-  protected readonly getPaymentType = getPaymentType;
 }
