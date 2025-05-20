@@ -1,7 +1,5 @@
 import {
-  AfterViewInit,
   Component,
-  ElementRef,
   EventEmitter,
   HostListener,
   Input,
@@ -14,8 +12,6 @@ import {AppConfig} from "../../../../models/config/config";
 import {
   debounceTime,
   distinctUntilChanged,
-  filter,
-  fromEvent,
   map,
   merge,
   Observable,
@@ -47,9 +43,11 @@ import {RequestParams} from "../../../../models/requestParams";
 export class PlannedPaymentsModalComponent implements OnInit, OnDestroy {
   @ViewChild('plannedPaymentModal') plannedPaymentModal: any;
   @ViewChild('errorModal') errorModal: any;
-  @ViewChild('instance') instance: any;
+  @ViewChild('typeahead') typeahead: any;
   @Input() idBudget: string;
   @Output() refreshEvent = new EventEmitter<boolean>();
+  @Output() categoryTypeEvent = new EventEmitter<CategoryType>();
+  @Output() assignmentDtoEvent = new EventEmitter<GetCategoryDto>();
   protected readonly SpinnerSize = SpinnerSize;
   protected readonly ModalUtils = ModalUtils;
   protected readonly formatString = formatString;
@@ -58,15 +56,15 @@ export class PlannedPaymentsModalComponent implements OnInit, OnDestroy {
   protected appConfig: AppConfig;
   protected responseModel: ResponseModel;
   protected plannedPaymentDto: PlannedPaymentDto;
-  protected selectedCategoryType: CategoryType | null;
-  protected focusSubject = new Subject<string>();
-  protected clickSubject = new Subject<string>();
   protected displayLoader: boolean;
   protected isEditing: boolean;
   protected idPlannedPayment: string;
   protected formConfig: FormConfig;
-  protected selectedCategoryDto: GetCategoryDto;
+  protected categoryType: CategoryType | null;
+  protected categoryDto: GetCategoryDto;
   protected categoriesDto: GetCategoryDto[] | null;
+  protected focusSubject = new Subject<string>();
+  protected clickSubject = new Subject<string>();
   public innerWidth: any;
 
   constructor(
@@ -84,7 +82,6 @@ export class PlannedPaymentsModalComponent implements OnInit, OnDestroy {
       throw Error("Config not provided")
     }
 
-    this.selectedCategoryDto = new GetCategoryDto();
     this.responseModel = new ResponseModel();
     ModalUtils.defaultSettings(this.displayLoader, this.isEditing);
     this.innerWidth = window.innerWidth;
@@ -116,20 +113,20 @@ export class PlannedPaymentsModalComponent implements OnInit, OnDestroy {
         let paymentType: string = getPaymentType(plannedPaymentAssignment, false, this.appConfig);
         switch (paymentType) {
           case this.formConfig.categoryModal.needsName:
-            this.selectedCategoryType = CategoryType.NEEDS;
+            this.categoryType = CategoryType.NEEDS;
             break;
           case this.formConfig.categoryModal.wantsName:
-            this.selectedCategoryType = CategoryType.WANTS;
+            this.categoryType = CategoryType.WANTS;
             break;
           case this.formConfig.categoryModal.savingsName:
-            this.selectedCategoryType = CategoryType.SAVINGS;
+            this.categoryType = CategoryType.SAVINGS;
             break;
           default:
-            this.selectedCategoryType = null;
+            this.categoryType = null;
         }
 
-        this.selectedCategoryDto = plannedPaymentAssignment.category;
-        this.onSelectedCategory();
+        this.categoryDto = plannedPaymentAssignment.category;
+        this.onClickedCategory();
       }
     }
 
@@ -154,9 +151,9 @@ export class PlannedPaymentsModalComponent implements OnInit, OnDestroy {
       });
   }
 
-  protected formatter = (x: GetCategoryDto): string => x.name;
+  protected typeaheadFormatter = (x: GetCategoryDto): string => x.name;
 
-  protected search = (text$: Observable<string>): Observable<GetCategoryDto[]> => {
+  protected typeaheadSearch = (text$: Observable<string>): Observable<GetCategoryDto[]> => {
     const debouncedText = text$.pipe(debounceTime(200), distinctUntilChanged());
     return merge(debouncedText, this.focusSubject, this.clickSubject).pipe(
       map(term => {
@@ -170,10 +167,10 @@ export class PlannedPaymentsModalComponent implements OnInit, OnDestroy {
       }));
   }
 
-  protected onSelectedCategory(type?: CategoryType): void {
+  protected onClickedCategory(type?: CategoryType): void {
     if (type) {
-      this.selectedCategoryDto = new GetCategoryDto();
-      this.selectedCategoryType = type;
+      this.categoryDto = new GetCategoryDto();
+      this.categoryType = type;
     }
 
     const categoriesOrder = this.appConfig.request.order;
@@ -184,10 +181,10 @@ export class PlannedPaymentsModalComponent implements OnInit, OnDestroy {
       order: categoriesOrder.orderDirections[0].value
     } as RequestParams;
 
-    if (this.selectedCategoryType) {
+    if (this.categoryType) {
       this.subscriptions.push(
         this.httpService.getCategories(
-          this.selectedCategoryType,
+          this.categoryType,
           params
         ).subscribe({
           next: (response: HttpResponse<GetCategoryDto[]>): void => {
@@ -248,13 +245,12 @@ export class PlannedPaymentsModalComponent implements OnInit, OnDestroy {
   }
 
   private setDefaultPlannedPaymentForm(): void {
-    this.selectedCategoryType = null;
+    this.categoryType = null;
+    this.categoryDto = new GetCategoryDto();
     this.plannedPaymentDto = {
       name: "",
       isPaid: false,
       comment: ""
     } as PlannedPaymentDto;
   }
-
-  protected readonly Observable = Observable;
 }
