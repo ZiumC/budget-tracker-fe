@@ -39,6 +39,7 @@ export interface PaymentModal {
   price: MinValueMaxLength;
   refund: MinValueMaxLength;
   comment: MinMaxLength;
+  commentAssignment: MinMaxLength;
 }
 
 export interface IncomeModal {

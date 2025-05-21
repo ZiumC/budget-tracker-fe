@@ -18,4 +18,6 @@ export class PlannedPaymentDto {
   realPrice: BigNumber;
   isPaid: boolean;
   comment: string;
+  idPaymentCategory: string;
+  assignmentComment: string;
 }

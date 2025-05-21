@@ -59,6 +59,10 @@
         "comment": {
           "minLength": "3",
           "maxLength": "512"
+        },
+        "commentAssignment": {
+          "minLength": "0",
+          "maxLength": "255"
         }
       },
       "incomeModal": {
