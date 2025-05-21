@@ -24,7 +24,10 @@
         "notFound": "{0} not found",
         "range": "{0} range is invalid",
         "equal": "{0} in both dates should be equal",
-        "alreadyDefined": "Month already defined"
+        "alreadyDefined": "Month already defined",
+        "typeahead": {
+          "notfound": "Categories not found"
+        }
       },
       "categoryModal": {
         "name": {

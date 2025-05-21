@@ -256,6 +256,7 @@
                      [ngbTypeahead]="typeaheadSearch"
                      (focus)="focusSubject.next($any($event).target.value)"
                      (click)="clickSubject.next($any($event).target.value)"
+                     (ngModelChange)="onTypeaheadChange()"
                      placeholder="Search for a category..."
                      [ngModelOptions]="{standalone: true}"/>
             </div>

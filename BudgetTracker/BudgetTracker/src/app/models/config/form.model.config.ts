@@ -18,6 +18,11 @@ export interface Messages {
   range: string;
   equal: string;
   alreadyDefined: string;
+  typeahead: Typehead;
+}
+
+export interface Typehead {
+  notfound: string;
 }
 
 export interface CategoryModal {
