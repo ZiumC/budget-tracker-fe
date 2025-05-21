@@ -157,14 +157,24 @@ export class PlannedPaymentsModalComponent implements OnInit, OnDestroy {
     const debouncedText = text$.pipe(debounceTime(200), distinctUntilChanged());
     return merge(debouncedText, this.focusSubject, this.clickSubject).pipe(
       map(term => {
+        let result: GetCategoryDto[] = [];
         if (this.categoriesDto) {
-          return term.length < 1 ?
-            this.categoriesDto :
-            this.categoriesDto.filter(v => v.name.toLowerCase().includes(term.toLowerCase())).slice(0, 5);
-        } else {
-          return [];
+          result = this.categoriesDto;
+          if (term.length >= 1) {
+            result = this.categoriesDto.filter(v => v.name.toLowerCase().includes(term.toLowerCase())).slice(0, 5);
+            if (result.length == 0) {
+              result = [{name: this.formConfig.messages.typeahead.notfound} as GetCategoryDto];
+            }
+          }
         }
+        return result;
       }));
+  }
+
+  protected onTypeaheadChange(): void {
+    if (this.categoryDto?.name == this.formConfig.messages.typeahead.notfound) {
+      this.categoryDto = new GetCategoryDto();
+    }
   }
 
   protected onClickedCategory(type?: CategoryType): void {
