@@ -120,7 +120,7 @@
                     <textarea type="text"
                               id="planned-payment-description-assignment"
                               class="form-control"
-                              placeholder="Not assigned"
+                              placeholder="{{plannedPayment.assignment ? '' : 'Not assigned'}}"
                               value="{{ plannedPayment.assignment?.comment }}"
                               disabled></textarea>
                   </div>

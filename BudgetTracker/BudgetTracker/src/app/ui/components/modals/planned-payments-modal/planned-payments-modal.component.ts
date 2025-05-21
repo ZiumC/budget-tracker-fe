@@ -126,6 +126,7 @@ export class PlannedPaymentsModalComponent implements OnInit, OnDestroy {
         }
 
         this.categoryDto = plannedPaymentAssignment.category;
+        this.plannedPaymentDto.assignmentComment = plannedPaymentAssignment.comment;
         this.onClickedCategory();
       }
     }
@@ -138,6 +139,7 @@ export class PlannedPaymentsModalComponent implements OnInit, OnDestroy {
 
     const isPaid = String(this.plannedPaymentDto.isPaid);
     this.plannedPaymentDto.isPaid = JSON.parse(isPaid)
+    this.plannedPaymentDto.idPaymentCategory = this.categoryDto.id;
 
     new TimerUtils(this.appConfig.animation.duration.default).start()
       .subscribe(finished => {
@@ -173,12 +175,16 @@ export class PlannedPaymentsModalComponent implements OnInit, OnDestroy {
 
   protected onTypeaheadChange(): void {
     if (this.categoryDto?.name == this.formConfig.messages.typeahead.notfound) {
-      this.categoryDto = new GetCategoryDto();
+      this.typeheadClear();
     }
   }
 
+  protected typeheadClear(): void {
+    this.categoryDto = new GetCategoryDto();
+  }
+
   protected onClickedCategory(type?: CategoryType): void {
-    if (type) {
+    if (type && type != this.categoryType) {
       this.categoryDto = new GetCategoryDto();
       this.categoryType = type;
     }
@@ -199,14 +205,9 @@ export class PlannedPaymentsModalComponent implements OnInit, OnDestroy {
         ).subscribe({
           next: (response: HttpResponse<GetCategoryDto[]>): void => {
             this.categoriesDto = response.body;
-          },
-          error: (err): void => {
-
           }
         })
       )
-    } else {
-
     }
   }
 
@@ -256,11 +257,14 @@ export class PlannedPaymentsModalComponent implements OnInit, OnDestroy {
 
   private setDefaultPlannedPaymentForm(): void {
     this.categoryType = null;
-    this.categoryDto = new GetCategoryDto();
+    this.typeheadClear();
+    // this.plannedPaymentDto = new PlannedPaymentDto();
     this.plannedPaymentDto = {
       name: "",
       isPaid: false,
-      comment: ""
+      comment: "",
+      idPaymentCategory: "",
+      assignmentComment: ""
     } as PlannedPaymentDto;
   }
 }
