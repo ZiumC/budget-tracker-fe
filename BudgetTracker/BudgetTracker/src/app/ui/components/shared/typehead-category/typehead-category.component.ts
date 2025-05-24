@@ -23,7 +23,8 @@ export class TypeheadCategoryComponent implements OnInit, OnDestroy {
   @Input() assignmentComment: string;
   @Input() isEditing: boolean;
   @Input() assignmentStatusCode: number;
-  @Output() validationEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
+  @Output() validationEvent = new EventEmitter<boolean>();
+  @Output() categoryEvent = new EventEmitter<{ category: GetCategoryDto, assignmentComment: string }>();
   protected readonly CategoryType = CategoryType;
   protected readonly formatString = formatString;
   protected readonly ModalUtils = ModalUtils;
@@ -33,6 +34,7 @@ export class TypeheadCategoryComponent implements OnInit, OnDestroy {
   protected categoriesDto: GetCategoryDto[] | null;
   protected focusSubject = new Subject<string>();
   protected clickSubject = new Subject<string>();
+  protected deleteSubject = new Subject<string>();
 
   constructor(
     private httpService: HttpService,
@@ -48,9 +50,12 @@ export class TypeheadCategoryComponent implements OnInit, OnDestroy {
       throw Error("Config not provided")
     }
 
-    if (!this.isEditing || this.assignmentStatusCode != 200){
+    if (!this.isEditing || this.assignmentStatusCode != 200) {
       this.typeheadClear();
     }
+
+    this.getCategories();
+    this.emitValidation();
   }
 
   ngOnDestroy(): void {
@@ -61,7 +66,7 @@ export class TypeheadCategoryComponent implements OnInit, OnDestroy {
 
   protected typeaheadSearch = (text$: Observable<string>): Observable<GetCategoryDto[]> => {
     const debouncedText = text$.pipe(debounceTime(200), distinctUntilChanged());
-    return merge(debouncedText, this.focusSubject, this.clickSubject).pipe(
+    return merge(debouncedText, this.focusSubject, this.clickSubject, this.deleteSubject).pipe(
       map(term => {
         let result: GetCategoryDto[] = [];
         if (this.categoriesDto) {
@@ -81,6 +86,7 @@ export class TypeheadCategoryComponent implements OnInit, OnDestroy {
     if (this.selectedCategoryDto?.name == this.formConfig.messages.typeahead.notfound) {
       this.typeheadClear();
     }
+    this.emitCategoryData();
     this.emitValidation();
   }
 
@@ -92,12 +98,30 @@ export class TypeheadCategoryComponent implements OnInit, OnDestroy {
     this.validationEvent.emit(result);
   }
 
+  protected emitCategoryData(): void {
+    this.categoryEvent.emit({
+      category: this.selectedCategoryDto,
+      assignmentComment: this.assignmentComment
+    });
+  }
+
   protected onClickedCategory(type?: CategoryType): void {
     if (type && type != this.categoryType) {
       this.typeheadClear();
       this.categoryType = type;
     }
+    this.getCategories();
+    this.emitValidation();
+  }
 
+  protected typeheadClear(): void {
+    console.log(this.categoriesDto)
+    this.selectedCategoryDto = new GetCategoryDto();
+    this.assignmentComment = "";
+    this.emitValidation();
+  }
+
+  private getCategories(): void {
     const categoriesOrder = this.appConfig.request.order;
     const params: RequestParams = {
       page: 1,
@@ -118,12 +142,5 @@ export class TypeheadCategoryComponent implements OnInit, OnDestroy {
         })
       )
     }
-    this.emitValidation();
-  }
-
-  protected typeheadClear(): void {
-    this.selectedCategoryDto = new GetCategoryDto();
-    this.categoryType = null;
-    this.emitValidation();
   }
 }

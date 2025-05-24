@@ -198,11 +198,11 @@
 
         <app-typehead-category [categoryType]="categoryType"
                                [assignmentComment]="plannedPaymentDto.assignmentComment"
-                               [selectedCategoryDto]="categoryDto"
+                               [selectedCategoryDto]="assignedCategoryDto"
                                [isEditing]="isEditing"
                                [assignmentStatusCode]="assignmentStatusCode"
-                               (validationEvent)="onChildChanged($event)">
-
+                               (validationEvent)="onTypeheadChanged($event)"
+                               (categoryEvent)="onCategoryChanged($event)">
         </app-typehead-category>
       </form>
     </div>

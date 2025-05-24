@@ -42,7 +42,8 @@ export class PlannedPaymentsModalComponent implements OnInit, OnDestroy {
   protected idPlannedPayment: string;
   protected isChildValid: boolean;
   protected categoryType: CategoryType | null;
-  protected categoryDto: GetCategoryDto;
+  protected assignedCategoryDto: GetCategoryDto;
+  protected triggerTypeheadCategory: boolean;
   public innerWidth: any;
 
   constructor(
@@ -103,7 +104,7 @@ export class PlannedPaymentsModalComponent implements OnInit, OnDestroy {
             this.categoryType = null;
         }
 
-        this.categoryDto = plannedPaymentAssignment.category;
+        this.assignedCategoryDto = plannedPaymentAssignment.category;
         this.plannedPaymentDto.assignmentComment = plannedPaymentAssignment.comment;
       }
     }
@@ -111,16 +112,22 @@ export class PlannedPaymentsModalComponent implements OnInit, OnDestroy {
     this.modalService.open(this.plannedPaymentModal, ModalOptions.default(ModalSize.BIG));
   }
 
-  protected onChildChanged(isValid: boolean): void {
+  protected onTypeheadChanged(isValid: boolean): void {
     this.isChildValid = isValid;
   }
 
+  protected onCategoryChanged(result: { category: GetCategoryDto, assignmentComment: string }): void {
+    this.assignedCategoryDto = result.category;
+    this.plannedPaymentDto.assignmentComment = result.assignmentComment;
+  }
+
   protected savePlannedPayment(): void {
+    this.triggerTypeheadCategory = true;
     this.displayLoader = true;
 
     const isPaid = String(this.plannedPaymentDto.isPaid);
-    this.plannedPaymentDto.isPaid = JSON.parse(isPaid)
-    this.plannedPaymentDto.idPaymentCategory = this.categoryDto.id;
+    this.plannedPaymentDto.isPaid = JSON.parse(isPaid);
+    this.plannedPaymentDto.idPaymentCategory = this.assignedCategoryDto.id;
 
     new TimerUtils(this.appConfig.animation.duration.default).start()
       .subscribe(finished => {
@@ -180,6 +187,7 @@ export class PlannedPaymentsModalComponent implements OnInit, OnDestroy {
 
   private setDefaultPlannedPaymentForm(): void {
     this.categoryType = null;
+    this.triggerTypeheadCategory = false;
     this.plannedPaymentDto = {
       name: "",
       isPaid: false,
