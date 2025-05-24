@@ -195,128 +195,137 @@
             </div>
           </div>
         </div>
-        <div id="category" class="form-control">
-          <div class="text-center">
-            <label for="category" class="my-2">Planned payment category</label>
-          </div>
-          <div class="row mb-2">
-            <div class="col text-center">
-              <input id="needs"
-                     type="radio"
-                     class="btn-check"
-                     name="category"
-                     required
-                     (click)="onClickedCategory(CategoryType.NEEDS)"
-                     [value]="formConfig.categoryModal.needsName"
-                     [(ngModel)]="categoryType">
-              <label class="btn btn-outline-primary" for="needs">
-                Needs
-              </label>
-            </div>
-            <div class="col text-center">
-              <input id="wants"
-                     type="radio"
-                     class="btn-check"
-                     name="category"
-                     required
-                     (click)="onClickedCategory(CategoryType.WANTS)"
-                     [value]="formConfig.categoryModal.wantsName"
-                     [(ngModel)]="categoryType">
-              <label class="btn btn-outline-primary" for="wants">
-                Wants
-              </label>
-            </div>
-            <div class="col text-center">
-              <input id="savings"
-                     type="radio"
-                     class="btn-check"
-                     name="category"
-                     required
-                     (click)="onClickedCategory(CategoryType.SAVINGS)"
-                     [value]="formConfig.categoryModal.savingsName"
-                     [(ngModel)]="categoryType">
-              <label class="btn btn-outline-primary" for="savings">
-                Savings
-              </label>
-            </div>
-          </div>
-          <div class="row mb-2"
-               [style]="categoryType ? '' : 'display: none'">
-            <div class="my-1">
-              <label for="category-model">Name</label>
-              <span class="text-danger">*</span>
-              <div class="input-group">
-                <input #typeahead="ngbTypeahead"
-                       id="category-model"
-                       name="category-model"
-                       type="text"
-                       class="form-control"
-                       [(ngModel)]="categoryDto"
-                       [resultFormatter]="typeaheadFormatter"
-                       [inputFormatter]="typeaheadFormatter"
-                       [ngbTypeahead]="typeaheadSearch"
-                       (focus)="focusSubject.next($any($event).target.value)"
-                       (click)="clickSubject.next($any($event).target.value)"
-                       (ngModelChange)="onTypeaheadChange()"
-                       placeholder="Search for a category..."
-                       [ngModelOptions]="{standalone: true}"/>
-                <div class="input-group-append">
-                  <button class="btn btn-outline-danger"
-                          type="button"
-                          (click)="typeheadClear()">
-                    <i class="bi bi-x-circle"></i>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="row"
-               [style]="categoryDto.description ? '' : 'display: none'">
-            <div class="col-md-6 mb-2">
-              <label for="category-description">Category description</label>
-              <textarea
-                id="category-description"
-                class="form-control"
-                rows="4"
-                required
-                [value]="categoryDto.description"
-                disabled>
-              </textarea>
-            </div>
-            <div class="col-md-6">
-              <div [className]="ModalUtils.displayMarginFor(paymentCommentAssignmentInput)">
-                <label for="category-assignment-comment">Assignment comment</label>
-                <textarea
-                  id="category-assignment-comment"
-                  class="form-control"
-                  name="category-assignment-comment"
-                  rows="4"
-                  maxlength="{{ formConfig.paymentModal.commentAssignment.maxLength }}"
-                  #paymentCommentAssignmentInput="ngModel"
-                  [(ngModel)]="plannedPaymentDto.assignmentComment"
-                  [ngClass]="{
-                'is-invalid': paymentCommentAssignmentInput.invalid,
-                'is-valid': paymentCommentAssignmentInput.valid }">
-              </textarea>
-                @if (paymentCommentAssignmentInput.invalid) {
-                  <div class="invalid-feedback">
-                    <label *ngIf="paymentCommentAssignmentInput.errors?.['minlength']">
-                      {{ formatString(formConfig.messages.minLength, formConfig.paymentModal.commentAssignment.minLength) }}
-                    </label>
-                    <label *ngIf="paymentCommentAssignmentInput.errors?.['maxlength']">
-                      {{ formatString(formConfig.messages.maxLength, formConfig.paymentModal.commentAssignment.maxLength) }}
-                    </label>
-                  </div>
-                }
-              </div>
-            </div>
-          </div>
-        </div>
+
+        <app-typehead-category [categoryType]="categoryType"
+                               [assignmentComment]="plannedPaymentDto.assignmentComment"
+                               [selectedCategoryDto]="categoryDto"
+                               [isEditing]="isEditing"
+                               [assignmentStatusCode]="assignmentStatusCode"
+                               (validationEvent)="onChildChanged($event)">
+
+        </app-typehead-category>
+        <!--        <div id="category" class="form-control">-->
+        <!--          <div class="text-center">-->
+        <!--            <label for="category" class="my-2">Planned payment category</label>-->
+        <!--          </div>-->
+        <!--          <div class="row mb-2">-->
+        <!--            <div class="col text-center">-->
+        <!--              <input id="needs"-->
+        <!--                     type="radio"-->
+        <!--                     class="btn-check"-->
+        <!--                     name="category"-->
+        <!--                     required-->
+        <!--                     (click)="onClickedCategory(CategoryType.NEEDS)"-->
+        <!--                     [value]="formConfig.categoryModal.needsName"-->
+        <!--                     [(ngModel)]="categoryType">-->
+        <!--              <label class="btn btn-outline-primary" for="needs">-->
+        <!--                Needs-->
+        <!--              </label>-->
+        <!--            </div>-->
+        <!--            <div class="col text-center">-->
+        <!--              <input id="wants"-->
+        <!--                     type="radio"-->
+        <!--                     class="btn-check"-->
+        <!--                     name="category"-->
+        <!--                     required-->
+        <!--                     (click)="onClickedCategory(CategoryType.WANTS)"-->
+        <!--                     [value]="formConfig.categoryModal.wantsName"-->
+        <!--                     [(ngModel)]="categoryType">-->
+        <!--              <label class="btn btn-outline-primary" for="wants">-->
+        <!--                Wants-->
+        <!--              </label>-->
+        <!--            </div>-->
+        <!--            <div class="col text-center">-->
+        <!--              <input id="savings"-->
+        <!--                     type="radio"-->
+        <!--                     class="btn-check"-->
+        <!--                     name="category"-->
+        <!--                     required-->
+        <!--                     (click)="onClickedCategory(CategoryType.SAVINGS)"-->
+        <!--                     [value]="formConfig.categoryModal.savingsName"-->
+        <!--                     [(ngModel)]="categoryType">-->
+        <!--              <label class="btn btn-outline-primary" for="savings">-->
+        <!--                Savings-->
+        <!--              </label>-->
+        <!--            </div>-->
+        <!--          </div>-->
+        <!--          <div class="row mb-2"-->
+        <!--               [style]="categoryType ? '' : 'display: none'">-->
+        <!--            <div class="my-1">-->
+        <!--              <label for="category-model">Name</label>-->
+        <!--              <span class="text-danger">*</span>-->
+        <!--              <div class="input-group">-->
+        <!--                <input #typeahead="ngbTypeahead"-->
+        <!--                       id="category-model"-->
+        <!--                       name="category-model"-->
+        <!--                       type="text"-->
+        <!--                       class="form-control"-->
+        <!--                       [(ngModel)]="categoryDto"-->
+        <!--                       [resultFormatter]="typeaheadFormatter"-->
+        <!--                       [inputFormatter]="typeaheadFormatter"-->
+        <!--                       [ngbTypeahead]="typeaheadSearch"-->
+        <!--                       (focus)="focusSubject.next($any($event).target.value)"-->
+        <!--                       (click)="clickSubject.next($any($event).target.value)"-->
+        <!--                       (ngModelChange)="onTypeaheadChange()"-->
+        <!--                       placeholder="Search for a category..."-->
+        <!--                       [ngModelOptions]="{standalone: true}"/>-->
+        <!--                <div class="input-group-append">-->
+        <!--                  <button class="btn btn-outline-danger"-->
+        <!--                          type="button"-->
+        <!--                          (click)="typeheadClear()">-->
+        <!--                    <i class="bi bi-x-circle"></i>-->
+        <!--                  </button>-->
+        <!--                </div>-->
+        <!--              </div>-->
+        <!--            </div>-->
+        <!--          </div>-->
+        <!--          <div class="row"-->
+        <!--               [style]="categoryDto.description ? '' : 'display: none'">-->
+        <!--            <div class="col-md-6 mb-2">-->
+        <!--              <label for="category-description">Category description</label>-->
+        <!--              <textarea-->
+        <!--                id="category-description"-->
+        <!--                class="form-control"-->
+        <!--                rows="4"-->
+        <!--                required-->
+        <!--                [value]="categoryDto.description"-->
+        <!--                disabled>-->
+        <!--              </textarea>-->
+        <!--            </div>-->
+        <!--            <div class="col-md-6">-->
+        <!--              <div [className]="ModalUtils.displayMarginFor(paymentCommentAssignmentInput)">-->
+        <!--                <label for="category-assignment-comment">Assignment comment</label>-->
+        <!--                <textarea-->
+        <!--                  id="category-assignment-comment"-->
+        <!--                  class="form-control"-->
+        <!--                  name="category-assignment-comment"-->
+        <!--                  rows="4"-->
+        <!--                  maxlength="{{ formConfig.paymentModal.commentAssignment.maxLength }}"-->
+        <!--                  #paymentCommentAssignmentInput="ngModel"-->
+        <!--                  [(ngModel)]="plannedPaymentDto.assignmentComment"-->
+        <!--                  [ngClass]="{-->
+        <!--                'is-invalid': paymentCommentAssignmentInput.invalid,-->
+        <!--                'is-valid': paymentCommentAssignmentInput.valid }">-->
+        <!--              </textarea>-->
+        <!--                @if (paymentCommentAssignmentInput.invalid) {-->
+        <!--                  <div class="invalid-feedback">-->
+        <!--                    <label *ngIf="paymentCommentAssignmentInput.errors?.['minlength']">-->
+        <!--                      {{ formatString(formConfig.messages.minLength, formConfig.paymentModal.commentAssignment.minLength) }}-->
+        <!--                    </label>-->
+        <!--                    <label *ngIf="paymentCommentAssignmentInput.errors?.['maxlength']">-->
+        <!--                      {{ formatString(formConfig.messages.maxLength, formConfig.paymentModal.commentAssignment.maxLength) }}-->
+        <!--                    </label>-->
+        <!--                  </div>-->
+        <!--                }-->
+        <!--              </div>-->
+        <!--            </div>-->
+        <!--          </div>-->
+        <!--        </div>-->
       </form>
     </div>
     <div class="modal-footer">
       <button
-        [disabled]="!(form.valid && categoryDto.id)"
+        [disabled]="!(form.valid && isChildValid)"
         type="button"
         class="btn btn-outline-secondary"
         (click)="savePlannedPayment()">

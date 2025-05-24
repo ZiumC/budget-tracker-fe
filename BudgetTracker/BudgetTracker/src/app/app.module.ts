@@ -4,7 +4,7 @@ import '@angular/common/locales/global/pl';
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 import {HeaderComponent} from './ui/components/shared/header/header.component';
-import {NgbDateParserFormatter, NgbModal, NgbModule} from '@ng-bootstrap/ng-bootstrap';
+import {NgbDateParserFormatter, NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {HttpClientModule} from '@angular/common/http';
 import {CommonModule} from '@angular/common';
 import {IndexComponent} from './ui/pages/index/index.component';
@@ -35,6 +35,7 @@ import { PlannedPaymentsModalComponent } from './ui/components/modals/planned-pa
 import { CategoryPageComponent } from './ui/pages/category-page/category-page.component';
 import { CategoryComponent } from './ui/components/page/category/category/category.component';
 import { CategoryModalComponent } from './ui/components/modals/category-modal/category-modal.component';
+import { TypeheadCategoryComponent } from './ui/components/shared/typehead-category/typehead-category.component';
 
 export function loadConfig(configService: ConfigService): () => Promise<Config> {
   return (): Promise<Config> => firstValueFrom(configService.loadConfig());
@@ -67,6 +68,7 @@ export function loadConfig(configService: ConfigService): () => Promise<Config> 
     CategoryPageComponent,
     CategoryComponent,
     CategoryModalComponent,
+    TypeheadCategoryComponent,
   ],
   imports: [
     BrowserModule,
