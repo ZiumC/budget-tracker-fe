@@ -1,23 +1,6 @@
-import {
-  Component,
-  EventEmitter,
-  HostListener,
-  Input,
-  OnDestroy,
-  OnInit,
-  Output,
-  ViewChild
-} from '@angular/core';
+import {Component, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {AppConfig} from "../../../../models/config/config";
-import {
-  debounceTime,
-  distinctUntilChanged,
-  map,
-  merge,
-  Observable,
-  Subject,
-  Subscription
-} from "rxjs";
+import {Subscription} from "rxjs";
 import {ResponseModel} from "../../../../models/response.model";
 import {SubscriptionUtils} from "../../../../util/subscription.utils";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
@@ -33,7 +16,6 @@ import {generateErrorModel} from "../../../../util/http.util";
 import {TimerUtils} from "../../../../util/timer.utils";
 import {CategoryType, GetCategoryDto} from "../../../../models/dto/category.model.dto";
 import {getPaymentType} from "../../../../util/category.utils";
-import {RequestParams} from "../../../../models/requestParams";
 
 @Component({
   selector: 'app-planned-payments-modal',
@@ -50,7 +32,6 @@ export class PlannedPaymentsModalComponent implements OnInit, OnDestroy {
   protected readonly SpinnerSize = SpinnerSize;
   protected readonly ModalUtils = ModalUtils;
   protected readonly formatString = formatString;
-  // protected readonly CategoryType = CategoryType;
   protected subscriptions: Subscription[] = [];
   protected appConfig: AppConfig;
   protected formConfig: FormConfig;
@@ -62,11 +43,6 @@ export class PlannedPaymentsModalComponent implements OnInit, OnDestroy {
   protected isChildValid: boolean;
   protected categoryType: CategoryType | null;
   protected categoryDto: GetCategoryDto;
-
-
-  // protected categoriesDto: GetCategoryDto[] | null;
-  // protected focusSubject = new Subject<string>();
-  // protected clickSubject = new Subject<string>();
   public innerWidth: any;
 
   constructor(
@@ -129,9 +105,6 @@ export class PlannedPaymentsModalComponent implements OnInit, OnDestroy {
 
         this.categoryDto = plannedPaymentAssignment.category;
         this.plannedPaymentDto.assignmentComment = plannedPaymentAssignment.comment;
-
-
-        // this.onClickedCategory();
       }
     }
 
@@ -160,64 +133,6 @@ export class PlannedPaymentsModalComponent implements OnInit, OnDestroy {
         }
       });
   }
-
-  // protected typeaheadFormatter = (x: GetCategoryDto): string => x.name;
-  //
-  // protected typeaheadSearch = (text$: Observable<string>): Observable<GetCategoryDto[]> => {
-  //   const debouncedText = text$.pipe(debounceTime(200), distinctUntilChanged());
-  //   return merge(debouncedText, this.focusSubject, this.clickSubject).pipe(
-  //     map(term => {
-  //       let result: GetCategoryDto[] = [];
-  //       if (this.categoriesDto) {
-  //         result = this.categoriesDto;
-  //         if (term.length >= 1) {
-  //           result = this.categoriesDto.filter(v => v.name.toLowerCase().includes(term.toLowerCase())).slice(0, 5);
-  //           if (result.length == 0) {
-  //             result = [{name: this.formConfig.messages.typeahead.notfound} as GetCategoryDto];
-  //           }
-  //         }
-  //       }
-  //       return result;
-  //     }));
-  // }
-  //
-  // protected onTypeaheadChange(): void {
-  //   if (this.categoryDto?.name == this.formConfig.messages.typeahead.notfound) {
-  //     this.typeheadClear();
-  //   }
-  // }
-  //
-  // protected typeheadClear(): void {
-  //   this.categoryDto = new GetCategoryDto();
-  // }
-  //
-  // protected onClickedCategory(type?: CategoryType): void {
-  //   if (type && type != this.categoryType) {
-  //     this.categoryDto = new GetCategoryDto();
-  //     this.categoryType = type;
-  //   }
-  //
-  //   const categoriesOrder = this.appConfig.request.order;
-  //   const params: RequestParams = {
-  //     page: 1,
-  //     pageSize: 300,
-  //     orderBy: categoriesOrder.paymentCategoryTypes[0].value,
-  //     order: categoriesOrder.orderDirections[0].value
-  //   } as RequestParams;
-  //
-  //   if (this.categoryType) {
-  //     this.subscriptions.push(
-  //       this.httpService.getCategories(
-  //         this.categoryType,
-  //         params
-  //       ).subscribe({
-  //         next: (response: HttpResponse<GetCategoryDto[]>): void => {
-  //           this.categoriesDto = response.body;
-  //         }
-  //       })
-  //     )
-  //   }
-  // }
 
   private updatePayment(): void {
     this.subscriptions.push(
@@ -265,8 +180,6 @@ export class PlannedPaymentsModalComponent implements OnInit, OnDestroy {
 
   private setDefaultPlannedPaymentForm(): void {
     this.categoryType = null;
-    // this.typeheadClear();
-    // this.plannedPaymentDto = new PlannedPaymentDto();
     this.plannedPaymentDto = {
       name: "",
       isPaid: false,
