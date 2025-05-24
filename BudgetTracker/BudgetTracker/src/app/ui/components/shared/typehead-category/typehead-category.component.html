@@ -95,6 +95,7 @@
           name="category-assignment-comment"
           rows="4"
           maxlength="{{ formConfig.paymentModal.commentAssignment.maxLength }}"
+          (ngModelChange)="emitCategoryData()"
           #paymentCommentAssignmentInput="ngModel"
           [(ngModel)]="assignmentComment"
           [ngClass]="{
