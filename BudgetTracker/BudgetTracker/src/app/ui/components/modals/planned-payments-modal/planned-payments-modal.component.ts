@@ -45,26 +45,28 @@ export class PlannedPaymentsModalComponent implements OnInit, OnDestroy {
   @ViewChild('errorModal') errorModal: any;
   @ViewChild('typeahead') typeahead: any;
   @Input() idBudget: string;
+  @Input() assignmentStatusCode: number;
   @Output() refreshEvent = new EventEmitter<boolean>();
-  @Output() categoryTypeEvent = new EventEmitter<CategoryType>();
-  @Output() assignmentDtoEvent = new EventEmitter<GetCategoryDto>();
   protected readonly SpinnerSize = SpinnerSize;
   protected readonly ModalUtils = ModalUtils;
   protected readonly formatString = formatString;
-  protected readonly CategoryType = CategoryType;
+  // protected readonly CategoryType = CategoryType;
   protected subscriptions: Subscription[] = [];
   protected appConfig: AppConfig;
+  protected formConfig: FormConfig;
   protected responseModel: ResponseModel;
   protected plannedPaymentDto: PlannedPaymentDto;
   protected displayLoader: boolean;
   protected isEditing: boolean;
   protected idPlannedPayment: string;
-  protected formConfig: FormConfig;
+  protected isChildValid: boolean;
   protected categoryType: CategoryType | null;
   protected categoryDto: GetCategoryDto;
-  protected categoriesDto: GetCategoryDto[] | null;
-  protected focusSubject = new Subject<string>();
-  protected clickSubject = new Subject<string>();
+
+
+  // protected categoriesDto: GetCategoryDto[] | null;
+  // protected focusSubject = new Subject<string>();
+  // protected clickSubject = new Subject<string>();
   public innerWidth: any;
 
   constructor(
@@ -127,11 +129,17 @@ export class PlannedPaymentsModalComponent implements OnInit, OnDestroy {
 
         this.categoryDto = plannedPaymentAssignment.category;
         this.plannedPaymentDto.assignmentComment = plannedPaymentAssignment.comment;
-        this.onClickedCategory();
+
+
+        // this.onClickedCategory();
       }
     }
 
     this.modalService.open(this.plannedPaymentModal, ModalOptions.default(ModalSize.BIG));
+  }
+
+  protected onChildChanged(isValid: boolean): void {
+    this.isChildValid = isValid;
   }
 
   protected savePlannedPayment(): void {
@@ -153,63 +161,63 @@ export class PlannedPaymentsModalComponent implements OnInit, OnDestroy {
       });
   }
 
-  protected typeaheadFormatter = (x: GetCategoryDto): string => x.name;
-
-  protected typeaheadSearch = (text$: Observable<string>): Observable<GetCategoryDto[]> => {
-    const debouncedText = text$.pipe(debounceTime(200), distinctUntilChanged());
-    return merge(debouncedText, this.focusSubject, this.clickSubject).pipe(
-      map(term => {
-        let result: GetCategoryDto[] = [];
-        if (this.categoriesDto) {
-          result = this.categoriesDto;
-          if (term.length >= 1) {
-            result = this.categoriesDto.filter(v => v.name.toLowerCase().includes(term.toLowerCase())).slice(0, 5);
-            if (result.length == 0) {
-              result = [{name: this.formConfig.messages.typeahead.notfound} as GetCategoryDto];
-            }
-          }
-        }
-        return result;
-      }));
-  }
-
-  protected onTypeaheadChange(): void {
-    if (this.categoryDto?.name == this.formConfig.messages.typeahead.notfound) {
-      this.typeheadClear();
-    }
-  }
-
-  protected typeheadClear(): void {
-    this.categoryDto = new GetCategoryDto();
-  }
-
-  protected onClickedCategory(type?: CategoryType): void {
-    if (type && type != this.categoryType) {
-      this.categoryDto = new GetCategoryDto();
-      this.categoryType = type;
-    }
-
-    const categoriesOrder = this.appConfig.request.order;
-    const params: RequestParams = {
-      page: 1,
-      pageSize: 300,
-      orderBy: categoriesOrder.paymentCategoryTypes[0].value,
-      order: categoriesOrder.orderDirections[0].value
-    } as RequestParams;
-
-    if (this.categoryType) {
-      this.subscriptions.push(
-        this.httpService.getCategories(
-          this.categoryType,
-          params
-        ).subscribe({
-          next: (response: HttpResponse<GetCategoryDto[]>): void => {
-            this.categoriesDto = response.body;
-          }
-        })
-      )
-    }
-  }
+  // protected typeaheadFormatter = (x: GetCategoryDto): string => x.name;
+  //
+  // protected typeaheadSearch = (text$: Observable<string>): Observable<GetCategoryDto[]> => {
+  //   const debouncedText = text$.pipe(debounceTime(200), distinctUntilChanged());
+  //   return merge(debouncedText, this.focusSubject, this.clickSubject).pipe(
+  //     map(term => {
+  //       let result: GetCategoryDto[] = [];
+  //       if (this.categoriesDto) {
+  //         result = this.categoriesDto;
+  //         if (term.length >= 1) {
+  //           result = this.categoriesDto.filter(v => v.name.toLowerCase().includes(term.toLowerCase())).slice(0, 5);
+  //           if (result.length == 0) {
+  //             result = [{name: this.formConfig.messages.typeahead.notfound} as GetCategoryDto];
+  //           }
+  //         }
+  //       }
+  //       return result;
+  //     }));
+  // }
+  //
+  // protected onTypeaheadChange(): void {
+  //   if (this.categoryDto?.name == this.formConfig.messages.typeahead.notfound) {
+  //     this.typeheadClear();
+  //   }
+  // }
+  //
+  // protected typeheadClear(): void {
+  //   this.categoryDto = new GetCategoryDto();
+  // }
+  //
+  // protected onClickedCategory(type?: CategoryType): void {
+  //   if (type && type != this.categoryType) {
+  //     this.categoryDto = new GetCategoryDto();
+  //     this.categoryType = type;
+  //   }
+  //
+  //   const categoriesOrder = this.appConfig.request.order;
+  //   const params: RequestParams = {
+  //     page: 1,
+  //     pageSize: 300,
+  //     orderBy: categoriesOrder.paymentCategoryTypes[0].value,
+  //     order: categoriesOrder.orderDirections[0].value
+  //   } as RequestParams;
+  //
+  //   if (this.categoryType) {
+  //     this.subscriptions.push(
+  //       this.httpService.getCategories(
+  //         this.categoryType,
+  //         params
+  //       ).subscribe({
+  //         next: (response: HttpResponse<GetCategoryDto[]>): void => {
+  //           this.categoriesDto = response.body;
+  //         }
+  //       })
+  //     )
+  //   }
+  // }
 
   private updatePayment(): void {
     this.subscriptions.push(
@@ -257,7 +265,7 @@ export class PlannedPaymentsModalComponent implements OnInit, OnDestroy {
 
   private setDefaultPlannedPaymentForm(): void {
     this.categoryType = null;
-    this.typeheadClear();
+    // this.typeheadClear();
     // this.plannedPaymentDto = new PlannedPaymentDto();
     this.plannedPaymentDto = {
       name: "",

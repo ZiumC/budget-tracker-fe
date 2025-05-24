@@ -45,6 +45,7 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy {
   protected plannedPaymentsLoader: boolean;
   protected plannedPaymentStatusLoader: boolean;
   protected totalPages: number;
+  protected assignmentStatusCode: number;
   public innerWidth: any;
 
   constructor(
@@ -211,7 +212,11 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy {
               payment.assignment = response.body;
             }
           }
-        }
+          this.assignmentStatusCode = response.status;
+        },
+        error: (err): void => {
+          this.assignmentStatusCode = err.status;
+        },
       })
     )
   }
