@@ -24,8 +24,6 @@ export class TypeheadCategoryComponent implements OnInit, OnDestroy {
   @Input() isEditing: boolean;
   @Input() assignmentStatusCode: number;
   @Output() validationEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
-  // @Input() validationEvents: Observable<void>;
-  // @Output() isValidEvent: EventEmitter<boolean> = new EventEmitter<boolean>;
   protected readonly CategoryType = CategoryType;
   protected readonly formatString = formatString;
   protected readonly ModalUtils = ModalUtils;
@@ -120,7 +118,6 @@ export class TypeheadCategoryComponent implements OnInit, OnDestroy {
         })
       )
     }
-
     this.emitValidation();
   }
 
