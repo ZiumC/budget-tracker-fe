@@ -15,6 +15,8 @@ import {formatString} from "../../../../util/string.utils";
 import {subtract} from "../../../../util/number.util";
 import {GetPaymentDto, PaymentDto} from "../../../../models/dto/payment.model.dto";
 import {generateErrorModel} from "../../../../util/http.util";
+import {CategoryType, GetCategoryDto} from "../../../../models/dto/category.model.dto";
+import {getPaymentType} from "../../../../util/category.utils";
 
 @Component({
   selector: 'app-payment-modal',
@@ -39,6 +41,9 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
   protected idPayment: string;
   protected isEditing: boolean;
   protected displayLoader: boolean;
+  protected isChildValid: boolean;
+  protected categoryType: CategoryType | null;
+  protected assignedCategoryDto: GetCategoryDto;
   protected innerWidth: any;
 
   constructor(
@@ -78,6 +83,27 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
       this.paymentDto.refund = paymentData.refund;
       this.paymentDto.isPaid = paymentData.isPaid;
       this.paymentDto.comment = paymentData.comment;
+
+      const paymentAssignment = paymentData.assignment;
+      if (paymentAssignment) {
+        let paymentType: string = getPaymentType(paymentAssignment, false, this.appConfig);
+        switch (paymentType) {
+          case this.formConfig.categoryModal.needsName:
+            this.categoryType = CategoryType.NEEDS;
+            break;
+          case this.formConfig.categoryModal.wantsName:
+            this.categoryType = CategoryType.WANTS;
+            break;
+          case this.formConfig.categoryModal.savingsName:
+            this.categoryType = CategoryType.SAVINGS;
+            break;
+          default:
+            this.categoryType = null;
+        }
+
+        this.assignedCategoryDto = paymentAssignment.category;
+        this.paymentDto.assignmentComment = paymentAssignment.comment;
+      }
     }
 
     this.modalService.open(this.paymentModal, ModalOptions.default(ModalSize.BIG));
@@ -88,11 +114,21 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
     this.innerWidth = window.innerWidth;
   }
 
+  protected onTypeheadChanged(isValid: boolean): void {
+    this.isChildValid = isValid;
+  }
+
+  protected onCategoryChanged(result: { category: GetCategoryDto, assignmentComment: string }): void {
+    this.assignedCategoryDto = result.category;
+    this.paymentDto.assignmentComment = result.assignmentComment;
+  }
+
   protected savePayment(): void {
     this.displayLoader = true;
 
     const isPaid = String(this.paymentDto.isPaid);
-    this.paymentDto.isPaid = JSON.parse(isPaid)
+    this.paymentDto.isPaid = JSON.parse(isPaid);
+    this.paymentDto.idPaymentCategory = this.assignedCategoryDto.id;
 
     new TimerUtils(this.appConfig.animation.duration.default).start()
       .subscribe(finished => {
@@ -151,10 +187,13 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
   }
 
   private setDefaultPaymentForm(): void {
+    this.categoryType = null;
     this.paymentDto = {
       name: "",
       isPaid: false,
-      comment: ""
+      comment: "",
+      idPaymentCategory: "",
+      assignmentComment: ""
     } as PaymentDto;
   }
 }

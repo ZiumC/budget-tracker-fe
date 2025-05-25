@@ -206,11 +206,19 @@
             </div>
           </div>
         </div>
+        <app-typehead-category [categoryType]="categoryType"
+                               [assignmentComment]="paymentDto.assignmentComment"
+                               [selectedCategoryDto]="assignedCategoryDto"
+                               [isEditing]="isEditing"
+                               [assignmentStatusCode]="assignmentStatusCode"
+                               (validationEvent)="onTypeheadChanged($event)"
+                               (categoryEvent)="onCategoryChanged($event)">
+        </app-typehead-category>
       </form>
     </div>
     <div class="modal-footer">
       <button
-        [disabled]="form.invalid"
+        [disabled]="!(form.valid && isChildValid)"
         type="button"
         class="btn btn-outline-secondary"
         (click)="savePayment()">
