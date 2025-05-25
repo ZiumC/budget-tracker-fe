@@ -43,7 +43,6 @@ export class PlannedPaymentsModalComponent implements OnInit, OnDestroy {
   protected isChildValid: boolean;
   protected categoryType: CategoryType | null;
   protected assignedCategoryDto: GetCategoryDto;
-  protected triggerTypeheadCategory: boolean;
   public innerWidth: any;
 
   constructor(
@@ -122,7 +121,6 @@ export class PlannedPaymentsModalComponent implements OnInit, OnDestroy {
   }
 
   protected savePlannedPayment(): void {
-    this.triggerTypeheadCategory = true;
     this.displayLoader = true;
 
     const isPaid = String(this.plannedPaymentDto.isPaid);
@@ -187,7 +185,6 @@ export class PlannedPaymentsModalComponent implements OnInit, OnDestroy {
 
   private setDefaultPlannedPaymentForm(): void {
     this.categoryType = null;
-    this.triggerTypeheadCategory = false;
     this.plannedPaymentDto = {
       name: "",
       isPaid: false,

@@ -7,6 +7,8 @@ export class PaymentDto {
   refund: BigNumber;
   isPaid: boolean;
   comment?: string;
+  idPaymentCategory: string;
+  assignmentComment: string;
 }
 
 export class PaymentStatusDto {
