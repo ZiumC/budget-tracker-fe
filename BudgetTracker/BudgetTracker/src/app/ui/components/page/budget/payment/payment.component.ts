@@ -32,9 +32,10 @@ export class PaymentComponent implements OnInit, OnDestroy {
   protected readonly DateUtils = DateUtil;
   protected readonly formatString = formatString;
   protected readonly subtract = subtract;
+  protected readonly getPaymentType = getPaymentType;
   protected subscriptions: Subscription[];
   protected appConfig: AppConfig;
-  protected paymentRequestModel: RequestParams;
+  protected requestParams: RequestParams;
   protected paymentResponseModel: ResponseModel;
   protected paymentsDto: GetPaymentDto[] | null;
   protected selectedPayment: GetPaymentDto;
@@ -57,12 +58,11 @@ export class PaymentComponent implements OnInit, OnDestroy {
       throw Error("Config not provided")
     }
 
-    this.paymentResponseModel = new ResponseModel();
-
     this.innerWidth = window.innerWidth;
+    this.paymentResponseModel = new ResponseModel();
     this.subscriptions = [];
 
-    this.paymentRequestModel = new RequestParams({
+    this.requestParams = new RequestParams({
       page: this.appConfig.request.pagination.defaultPage,
       pageSize: this.appConfig.request.pagination.defaultPageSizeOptions[0],
     })
@@ -93,23 +93,23 @@ export class PaymentComponent implements OnInit, OnDestroy {
   }
 
   protected onPageSizeEvent(pageSize: number): void {
-    this.paymentRequestModel.page = this.appConfig.request.pagination.defaultPage;
-    this.paymentRequestModel.pageSize = pageSize;
+    this.requestParams.page = this.appConfig.request.pagination.defaultPage;
+    this.requestParams.pageSize = pageSize;
     this.onRefreshPayment();
   }
 
   protected onPageEvent(page: number): void {
-    this.paymentRequestModel.page = page;
+    this.requestParams.page = page;
     this.onRefreshPayment();
   }
 
   protected onOrderEvent(orderOptions: OrderOptions): void {
     if (orderOptions.orderType.applyForApi) {
-      this.paymentRequestModel.orderBy = orderOptions.orderType.value;
+      this.requestParams.orderBy = orderOptions.orderType.value;
       if (orderOptions.orderType.displayDirections) {
-        this.paymentRequestModel.order = orderOptions.orderDirection!.value;
+        this.requestParams.order = orderOptions.orderDirection!.value;
       } else {
-        this.paymentRequestModel.order = null;
+        this.requestParams.order = null;
       }
       this.onRefreshPayment();
     } else {
@@ -136,8 +136,12 @@ export class PaymentComponent implements OnInit, OnDestroy {
         false
       ).subscribe({
         next: (): void => {
-          this.paymentsDto!
-            .find((payment): boolean => payment.id == idPayment)!.isPaid! = isPaid;
+          for (let payment of this.paymentsDto!) {
+            if (payment.id == idPayment) {
+              payment.isPaid = isPaid;
+              payment.dateUpdated = new Date();
+            }
+          }
         },
         error: (err): void => {
           const response = generateErrorModel(err);
@@ -152,7 +156,7 @@ export class PaymentComponent implements OnInit, OnDestroy {
     )
   }
 
-  private getPaymentAssignment(idPayment: string): void{
+  private getPaymentAssignment(idPayment: string): void {
     this.subscriptions.push(
       this.httpService.getPaymentAssignment(
         idPayment,
@@ -189,7 +193,7 @@ export class PaymentComponent implements OnInit, OnDestroy {
     this.subscriptions.push(
       this.httpService.getBudgetPayments<GetPaymentDto[]>(
         this.idBudget,
-        this.paymentRequestModel,
+        this.requestParams,
         false).subscribe({
         next: (response: HttpResponse<GetPaymentDto[]>): void => {
           this.paymentsDto = response.body;
@@ -215,7 +219,7 @@ export class PaymentComponent implements OnInit, OnDestroy {
     this.subscriptions.push(
       this.httpService.getPaymentPages(
         this.idBudget,
-        this.paymentRequestModel).subscribe({
+        this.requestParams).subscribe({
         next: (response: HttpResponse<PageDto>): void => {
           this.paymentTotalPages = response.body!.pages;
         }
@@ -224,11 +228,9 @@ export class PaymentComponent implements OnInit, OnDestroy {
   }
 
   private defaultOrderParams(): void {
-    this.paymentRequestModel.orderBy =
+    this.requestParams.orderBy =
       this.appConfig.request.order.paymentTypes[0].value;
-    this.paymentRequestModel.order =
+    this.requestParams.order =
       this.appConfig.request.order.orderDirections[0].value;
   }
-
-  protected readonly getPaymentType = getPaymentType;
 }

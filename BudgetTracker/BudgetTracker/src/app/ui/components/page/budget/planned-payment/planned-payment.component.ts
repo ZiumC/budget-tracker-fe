@@ -128,8 +128,12 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy {
         true
       ).subscribe({
         next: (): void => {
-          this.plannedPaymentsDto!
-            .find((payment): boolean => payment.id == idPlannedPayment)!.isPaid! = isPaid;
+          for(let plannedPayment of this.plannedPaymentsDto!){
+            if (plannedPayment.id == idPlannedPayment){
+              plannedPayment.isPaid = isPaid;
+              plannedPayment.dateUpdated = new Date();
+            }
+          }
         },
         error: (err): void => {
           const response = generateErrorModel(err);
@@ -156,8 +160,7 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy {
       this.httpService.getBudgetPayments<GetPlannedPaymentDto[]>(
         this.idBudget,
         this.requestParams,
-        true
-      ).subscribe({
+        true).subscribe({
         next: (response: HttpResponse<GetPlannedPaymentDto[]>): void => {
           this.plannedPaymentsDto = response.body;
           this.paymentResponseModel.statusCode = response.status;
