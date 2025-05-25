@@ -25,6 +25,7 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
   @ViewChild('paymentModal') paymentModal: any;
   @ViewChild('errorModal') errorModal: any;
   @Input() idBudget: string;
+  @Input() assignmentStatusCode: number;
   @Output() refreshPaymentEvent = new EventEmitter<boolean>();
   protected readonly formatString = formatString;
   protected readonly subtract = subtract;

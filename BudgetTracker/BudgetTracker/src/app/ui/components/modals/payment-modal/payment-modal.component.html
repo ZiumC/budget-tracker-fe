@@ -29,39 +29,41 @@
     <div class="modal-body">
       <form ngbAutofocus #form="ngForm">
         <div class="row">
-          <div [className]="innerWidth > appConfig.mobileWidth ? 'col-md-6': 'col-md-6  mb-4 pb-2'">
-            <div [className]="ModalUtils.displayMarginFor(paymentNameInput)">
-              <label for="payment-name">Name</label>
-              <span class="text-danger">*</span>
-              <input
-                type="text"
-                id="payment-name"
-                name="payment-name"
-                class="form-control"
-                [(ngModel)]="paymentDto.name"
-                required
-                minlength="{{ formConfig.paymentModal.name.minLength }}"
-                maxlength="{{ formConfig.paymentModal.name.maxLength }}"
-                #paymentNameInput="ngModel"
-                [ngClass]="{
+          <div [className]="ModalUtils.displayMarginFor(paymentNameInput)">
+            <label for="payment-name">Name</label>
+            <span class="text-danger">*</span>
+            <input
+              type="text"
+              id="payment-name"
+              name="payment-name"
+              class="form-control"
+              [(ngModel)]="paymentDto.name"
+              required
+              minlength="{{ formConfig.paymentModal.name.minLength }}"
+              maxlength="{{ formConfig.paymentModal.name.maxLength }}"
+              #paymentNameInput="ngModel"
+              [ngClass]="{
                 'is-invalid': paymentNameInput.invalid &&
                   (paymentNameInput.dirty || paymentNameInput.touched),
                 'is-valid': paymentNameInput.valid }"/>
-              @if (paymentNameInput.invalid &&
-              (paymentNameInput.dirty || paymentNameInput.touched)) {
-                <div class="invalid-feedback">
-                  <label *ngIf="paymentNameInput.errors?.['required']">
-                    {{ formConfig.messages.required }}
-                  </label>
-                  <label *ngIf="paymentNameInput.errors?.['minlength']">
-                    {{ formatString(formConfig.messages.minLength, formConfig.paymentModal.name.minLength) }}
-                  </label>
-                  <label *ngIf="paymentNameInput.errors?.['maxlength']">
-                    {{ formatString(formConfig.messages.maxLength, formConfig.paymentModal.name.maxLength) }}
-                  </label>
-                </div>
-              }
-            </div>
+            @if (paymentNameInput.invalid &&
+            (paymentNameInput.dirty || paymentNameInput.touched)) {
+              <div class="invalid-feedback">
+                <label *ngIf="paymentNameInput.errors?.['required']">
+                  {{ formConfig.messages.required }}
+                </label>
+                <label *ngIf="paymentNameInput.errors?.['minlength']">
+                  {{ formatString(formConfig.messages.minLength, formConfig.paymentModal.name.minLength) }}
+                </label>
+                <label *ngIf="paymentNameInput.errors?.['maxlength']">
+                  {{ formatString(formConfig.messages.maxLength, formConfig.paymentModal.name.maxLength) }}
+                </label>
+              </div>
+            }
+          </div>
+        </div>
+        <div class="row">
+          <div [className]="innerWidth > appConfig.mobileWidth ? 'col-md-6': 'col-md-6  mb-4 pb-2'">
             <div [className]="ModalUtils.displayMarginFor(paymentPriceInput)">
               <label for="payment-price">Price</label>
               <span class="text-danger">*</span>
@@ -180,7 +182,7 @@
                 id="payment-comment"
                 class="form-control"
                 name="payment-comment"
-                rows="8"
+                rows="5"
                 minlength="{{ formConfig.paymentModal.comment.minLength }}"
                 maxlength="{{ formConfig.paymentModal.comment.maxLength }}"
                 #paymentCommentInput="ngModel"
