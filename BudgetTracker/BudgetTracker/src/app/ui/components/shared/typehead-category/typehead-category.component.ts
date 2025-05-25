@@ -115,7 +115,6 @@ export class TypeheadCategoryComponent implements OnInit, OnDestroy {
   }
 
   protected typeheadClear(): void {
-    console.log(this.categoriesDto)
     this.selectedCategoryDto = new GetCategoryDto();
     this.assignmentComment = "";
     this.emitValidation();

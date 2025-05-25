@@ -16,6 +16,8 @@ import {HttpResponse} from "@angular/common/http";
 import {PageDto} from "../../../../../models/dto/page.model.dto";
 import {OrderOptions} from "../../../shared/order/order.component";
 import {SortPayment} from "../../../../../util/arrays.utils";
+import {getPaymentType} from "../../../../../util/category.utils";
+import {GetAssignmentDto} from "../../../../../models/dto/assignment.model.dto";
 
 @Component({
   selector: 'app-payment',
@@ -39,6 +41,7 @@ export class PaymentComponent implements OnInit, OnDestroy {
   protected paymentTotalPages: number | undefined;
   protected paymentLoader: boolean;
   protected paymentStatusLoader: boolean;
+  protected assignmentStatusCode: number;
   public innerWidth: any;
 
   constructor(
@@ -80,6 +83,13 @@ export class PaymentComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     SubscriptionUtils.unsubscribeAll(this.subscriptions);
+  }
+
+  protected onPaymentSelect(plannedPayment: GetPaymentDto): void {
+    if (this.selectedPayment !== plannedPayment) {
+      this.getPaymentAssignment(plannedPayment.id);
+    }
+    this.selectedPayment = plannedPayment;
   }
 
   protected onPageSizeEvent(pageSize: number): void {
@@ -142,6 +152,26 @@ export class PaymentComponent implements OnInit, OnDestroy {
     )
   }
 
+  private getPaymentAssignment(idPayment: string): void{
+    this.subscriptions.push(
+      this.httpService.getPaymentAssignment(
+        idPayment,
+        false).subscribe({
+        next: (response: HttpResponse<GetAssignmentDto>): void => {
+          for (let payment of this.paymentsDto!) {
+            if (payment.id == idPayment) {
+              payment.assignment = response.body;
+            }
+          }
+          this.assignmentStatusCode = response.status;
+        },
+        error: (err): void => {
+          this.assignmentStatusCode = err.status;
+        },
+      })
+    )
+  }
+
   private markPaymentsAsLoaded(isLoaded: boolean): void {
     if (isLoaded) {
       new TimerUtils(this.appConfig.animation.duration.default).start()
@@ -199,4 +229,6 @@ export class PaymentComponent implements OnInit, OnDestroy {
     this.paymentRequestModel.order =
       this.appConfig.request.order.orderDirections[0].value;
   }
+
+  protected readonly getPaymentType = getPaymentType;
 }
