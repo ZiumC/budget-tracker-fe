@@ -8,7 +8,6 @@ import {NgbDateParserFormatter, NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {HttpClientModule} from '@angular/common/http';
 import {CommonModule} from '@angular/common';
 import {IndexComponent} from './ui/pages/index/index.component';
-import {FooterComponent} from './ui/components/shared/footer/footer.component';
 import {SpinnerComponent} from './ui/components/shared/spinner/spinner.component';
 import {ErrorComponent} from './ui/components/shared/error/error.component';
 import {BudgetComponent} from './ui/pages/budget/budget.component';
@@ -46,7 +45,6 @@ export function loadConfig(configService: ConfigService): () => Promise<Config> 
     AppComponent,
     HeaderComponent,
     IndexComponent,
-    FooterComponent,
     SpinnerComponent,
     ErrorComponent,
     BudgetComponent,
