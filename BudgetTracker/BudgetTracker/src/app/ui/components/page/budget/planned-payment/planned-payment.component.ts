@@ -26,12 +26,12 @@ import {getPaymentType} from "../../../../../util/category.utils";
   styleUrl: './planned-payment.component.css'
 })
 export class PlannedPaymentComponent implements OnInit, OnDestroy, AfterViewInit {
-  @ViewChild('paymentComponentPage') element: ElementRef;
+  @ViewChild('plannedPaymentComponentPage') element: ElementRef;
   @ViewChild('plannedPaymentModal') plannedPaymentModal: any;
   @ViewChild('errorModal') errorModal: any;
   @Input() idBudget: string;
   private componentDimension = {width: 0, height: 0};
-  private pageWidth: number;
+  protected pageWidth: number;
   protected readonly formatString = formatString;
   protected readonly DateUtils = DateUtil;
   protected readonly format = format;

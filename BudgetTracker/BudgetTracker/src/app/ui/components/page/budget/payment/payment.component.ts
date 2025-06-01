@@ -24,10 +24,13 @@ import {GetAssignmentDto} from "../../../../../models/dto/assignment.model.dto";
   templateUrl: './payment.component.html',
   styleUrl: './payment.component.css'
 })
-export class PaymentComponent implements OnInit, OnDestroy {
+export class PaymentComponent implements OnInit, OnDestroy, AfterViewInit {
+  @ViewChild('paymentComponentPage') element: ElementRef;
   @ViewChild('errorModal') errorModal: any;
   @ViewChild('paymentModal') paymentModal: any;
   @Input() idBudget: string;
+  private pageWidth: any;
+  private componentDimension = {width: 0, height: 0};
   protected readonly format = format;
   protected readonly DateUtils = DateUtil;
   protected readonly formatString = formatString;
@@ -43,11 +46,14 @@ export class PaymentComponent implements OnInit, OnDestroy {
   protected paymentLoader: boolean;
   protected paymentStatusLoader: boolean;
   protected assignmentStatusCode: number;
-  public pageWidth: any;
 
   constructor(
     private httpService: HttpService,
     private configService: ConfigService) {
+  }
+
+  ngAfterViewInit(): void {
+    this.setComponentDimensions();
   }
 
   ngOnInit(): void {
@@ -90,6 +96,10 @@ export class PaymentComponent implements OnInit, OnDestroy {
       this.getPaymentAssignment(plannedPayment.id);
     }
     this.selectedPayment = plannedPayment;
+  }
+
+  protected displayMobileView(): boolean {
+    return this.pageWidth <= this.appConfig.pageMobileWidth;
   }
 
   protected onPageSizeEvent(pageSize: number): void {
@@ -225,6 +235,11 @@ export class PaymentComponent implements OnInit, OnDestroy {
         }
       })
     )
+  }
+
+  private setComponentDimensions(): void {
+    this.componentDimension.width = this.element.nativeElement.offsetWidth;
+    this.componentDimension.height = this.element.nativeElement.offsetHeight;
   }
 
   private defaultOrderParams(): void {
