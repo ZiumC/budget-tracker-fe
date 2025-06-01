@@ -27,20 +27,20 @@
               <table>
                 <tr class="table-header">
                   <th>Name</th>
-                  <th [style.display]="innerWidth > appConfig.mobileWidth ? '' : 'none'">
+                  <th [style.display]="pageWidth > appConfig.pageMobileWidth ? '' : 'none'">
                     Price (PLN)
                   </th>
-                  <th [style.display]="innerWidth > appConfig.mobileWidth ? '' : 'none'">
+                  <th [style.display]="pageWidth > appConfig.pageMobileWidth ? '' : 'none'">
                     Refund (PLN)
                   </th>
                   <th>Real (PLN)</th>
                 </tr>
                 <tr>
                   <td>{{ payment.name }}</td>
-                  <td [style.display]="innerWidth > appConfig.mobileWidth ? '' : 'none'">
+                  <td [style.display]="pageWidth > appConfig.pageMobileWidth ? '' : 'none'">
                     {{ format(payment.price) }}
                   </td>
-                  <td [style.display]="innerWidth > appConfig.mobileWidth ? '' : 'none'">
+                  <td [style.display]="pageWidth > appConfig.pageMobileWidth ? '' : 'none'">
                     {{ format(payment.refund) }}
                   </td>
                   <td>{{ format(subtract(payment.price, payment.refund)) }}</td>
@@ -60,7 +60,7 @@
                 <div class="col-lg-6">
                   <div class="mb-3 condition-container">
                     <div class="form-group">
-                      <div [style.display]="innerWidth > appConfig.mobileWidth ? 'none' : ''">
+                      <div [style.display]="pageWidth > appConfig.pageMobileWidth ? 'none' : ''">
                         <label for="payment-price">Price (PLN)
                         </label>
                         <input type="text"

@@ -34,7 +34,7 @@
               <div class="mb-1 text-center"
                    [className]="buttonOptionsClass()">
                 <button type="button"
-                        [className]="innerWidth > appConfig.mobileWidth ? 'btn btn-success' : 'btn btn-success width-ex-20'"
+                        [className]="innerWidth > appConfig.pageMobileWidth ? 'btn btn-success' : 'btn btn-success width-ex-20'"
                         data-bs-toggle="tooltip"
                         data-bs-placement="bottom"
                         title="Add payment"
@@ -42,7 +42,7 @@
                   <i class="bi bi-coin"></i> Payment
                 </button>
                 <button type="button"
-                        [className]="innerWidth > appConfig.mobileWidth ? 'btn btn-success' : 'btn btn-success width-ex-20'"
+                        [className]="innerWidth > appConfig.pageMobileWidth ? 'btn btn-success' : 'btn btn-success width-ex-20'"
                         data-bs-toggle="tooltip"
                         data-bs-placement="bottom"
                         title="Add planned payment"
@@ -50,7 +50,7 @@
                   <i class="bi bi-file-spreadsheet-fill"></i> Plan payment
                 </button>
                 <button type="button"
-                        [className]="innerWidth > appConfig.mobileWidth ? 'btn btn-success' : 'btn btn-success width-ex-20'"
+                        [className]="innerWidth > appConfig.pageMobileWidth ? 'btn btn-success' : 'btn btn-success width-ex-20'"
                         data-bs-toggle="tooltip"
                         data-bs-placement="bottom"
                         title="Add income"
@@ -58,7 +58,7 @@
                   <i class="bi bi-cash-coin"></i> Income
                 </button>
                 <button type="button"
-                        [className]="innerWidth > appConfig.mobileWidth ? 'btn btn-danger' : 'btn btn-danger width-ex-20'"
+                        [className]="innerWidth > appConfig.pageMobileWidth ? 'btn btn-danger' : 'btn btn-danger width-ex-20'"
                         data-bs-toggle="tooltip"
                         data-bs-placement="bottom"
                         title="Delete budget"
@@ -77,39 +77,80 @@
         </ng-template>
       </div>
     </div>
-    <div class="card text-center mb-3">
-      <div class="card-header">
-        Incomes
-      </div>
-      <div id="incomes-card" class="card-body">
-        <app-income #appIncome
-                    [idBudget]="idBudget">
+    <div class="row">
+      <div class="col">
+        <div class="card text-center mb-3">
+          <div class="card-header">
+            Incomes
+          </div>
+          <div id="incomes-card" class="card-body">
+            <app-income #appIncome
+                        [idBudget]="idBudget">
 
-        </app-income>
+            </app-income>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card text-center mb-3">
+          <div class="card-header">
+            Planned payments
+          </div>
+          <div id="planned-payments-card" class="card-body">
+            <app-planned-payment #appPlannedPayment
+                                 [idBudget]="idBudget">
+
+            </app-planned-payment>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="card text-center mb-3">
-      <div class="card-header">
-        Planned payments
-      </div>
-      <div id="planned-payments-card" class="card-body">
-        <app-planned-payment #appPlannedPayment
-                             [idBudget]="idBudget">
+    <div class="row">
+      <div class="card text-center mb-lg-3">
+        <div class="card-header">
+          Payments
+        </div>
+        <div id="payments-card" class="card-body">
+          <app-payment #appPayment
+                       [idBudget]="idBudget">
 
-        </app-planned-payment>
+          </app-payment>
+        </div>
       </div>
     </div>
-    <div class="card text-center mb-lg-3">
-      <div class="card-header">
-        Payments
-      </div>
-      <div id="payments-card" class="card-body">
-        <app-payment #appPayment
-                     [idBudget]="idBudget">
+    <!--    <div class="card text-center mb-3">-->
+    <!--      <div class="card-header">-->
+    <!--        Incomes-->
+    <!--      </div>-->
+    <!--      <div id="incomes-card" class="card-body">-->
+    <!--        <app-income #appIncome-->
+    <!--                    [idBudget]="idBudget">-->
 
-        </app-payment>
-      </div>
-    </div>
+    <!--        </app-income>-->
+    <!--      </div>-->
+    <!--    </div>-->
+    <!--    <div class="card text-center mb-3">-->
+    <!--      <div class="card-header">-->
+    <!--        Planned payments-->
+    <!--      </div>-->
+    <!--      <div id="planned-payments-card" class="card-body">-->
+    <!--        <app-planned-payment #appPlannedPayment-->
+    <!--                             [idBudget]="idBudget">-->
+
+    <!--        </app-planned-payment>-->
+    <!--      </div>-->
+    <!--    </div>-->
+    <!--    <div class="card text-center mb-lg-3">-->
+    <!--      <div class="card-header">-->
+    <!--        Payments-->
+    <!--      </div>-->
+    <!--      <div id="payments-card" class="card-body">-->
+    <!--        <app-payment #appPayment-->
+    <!--                     [idBudget]="idBudget">-->
+
+    <!--        </app-payment>-->
+    <!--      </div>-->
+    <!--    </div>-->
     <app-delete-modal #deleteModal
                       (indexPageEvent)="onRedirectToIndex()">
 

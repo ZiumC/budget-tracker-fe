@@ -1,4 +1,4 @@
-import {Component, HostListener, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, HostListener, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {format, subtract} from "../../../../../util/number.util";
 import {DateUtil} from "../../../../../util/date.util";
 import {formatString} from "../../../../../util/string.utils";
@@ -43,7 +43,7 @@ export class PaymentComponent implements OnInit, OnDestroy {
   protected paymentLoader: boolean;
   protected paymentStatusLoader: boolean;
   protected assignmentStatusCode: number;
-  public innerWidth: any;
+  public pageWidth: any;
 
   constructor(
     private httpService: HttpService,
@@ -58,14 +58,14 @@ export class PaymentComponent implements OnInit, OnDestroy {
       throw Error("Config not provided")
     }
 
-    this.innerWidth = window.innerWidth;
+    this.pageWidth = window.innerWidth;
     this.paymentResponseModel = new ResponseModel();
     this.subscriptions = [];
 
     this.requestParams = new RequestParams({
       page: this.appConfig.request.pagination.defaultPage,
       pageSize: this.appConfig.request.pagination.defaultPageSizeOptions[0],
-    })
+    });
 
     this.getPayments();
     this.defaultOrderParams();
@@ -78,7 +78,7 @@ export class PaymentComponent implements OnInit, OnDestroy {
 
   @HostListener('window:resize', ['$event'])
   onResize(): void {
-    this.innerWidth = window.innerWidth;
+    this.pageWidth = window.innerWidth;
   }
 
   ngOnDestroy(): void {

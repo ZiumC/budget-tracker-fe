@@ -1,204 +1,206 @@
-<ng-template [ngIf]="!plannedPaymentsLoader"
-             [ngIfElse]="loadedPlannedPaymentsBlock">
-  <app-spinner-grow></app-spinner-grow>
-</ng-template>
-<ng-template #loadedPlannedPaymentsBlock>
-  <ng-template [ngIf]="paymentResponseModel.statusCode == requiredStatusCode"
-               [ngIfElse]="errorPlannedPaymentsBlock">
-    <div class="mb-3">
-      <app-order [name]="'planned-payment-order'"
-                 [orderTypes]="appConfig.request.order.plannedPaymentTypes"
-                 [excludedOrderTypes]="appConfig.request.order.excludedTypes"
-                 [orderDirections]="appConfig.request.order.orderDirections"
-                 (orderByEvent)="onOrderEvent($event)"
-                 (orderDirectionEvent)="onOrderEvent($event)">
-      </app-order>
-    </div>
-    <hr class="horizontal">
-    @for (plannedPayment of plannedPaymentsDto; track plannedPayment) {
-      <div ngbAccordion>
-        <div ngbAccordionItem
-             [collapsed]="selectedPlannedPayment !== plannedPayment"
-             [class.payment-border]="plannedPayment.isPaid">
-          <h2 ngbAccordionHeader>
-            <button ngbAccordionButton
-                    (click)="onPlannedPaymentSelect(plannedPayment)"
-                    class="light-gray-bg accordion-button-header">
-              <table>
-                <tr class="table-header">
-                  <th>Name</th>
-                  <th [style.display]="innerWidth > appConfig.mobileWidth ? '' : 'none'">
-                    Estimated (PLN)
-                  </th>
-                  <th>Real price (PLN)</th>
-                  <th [style.display]="innerWidth > appConfig.mobileWidth ? '' : 'none'">
-                    Deviation (PLN)
-                  </th>
-                </tr>
-                <tr>
-                  <td>{{ plannedPayment.name }}</td>
-                  <td [style.display]="innerWidth > appConfig.mobileWidth ? '' : 'none'">
-                    {{ format(plannedPayment.estimated) }}
-                  </td>
-                  <td> {{ format(plannedPayment.realPrice) }}</td>
-                  <td [style.display]="innerWidth > appConfig.mobileWidth ? '' : 'none'">
-                    @if (BigNumber(plannedPayment.realPrice).gt(0)) {
-                      {{ format(subtract(plannedPayment.estimated, plannedPayment.realPrice)) }}
-                    } @else {
-                      -
-                    }
-                  </td>
-                </tr>
-              </table>
-            </button>
-          </h2>
-          <div ngbAccordionCollapse>
-            <div ngbAccordionBody>
-              <div class="row">
-                <div [style.display]="plannedPayment.isPaid ? 'block' : 'none'"
-                     class="mb-2 condition-container text-center">
-                  <h6>Planned payment <strong>is paid</strong></h6>
+<div #paymentComponentPage>
+  <ng-template [ngIf]="!plannedPaymentsLoader"
+               [ngIfElse]="loadedPlannedPaymentsBlock">
+    <app-spinner-grow></app-spinner-grow>
+  </ng-template>
+  <ng-template #loadedPlannedPaymentsBlock>
+    <ng-template [ngIf]="paymentResponseModel.statusCode == requiredStatusCode"
+                 [ngIfElse]="errorPlannedPaymentsBlock">
+      <div class="mb-3">
+        <app-order [name]="'planned-payment-order'"
+                   [orderTypes]="appConfig.request.order.plannedPaymentTypes"
+                   [excludedOrderTypes]="appConfig.request.order.excludedTypes"
+                   [orderDirections]="appConfig.request.order.orderDirections"
+                   (orderByEvent)="onOrderEvent($event)"
+                   (orderDirectionEvent)="onOrderEvent($event)">
+        </app-order>
+      </div>
+      <hr class="horizontal">
+      @for (plannedPayment of plannedPaymentsDto; track plannedPayment) {
+        <div ngbAccordion>
+          <div ngbAccordionItem
+               [collapsed]="selectedPlannedPayment !== plannedPayment"
+               [class.payment-border]="plannedPayment.isPaid">
+            <h2 ngbAccordionHeader>
+              <button ngbAccordionButton
+                      (click)="onPlannedPaymentSelect(plannedPayment)"
+                      class="light-gray-bg accordion-button-header">
+                <table>
+                  <tr class="table-header">
+                    <th>Name</th>
+                    <th [style.display]="displayMobileView() ? 'none' : ''">
+                      Estimated (PLN)
+                    </th>
+                    <th>Real price (PLN)</th>
+                    <th [style.display]="displayMobileView() ? 'none' : ''">
+                      Deviation (PLN)
+                    </th>
+                  </tr>
+                  <tr>
+                    <td>{{ plannedPayment.name }}</td>
+                    <td [style.display]="displayMobileView() ? 'none' : ''">
+                      {{ format(plannedPayment.estimated) }}
+                    </td>
+                    <td> {{ format(plannedPayment.realPrice) }}</td>
+                    <td [style.display]="displayMobileView() ? 'none' : ''">
+                      @if (BigNumber(plannedPayment.realPrice).gt(0)) {
+                        {{ format(subtract(plannedPayment.estimated, plannedPayment.realPrice)) }}
+                      } @else {
+                        -
+                      }
+                    </td>
+                  </tr>
+                </table>
+              </button>
+            </h2>
+            <div ngbAccordionCollapse>
+              <div ngbAccordionBody>
+                <div class="row">
+                  <div [style.display]="plannedPayment.isPaid ? 'block' : 'none'"
+                       class="mb-2 condition-container text-center">
+                    <h6>Planned payment <strong>is paid</strong></h6>
+                  </div>
                 </div>
-              </div>
-              <div class="row">
-                <div class="col-lg-6">
-                  <div class="mb-3 condition-container">
-                    <div class="form-group">
-                      <div [style.display]="innerWidth > appConfig.mobileWidth ? 'none' : ''">
-                        <label for="planned-payment-estimated">Estimated (PLN)
-                        </label>
-                        <input type="text"
-                               id="planned-payment-estimated"
-                               class="form-control mb-2"
-                               value="{{ format(plannedPayment.estimated) }}"
-                               disabled>
-                        <label for="planned-payment-real">Deviation (PLN)
-                        </label>
-                        <input type="text"
-                               id="planned-payment-real"
-                               class="form-control mb-2"
-                               [value]="BigNumber(plannedPayment.realPrice).gt(0) ?
+                <div class="row">
+                  <div class="col-lg-6">
+                    <div class="mb-3 condition-container">
+                      <div class="form-group">
+                        <div [style.display]="displayMobileView() ? 'none' : ''">
+                          <label for="planned-payment-estimated">Estimated (PLN)
+                          </label>
+                          <input type="text"
+                                 id="planned-payment-estimated"
+                                 class="form-control mb-2"
+                                 value="{{ format(plannedPayment.estimated) }}"
+                                 disabled>
+                          <label for="planned-payment-real">Deviation (PLN)
+                          </label>
+                          <input type="text"
+                                 id="planned-payment-real"
+                                 class="form-control mb-2"
+                                 [value]="BigNumber(plannedPayment.realPrice).gt(0) ?
                                  format(subtract(plannedPayment.estimated, plannedPayment.realPrice)) :
                                  '-'"
+                                 disabled>
+                        </div>
+                        <label for="planned-payment-date-updated">Date updated
+                        </label>
+                        <input type="text"
+                               id="planned-payment-date-updated"
+                               class="form-control mb-2"
+                               value="{{DateUtils.formatWithTime(plannedPayment.dateUpdated)}}"
                                disabled>
-                      </div>
-                      <label for="planned-payment-date-updated">Date updated
-                      </label>
-                      <input type="text"
-                             id="planned-payment-date-updated"
-                             class="form-control mb-2"
-                             value="{{DateUtils.formatWithTime(plannedPayment.dateUpdated)}}"
-                             disabled>
-                      <label for="planned-payment-comment">Payment comment</label>
-                      <textarea type="text"
-                                id="planned-payment-comment"
-                                class="form-control"
-                                value="{{ plannedPayment.comment }}"
-                                disabled>
+                        <label for="planned-payment-comment">Payment comment</label>
+                        <textarea type="text"
+                                  id="planned-payment-comment"
+                                  class="form-control"
+                                  value="{{ plannedPayment.comment }}"
+                                  disabled>
                                 </textarea>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div class="col-lg-6">
-                  <div class="form-group">
-                    <label for="planned-payment-category">Category
-                    </label>
-                    <div class="input-group mb-2">
-                      <input type="text"
-                             id="planned-payment-category"
-                             class="form-control"
-                             placeholder="Not assigned"
-                             value="{{plannedPayment.assignment?.category?.name}}"
-                             aria-describedby="basic-addon2"
-                             disabled>
-                      <div class="input-group-append">
+                  <div class="col-lg-6">
+                    <div class="form-group">
+                      <label for="planned-payment-category">Category
+                      </label>
+                      <div class="input-group mb-2">
+                        <input type="text"
+                               id="planned-payment-category"
+                               class="form-control"
+                               placeholder="Not assigned"
+                               value="{{plannedPayment.assignment?.category?.name}}"
+                               aria-describedby="basic-addon2"
+                               disabled>
+                        <div class="input-group-append">
                         <span class="input-group-text"
                               id="basic-addon2">{{ getPaymentType(plannedPayment.assignment, true, appConfig) }}</span>
+                        </div>
                       </div>
+                      <label for="planned-payment-description-assignment">Assignment comment</label>
+                      <textarea type="text"
+                                id="planned-payment-description-assignment"
+                                class="form-control"
+                                placeholder="{{plannedPayment.assignment ? '' : 'Not assigned'}}"
+                                value="{{ plannedPayment.assignment?.comment }}"
+                                disabled></textarea>
                     </div>
-                    <label for="planned-payment-description-assignment">Assignment comment</label>
-                    <textarea type="text"
-                              id="planned-payment-description-assignment"
-                              class="form-control"
-                              placeholder="{{plannedPayment.assignment ? '' : 'Not assigned'}}"
-                              value="{{ plannedPayment.assignment?.comment }}"
-                              disabled></textarea>
                   </div>
                 </div>
-              </div>
-              <div class="row mx-auto mt-3">
-                <div class="planned-payment-buttons text-center">
-                  <button
-                    [style.display]="plannedPayment.isPaid ? 'block' : 'none'"
-                    type="button"
-                    class="btn btn-outline-primary"
-                    data-bs-toggle="tooltip"
-                    data-bs-placement="bottom"
-                    title="Switch to not paid status"
-                    (click)="patchPlannedPaymentStatus(false, plannedPayment.id)">
-                    <i class="bi bi-bag-x-fill"></i> Unpaid
-                  </button>
-                  <button
-                    [style.display]="!plannedPayment.isPaid ? 'block' : 'none'"
-                    type="button"
-                    class="btn btn-outline-secondary"
-                    data-bs-toggle="tooltip"
-                    data-bs-placement="bottom"
-                    title="Switch to paid status"
-                    (click)="patchPlannedPaymentStatus(true, plannedPayment.id)">
-                    <i class="bi bi-bag-check-fill"></i> Paid
-                  </button>
-                  <button
-                    type="button"
-                    class="btn btn-outline-warning"
-                    data-bs-toggle="tooltip"
-                    data-bs-placement="bottom"
-                    title="Edit planned payment"
-                    (click)="plannedPaymentModal.open(plannedPayment)">
-                    <i class="bi bi-pencil-square"></i> Edit
-                  </button>
-                  <button
-                    type="button"
-                    class="btn btn-outline-danger"
-                    data-bs-toggle="tooltip"
-                    data-bs-placement="bottom"
-                    title="Delete payment"
-                    (click)="deleteModal.openWithPlannedPayment(plannedPayment)">
-                    <i class="bi bi-trash3-fill"></i> Delete
-                  </button>
+                <div class="row mx-auto mt-3">
+                  <div class="planned-payment-buttons text-center">
+                    <button
+                      [style.display]="plannedPayment.isPaid ? 'block' : 'none'"
+                      type="button"
+                      class="btn btn-outline-primary"
+                      data-bs-toggle="tooltip"
+                      data-bs-placement="bottom"
+                      title="Switch to not paid status"
+                      (click)="patchPlannedPaymentStatus(false, plannedPayment.id)">
+                      <i class="bi bi-bag-x-fill"></i> Unpaid
+                    </button>
+                    <button
+                      [style.display]="!plannedPayment.isPaid ? 'block' : 'none'"
+                      type="button"
+                      class="btn btn-outline-secondary"
+                      data-bs-toggle="tooltip"
+                      data-bs-placement="bottom"
+                      title="Switch to paid status"
+                      (click)="patchPlannedPaymentStatus(true, plannedPayment.id)">
+                      <i class="bi bi-bag-check-fill"></i> Paid
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn-outline-warning"
+                      data-bs-toggle="tooltip"
+                      data-bs-placement="bottom"
+                      title="Edit planned payment"
+                      (click)="plannedPaymentModal.open(plannedPayment)">
+                      <i class="bi bi-pencil-square"></i> Edit
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn-outline-danger"
+                      data-bs-toggle="tooltip"
+                      data-bs-placement="bottom"
+                      title="Delete payment"
+                      (click)="deleteModal.openWithPlannedPayment(plannedPayment)">
+                      <i class="bi bi-trash3-fill"></i> Delete
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    }
-    @if (totalPages! > 0) {
-      <app-pagination [name]="'planned-payment-paginate'"
-                      [pageCount]="totalPages!"
-                      [displayPageSize]="true"
-                      [pageSizeOptions]="appConfig.request.pagination.defaultPageSizeOptions"
-                      (pageSizeEvent)="onPageSizeEvent($event)"
-                      (pageEvent)="onPageEvent($event)">
+      }
+      @if (totalPages! > 0) {
+        <app-pagination [name]="'planned-payment-paginate'"
+                        [pageCount]="totalPages!"
+                        [displayPageSize]="true"
+                        [pageSizeOptions]="appConfig.request.pagination.defaultPageSizeOptions"
+                        (pageSizeEvent)="onPageSizeEvent($event)"
+                        (pageEvent)="onPageEvent($event)">
 
-      </app-pagination>
-    }
+        </app-pagination>
+      }
+    </ng-template>
+    <ng-template #errorPlannedPaymentsBlock>
+      <app-error [response]="paymentResponseModel"
+                 [notFoundErrorText]="formatString(appConfig.form.messages.notFound,'Planned payments data')">
+
+      </app-error>
+    </ng-template>
   </ng-template>
-  <ng-template #errorPlannedPaymentsBlock>
-    <app-error [response]="paymentResponseModel"
-               [notFoundErrorText]="formatString(appConfig.form.messages.notFound,'Planned payments data')">
+  <app-planned-payments-modal #plannedPaymentModal
+                              [idBudget]="idBudget"
+                              [assignmentStatusCode]="assignmentStatusCode"
+                              (refreshEvent)=onRefreshPlannedPayment()>
+  </app-planned-payments-modal>
+  <app-delete-modal #deleteModal
+                    (refreshPlannedPaymentEvent)="onRefreshPlannedPayment()">
 
-    </app-error>
-  </ng-template>
-</ng-template>
-<app-planned-payments-modal #plannedPaymentModal
-                            [idBudget]="idBudget"
-                            [assignmentStatusCode]="assignmentStatusCode"
-                            (refreshEvent)=onRefreshPlannedPayment()>
-</app-planned-payments-modal>
-<app-delete-modal #deleteModal
-                  (refreshPlannedPaymentEvent)="onRefreshPlannedPayment()">
-
-</app-delete-modal>
-<app-error-modal #errorModal>
-</app-error-modal>
+  </app-delete-modal>
+  <app-error-modal #errorModal>
+  </app-error-modal>
+</div>

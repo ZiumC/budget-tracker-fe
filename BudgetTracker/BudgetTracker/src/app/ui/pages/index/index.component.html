@@ -122,7 +122,7 @@
              [className]="buttonOptionsClass()">
           <div class="px-5">
             <button type="button"
-                    [className]="innerWidth > appConfig.mobileWidth ? 'btn btn-success' : 'btn btn-success width-ex-20'"
+                    [className]="innerWidth > appConfig.pageMobileWidth ? 'btn btn-success' : 'btn btn-success width-ex-20'"
                     data-bs-toggle="tooltip"
                     data-bs-placement="bottom"
                     title="Create budget"
@@ -132,7 +132,7 @@
           </div>
           <div class="px-5">
             <button type="button"
-                    [className]="innerWidth > appConfig.mobileWidth ? 'btn btn-success' : 'btn btn-success width-ex-20'"
+                    [className]="innerWidth > appConfig.pageMobileWidth ? 'btn btn-success' : 'btn btn-success width-ex-20'"
                     data-bs-toggle="tooltip"
                     data-bs-placement="bottom"
                     title="Create multiple budgets"
@@ -143,7 +143,7 @@
           @if (toCurrentYear) {
             <div class="px-5">
               <button type="button"
-                      [className]="innerWidth > appConfig.mobileWidth ? 'btn btn-primary' : 'btn btn-primary width-ex-20'"
+                      [className]="innerWidth > appConfig.pageMobileWidth ? 'btn btn-primary' : 'btn btn-primary width-ex-20'"
                       data-bs-toggle="tooltip"
                       data-bs-placement="bottom"
                       title="Switch to current year"

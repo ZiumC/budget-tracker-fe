@@ -98,7 +98,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
   }
 
   protected buttonOptionsClass(): string {
-    const isMobileView = innerWidth <= this.appConfig.mobileWidth;
+    const isMobileView = innerWidth <= this.appConfig.pageMobileWidth;
     return isMobileView ? "budget-button-options-rows" : "budget-button-options-4-cols";
   }
 
