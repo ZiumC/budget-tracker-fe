@@ -1,11 +1,3 @@
-.planned-payment-buttons {
-  display: grid;
-  justify-items: center;
-  grid-template-columns: auto auto auto;
-  gap: 3ex;
-  grid-auto-flow: row;
-}
-
 #payments-card {
   background-color: var(--bs-card-cap-bg);
 }
