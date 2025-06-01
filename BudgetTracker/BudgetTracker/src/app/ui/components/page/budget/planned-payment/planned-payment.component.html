@@ -157,7 +157,8 @@
                       class="btn btn-outline-primary"
                       data-bs-toggle="tooltip"
                       data-bs-placement="bottom"
-                      title="Copy planned payment">
+                      title="Copy planned payment"
+                      (click)="copyPaymentModal.open()">
                       <i class="bi bi-copy"></i> Copy
                     </button>
                     <button
@@ -208,6 +209,9 @@
                               [assignmentStatusCode]="assignmentStatusCode"
                               (refreshEvent)=onRefreshPlannedPayment()>
   </app-planned-payments-modal>
+  <app-copy-payment-modal #copyPaymentModal>
+
+  </app-copy-payment-modal>
   <app-delete-modal #deleteModal
                     (refreshPlannedPaymentEvent)="onRefreshPlannedPayment()">
 

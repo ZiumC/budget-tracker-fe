@@ -1,0 +1,56 @@
+<ng-template #copyPaymentModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">
+      Copy planned payment
+    </h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="modal.close()">
+    </button>
+  </div>
+
+  <div class="modal-body">
+    <form ngbAutofocus #form="ngForm">
+      <div class="col-mx">
+        <ng-container [ngSwitch]="step">
+          <ng-container *ngSwitchCase="1">
+            <p>1-st step</p>
+          </ng-container>
+
+          <ng-container *ngSwitchCase="2">
+            <p>2-nd step</p>
+          </ng-container>
+        </ng-container>
+      </div>
+    </form>
+  </div>
+
+  <div class="modal-footer">
+    <ng-container [ngSwitch]="step">
+      <ng-container *ngSwitchCase="1">
+        <button
+          (click)="goNext()"
+          type="button"
+          class="btn btn-outline-primary">
+          Next
+        </button>
+      </ng-container>
+      <ng-container *ngSwitchCase="2">
+        <button
+          (click)="goBack()"
+          type="button"
+          class="btn btn-outline-secondary">
+          Back
+        </button>
+        <button
+          [disabled]="form.invalid"
+          type="button"
+          class="btn btn-outline-primary">
+          Save
+        </button>
+      </ng-container>
+    </ng-container>
+  </div>
+</ng-template>

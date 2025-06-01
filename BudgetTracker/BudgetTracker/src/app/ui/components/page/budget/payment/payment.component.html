@@ -133,8 +133,7 @@
                   </div>
                 </div>
                 <div class="row mx-auto mt-3">
-                  <div [className]="displayMobileView() ? 'payment-2-col-2-row-btn' : 'payment-4-col-btn'"
-                       class="text-center">
+                  <div class="text-center payment-buttons">
                     <button
                       [style.display]="payment.isPaid ? 'block' : 'none'"
                       type="button"
@@ -154,14 +153,6 @@
                       title="Switch to paid status"
                       (click)="patchPaymentStatus(true, payment.id)">
                       <i class="bi bi-bag-check-fill"></i> Paid
-                    </button>
-                    <button
-                      type="button"
-                      class="btn btn-outline-primary"
-                      data-bs-toggle="tooltip"
-                      data-bs-placement="bottom"
-                      title="Copy planned payment">
-                      <i class="bi bi-copy"></i> Copy
                     </button>
                     <button
                       type="button"

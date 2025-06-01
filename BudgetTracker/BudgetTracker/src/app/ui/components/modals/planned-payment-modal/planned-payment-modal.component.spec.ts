@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PlannedPaymentsModalComponent } from './planned-payments-modal.component';
+import { PlannedPaymentModalComponent } from './planned-payment-modal.component';
 
 describe('PlannedPaymentsModalComponent', () => {
-  let component: PlannedPaymentsModalComponent;
-  let fixture: ComponentFixture<PlannedPaymentsModalComponent>;
+  let component: PlannedPaymentModalComponent;
+  let fixture: ComponentFixture<PlannedPaymentModalComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [PlannedPaymentsModalComponent]
+      declarations: [PlannedPaymentModalComponent]
     })
     .compileComponents();
-    
-    fixture = TestBed.createComponent(PlannedPaymentsModalComponent);
+
+    fixture = TestBed.createComponent(PlannedPaymentModalComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

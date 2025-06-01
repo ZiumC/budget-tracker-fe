@@ -19,10 +19,10 @@ import {getPaymentType} from "../../../../util/category.utils";
 
 @Component({
   selector: 'app-planned-payments-modal',
-  templateUrl: './planned-payments-modal.component.html',
-  styleUrl: './planned-payments-modal.component.css'
+  templateUrl: './planned-payment-modal.component.html',
+  styleUrl: './planned-payment-modal.component.css'
 })
-export class PlannedPaymentsModalComponent implements OnInit, OnDestroy {
+export class PlannedPaymentModalComponent implements OnInit, OnDestroy {
   @ViewChild('plannedPaymentModal') plannedPaymentModal: any;
   @ViewChild('errorModal') errorModal: any;
   @ViewChild('typeahead') typeahead: any;

@@ -30,11 +30,12 @@ import {DatepickerFormatter} from "./util/date.util";
 import { IncomeComponent } from './ui/components/page/budget/income/income.component';
 import { PaymentComponent } from './ui/components/page/budget/payment/payment.component';
 import { PlannedPaymentComponent } from './ui/components/page/budget/planned-payment/planned-payment.component';
-import { PlannedPaymentsModalComponent } from './ui/components/modals/planned-payments-modal/planned-payments-modal.component';
+import { PlannedPaymentModalComponent } from './ui/components/modals/planned-payment-modal/planned-payment-modal.component';
 import { CategoryPageComponent } from './ui/pages/category-page/category-page.component';
 import { CategoryComponent } from './ui/components/page/category/category/category.component';
 import { CategoryModalComponent } from './ui/components/modals/category-modal/category-modal.component';
 import { TypeheadCategoryComponent } from './ui/components/shared/typehead-category/typehead-category.component';
+import { CopyPaymentModalComponent } from './ui/components/modals/copy-payment-modal/copy-payment-modal.component';
 
 export function loadConfig(configService: ConfigService): () => Promise<Config> {
   return (): Promise<Config> => firstValueFrom(configService.loadConfig());
@@ -62,11 +63,12 @@ export function loadConfig(configService: ConfigService): () => Promise<Config> 
     IncomeComponent,
     PaymentComponent,
     PlannedPaymentComponent,
-    PlannedPaymentsModalComponent,
+    PlannedPaymentModalComponent,
     CategoryPageComponent,
     CategoryComponent,
     CategoryModalComponent,
     TypeheadCategoryComponent,
+    CopyPaymentModalComponent,
   ],
   imports: [
     BrowserModule,
