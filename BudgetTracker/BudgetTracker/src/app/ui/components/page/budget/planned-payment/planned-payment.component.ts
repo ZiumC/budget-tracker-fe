@@ -1,4 +1,4 @@
-import {Component, HostListener, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, HostListener, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {HttpService} from "../../../../../services/http/http.service";
 import {ConfigService} from "../../../../../services/config/config.service";
 import {Subscription} from "rxjs";
@@ -25,10 +25,13 @@ import {getPaymentType} from "../../../../../util/category.utils";
   templateUrl: './planned-payment.component.html',
   styleUrl: './planned-payment.component.css'
 })
-export class PlannedPaymentComponent implements OnInit, OnDestroy {
+export class PlannedPaymentComponent implements OnInit, OnDestroy, AfterViewInit {
+  @ViewChild('paymentComponentPage') element: ElementRef;
   @ViewChild('plannedPaymentModal') plannedPaymentModal: any;
   @ViewChild('errorModal') errorModal: any;
   @Input() idBudget: string;
+  private componentDimension = {width: 0, height: 0};
+  private pageWidth: number;
   protected readonly formatString = formatString;
   protected readonly DateUtils = DateUtil;
   protected readonly format = format;
@@ -46,11 +49,14 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy {
   protected plannedPaymentStatusLoader: boolean;
   protected totalPages: number;
   protected assignmentStatusCode: number;
-  public innerWidth: any;
 
   constructor(
     private httpService: HttpService,
     private configService: ConfigService) {
+  }
+
+  ngAfterViewInit(): void {
+    this.setComponentDimensions();
   }
 
   ngOnInit(): void {
@@ -62,7 +68,7 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy {
       throw Error("Config not provided")
     }
 
-    this.innerWidth = window.innerWidth;
+    this.pageWidth = window.innerWidth;
     this.paymentResponseModel = new ResponseModel();
     this.subscriptions = [];
 
@@ -78,7 +84,8 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy {
 
   @HostListener('window:resize', ['$event'])
   onResize(): void {
-    this.innerWidth = window.innerWidth;
+    this.pageWidth = window.innerWidth;
+    this.setComponentDimensions();
   }
 
   openModal(): void {
@@ -117,6 +124,11 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy {
     this.getPlannedPayments();
   }
 
+  protected displayMobileView(): boolean {
+    return this.pageWidth <= this.appConfig.pageMobileWidth ||
+      this.componentDimension.width <= this.appConfig.componentMobileWidth;
+  }
+
   protected patchPlannedPaymentStatus(isPaid: boolean, idPlannedPayment: string): void {
     this.plannedPaymentStatusLoader = true;
     this.subscriptions.push(
@@ -128,8 +140,8 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy {
         true
       ).subscribe({
         next: (): void => {
-          for(let plannedPayment of this.plannedPaymentsDto!){
-            if (plannedPayment.id == idPlannedPayment){
+          for (let plannedPayment of this.plannedPaymentsDto!) {
+            if (plannedPayment.id == idPlannedPayment) {
               plannedPayment.isPaid = isPaid;
               plannedPayment.dateUpdated = new Date();
             }
@@ -223,6 +235,12 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy {
       })
     )
   }
+
+  private setComponentDimensions(): void {
+    this.componentDimension.width = this.element.nativeElement.offsetWidth;
+    this.componentDimension.height = this.element.nativeElement.offsetHeight;
+  }
+
 
   private defaultOrderParams(): void {
     this.requestParams.orderBy =

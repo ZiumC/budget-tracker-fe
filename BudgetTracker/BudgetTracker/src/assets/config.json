@@ -232,7 +232,8 @@
       }
     },
     "budgetLimit": 6,
-    "mobileWidth": 770,
-    "mediumWidth": 1015
+    "pageMobileWidth": 770,
+    "pageMediumWidth": 1015,
+    "componentMobileWidth": 550
   }
 }

@@ -15,6 +15,7 @@ export interface AppConfig {
   request: RequestConfig;
   response: ResponseConfig;
   budgetLimit: number;
-  mobileWidth: number;
-  mediumWidth: number;
+  pageMobileWidth: number;
+  pageMediumWidth: number;
+  componentMobileWidth: number;
 }

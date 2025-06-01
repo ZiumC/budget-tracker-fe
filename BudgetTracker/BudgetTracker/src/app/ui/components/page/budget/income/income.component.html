@@ -28,20 +28,20 @@
                 <tr class="table-header">
                   <th>Name</th>
                   <th>Income (PLN)</th>
-                  <th [style.display]="innerWidth > appConfig.mobileWidth ? '' : 'none'">
+                  <th [style.display]="innerWidth > appConfig.pageMobileWidth ? '' : 'none'">
                     Appropriation
                   </th>
-                  <th [style.display]="innerWidth > appConfig.mobileWidth ? '' : 'none'">
+                  <th [style.display]="innerWidth > appConfig.pageMobileWidth ? '' : 'none'">
                     Date created
                   </th>
                 </tr>
                 <tr>
                   <td>{{ income.name }}</td>
                   <td>{{ format(income.wage) }}</td>
-                  <td [style.display]="innerWidth > appConfig.mobileWidth ? '' : 'none'">
+                  <td [style.display]="innerWidth > appConfig.pageMobileWidth ? '' : 'none'">
                     #Category
                   </td>
-                  <td [style.display]="innerWidth > appConfig.mobileWidth ? '' : 'none'">
+                  <td [style.display]="innerWidth > appConfig.pageMobileWidth ? '' : 'none'">
                     {{ DateUtils.format(income.dateUpdated) }}
                   </td>
                 </tr>
@@ -55,7 +55,7 @@
                      class="col-lg-6 mb-2 condition-container">
                   <p>Income is surplus</p>
                 </div>
-                <div [style.display]="innerWidth > appConfig.mobileWidth ? 'none' : ''"
+                <div [style.display]="innerWidth > appConfig.pageMobileWidth ? 'none' : ''"
                      class="mb-3 condition-container">
                   <div class="form-group">
                     <label for="income-category">Category

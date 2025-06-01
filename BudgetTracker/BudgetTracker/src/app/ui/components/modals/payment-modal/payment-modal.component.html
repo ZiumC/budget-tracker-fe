@@ -63,7 +63,7 @@
           </div>
         </div>
         <div class="row">
-          <div [className]="innerWidth > appConfig.mobileWidth ? 'col-md-6': 'col-md-6  mb-4 pb-2'">
+          <div [className]="innerWidth > appConfig.pageMobileWidth ? 'col-md-6': 'col-md-6  mb-4 pb-2'">
             <div [className]="ModalUtils.displayMarginFor(paymentPriceInput)">
               <label for="payment-price">Price</label>
               <span class="text-danger">*</span>

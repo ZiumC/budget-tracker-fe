@@ -176,7 +176,7 @@ export class IndexComponent implements OnInit, OnDestroy {
   }
 
   protected buttonOptionsClass(): string {
-    const isMobileView = innerWidth <= this.appConfig.mobileWidth;
+    const isMobileView = innerWidth <= this.appConfig.pageMobileWidth;
 
     if (isMobileView) {
       return "budget-button-options-rows";
@@ -190,7 +190,7 @@ export class IndexComponent implements OnInit, OnDestroy {
   }
 
   protected budgetCardContainerClass(): string {
-    const isMobileView = innerWidth <= this.appConfig.mobileWidth;
+    const isMobileView = innerWidth <= this.appConfig.pageMobileWidth;
     const budgetsLength = this.budgets!.length;
 
     if (isMobileView) {
@@ -204,7 +204,7 @@ export class IndexComponent implements OnInit, OnDestroy {
         return "budget-card-container-2-cols";
       }
     } else {
-      if (innerWidth <= this.appConfig.mediumWidth) {
+      if (innerWidth <= this.appConfig.pageMediumWidth) {
         return "budget-card-container-2-cols";
       } else {
         return "budget-card-container-3-cols";
