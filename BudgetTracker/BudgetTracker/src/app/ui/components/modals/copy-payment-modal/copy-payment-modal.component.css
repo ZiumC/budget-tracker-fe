@@ -1,0 +1,25 @@
+.step {
+  text-align: center;
+  flex: 1;
+  position: relative;
+}
+
+.circle {
+  width: 5ex;
+  height: 5ex;
+  margin: 0 auto;
+  border-radius: 50%;
+  line-height: 5ex;
+  font-weight: bold;
+  background-color: #dee2e6;
+}
+
+.step.active .circle {
+  background-color: #0d6efd;
+  color: white;
+}
+
+.step.completed .circle {
+  background-color: #0d6efd;
+  color: white;
+}
