@@ -39,6 +39,12 @@ export class DateUtil {
     const currentYear = new Date().getFullYear();
     return new Date(currentYear, 11, 31);
   }
+
+  static setMonthsToDate(date: Date, months: number): Date {
+    let result = new Date(date);
+    result.setMonth(result.getMonth() + months);
+    return result;
+  }
 }
 
 export class DatePickerUtil {
