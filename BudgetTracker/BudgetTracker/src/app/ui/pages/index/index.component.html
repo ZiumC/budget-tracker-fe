@@ -20,7 +20,7 @@
                       name="from-date"
                       class="form-control"
                       [(ngModel)]="fromDatePicker"
-                      (ngModelChange)="onDatesChanged(fromDate, toDate)"
+                      (ngModelChange)="DateUtils.validateOnDatesChanged(fromDate, toDate, fromDatePicker, toDatePicker)"
                       required
                       #fromDate="ngModel"
                       container="body"
@@ -68,7 +68,7 @@
                       name="to-date"
                       class="form-control"
                       [(ngModel)]="toDatePicker"
-                      (ngModelChange)="onDatesChanged(fromDate, toDate)"
+                      (ngModelChange)="DateUtils.validateOnDatesChanged(fromDate, toDate, fromDatePicker, toDatePicker)"
                       container="body"
                       placement="bottom-end"
                       required

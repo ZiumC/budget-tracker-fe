@@ -153,28 +153,6 @@ export class IndexComponent implements OnInit, OnDestroy {
     this.reloadPage();
   }
 
-  protected onDatesChanged(fromDateInput: NgModel, toDateInput: NgModel): void {
-    const isInvalidFromDate = isInvalidDate(this.fromDatePicker);
-    const isInvalidToDate = isInvalidDate(this.toDatePicker);
-
-    if (isInvalidFromDate) {
-      fromDateInput.control.setErrors({ngbDate: true});
-    } else if (isInvalidToDate) {
-      toDateInput.control.setErrors({ngbDate: true});
-    } else {
-      const fromDate = DatePickerUtil.convertToDate(this.fromDatePicker);
-      const toDate = DatePickerUtil.convertToDate(this.toDatePicker);
-
-      if (toDate <= fromDate) {
-        fromDateInput.control.setErrors({invalidRange: true});
-        toDateInput.control.setErrors({invalidRange: true});
-      } else {
-        fromDateInput.control.setErrors(null);
-        toDateInput.control.setErrors(null);
-      }
-    }
-  }
-
   protected buttonOptionsClass(): string {
     const isMobileView = innerWidth <= this.appConfig.pageMobileWidth;
 
