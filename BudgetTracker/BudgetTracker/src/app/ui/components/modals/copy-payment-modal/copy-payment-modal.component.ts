@@ -9,6 +9,9 @@ import {DatePicker} from "../../../../models/datepicker.model";
 import {DatePickerUtil, DateUtil} from "../../../../util/date.util";
 import {AppConfig} from "../../../../models/config/config";
 import {FormConfig} from "../../../../models/config/form.model.config";
+import {format} from "../../../../util/number.util";
+import {GetBudgetDto} from "../../../../models/dto/budget.model.dto";
+import {ResponseModel} from "../../../../models/response.model";
 
 @Component({
   selector: 'app-copy-payment-modal',
@@ -18,7 +21,11 @@ import {FormConfig} from "../../../../models/config/form.model.config";
 export class CopyPaymentModalComponent implements OnInit, OnDestroy {
   @ViewChild('copyPaymentModal') copyModal: any;
   protected readonly formatString = formatString;
+  protected readonly DateUtils = DateUtil;
   protected readonly ModalUtils = ModalUtils;
+  protected selectedBudgets: string[] = [];
+  protected budgets: GetBudgetDto[] | null;
+  protected budgetsResponseModel: ResponseModel;
   protected currentStep: number = 1;
   protected fromDatePicker: DatePicker;
   protected toDatePicker: DatePicker;
@@ -52,6 +59,24 @@ export class CopyPaymentModalComponent implements OnInit, OnDestroy {
     this.toDatePicker = DatePickerUtil.convertToDatePicker(toDate);
 
     this.searchBudgets();
+    // this.budgetsResponseModel = {
+    //   statusCode: 404
+    // } as ResponseModel;
+    this.budgets = [{
+      id: "aaaa",
+      name: "Janurary",
+      dateStart: new Date(),
+      dateEnd: new Date()
+    } as GetBudgetDto, {id: "bbbbbb", name: "Feb", dateStart: new Date(), dateEnd: new Date()} as GetBudgetDto]
+  }
+
+  onCheckBudget(id: string): void {
+    let selectedBudgetIndex = this.selectedBudgets.indexOf(id);
+    if (selectedBudgetIndex > -1) {
+      this.selectedBudgets = this.selectedBudgets.filter((_, i) => i !== selectedBudgetIndex);
+    } else {
+      this.selectedBudgets.push(id);
+    }
   }
 
   protected searchBudgets(): void {
