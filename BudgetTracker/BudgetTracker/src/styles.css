@@ -197,7 +197,6 @@ div.ngb-dp-weekday {
 }
 
 
-
 hr.vertical {
   border-left: 0.75ex solid black;
   border-radius: 0.5ex;
@@ -215,6 +214,11 @@ hr.horizontal-light {
 
 .icon-big {
   font-size: 2.5ex;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+  text-decoration: none;
 }
 
 @media only screen and (max-width: 770px) {

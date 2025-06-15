@@ -126,8 +126,7 @@
                       </div>
                     }
                   </div>
-                  <div class="mx-1"></div>
-                  <div>
+                  <div class="mx-1">
                     <button type="button"
                             class="btn btn-outline-secondary"
                             data-bs-toggle="tooltip"
@@ -142,10 +141,43 @@
               </div>
             </div>
           </div>
+          <div class="row">
+            <div class="col">
+              @if (!budgets || budgets.length == 0) {
+                <app-error [response]="budgetsResponseModel"
+                           [notFoundErrorText]="formatString(appConfig.form.messages.notFound,'Budgets data')">
+                </app-error>
+              } @else {
+                @for (budget of budgets; track budget) {
+                  <a (click)="onCheckBudget(budget.id)" class="cursor-pointer">
+                    <div class="card my-2" [class.budget-border]="selectedBudgets.indexOf(budget.id) > -1">
+                      <div class="card-body">
+                        <table>
+                          <tr class="table-header">
+                            <th>Name</th>
+                            <th>Date start</th>
+                            <th>Date end</th>
+                          </tr>
+                          <tr>
+                            <td>{{ budget.name }}</td>
+                            <td>{{ DateUtils.format(budget.dateStart) }}</td>
+                            <td>{{ DateUtils.format(budget.dateEnd) }}</td>
+                          </tr>
+                        </table>
+                      </div>
+                    </div>
+                  </a>
+                }
+              }
+            </div>
+          </div>
         </div>
         <div class="modal-footer">
+          <div class="h-100">
+            <p class="my-auto">Selected ({{selectedBudgets.length}}) budgets</p>
+          </div>
           <button
-            [disabled]="step1Form.invalid"
+            [disabled]="step1Form.invalid || selectedBudgets.length == 0"
             type="button"
             class="btn btn-outline-primary"
             (click)="goNext()">
