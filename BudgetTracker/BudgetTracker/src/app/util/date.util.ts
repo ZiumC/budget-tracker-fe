@@ -2,6 +2,7 @@ import {formatDate} from "@angular/common";
 import {DatePicker} from "../models/datepicker.model";
 import {Injectable} from "@angular/core";
 import {NgbDateParserFormatter, NgbDateStruct} from "@ng-bootstrap/ng-bootstrap";
+import {NgModel} from "@angular/forms";
 
 export class DateUtil {
   static format(date: Date | null | undefined): string {
@@ -44,6 +45,29 @@ export class DateUtil {
     let result = new Date(date);
     result.setMonth(result.getMonth() + months);
     return result;
+  }
+
+  static validateOnDatesChanged(fromDateInput: NgModel, toDateInput: NgModel,
+                                fromDatePicker: DatePicker, toDatePicker: DatePicker): void {
+    const isInvalidFromDate = isInvalidDate(fromDatePicker);
+    const isInvalidToDate = isInvalidDate(toDatePicker);
+
+    if (isInvalidFromDate) {
+      fromDateInput.control.setErrors({ngbDate: true});
+    } else if (isInvalidToDate) {
+      toDateInput.control.setErrors({ngbDate: true});
+    } else {
+      const fromDate = DatePickerUtil.convertToDate(fromDatePicker);
+      const toDate = DatePickerUtil.convertToDate(toDatePicker);
+
+      if (toDate <= fromDate) {
+        fromDateInput.control.setErrors({invalidRange: true});
+        toDateInput.control.setErrors({invalidRange: true});
+      } else {
+        fromDateInput.control.setErrors(null);
+        toDateInput.control.setErrors(null);
+      }
+    }
   }
 }
 
