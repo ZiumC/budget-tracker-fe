@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ModalOptions, ModalSize, ModalUtils} from "../../../../util/modal.utils";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {HttpService} from "../../../../services/http/http.service";
@@ -31,6 +31,7 @@ export class CopyPaymentModalComponent implements OnInit, OnDestroy {
   protected toDatePicker: DatePicker;
   protected appConfig: AppConfig;
   protected formConfig: FormConfig;
+  private pageWidth: number;
 
 
   constructor(
@@ -43,6 +44,11 @@ export class CopyPaymentModalComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
   }
 
+  @HostListener('window:resize', ['$event'])
+  onResize(): void {
+    this.pageWidth = window.innerWidth;
+  }
+
   ngOnInit(): void {
     const appCfg = this.configService.getAppConfig();
     if (appCfg) {
@@ -52,6 +58,8 @@ export class CopyPaymentModalComponent implements OnInit, OnDestroy {
       throw Error("Config not provided");
     }
 
+    this.pageWidth = window.innerWidth;
+
     this.setDefaultDates();
     this.searchBudgets();
     this.budgets = [{
@@ -59,7 +67,18 @@ export class CopyPaymentModalComponent implements OnInit, OnDestroy {
       name: "Janurary",
       dateStart: new Date(),
       dateEnd: new Date()
-    } as GetBudgetDto, {id: "bbbbbb", name: "Feb", dateStart: new Date(), dateEnd: new Date()} as GetBudgetDto]
+    } as GetBudgetDto, {id: "bbbbbb", name: "Feb", dateStart: new Date(), dateEnd: new Date()} as GetBudgetDto,
+      {
+        id: "g",
+        name: "Janurary",
+        dateStart: new Date(),
+        dateEnd: new Date()
+      } as GetBudgetDto, {id: "c", name: "Feb", dateStart: new Date(), dateEnd: new Date()} as GetBudgetDto,{
+        id: "d",
+        name: "Janurary",
+        dateStart: new Date(),
+        dateEnd: new Date()
+      } as GetBudgetDto, {id: "e", name: "Feb", dateStart: new Date(), dateEnd: new Date()} as GetBudgetDto]
   }
 
   onCheckBudget(id: string): void {
@@ -69,6 +88,10 @@ export class CopyPaymentModalComponent implements OnInit, OnDestroy {
     } else {
       this.selectedBudgets.push(id);
     }
+  }
+
+  protected displayMobileView(): boolean {
+    return this.pageWidth <= this.appConfig.pageMobileWidth;
   }
 
   protected setDefaultDates(): void {
