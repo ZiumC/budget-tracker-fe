@@ -69,6 +69,18 @@ export class DateUtil {
       }
     }
   }
+
+  static validateFeatureOnDateChanged(toDateInput: NgModel, fromDatePicker: DatePicker, toDatePicker: DatePicker, maxMonths: number): void {
+    const fromDate = DatePickerUtil.convertToDate(fromDatePicker);
+    const toDate = DatePickerUtil.convertToDate(toDatePicker);
+    const maxDate = this.setMonthsToDate(fromDate, maxMonths);
+
+    if (toDate > maxDate) {
+      toDateInput.control.setErrors({tooFuture: true});
+    } else {
+      toDateInput.control.setErrors(null);
+    }
+  }
 }
 
 export class DatePickerUtil {

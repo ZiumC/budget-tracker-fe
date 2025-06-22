@@ -23,6 +23,7 @@
         "invalidFormat": "Invalid {0} format",
         "notFound": "{0} not found",
         "range": "{0} range is invalid",
+        "tooFuture" : "{0} is too future",
         "equal": "{0} in both dates should be equal",
         "alreadyDefined": "Month already defined",
         "typeahead": {
