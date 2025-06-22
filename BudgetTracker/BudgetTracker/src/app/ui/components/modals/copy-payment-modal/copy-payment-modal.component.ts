@@ -4,14 +4,15 @@ import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {HttpService} from "../../../../services/http/http.service";
 import {ConfigService} from "../../../../services/config/config.service";
 import {formatString} from "../../../../util/string.utils";
-import {NgModel} from "@angular/forms";
 import {DatePicker} from "../../../../models/datepicker.model";
-import {DatePickerUtil, DateUtil, isInvalidDate} from "../../../../util/date.util";
+import {DatePickerUtil, DateUtil} from "../../../../util/date.util";
 import {AppConfig} from "../../../../models/config/config";
 import {FormConfig} from "../../../../models/config/form.model.config";
-import {format} from "../../../../util/number.util";
 import {GetBudgetDto} from "../../../../models/dto/budget.model.dto";
 import {ResponseModel} from "../../../../models/response.model";
+import {format, subtract} from "../../../../util/number.util";
+import {GetPlannedPaymentDto} from "../../../../models/dto/planned-payment.model.dto";
+import BigNumber from "bignumber.js";
 
 @Component({
   selector: 'app-copy-payment-modal',
@@ -21,16 +22,23 @@ import {ResponseModel} from "../../../../models/response.model";
 export class CopyPaymentModalComponent implements OnInit, OnDestroy {
   @ViewChild('copyPaymentModal') copyModal: any;
   protected readonly formatString = formatString;
+  protected readonly format = format;
+  protected readonly BigNumber = BigNumber;
+  protected readonly subtract = subtract;
   protected readonly DateUtils = DateUtil;
   protected readonly ModalUtils = ModalUtils;
-  protected selectedBudgets: string[] = [];
+  protected readonly maxMonths: number = 7;
+  protected selectedBudgetIds: string[] = [];
   protected budgets: GetBudgetDto[] | null;
   protected budgetsResponseModel: ResponseModel;
-  protected currentStep: number = 1;
+  protected currentStep: number;
   protected fromDatePicker: DatePicker;
   protected toDatePicker: DatePicker;
   protected appConfig: AppConfig;
   protected formConfig: FormConfig;
+  protected selectedBudgetId: string;
+  private budgetPlannedPaymentsToCopy: Map<string, GetPlannedPaymentDto> = new Map();
+  private plannedPaymentToCopy: GetPlannedPaymentDto;
   private pageWidth: number;
 
 
@@ -73,7 +81,7 @@ export class CopyPaymentModalComponent implements OnInit, OnDestroy {
         name: "Janurary",
         dateStart: new Date(),
         dateEnd: new Date()
-      } as GetBudgetDto, {id: "c", name: "Feb", dateStart: new Date(), dateEnd: new Date()} as GetBudgetDto,{
+      } as GetBudgetDto, {id: "c", name: "Feb", dateStart: new Date(), dateEnd: new Date()} as GetBudgetDto, {
         id: "d",
         name: "Janurary",
         dateStart: new Date(),
@@ -82,11 +90,11 @@ export class CopyPaymentModalComponent implements OnInit, OnDestroy {
   }
 
   onCheckBudget(id: string): void {
-    let selectedBudgetIndex = this.selectedBudgets.indexOf(id);
+    let selectedBudgetIndex = this.selectedBudgetIds.indexOf(id);
     if (selectedBudgetIndex > -1) {
-      this.selectedBudgets = this.selectedBudgets.filter((_, i) => i !== selectedBudgetIndex);
+      this.selectedBudgetIds = this.selectedBudgetIds.filter((_, i) => i !== selectedBudgetIndex);
     } else {
-      this.selectedBudgets.push(id);
+      this.selectedBudgetIds.push(id);
     }
   }
 
@@ -96,7 +104,7 @@ export class CopyPaymentModalComponent implements OnInit, OnDestroy {
 
   protected setDefaultDates(): void {
     const fromDate = DateUtil.setMonthsToDate(DateUtil.firstDayOfCurrentMonth(), 1);
-    const toDate = DateUtil.setMonthsToDate(DateUtil.lastDayOfCurrentMonth(), 7);
+    const toDate = DateUtil.setMonthsToDate(DateUtil.lastDayOfCurrentMonth(), this.maxMonths);
 
     this.fromDatePicker = DatePickerUtil.convertToDatePicker(fromDate);
     this.toDatePicker = DatePickerUtil.convertToDatePicker(toDate);
@@ -109,17 +117,36 @@ export class CopyPaymentModalComponent implements OnInit, OnDestroy {
     //TO DO...
   }
 
-  open(): void {
-    this.selectedBudgets = [];
+  open(plannedPaymentToCopy: GetPlannedPaymentDto): void {
+    this.plannedPaymentToCopy = plannedPaymentToCopy;
+    this.currentStep = 1;
+    this.selectedBudgetId = "";
+    this.selectedBudgetIds = [];
     this.setDefaultDates();
     this.modalService.open(this.copyModal, ModalOptions.default(ModalSize.BIG));
   }
 
+  protected initializePlannedPayments(): void {
+    for (let budgetId of this.selectedBudgetIds!) {
+      this.budgetPlannedPaymentsToCopy.set(budgetId, this.plannedPaymentToCopy);
+    }
+  }
+
+  protected getBudgetData(budgetId: string): GetBudgetDto {
+    return this.budgets?.find(b => b.id == budgetId)!;
+  }
+
+  protected getPlannedPaymentData(budgetId: string): GetPlannedPaymentDto {
+    return this.budgetPlannedPaymentsToCopy.get(budgetId)!;
+  }
+
   protected goNext(): void {
+    this.initializePlannedPayments();
     this.currentStep = this.currentStep + 1;
   }
 
   protected goBack(): void {
+    this.selectedBudgetId = "";
     this.currentStep = this.currentStep - 1;
   }
 

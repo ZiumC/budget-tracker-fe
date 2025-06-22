@@ -14,6 +14,7 @@ export interface Messages {
   maxLength: string;
   invalid: string;
   invalidFormat: string;
+  tooFuture: string;
   notFound: string;
   range: string;
   equal: string;

@@ -94,7 +94,9 @@
                       name="to-date"
                       class="form-control"
                       [(ngModel)]="toDatePicker"
-                      (ngModelChange)="DateUtils.validateOnDatesChanged(fromDate, toDate, fromDatePicker, toDatePicker)"
+                      (ngModelChange)="
+                        DateUtils.validateOnDatesChanged(fromDate, toDate, fromDatePicker, toDatePicker);
+                        DateUtils.validateFeatureOnDateChanged(toDate, fromDatePicker, toDatePicker, maxMonths)"
                       container="body"
                       placement="bottom-end"
                       required
@@ -117,6 +119,9 @@
                         </label>
                         <label *ngIf="toDate.errors?.['invalidRange']">
                           {{ formatString(formConfig.messages.range, "Date") }}
+                        </label>
+                        <label *ngIf="toDate.errors?.['tooFuture']">
+                          {{ formatString(formConfig.messages.tooFuture, "Date") }}
                         </label>
                         <label *ngIf="toDate.errors?.['ngbDate']">
                           {{ formatString(formConfig.messages.invalid, "Date") }}
@@ -151,7 +156,7 @@
               } @else {
                 @for (budget of budgets; track budget) {
                   <a (click)="onCheckBudget(budget.id)" class="cursor-pointer">
-                    <div class="card my-2" [class.budget-border]="selectedBudgets.indexOf(budget.id) > -1">
+                    <div class="card my-2" [class.budget-border]="selectedBudgetIds.indexOf(budget.id) > -1">
                       <div class="card-body">
                         <table>
                           <tr class="table-header">
@@ -175,10 +180,10 @@
         </div>
         <div class="modal-footer">
           <div class="h-100">
-            <p class="my-auto">Selected ({{ selectedBudgets.length }}) budgets</p>
+            <p class="my-auto">Selected ({{ selectedBudgetIds.length }}) budgets</p>
           </div>
           <button
-            [disabled]="step1Form.invalid || selectedBudgets.length == 0"
+            [disabled]="step1Form.invalid || selectedBudgetIds.length == 0"
             type="button"
             class="btn btn-outline-primary"
             (click)="goNext()">
@@ -189,8 +194,60 @@
     </ng-container>
     <ng-container *ngSwitchCase="2">
       <form ngbAutofocus #step2Form="ngForm">
-        <div class="modal-body ">
-
+        <div
+          [className]="displayMobileView() ? 'step-mobile-view modal-body overflow-y-auto' : 'modal-body overflow-y-auto'">
+          <div class="row">
+            <div class="col">
+              @for (budgetId of selectedBudgetIds; track budgetId) {
+                <label for="{{budgetId}}">{{ getBudgetData(budgetId).name }} {{DateUtils.format(getBudgetData(budgetId).dateStart)}}</label>
+                <div id="{{budgetId}}" ngbAccordion>
+                  <div ngbAccordionItem
+                       [collapsed]="selectedBudgetId !== budgetId">
+                    <h2 ngbAccordionHeader>
+                      <button ngbAccordionButton
+                              (click)="selectedBudgetId = budgetId"
+                              class="light-gray-bg accordion-button-header">
+                        <table>
+                          <tr class="table-header">
+                            <th>Name</th>
+                            <th>Estimated (PLN)</th>
+                            <th [style.display]="displayMobileView() ? 'none' : ''">
+                              Real Price (PLN)
+                            </th>
+                            <th [style.display]="displayMobileView() ? 'none' : ''">
+                              Deviation (PLN)
+                            </th>
+                          </tr>
+                          <tr>
+                            <td>{{ getPlannedPaymentData(budgetId).name }}</td>
+                            <td>{{ getPlannedPaymentData(budgetId).estimated }}</td>
+                            <td [style.display]="displayMobileView() ? 'none' : ''">
+                              {{ getPlannedPaymentData(budgetId).realPrice }}
+                            </td>
+                            <td [style.display]="displayMobileView() ? 'none' : ''">
+                              @if (BigNumber(getPlannedPaymentData(budgetId).realPrice).gt(0)) {
+                                {{ format(subtract(getPlannedPaymentData(budgetId).estimated, getPlannedPaymentData(budgetId).realPrice)) }}
+                              } @else {
+                                -
+                              }
+                            </td>
+                          </tr>
+                        </table>
+                      </button>
+                    </h2>
+                    <div ngbAccordionCollapse>
+                      <div ngbAccordionBody class="text-center">
+                        <div class="row">
+                        </div>
+                      </div>
+                      <div class="row">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
         </div>
         <div class="modal-footer">
           <button
