@@ -127,8 +127,9 @@ export class CopyPaymentModalComponent implements OnInit, OnDestroy {
   }
 
   protected initializePlannedPayments(): void {
+    this.plannedPaymentToCopy.isPaid = false;
     for (let budgetId of this.selectedBudgetIds!) {
-      this.budgetPlannedPaymentsToCopy.set(budgetId, this.plannedPaymentToCopy);
+      this.budgetPlannedPaymentsToCopy.set(budgetId, structuredClone(this.plannedPaymentToCopy));
     }
   }
 
@@ -151,6 +152,6 @@ export class CopyPaymentModalComponent implements OnInit, OnDestroy {
   }
 
   protected save(): void {
-
+    console.log(this.budgetPlannedPaymentsToCopy);
   }
 }

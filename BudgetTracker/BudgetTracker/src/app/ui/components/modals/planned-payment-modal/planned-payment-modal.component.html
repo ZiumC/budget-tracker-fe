@@ -135,7 +135,7 @@
                 <input
                   type="text"
                   id="planned-payment-real-price"
-                  name="payment-refund"
+                  name="planned-payment-real-price"
                   class="form-control"
                   [(ngModel)]="plannedPaymentDto.realPrice"
                   min="{{ formConfig.paymentModal.refund.minValue }}"
@@ -166,11 +166,11 @@
           </div>
           <div class="col-md-6">
             <div [className]="ModalUtils.displayMarginFor(paymentCommentInput)">
-              <label for="payment-comment">Comment</label>
+              <label for="planned-payment-comment">Comment</label>
               <textarea
-                id="payment-comment"
+                id="planned-payment-comment"
+                name="planned-payment-comment"
                 class="form-control"
-                name="payment-comment"
                 rows="{{ innerWidth <= appConfig.pageMobileWidth ? 4 : 9 }}"
                 minlength="{{ formConfig.paymentModal.comment.minLength }}"
                 maxlength="{{ formConfig.paymentModal.comment.maxLength }}"
