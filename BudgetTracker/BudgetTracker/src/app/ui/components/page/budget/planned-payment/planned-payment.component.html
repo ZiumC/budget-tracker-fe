@@ -153,6 +153,7 @@
                       <i class="bi bi-bag-check-fill"></i> Paid
                     </button>
                     <button
+                      [disabled]="!plannedPayment.assignment"
                       type="button"
                       class="btn btn-outline-primary"
                       data-bs-toggle="tooltip"

@@ -1,5 +1,9 @@
-.step-mobile-view{
+.step-mobile-view {
   max-height: 60ex;
+}
+
+.step-view {
+  max-height: 80ex;
 }
 
 .step {
