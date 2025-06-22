@@ -221,6 +221,11 @@ hr.horizontal-light {
   text-decoration: none;
 }
 
+.error-border {
+  border: 0.2ex solid var(--bs-form-invalid-border-color);
+  border-radius: 0.5ex;
+}
+
 @media only screen and (max-width: 770px) {
   .width-wrapper {
     width: 92%;
