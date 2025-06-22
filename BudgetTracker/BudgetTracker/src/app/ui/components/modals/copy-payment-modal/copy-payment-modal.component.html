@@ -199,11 +199,18 @@
           <div class="row">
             <div class="col">
               @for (budgetId of selectedBudgetIds; track budgetId) {
-                <label
-                  for="{{budgetId}}">{{ getBudgetData(budgetId).name }} {{ DateUtils.format(getBudgetData(budgetId).dateStart) }}</label>
+                <label for="{{budgetId}}">
+                  {{ getBudgetData(budgetId).name }} {{ DateUtils.format(getBudgetData(budgetId).dateStart) }}
+                </label>
                 <div id="{{budgetId}}" ngbAccordion>
                   <div ngbAccordionItem
-                       [collapsed]="selectedBudgetId !== budgetId">
+                       [collapsed]="selectedBudgetId !== budgetId"
+                       [class.error-border]="isInvalidPlannedPaymentForm(
+                         paymentNameInput,
+                         plannedPaymentEstimatedInput,
+                         plannedPaymentRealPriceInput,
+                         paymentCommentInput)"
+                  >
                     <h2 ngbAccordionHeader>
                       <button ngbAccordionButton
                               (click)="selectedBudgetId = budgetId"

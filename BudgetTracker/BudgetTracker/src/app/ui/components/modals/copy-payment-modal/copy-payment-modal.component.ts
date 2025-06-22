@@ -13,6 +13,7 @@ import {ResponseModel} from "../../../../models/response.model";
 import {format, subtract} from "../../../../util/number.util";
 import {GetPlannedPaymentDto} from "../../../../models/dto/planned-payment.model.dto";
 import BigNumber from "bignumber.js";
+import {NgForm, NgModel} from "@angular/forms";
 
 @Component({
   selector: 'app-copy-payment-modal',
@@ -139,6 +140,19 @@ export class CopyPaymentModalComponent implements OnInit, OnDestroy {
 
   protected getPlannedPaymentData(budgetId: string): GetPlannedPaymentDto {
     return this.budgetPlannedPaymentsToCopy.get(budgetId)!;
+  }
+
+  protected isInvalidPlannedPaymentForm(
+    inputName: NgModel, inputEstimated: NgModel,
+    inputReal: NgModel, textareaComment: NgModel): boolean {
+    const formErrors = [
+      inputName.control.errors,
+      inputEstimated.control.errors,
+      inputReal.control.errors,
+      textareaComment.control.errors
+    ];
+
+    return formErrors.find(e => e != null) != null;
   }
 
   protected goNext(): void {
