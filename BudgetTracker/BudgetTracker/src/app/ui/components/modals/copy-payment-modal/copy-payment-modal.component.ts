@@ -13,7 +13,13 @@ import {ResponseModel} from "../../../../models/response.model";
 import {format, subtract} from "../../../../util/number.util";
 import {GetPlannedPaymentDto} from "../../../../models/dto/planned-payment.model.dto";
 import BigNumber from "bignumber.js";
-import {NgForm, NgModel} from "@angular/forms";
+import {NgModel} from "@angular/forms";
+import {Subscription} from "rxjs";
+import {HttpResponse} from "@angular/common/http";
+import {generateErrorModel} from "../../../../util/http.util";
+import {RequestParams} from "../../../../models/requestParams";
+import {TimerUtils} from "../../../../util/timer.utils";
+import {SpinnerSize} from "../../shared/spinner/spinner.component";
 
 @Component({
   selector: 'app-copy-payment-modal',
@@ -22,6 +28,7 @@ import {NgForm, NgModel} from "@angular/forms";
 })
 export class CopyPaymentModalComponent implements OnInit, OnDestroy {
   @ViewChild('copyPaymentModal') copyModal: any;
+  @ViewChild('errorModal') errorModal: any;
   protected readonly formatString = formatString;
   protected readonly format = format;
   protected readonly BigNumber = BigNumber;
@@ -29,15 +36,19 @@ export class CopyPaymentModalComponent implements OnInit, OnDestroy {
   protected readonly DateUtils = DateUtil;
   protected readonly ModalUtils = ModalUtils;
   protected readonly maxMonths: number = 7;
+  protected subscriptions: Subscription[] = [];
   protected selectedBudgetIds: string[] = [];
   protected budgets: GetBudgetDto[] | null;
+  protected budgetRequestParams: RequestParams;
   protected budgetsResponseModel: ResponseModel;
+  protected budgetLoader: boolean;
+  protected requiredBudgetStatusCode: number;
+  protected selectedBudgetId: string;
   protected currentStep: number;
   protected fromDatePicker: DatePicker;
   protected toDatePicker: DatePicker;
   protected appConfig: AppConfig;
   protected formConfig: FormConfig;
-  protected selectedBudgetId: string;
   private budgetPlannedPaymentsToCopy: Map<string, GetPlannedPaymentDto> = new Map();
   private plannedPaymentToCopy: GetPlannedPaymentDto;
   private pageWidth: number;
@@ -67,27 +78,12 @@ export class CopyPaymentModalComponent implements OnInit, OnDestroy {
       throw Error("Config not provided");
     }
 
+    this.requiredBudgetStatusCode = appCfg.response.required.budgetStatus;
+    this.budgetRequestParams = new RequestParams();
+    this.budgetsResponseModel = new ResponseModel();
     this.pageWidth = window.innerWidth;
 
     this.setDefaultDates();
-    this.searchBudgets();
-    this.budgets = [{
-      id: "aaaa",
-      name: "Janurary",
-      dateStart: new Date(),
-      dateEnd: new Date()
-    } as GetBudgetDto, {id: "bbbbbb", name: "Feb", dateStart: new Date(), dateEnd: new Date()} as GetBudgetDto,
-      {
-        id: "g",
-        name: "Janurary",
-        dateStart: new Date(),
-        dateEnd: new Date()
-      } as GetBudgetDto, {id: "c", name: "Feb", dateStart: new Date(), dateEnd: new Date()} as GetBudgetDto, {
-        id: "d",
-        name: "Janurary",
-        dateStart: new Date(),
-        dateEnd: new Date()
-      } as GetBudgetDto, {id: "e", name: "Feb", dateStart: new Date(), dateEnd: new Date()} as GetBudgetDto]
   }
 
   onCheckBudget(id: string): void {
@@ -112,10 +108,31 @@ export class CopyPaymentModalComponent implements OnInit, OnDestroy {
   }
 
   protected searchBudgets(): void {
+    this.markBudgetsAsLoaded(false);
+
+    this.budgets = [];
     let fromDate: Date = DatePickerUtil.convertToDate(this.fromDatePicker);
     let toDate: Date = DatePickerUtil.convertToDate(this.toDatePicker);
 
-    //TO DO...
+    this.budgetRequestParams.fromDate = DateUtil.format(fromDate);
+    this.budgetRequestParams.toDate = DateUtil.format(toDate);
+
+    this.subscriptions.push(
+      this.httpService.getBudgets(this.budgetRequestParams).subscribe({
+        next: (response: HttpResponse<GetBudgetDto[]>): void => {
+          this.budgets = response.body;
+          this.budgetsResponseModel.statusCode = response.status;
+        },
+        error: (err): void => {
+          this.budgetsResponseModel = generateErrorModel(err);
+          this.errorModal.open(this.budgetsResponseModel);
+          this.markBudgetsAsLoaded(true);
+        },
+        complete: (): void => {
+          this.markBudgetsAsLoaded(true);
+        }
+      })
+    );
   }
 
   open(plannedPaymentToCopy: GetPlannedPaymentDto): void {
@@ -124,6 +141,7 @@ export class CopyPaymentModalComponent implements OnInit, OnDestroy {
     this.selectedBudgetId = "";
     this.selectedBudgetIds = [];
     this.setDefaultDates();
+    this.searchBudgets();
     this.modalService.open(this.copyModal, ModalOptions.default(ModalSize.BIG));
   }
 
@@ -131,6 +149,19 @@ export class CopyPaymentModalComponent implements OnInit, OnDestroy {
     this.plannedPaymentToCopy.isPaid = false;
     for (let budgetId of this.selectedBudgetIds!) {
       this.budgetPlannedPaymentsToCopy.set(budgetId, structuredClone(this.plannedPaymentToCopy));
+    }
+  }
+
+  protected markBudgetsAsLoaded(value: boolean): void {
+    if (value) {
+      new TimerUtils(this.appConfig.timer.duration.default).start()
+        .subscribe(finished => {
+          if (finished) {
+            this.budgetLoader = value;
+          }
+        });
+    } else {
+      this.budgetLoader = value;
     }
   }
 
@@ -168,4 +199,6 @@ export class CopyPaymentModalComponent implements OnInit, OnDestroy {
   protected save(): void {
     console.log(this.budgetPlannedPaymentsToCopy);
   }
+
+  protected readonly SpinnerSize = SpinnerSize;
 }
