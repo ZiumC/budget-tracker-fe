@@ -29,168 +29,178 @@
 
   <ng-container [ngSwitch]="currentStep">
     <ng-container *ngSwitchCase="1">
-      <form ngbAutofocus #step1Form="ngForm">
-        <div
-          [className]="displayMobileView() ? 'step-mobile-view modal-body overflow-y-auto' : 'modal-body overflow-y-auto'">
-          <div class="row">
-            <div class="col-md-6">
-              <div [className]="ModalUtils.displayMarginFor(fromDate)">
-                <div class="mr-5">
-                  <div class="text-center">
-                    <label for="from-date">From</label>
-                  </div>
-                  <div class="input-group">
-                    <input
-                      type="text"
-                      id="from-date"
-                      name="from-date"
-                      class="form-control"
-                      [(ngModel)]="fromDatePicker"
-                      (ngModelChange)="DateUtils.validateOnDatesChanged(fromDate, toDate, fromDatePicker, toDatePicker)"
-                      required
-                      #fromDate="ngModel"
-                      container="body"
-                      placement="bottom-end"
-                      ngbDatepicker
-                      #dateStart="ngbDatepicker"
-                      [ngClass]="{
+      <ng-template [ngIf]="!budgetLoader"
+                   [ngIfElse]="loadedFirstStep">
+        <div class="my-5">
+          <app-spinner [size]="SpinnerSize.BIG"></app-spinner>
+        </div>
+      </ng-template>
+      <ng-template #loadedFirstStep>
+        <form ngbAutofocus #step1Form="ngForm">
+          <div
+            [className]="displayMobileView() ? 'step-mobile-view modal-body overflow-y-auto' : 'modal-body overflow-y-auto'">
+            <div class="row">
+              <div class="col-md-6">
+                <div [className]="ModalUtils.displayMarginFor(fromDate)">
+                  <div class="mr-5">
+                    <div class="text-center">
+                      <label for="from-date">From</label>
+                    </div>
+                    <div class="input-group">
+                      <input
+                        type="text"
+                        id="from-date"
+                        name="from-date"
+                        class="form-control"
+                        [(ngModel)]="fromDatePicker"
+                        (ngModelChange)="DateUtils.validateOnDatesChanged(fromDate, toDate, fromDatePicker, toDatePicker)"
+                        required
+                        #fromDate="ngModel"
+                        container="body"
+                        placement="bottom-end"
+                        ngbDatepicker
+                        #dateStart="ngbDatepicker"
+                        [ngClass]="{
                             'is-invalid': fromDate.invalid,
                             'is-valid': fromDate.valid }"/>
-                    <div class="input-group-append">
-                      <button class="btn btn-outline-secondary bi bi-calendar3"
-                              (click)="dateStart.toggle()"
-                              type="button">
-                      </button>
+                      <div class="input-group-append">
+                        <button class="btn btn-outline-secondary bi bi-calendar3"
+                                (click)="dateStart.toggle()"
+                                type="button">
+                        </button>
+                      </div>
+                      @if (fromDate.invalid) {
+                        <div class="invalid-feedback">
+                          <label *ngIf="fromDate.errors?.['required']">
+                            {{ formConfig.messages.required }}
+                          </label>
+                          <label *ngIf="fromDate.errors?.['invalidRange']">
+                            {{ formatString(formConfig.messages.range, "Date") }}
+                          </label>
+                          <label *ngIf="fromDate.errors?.['ngbDate']">
+                            {{ formatString(formConfig.messages.invalid, "Date") }}
+                          </label>
+                        </div>
+                      } @else {
+                        <div class="valid-feedback">
+                        </div>
+                      }
                     </div>
-                    @if (fromDate.invalid) {
-                      <div class="invalid-feedback">
-                        <label *ngIf="fromDate.errors?.['required']">
-                          {{ formConfig.messages.required }}
-                        </label>
-                        <label *ngIf="fromDate.errors?.['invalidRange']">
-                          {{ formatString(formConfig.messages.range, "Date") }}
-                        </label>
-                        <label *ngIf="fromDate.errors?.['ngbDate']">
-                          {{ formatString(formConfig.messages.invalid, "Date") }}
-                        </label>
-                      </div>
-                    } @else {
-                      <div class="valid-feedback">
-                      </div>
-                    }
                   </div>
                 </div>
               </div>
-            </div>
-            <div class="col-md-6">
-              <div [className]="ModalUtils.displayMarginFor(toDate)">
-                <div class="text-center">
-                  <label for="to-date">To</label>
-                </div>
-                <div class="d-flex">
-                  <div class="input-group">
-                    <input
-                      id="to-date"
-                      name="to-date"
-                      class="form-control"
-                      [(ngModel)]="toDatePicker"
-                      (ngModelChange)="
+              <div class="col-md-6">
+                <div [className]="ModalUtils.displayMarginFor(toDate)">
+                  <div class="text-center">
+                    <label for="to-date">To</label>
+                  </div>
+                  <div class="d-flex">
+                    <div class="input-group">
+                      <input
+                        id="to-date"
+                        name="to-date"
+                        class="form-control"
+                        [(ngModel)]="toDatePicker"
+                        (ngModelChange)="
                         DateUtils.validateOnDatesChanged(fromDate, toDate, fromDatePicker, toDatePicker);
                         DateUtils.validateFeatureOnDateChanged(toDate, fromDatePicker, toDatePicker, maxMonths)"
-                      container="body"
-                      placement="bottom-end"
-                      required
-                      #toDate="ngModel"
-                      ngbDatepicker
-                      #dateEnd="ngbDatepicker"
-                      [ngClass]="{
+                        container="body"
+                        placement="bottom-end"
+                        required
+                        #toDate="ngModel"
+                        ngbDatepicker
+                        #dateEnd="ngbDatepicker"
+                        [ngClass]="{
                             'is-invalid': toDate.invalid,
                             'is-valid': toDate.valid }"/>
-                    <div class="input-group-append">
-                      <button class="btn btn-outline-secondary bi bi-calendar3"
-                              (click)="dateEnd.toggle()"
-                              type="button">
+                      <div class="input-group-append">
+                        <button class="btn btn-outline-secondary bi bi-calendar3"
+                                (click)="dateEnd.toggle()"
+                                type="button">
+                        </button>
+                      </div>
+                      @if (toDate.invalid) {
+                        <div class="invalid-feedback">
+                          <label *ngIf="toDate.errors?.['required']">
+                            {{ formConfig.messages.required }}
+                          </label>
+                          <label *ngIf="toDate.errors?.['invalidRange']">
+                            {{ formatString(formConfig.messages.range, "Date") }}
+                          </label>
+                          <label *ngIf="toDate.errors?.['tooFuture']">
+                            {{ formatString(formConfig.messages.tooFuture, "Date") }}
+                          </label>
+                          <label *ngIf="toDate.errors?.['ngbDate']">
+                            {{ formatString(formConfig.messages.invalid, "Date") }}
+                          </label>
+                        </div>
+                      } @else {
+                        <div class="valid-feedback">
+                        </div>
+                      }
+                    </div>
+                    <div class="mx-1">
+                      <button type="button"
+                              class="btn btn-outline-secondary"
+                              data-bs-toggle="tooltip"
+                              data-bs-placement="bottom"
+                              title="Search budgets"
+                              (click)="searchBudgets()"
+                              [disabled]="step1Form.invalid">
+                        <i class="bi bi-search"></i>
                       </button>
                     </div>
-                    @if (toDate.invalid) {
-                      <div class="invalid-feedback">
-                        <label *ngIf="toDate.errors?.['required']">
-                          {{ formConfig.messages.required }}
-                        </label>
-                        <label *ngIf="toDate.errors?.['invalidRange']">
-                          {{ formatString(formConfig.messages.range, "Date") }}
-                        </label>
-                        <label *ngIf="toDate.errors?.['tooFuture']">
-                          {{ formatString(formConfig.messages.tooFuture, "Date") }}
-                        </label>
-                        <label *ngIf="toDate.errors?.['ngbDate']">
-                          {{ formatString(formConfig.messages.invalid, "Date") }}
-                        </label>
-                      </div>
-                    } @else {
-                      <div class="valid-feedback">
-                      </div>
-                    }
-                  </div>
-                  <div class="mx-1">
-                    <button type="button"
-                            class="btn btn-outline-secondary"
-                            data-bs-toggle="tooltip"
-                            data-bs-placement="bottom"
-                            title="Search budgets"
-                            (click)="searchBudgets()"
-                            [disabled]="step1Form.invalid">
-                      <i class="bi bi-search"></i>
-                    </button>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div class="row">
-            <div class="col">
-              @if (!budgets || budgets.length == 0) {
-                <app-error [response]="budgetsResponseModel"
-                           [notFoundErrorText]="formatString(appConfig.form.messages.notFound,'Budgets data')">
-                </app-error>
-              } @else {
-                @for (budget of budgets; track budget) {
-                  <a (click)="onCheckBudget(budget.id)" class="cursor-pointer">
-                    <div class="card my-2" [class.budget-border]="selectedBudgetIds.indexOf(budget.id) > -1">
-                      <div class="card-body">
-                        <table>
-                          <tr class="table-header">
-                            <th>Name</th>
-                            <th>Date start</th>
-                            <th>Date end</th>
-                          </tr>
-                          <tr>
-                            <td>{{ budget.name }}</td>
-                            <td>{{ DateUtils.format(budget.dateStart) }}</td>
-                            <td>{{ DateUtils.format(budget.dateEnd) }}</td>
-                          </tr>
-                        </table>
+            <div class="row">
+              <div class="col">
+                @if (!budgets || budgets.length == 0) {
+                  <div class="text-center">
+                    <app-error [response]="budgetsResponseModel"
+                               [notFoundErrorText]="formatString(appConfig.form.messages.notFound,'Budgets data')">
+                    </app-error>
+                  </div>
+                } @else {
+                  @for (budget of budgets; track budget) {
+                    <a (click)="onCheckBudget(budget.id)" class="cursor-pointer">
+                      <div class="card my-2" [class.budget-border]="selectedBudgetIds.indexOf(budget.id) > -1">
+                        <div class="card-body">
+                          <table>
+                            <tr class="table-header">
+                              <th>Name</th>
+                              <th>Date start</th>
+                              <th>Date end</th>
+                            </tr>
+                            <tr>
+                              <td>{{ budget.name }}</td>
+                              <td>{{ DateUtils.format(budget.dateStart) }}</td>
+                              <td>{{ DateUtils.format(budget.dateEnd) }}</td>
+                            </tr>
+                          </table>
+                        </div>
                       </div>
-                    </div>
-                  </a>
+                    </a>
+                  }
                 }
-              }
+              </div>
             </div>
           </div>
-        </div>
-        <div class="modal-footer">
-          <div class="h-100">
-            <p class="my-auto">Selected ({{ selectedBudgetIds.length }}) budgets</p>
+          <div class="modal-footer">
+            <div class="h-100">
+              <p class="my-auto">Selected ({{ selectedBudgetIds.length }}) budgets</p>
+            </div>
+            <button
+              [disabled]="step1Form.invalid || selectedBudgetIds.length == 0"
+              type="button"
+              class="btn btn-outline-primary"
+              (click)="goNext()">
+              Next
+            </button>
           </div>
-          <button
-            [disabled]="step1Form.invalid || selectedBudgetIds.length == 0"
-            type="button"
-            class="btn btn-outline-primary"
-            (click)="goNext()">
-            Next
-          </button>
-        </div>
-      </form>
+        </form>
+      </ng-template>
     </ng-container>
     <ng-container *ngSwitchCase="2">
       <form ngbAutofocus #step2Form="ngForm">
@@ -433,3 +443,5 @@
     </ng-container>
   </ng-container>
 </ng-template>
+<app-error-modal #errorModal>
+</app-error-modal>
