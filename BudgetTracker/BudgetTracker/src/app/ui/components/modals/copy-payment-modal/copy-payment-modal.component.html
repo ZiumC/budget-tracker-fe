@@ -209,17 +209,37 @@
           <div class="row">
             <div class="col">
               @for (budgetId of selectedBudgetIds; track budgetId) {
-                <label for="{{budgetId}}">
-                  {{ getBudgetData(budgetId).name }} {{ DateUtils.format(getBudgetData(budgetId).dateStart) }}
-                </label>
+                <div class="d-flex align-items-baseline">
+                  @if (!ModalUtils.isUndefinedStatus(getPlannedPaymentStatus(budgetId))) {
+                    @if (getPlannedPaymentStatus(budgetId).isSuccess) {
+                      <div class="text-success"
+                           data-bs-toggle="tooltip"
+                           data-bs-placement="bottom"
+                           title="{{getPlannedPaymentStatus(budgetId).message}}">
+                        <i class="bi bi-check-circle icon-big"></i>
+                      </div>
+                    } @else {
+                      <div class="text-danger"
+                           data-bs-toggle="tooltip"
+                           data-bs-placement="bottom"
+                           title="{{getPlannedPaymentStatus(budgetId).message}}">
+                        <i class="bi bi-x-circle icon-big"></i>
+                      </div>
+                    }
+                    <div class="mx-1"></div>
+                  }
+                  <label for="{{budgetId}}">
+                    {{ getBudgetData(budgetId).name }} {{ DateUtils.format(getBudgetData(budgetId).dateStart) }}
+                  </label>
+                </div>
                 <div id="{{budgetId}}" ngbAccordion>
                   <div ngbAccordionItem
                        [collapsed]="selectedBudgetId !== budgetId"
-                       [class.error-border]="isInvalidPlannedPaymentForm(
+                       [class.error-border]="displayErrorBorder(
                          paymentNameInput,
                          plannedPaymentEstimatedInput,
                          plannedPaymentRealPriceInput,
-                         paymentCommentInput)"
+                         paymentCommentInput, budgetId)"
                   >
                     <h2 ngbAccordionHeader>
                       <button ngbAccordionButton
@@ -419,6 +439,11 @@
                     </div>
                   </div>
                 </div>
+                @if (!getPlannedPaymentStatus(budgetId).isSuccess) {
+                  <div class="text-danger response-error-message">
+                    <p>{{ getPlannedPaymentStatus(budgetId).message }}</p>
+                  </div>
+                }
               }
             </div>
           </div>

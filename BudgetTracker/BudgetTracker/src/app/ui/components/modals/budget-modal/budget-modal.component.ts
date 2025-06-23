@@ -7,10 +7,10 @@ import {DatePickerUtil, DateUtil, isInvalidDate} from "../../../../util/date.uti
 import {SpinnerSize} from "../../shared/spinner/spinner.component";
 import {HttpResponse} from "@angular/common/http";
 import {HttpService} from "../../../../services/http/http.service";
-import {BudgetDatePicker, BudgetStatus} from "../../../../models/modal/budget.model.modal";
+import {BudgetDatePicker} from "../../../../models/modal/budget.model.modal";
 import {ModalOptions, ModalUtils} from "../../../../util/modal.utils";
 import {AbstractControl, NgForm, NgModel} from "@angular/forms";
-import {ResponseModel} from "../../../../models/response.model";
+import {ResponseModel, Status} from "../../../../models/response.model";
 import {TimerUtils} from "../../../../util/timer.utils";
 import {BudgetDto, GetBudgetDto} from "../../../../models/dto/budget.model.dto";
 import {AppConfig} from "../../../../models/config/config";
@@ -38,7 +38,7 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
   protected subscriptions: Subscription[];
   protected editBudgetDatePicker: BudgetDatePicker;
   protected addBudgetDatePicker: DatePicker;
-  protected budgetStatusIcon: BudgetStatus;
+  protected budgetStatusIcon: Status;
   protected responseModel: ResponseModel;
   protected isEditing: boolean;
   protected displayTimer: boolean;
@@ -148,8 +148,8 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
   }
 
   protected close(modal: any): void {
-    if (!ModalUtils.isUndefinedBudgetStatus(this.budgetStatusIcon) &&
-      this.budgetStatusIcon.status) {
+    if (!ModalUtils.isUndefinedStatus(this.budgetStatusIcon) &&
+      this.budgetStatusIcon.isSuccess) {
       this.refreshPageEvent.emit(true);
     }
 
@@ -217,9 +217,9 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
     const status = response.status;
     const isSuccess = status >= 200 && status <= 299;
     this.budgetStatusIcon = {
-      status: isSuccess,
+      isSuccess: isSuccess,
       message: status + " - Ok"
-    } as BudgetStatus;
+    } as Status;
   }
 
   private onRequestFailed(err: any, control: AbstractControl | ResponseModel): void {
@@ -231,9 +231,9 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
     }
 
     this.budgetStatusIcon = {
-      status: false,
+      isSuccess: false,
       message: err.status + " - " + err.error["title"]
-    } as BudgetStatus;
+    } as Status;
 
     this.disableForm = false;
   }
@@ -248,7 +248,7 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
   }
 
   private resetBudgetStatus(): void {
-    this.budgetStatusIcon = new BudgetStatus();
+    this.budgetStatusIcon = new Status();
   }
 
   private resetModalOptions(): void {

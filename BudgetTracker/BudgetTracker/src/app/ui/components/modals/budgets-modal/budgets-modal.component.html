@@ -14,8 +14,8 @@
     <form #form="ngForm">
       @for (budgetField of budgetPickers; let i = $index; track i) {
         <div class="d-flex align-items-baseline">
-          @if (!ModalUtils.isUndefinedBudgetStatus(budgetStatusIcons[i])) {
-            @if (budgetStatusIcons[i].status) {
+          @if (!ModalUtils.isUndefinedStatus(budgetStatusIcons[i])) {
+            @if (budgetStatusIcons[i].isSuccess) {
               <div class="text-success"
                    data-bs-toggle="tooltip"
                    data-bs-placement="bottom"
@@ -42,7 +42,7 @@
                 name="budget-date-{{i}}"
                 class="form-control"
                 [(ngModel)]="budgetPickers[i]"
-                [disabled]="displayTimer || budgetStatusIcons[i].status"
+                [disabled]="displayTimer || budgetStatusIcons[i].isSuccess"
                 container="body"
                 placement="bottom-end"
                 required
@@ -52,11 +52,11 @@
                 #budgetDatePicker="ngbDatepicker"
                 [ngClass]="{
                 'is-invalid': budgetDateField.invalid ||
-                  (!ModalUtils.isUndefinedBudgetStatus(budgetStatusIcons[i]) && !budgetStatusIcons[i].status),
+                  (!ModalUtils.isUndefinedStatus(budgetStatusIcons[i]) && !budgetStatusIcons[i].isSuccess),
                 'is-valid': budgetDateField.valid }"/>
               <div class="input-group-append">
                 <button class="btn btn-outline-secondary bi bi-calendar3"
-                        [disabled]="displayTimer || budgetStatusIcons[i].status"
+                        [disabled]="displayTimer || budgetStatusIcons[i].isSuccess"
                         (click)="budgetDatePicker.toggle()"
                         type="button">
                 </button>
@@ -83,8 +83,8 @@
             <div class="mx-2"></div>
             <div>
               <button type="button"
-                      [disabled]="!ModalUtils.isUndefinedBudgetStatus(budgetStatusIcons[i]) &&
-                      budgetStatusIcons[i].status"
+                      [disabled]="!ModalUtils.isUndefinedStatus(budgetStatusIcons[i]) &&
+                      budgetStatusIcons[i].isSuccess"
                       class="btn btn-outline-danger"
                       data-bs-toggle="tooltip"
                       data-bs-placement="bottom"

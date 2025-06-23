@@ -9,7 +9,7 @@ import {DatePickerUtil, DateUtil} from "../../../../util/date.util";
 import {AppConfig} from "../../../../models/config/config";
 import {FormConfig} from "../../../../models/config/form.model.config";
 import {GetBudgetDto} from "../../../../models/dto/budget.model.dto";
-import {ResponseModel} from "../../../../models/response.model";
+import {ResponseModel, Status} from "../../../../models/response.model";
 import {format, subtract} from "../../../../util/number.util";
 import {GetPlannedPaymentDto} from "../../../../models/dto/planned-payment.model.dto";
 import BigNumber from "bignumber.js";
@@ -20,6 +20,7 @@ import {generateErrorModel} from "../../../../util/http.util";
 import {RequestParams} from "../../../../models/requestParams";
 import {TimerUtils} from "../../../../util/timer.utils";
 import {SpinnerSize} from "../../shared/spinner/spinner.component";
+import {PlannedPaymentStatus} from "../../../../models/modal/copy-payment.model.modal";
 
 @Component({
   selector: 'app-copy-payment-modal',
@@ -33,6 +34,7 @@ export class CopyPaymentModalComponent implements OnInit, OnDestroy {
   protected readonly format = format;
   protected readonly BigNumber = BigNumber;
   protected readonly subtract = subtract;
+  protected readonly SpinnerSize = SpinnerSize;
   protected readonly DateUtils = DateUtil;
   protected readonly ModalUtils = ModalUtils;
   protected readonly maxMonths: number = 7;
@@ -49,7 +51,7 @@ export class CopyPaymentModalComponent implements OnInit, OnDestroy {
   protected toDatePicker: DatePicker;
   protected appConfig: AppConfig;
   protected formConfig: FormConfig;
-  private budgetPlannedPaymentsToCopy: Map<string, GetPlannedPaymentDto> = new Map();
+  private budgetPlannedPaymentsToCopy: Map<string, PlannedPaymentStatus> = new Map();
   private plannedPaymentToCopy: GetPlannedPaymentDto;
   private pageWidth: number;
 
@@ -146,9 +148,13 @@ export class CopyPaymentModalComponent implements OnInit, OnDestroy {
   }
 
   protected initializePlannedPayments(): void {
-    this.plannedPaymentToCopy.isPaid = false;
+    let clonedPlannedPayment = structuredClone(this.plannedPaymentToCopy);
+    clonedPlannedPayment.isPaid = false;
+    clonedPlannedPayment.id = "";
     for (let budgetId of this.selectedBudgetIds!) {
-      this.budgetPlannedPaymentsToCopy.set(budgetId, structuredClone(this.plannedPaymentToCopy));
+      this.budgetPlannedPaymentsToCopy.set(budgetId, {
+        plannedPaymentDto: clonedPlannedPayment
+      } as PlannedPaymentStatus);
     }
   }
 
@@ -170,20 +176,34 @@ export class CopyPaymentModalComponent implements OnInit, OnDestroy {
   }
 
   protected getPlannedPaymentData(budgetId: string): GetPlannedPaymentDto {
-    return this.budgetPlannedPaymentsToCopy.get(budgetId)!;
+    return this.budgetPlannedPaymentsToCopy.get(budgetId)?.plannedPaymentDto!;
   }
 
-  protected isInvalidPlannedPaymentForm(
-    inputName: NgModel, inputEstimated: NgModel,
-    inputReal: NgModel, textareaComment: NgModel): boolean {
-    const formErrors = [
-      inputName.control.errors,
-      inputEstimated.control.errors,
-      inputReal.control.errors,
-      textareaComment.control.errors
-    ];
+  protected getPlannedPaymentStatus(budgetId: string): Status {
+    let status = this.budgetPlannedPaymentsToCopy.get(budgetId)?.status;
+    if (!status) {
+      status = new Status();
+    }
+    return status;
+  }
 
-    return formErrors.find(e => e != null) != null;
+  protected displayErrorBorder(
+    inputName: NgModel, inputEstimated: NgModel,
+    inputReal: NgModel, textareaComment: NgModel,
+    budgetId: string): boolean {
+    const isFormInvalid = this.isFormInvalid(
+      inputName,
+      inputEstimated,
+      inputReal,
+      textareaComment);
+
+    const plannedPaymentStatus = this.budgetPlannedPaymentsToCopy.get(budgetId)?.status;
+    let responseStatus: boolean = false;
+    if (plannedPaymentStatus) {
+      responseStatus = !plannedPaymentStatus.isSuccess;
+    }
+
+    return isFormInvalid || responseStatus;
   }
 
   protected goNext(): void {
@@ -197,8 +217,30 @@ export class CopyPaymentModalComponent implements OnInit, OnDestroy {
   }
 
   protected save(): void {
-    console.log(this.budgetPlannedPaymentsToCopy);
-  }
+    //this is for tests
+    this.budgetPlannedPaymentsToCopy.forEach((value, key) => {
+      if (key === "d224c9fa-66ce-4185-075a-08ddb182f669") {
+        this.budgetPlannedPaymentsToCopy.set(key, {
+          plannedPaymentDto: value.plannedPaymentDto,
+          status: {isSuccess: true, message: 'some true'} as Status
+        } as PlannedPaymentStatus);
+      }
+    });
 
-  protected readonly SpinnerSize = SpinnerSize;
+  }
+  //TO DO...
+  //when all success - display timer
+  //when is success for one planned payment - disable all fields
+  private isFormInvalid(
+    inputName: NgModel, inputEstimated: NgModel,
+    inputReal: NgModel, textareaComment: NgModel): boolean {
+    const formErrors = [
+      inputName.control.errors,
+      inputEstimated.control.errors,
+      inputReal.control.errors,
+      textareaComment.control.errors
+    ];
+
+    return formErrors.find(e => e != null) != null;
+  }
 }

@@ -23,3 +23,8 @@ export class BudgetResponse {
   payments: ResponseModel;
   paymentStatus: ResponseModel;
 }
+
+export class Status {
+  isSuccess: boolean;
+  message: string;
+}

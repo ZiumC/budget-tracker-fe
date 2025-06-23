@@ -163,8 +163,8 @@
             </div>
           } @else {
             <div class="d-flex align-items-baseline">
-              @if (!ModalUtils.isUndefinedBudgetStatus(budgetStatusIcon)) {
-                @if (budgetStatusIcon.status) {
+              @if (!ModalUtils.isUndefinedStatus(budgetStatusIcon)) {
+                @if (budgetStatusIcon.isSuccess) {
                   <div class="text-success"
                        data-bs-toggle="tooltip"
                        data-bs-placement="bottom"
@@ -198,15 +198,15 @@
                     container="body"
                     ngbDatepicker
                     #date="ngbDatepicker"
-                    [disabled]="budgetStatusIcon.status"
+                    [disabled]="budgetStatusIcon.isSuccess"
                     [ngClass]="{
                   'is-invalid': budgetDateInput.invalid ||
-                    (!ModalUtils.isUndefinedBudgetStatus(budgetStatusIcon) && !budgetStatusIcon.status),
+                    (!ModalUtils.isUndefinedStatus(budgetStatusIcon) && !budgetStatusIcon.isSuccess),
                   'is-valid': budgetDateInput.valid }"/>
                   <div class="input-group-append">
                     <button class="btn btn-outline-secondary bi bi-calendar3"
                             (click)="date.toggle()"
-                            [disabled]="budgetStatusIcon.status"
+                            [disabled]="budgetStatusIcon.isSuccess"
                             type="button">
                     </button>
                   </div>
@@ -239,7 +239,7 @@
     </div>
     <div class="modal-footer">
       <button
-        [disabled]="form.invalid || budgetStatusIcon.status"
+        [disabled]="form.invalid || budgetStatusIcon.isSuccess"
         type="button"
         class="btn btn-outline-secondary"
         (click)="saveBudget(form)">

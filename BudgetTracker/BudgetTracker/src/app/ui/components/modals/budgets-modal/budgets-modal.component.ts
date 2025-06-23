@@ -6,7 +6,6 @@ import {HttpService} from "../../../../services/http/http.service";
 import {catchError, forkJoin, Observable, of, Subscription} from "rxjs";
 import {HttpResponse} from "@angular/common/http";
 import {SubscriptionUtils} from "../../../../util/subscription.utils";
-import {BudgetStatus} from "../../../../models/modal/budget.model.modal";
 import {ModalOptions, ModalUtils} from "../../../../util/modal.utils";
 import {AbstractControl, NgForm, NgModel} from "@angular/forms";
 import {AppConfig} from "../../../../models/config/config";
@@ -14,6 +13,7 @@ import {FormConfig} from "../../../../models/config/form.model.config";
 import {ConfigService} from "../../../../services/config/config.service";
 import {isSuccess} from "../../../../util/http.util";
 import {formatString} from "../../../../util/string.utils";
+import {Status} from "../../../../models/response.model";
 
 @Component({
   selector: 'app-budgets-modal',
@@ -31,7 +31,7 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
   protected formConfig: FormConfig;
   protected subscriptions: Subscription[];
   protected budgetPickers: DatePicker[];
-  protected budgetStatusIcons: BudgetStatus[];
+  protected budgetStatusIcons: Status[];
   protected displayTimer: boolean;
   protected disableTimer: boolean;
 
@@ -79,7 +79,7 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
       }
 
       this.budgetPickers.push(DatePickerUtil.convertToDatePicker(maxDate));
-      this.budgetStatusIcons.push(new BudgetStatus());
+      this.budgetStatusIcons.push(new Status());
     }
   }
 
@@ -110,7 +110,7 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
       ngModel.control.setErrors({ngbDate: true});
     } else {
       ngModel.control.setErrors(null);
-      this.budgetStatusIcons[index] = new BudgetStatus();
+      this.budgetStatusIcons[index] = new Status();
     }
   }
 
@@ -119,8 +119,8 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
     for (let i = 0; i < this.budgetPickers.length; i++) {
       const field = this.budgetPickers[i];
       const formatedDate = DatePickerUtil.formatDatePicker(field);
-      if (!this.budgetStatusIcons[i].status ||
-        ModalUtils.isUndefinedBudgetStatus(this.budgetStatusIcons[i])) {
+      if (!this.budgetStatusIcons[i].isSuccess ||
+        ModalUtils.isUndefinedStatus(this.budgetStatusIcons[i])) {
         budgetRequests.push(this.httpService.createBudget(formatedDate).pipe(
           catchError((err): Observable<HttpResponse<any>> => {
             return of(err);
@@ -140,7 +140,7 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
             //when previous request status was invalid
             // - retry that request. All success requests
             // are skipping
-            if (!budgetResponse.status) {
+            if (!budgetResponse.isSuccess) {
               const response = responses[newRequestIndex];
               if (response.status >= 200 && response.status <= 299) {
                 this.onRequestSuccess(i, response);
@@ -197,33 +197,33 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
   }
 
   private allSuccessIcons(): boolean {
-    return this.budgetStatusIcons.every(s => s && s.status);
+    return this.budgetStatusIcons.every(s => s && s.isSuccess);
   }
 
   private atLeastSuccessIcon(): boolean {
-    return this.budgetStatusIcons.some(s => s && s.status);
+    return this.budgetStatusIcons.some(s => s && s.isSuccess);
   }
 
   private resetBudgetStatus(): void {
     this.budgetStatusIcons = [];
     for (let i = 0; i < this.budgetPickers.length; i++) {
-      this.budgetStatusIcons.push(new BudgetStatus());
+      this.budgetStatusIcons.push(new Status());
     }
   }
 
   private onRequestSuccess(index: number, response: HttpResponse<any>): void {
     this.budgetStatusIcons[index] = {
-      status: isSuccess(response),
+      isSuccess: isSuccess(response),
       message: "Ok"
-    } as BudgetStatus;
+    } as Status;
   }
 
   private onRequestFailed(index: number, err: any, control: AbstractControl): void {
     control.setErrors({'responseMessage': err.error["message"]});
     this.budgetStatusIcons[index] = {
-      status: false,
+      isSuccess: false,
       message: err.error["title"]
-    } as BudgetStatus;
+    } as Status;
   }
 
   private resetModalOptions(): void {
