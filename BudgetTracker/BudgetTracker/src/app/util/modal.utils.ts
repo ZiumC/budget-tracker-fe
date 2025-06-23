@@ -1,11 +1,11 @@
-import {BudgetStatus} from "../models/modal/budget.model.modal";
 import {NgModel} from "@angular/forms";
 import {NgbModalOptions} from "@ng-bootstrap/ng-bootstrap/modal/modal-config";
+import {Status} from "../models/response.model";
 
 export class ModalUtils {
-  public static isUndefinedBudgetStatus(budgetStatus: BudgetStatus): boolean {
-    return typeof budgetStatus.status === "undefined" &&
-      typeof budgetStatus.message === "undefined"
+  public static isUndefinedStatus(status: Status): boolean {
+    return typeof status.isSuccess === "undefined" &&
+      typeof status.message === "undefined"
   }
 
   public static displayMarginFor(model: NgModel): string {
