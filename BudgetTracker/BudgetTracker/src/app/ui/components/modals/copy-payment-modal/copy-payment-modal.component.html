@@ -103,7 +103,7 @@
                         [(ngModel)]="toDatePicker"
                         (ngModelChange)="
                         DateUtils.validateOnDatesChanged(fromDate, toDate, fromDatePicker, toDatePicker);
-                        DateUtils.validateFeatureOnDateChanged(toDate, fromDatePicker, toDatePicker, maxMonths)"
+                        DateUtils.validateFeatureOnDateChanged(toDate, fromDatePicker, toDatePicker, monthsLimit)"
                         container="body"
                         placement="bottom-end"
                         required
@@ -164,7 +164,7 @@
                   </div>
                 } @else {
                   @for (budget of budgets; track budget) {
-                    <a (click)="onCheckBudget(budget.id)" class="cursor-pointer">
+                    <a (click)="onSelectedBudget(budget.id)" class="cursor-pointer">
                       <div class="card my-2" [class.budget-border]="selectedBudgetIds.indexOf(budget.id) > -1">
                         <div class="card-body">
                           <table>
@@ -234,7 +234,7 @@
                 </div>
                 <div id="{{budgetId}}" ngbAccordion>
                   <div ngbAccordionItem
-                       [collapsed]="clickedBudgetId !== budgetId"
+                       [collapsed]="selectedBudget !== budgetId"
                        [class.error-border]="setPlannedPaymentError(
                          paymentNameInput,
                          plannedPaymentEstimatedInput,
@@ -243,7 +243,7 @@
                   >
                     <h2 ngbAccordionHeader>
                       <button ngbAccordionButton
-                              (click)="clickedBudgetId = budgetId"
+                              (click)="selectedBudget = budgetId"
                               class="light-gray-bg accordion-button-header">
                         <table>
                           <tr class="table-header">
@@ -481,6 +481,9 @@
   </ng-container>
 </ng-template>
 <app-info-modal #infoModal
-                (confirmCancel)="onConfirmCancel($event)">
+                (confirmCancel)="onCancel($event)">
 
 </app-info-modal>
+<app-error-modal #errorModal>
+
+</app-error-modal>

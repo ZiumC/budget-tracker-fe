@@ -14,6 +14,7 @@ export interface AppConfig {
   form: FormConfig;
   request: RequestConfig;
   response: ResponseConfig;
+  monthsLimit: number;
   budgetLimit: number;
   pageMobileWidth: number;
   pageMediumWidth: number;
