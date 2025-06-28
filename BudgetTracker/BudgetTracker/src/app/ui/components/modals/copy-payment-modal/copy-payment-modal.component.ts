@@ -31,6 +31,7 @@ import {toPlannedPaymentDto} from "../../../../util/mapper.utils";
 export class CopyPaymentModalComponent implements OnInit, OnDestroy {
   @ViewChild('copyPaymentModal') copyModal: any;
   @ViewChild('errorModal') errorModal: any;
+  @ViewChild('infoModal') infoModal: any;
   protected readonly formatString = formatString;
   protected readonly format = format;
   protected readonly BigNumber = BigNumber;
@@ -210,9 +211,11 @@ export class CopyPaymentModalComponent implements OnInit, OnDestroy {
     this.currentStep = this.currentStep + 1;
   }
 
-  protected goBack(): void {
-    this.clickedBudgetId = "";
-    this.currentStep = this.currentStep - 1;
+  protected onConfirmCancel(canceled: boolean) {
+    if (canceled) {
+      this.clickedBudgetId = "";
+      this.currentStep = this.currentStep - 1;
+    }
   }
 
   protected save(): void {

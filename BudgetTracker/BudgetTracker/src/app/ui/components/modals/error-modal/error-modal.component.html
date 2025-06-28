@@ -1,17 +1,21 @@
 <ng-template #errorModal let-modal>
-    <div class="modal-header">
-        <h4 class="modal-title" id="modal-basic-title">
-            Error occurred
-        </h4>
-        <button
-                type="button"
-                class="btn-close"
-                aria-label="Close"
-                (click)="modal.close()">
-        </button>
+  <div class="modal-header justify-content-center">
+    <h4 class="modal-title text-warning" id="modal-basic-title">
+      <i class="bi bi-exclamation-circle"></i>
+    </h4>
+  </div>
+  <div class="modal-body">
+    <app-error-view [responseModel]="responseModel">
+    </app-error-view>
+  </div>
+  <div class="modal-footer">
+    <div class="mx-auto">
+      <button
+        type="button"
+        class="btn btn-outline-secondary mx-2"
+        (click)="modal.close()">
+        Close
+      </button>
     </div>
-    <div class="modal-body">
-        <app-error-view [responseModel]="responseModel">
-        </app-error-view>
-    </div>
+  </div>
 </ng-template>

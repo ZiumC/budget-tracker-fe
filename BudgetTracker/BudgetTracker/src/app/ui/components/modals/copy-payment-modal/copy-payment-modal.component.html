@@ -465,7 +465,7 @@
             type="button"
             class="btn btn-outline-secondary"
             [disabled]="displayTimer || atLeastSuccessResponse()"
-            (click)="goBack()">
+            (click)="infoModal.open()">
             Back
           </button>
           <button
@@ -480,5 +480,7 @@
     </ng-container>
   </ng-container>
 </ng-template>
-<app-error-modal #errorModal>
-</app-error-modal>
+<app-info-modal #infoModal
+                (confirmCancel)="onConfirmCancel($event)">
+
+</app-info-modal>
