@@ -215,14 +215,14 @@
                       <div class="text-success"
                            data-bs-toggle="tooltip"
                            data-bs-placement="bottom"
-                           title="{{getPlannedPaymentStatus(budgetId).message}}">
+                           title="{{getPlannedPaymentStatus(budgetId).title}}">
                         <i class="bi bi-check-circle icon-big"></i>
                       </div>
                     } @else {
                       <div class="text-danger"
                            data-bs-toggle="tooltip"
                            data-bs-placement="bottom"
-                           title="{{getPlannedPaymentStatus(budgetId).message}}">
+                           title="{{getPlannedPaymentStatus(budgetId).title}}">
                         <i class="bi bi-x-circle icon-big"></i>
                       </div>
                     }
@@ -234,8 +234,8 @@
                 </div>
                 <div id="{{budgetId}}" ngbAccordion>
                   <div ngbAccordionItem
-                       [collapsed]="selectedBudgetId !== budgetId"
-                       [class.error-border]="displayErrorBorder(
+                       [collapsed]="clickedBudgetId !== budgetId"
+                       [class.error-border]="setPlannedPaymentError(
                          paymentNameInput,
                          plannedPaymentEstimatedInput,
                          plannedPaymentRealPriceInput,
@@ -243,7 +243,7 @@
                   >
                     <h2 ngbAccordionHeader>
                       <button ngbAccordionButton
-                              (click)="selectedBudgetId = budgetId"
+                              (click)="clickedBudgetId = budgetId"
                               class="light-gray-bg accordion-button-header">
                         <table>
                           <tr class="table-header">
@@ -288,11 +288,12 @@
                               id="{{budgetId}}-payment-name"
                               name="{{budgetId}}-payment-name"
                               class="form-control"
-                              [(ngModel)]="getPlannedPaymentData(budgetId).name"
                               required
                               minlength="{{ formConfig.paymentModal.name.minLength }}"
                               maxlength="{{ formConfig.paymentModal.name.maxLength }}"
                               #paymentNameInput="ngModel"
+                              [(ngModel)]="getPlannedPaymentData(budgetId).name"
+                              [disabled]="disableForm(budgetId)"
                               [ngClass]="{
                                 'is-invalid': paymentNameInput.invalid &&
                                   (paymentNameInput.dirty || paymentNameInput.touched),
@@ -337,13 +338,14 @@
                                   id="{{budgetId}}-planned-payment-estimated"
                                   name="{{budgetId}}-planned-payment-estimated"
                                   class="form-control"
-                                  [(ngModel)]="getPlannedPaymentData(budgetId).estimated"
                                   required
                                   min="{{ formConfig.paymentModal.price.minValue }}"
                                   maxlength="{{ formConfig.paymentModal.price.maxLength }}"
                                   placeholder="{{ formConfig.paymentModal.placeholder }}"
                                   pattern="{{ formConfig.regex.money }}"
                                   #plannedPaymentEstimatedInput="ngModel"
+                                  [(ngModel)]="getPlannedPaymentData(budgetId).estimated"
+                                  [disabled]="disableForm(budgetId)"
                                   [ngClass]="{
                                     'is-invalid': plannedPaymentEstimatedInput.invalid &&
                                       (plannedPaymentEstimatedInput.dirty || plannedPaymentEstimatedInput.touched),
@@ -375,12 +377,13 @@
                                   id="{{budgetId}}-planned-payment-real-price"
                                   name="{{budgetId}}-planned-payment-real-price"
                                   class="form-control"
-                                  [(ngModel)]="getPlannedPaymentData(budgetId).realPrice"
                                   min="{{ formConfig.paymentModal.refund.minValue }}"
                                   maxlength="{{ formConfig.paymentModal.refund.maxLength }}"
                                   placeholder="{{formConfig.paymentModal.placeholder}}"
                                   pattern="{{formConfig.regex.money}}"
                                   #plannedPaymentRealPriceInput="ngModel"
+                                  [(ngModel)]="getPlannedPaymentData(budgetId).realPrice"
+                                  [disabled]="disableForm(budgetId)"
                                   [ngClass]="{
                                     'is-invalid': plannedPaymentRealPriceInput.invalid &&
                                       (plannedPaymentRealPriceInput.dirty || plannedPaymentRealPriceInput.touched),
@@ -413,6 +416,7 @@
                                 minlength="{{ formConfig.paymentModal.comment.minLength }}"
                                 maxlength="{{ formConfig.paymentModal.comment.maxLength }}"
                                 #paymentCommentInput="ngModel"
+                                [disabled]="disableForm(budgetId)"
                                 [(ngModel)]="getPlannedPaymentData(budgetId).comment"
                                 [ngClass]="{
                                   'is-invalid': paymentCommentInput.invalid &&
@@ -434,8 +438,6 @@
                           </div>
                         </div>
                       </div>
-                      <div class="row">
-                      </div>
                     </div>
                   </div>
                 </div>
@@ -445,6 +447,15 @@
                   </div>
                 }
               }
+              <ng-template [ngIf]="displayTimer">
+                <div class="my-4">
+                  <div class="pt-3"></div>
+                  <app-timer [duration]="appConfig.timer.duration.default"
+                             (timerFinishedEvent)="onTimerFinishedEvent(modal)">
+
+                  </app-timer>
+                </div>
+              </ng-template>
             </div>
           </div>
         </div>
@@ -453,11 +464,12 @@
             *ngIf="currentStep > 1"
             type="button"
             class="btn btn-outline-secondary"
+            [disabled]="displayTimer || atLeastSuccessResponse()"
             (click)="goBack()">
             Back
           </button>
           <button
-            [disabled]="step2Form.invalid"
+            [disabled]="step2Form.invalid || displayTimer"
             type="button"
             class="btn btn-outline-primary"
             (click)="save()">

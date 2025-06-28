@@ -26,5 +26,6 @@ export class BudgetResponse {
 
 export class Status {
   isSuccess: boolean;
+  title: string;
   message: string;
 }
