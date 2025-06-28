@@ -232,6 +232,7 @@
         "categoryStatus": 200
       }
     },
+    "monthsLimit": 7,
     "budgetLimit": 6,
     "pageMobileWidth": 770,
     "pageMediumWidth": 1015,

@@ -70,7 +70,11 @@ export class DateUtil {
     }
   }
 
-  static validateFeatureOnDateChanged(toDateInput: NgModel, fromDatePicker: DatePicker, toDatePicker: DatePicker, maxMonths: number): void {
+  static validateFeatureOnDateChanged(
+      toDateInput: NgModel,
+      fromDatePicker: DatePicker,
+      toDatePicker: DatePicker,
+      maxMonths: number): void {
     const fromDate = DatePickerUtil.convertToDate(fromDatePicker);
     const toDate = DatePickerUtil.convertToDate(toDatePicker);
     const maxDate = this.setMonthsToDate(fromDate, maxMonths);

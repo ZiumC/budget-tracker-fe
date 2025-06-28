@@ -1,4 +1,4 @@
-import {Component, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, HostListener, OnDestroy, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {ModalOptions, ModalSize, ModalUtils} from "../../../../util/modal.utils";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {HttpService} from "../../../../services/http/http.service";
@@ -29,9 +29,9 @@ import {toPlannedPaymentDto} from "../../../../util/mapper.utils";
   styleUrl: './copy-payment-modal.component.css'
 })
 export class CopyPaymentModalComponent implements OnInit, OnDestroy {
-  @ViewChild('copyPaymentModal') copyModal: any;
+  @ViewChild('copyPaymentModal') copyModal: TemplateRef<HTMLElement>;
+  @ViewChild('infoModal') infoModal: TemplateRef<HTMLElement>;
   @ViewChild('errorModal') errorModal: any;
-  @ViewChild('infoModal') infoModal: any;
   protected readonly formatString = formatString;
   protected readonly format = format;
   protected readonly BigNumber = BigNumber;
@@ -39,15 +39,15 @@ export class CopyPaymentModalComponent implements OnInit, OnDestroy {
   protected readonly SpinnerSize = SpinnerSize;
   protected readonly DateUtils = DateUtil;
   protected readonly ModalUtils = ModalUtils;
-  protected readonly maxMonths: number = 7;
+  protected monthsLimit: number;
   protected subscriptions: Subscription[] = [];
   protected selectedBudgetIds: string[] = [];
+  protected selectedBudget: string;
+  protected budgetLoader: boolean;
   protected budgets: GetBudgetDto[] | null;
   protected budgetRequestParams: RequestParams;
   protected budgetsResponseModel: ResponseModel;
-  protected budgetLoader: boolean;
-  protected requiredBudgetStatusCode: number;
-  protected clickedBudgetId: string;
+  protected budgetRequiredStatusCode: number;
   protected currentStep: number;
   protected fromDatePicker: DatePicker;
   protected toDatePicker: DatePicker;
@@ -83,7 +83,8 @@ export class CopyPaymentModalComponent implements OnInit, OnDestroy {
       throw Error("Config not provided");
     }
 
-    this.requiredBudgetStatusCode = appCfg.response.required.budgetStatus;
+    this.monthsLimit = appCfg.monthsLimit;
+    this.budgetRequiredStatusCode = appCfg.response.required.budgetStatus;
     this.budgetRequestParams = new RequestParams();
     this.budgetsResponseModel = new ResponseModel();
     this.pageWidth = window.innerWidth;
@@ -91,7 +92,7 @@ export class CopyPaymentModalComponent implements OnInit, OnDestroy {
     this.setDefaultDates();
   }
 
-  onCheckBudget(id: string): void {
+  onSelectedBudget(id: string): void {
     let selectedBudgetIndex = this.selectedBudgetIds.indexOf(id);
     if (selectedBudgetIndex > -1) {
       this.selectedBudgetIds = this.selectedBudgetIds.filter((_, i) => i !== selectedBudgetIndex);
@@ -106,7 +107,7 @@ export class CopyPaymentModalComponent implements OnInit, OnDestroy {
 
   protected setDefaultDates(): void {
     const fromDate = DateUtil.setMonthsToDate(DateUtil.firstDayOfCurrentMonth(), 1);
-    const toDate = DateUtil.setMonthsToDate(DateUtil.lastDayOfCurrentMonth(), this.maxMonths);
+    const toDate = DateUtil.setMonthsToDate(DateUtil.lastDayOfCurrentMonth(), this.monthsLimit);
 
     this.fromDatePicker = DatePickerUtil.convertToDatePicker(fromDate);
     this.toDatePicker = DatePickerUtil.convertToDatePicker(toDate);
@@ -143,7 +144,7 @@ export class CopyPaymentModalComponent implements OnInit, OnDestroy {
   open(plannedPaymentToCopy: GetPlannedPaymentDto): void {
     this.plannedPaymentToCopy = plannedPaymentToCopy;
     this.currentStep = 1;
-    this.clickedBudgetId = "";
+    this.selectedBudget = "";
     this.selectedBudgetIds = [];
     this.setDefaultDates();
     this.searchBudgets();
@@ -211,9 +212,9 @@ export class CopyPaymentModalComponent implements OnInit, OnDestroy {
     this.currentStep = this.currentStep + 1;
   }
 
-  protected onConfirmCancel(canceled: boolean) {
+  protected onCancel(canceled: boolean) {
     if (canceled) {
-      this.clickedBudgetId = "";
+      this.selectedBudget = "";
       this.currentStep = this.currentStep - 1;
     }
   }
