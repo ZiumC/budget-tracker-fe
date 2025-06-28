@@ -1,0 +1,26 @@
+<ng-template #infoModal let-modal>
+  <div class="modal-header justify-content-center">
+    <h3 class="modal-title text-primary" id="modal-basic-title">
+        <i class="bi bi-info-circle"></i>
+    </h3>
+  </div>
+  <div class="modal-body col-mx text-center">
+    <h5>Modified changes can be lost!</h5>
+  </div>
+  <div class="modal-footer">
+    <div class="mx-auto">
+      <button
+        type="button"
+        class="btn btn-outline-secondary mx-2"
+        (click)="cancel(modal)">
+        Cancel
+      </button>
+      <button
+        type="button"
+        class="btn btn-outline-primary mx-2"
+        (click)="ok(modal)">
+        Ok
+      </button>
+    </div>
+  </div>
+</ng-template>

@@ -1,8 +1,8 @@
 <ng-template #deleteModal>
   @if (!displayLoader) {
-    <div class="modal-header">
-      <h3 class="modal-title" id="modal-basic-title">
-        Proceed?
+    <div class="modal-header justify-content-center">
+      <h3 class="modal-title text-danger" id="modal-basic-title">
+        <i class="bi bi-question-circle"></i>
       </h3>
     </div>
   }
@@ -20,18 +20,20 @@
       <h5>This action can't be undone!</h5>
     </div>
     <div class="modal-footer">
-      <button
-        type="button"
-        class="btn btn-outline-secondary"
-        (click)="close()">
-        Cancel
-      </button>
-      <button
-        type="button"
-        class="btn btn-outline-danger"
-        (click)="delete()">
-        Delete
-      </button>
+      <div class="mx-auto">
+        <button
+          type="button"
+          class="btn btn-outline-secondary mx-2"
+          (click)="cancel()">
+          Cancel
+        </button>
+        <button
+          type="button"
+          class="btn btn-outline-danger mx-2"
+          (click)="delete()">
+          Delete
+        </button>
+      </div>
     </div>
   </ng-template>
 </ng-template>

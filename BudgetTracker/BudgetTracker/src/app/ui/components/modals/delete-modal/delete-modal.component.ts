@@ -139,7 +139,7 @@ export class DeleteModalComponent implements OnInit, OnDestroy {
     this.removeReferences();
   }
 
-  close(): void {
+  cancel(): void {
     this.removeReferences();
     this.modalService.dismissAll();
   }
