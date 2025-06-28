@@ -3,6 +3,6 @@ import {Status} from "../response.model";
 
 
 export class PlannedPaymentStatus {
-  plannedPaymentDto: GetPlannedPaymentDto;
+  getPlannedPaymentDto: GetPlannedPaymentDto;
   status: Status;
 }

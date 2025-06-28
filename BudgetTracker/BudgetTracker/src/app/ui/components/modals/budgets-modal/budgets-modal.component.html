@@ -116,7 +116,9 @@
     <ng-template [ngIf]="displayTimer">
       <div class="my-4"></div>
       <app-timer [duration]="appConfig.timer.duration.default"
-                 (timerFinishedEvent)="onTimerFinishedEvent(modal)"></app-timer>
+                 (timerFinishedEvent)="onTimerFinishedEvent(modal)">
+
+      </app-timer>
     </ng-template>
   </div>
   <div class="modal-footer">

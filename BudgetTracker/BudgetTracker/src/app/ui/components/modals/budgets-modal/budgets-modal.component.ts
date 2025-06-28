@@ -228,6 +228,5 @@ export class BudgetsModalComponent implements OnInit, OnDestroy {
 
   private resetModalOptions(): void {
     this.disableTimer = false;
-    this.displayTimer = false;
   }
 }

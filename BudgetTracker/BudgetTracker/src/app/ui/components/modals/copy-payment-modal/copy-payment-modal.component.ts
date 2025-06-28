@@ -14,13 +14,14 @@ import {format, subtract} from "../../../../util/number.util";
 import {GetPlannedPaymentDto} from "../../../../models/dto/planned-payment.model.dto";
 import BigNumber from "bignumber.js";
 import {NgModel} from "@angular/forms";
-import {Subscription} from "rxjs";
+import {catchError, forkJoin, Observable, of, Subscription} from "rxjs";
 import {HttpResponse} from "@angular/common/http";
 import {generateErrorModel} from "../../../../util/http.util";
 import {RequestParams} from "../../../../models/requestParams";
 import {TimerUtils} from "../../../../util/timer.utils";
 import {SpinnerSize} from "../../shared/spinner/spinner.component";
 import {PlannedPaymentStatus} from "../../../../models/modal/copy-payment.model.modal";
+import {toPlannedPaymentDto} from "../../../../util/mapper.utils";
 
 @Component({
   selector: 'app-copy-payment-modal',
@@ -45,13 +46,14 @@ export class CopyPaymentModalComponent implements OnInit, OnDestroy {
   protected budgetsResponseModel: ResponseModel;
   protected budgetLoader: boolean;
   protected requiredBudgetStatusCode: number;
-  protected selectedBudgetId: string;
+  protected clickedBudgetId: string;
   protected currentStep: number;
   protected fromDatePicker: DatePicker;
   protected toDatePicker: DatePicker;
   protected appConfig: AppConfig;
   protected formConfig: FormConfig;
-  private budgetPlannedPaymentsToCopy: Map<string, PlannedPaymentStatus> = new Map();
+  protected displayTimer: boolean;
+  private plannedPaymentsToCopy: Map<string, PlannedPaymentStatus> = new Map();
   private plannedPaymentToCopy: GetPlannedPaymentDto;
   private pageWidth: number;
 
@@ -140,21 +142,26 @@ export class CopyPaymentModalComponent implements OnInit, OnDestroy {
   open(plannedPaymentToCopy: GetPlannedPaymentDto): void {
     this.plannedPaymentToCopy = plannedPaymentToCopy;
     this.currentStep = 1;
-    this.selectedBudgetId = "";
+    this.clickedBudgetId = "";
     this.selectedBudgetIds = [];
     this.setDefaultDates();
     this.searchBudgets();
+    this.displayTimer = false;
     this.modalService.open(this.copyModal, ModalOptions.default(ModalSize.BIG));
   }
 
   protected initializePlannedPayments(): void {
-    let clonedPlannedPayment = structuredClone(this.plannedPaymentToCopy);
-    clonedPlannedPayment.isPaid = false;
-    clonedPlannedPayment.id = "";
-    for (let budgetId of this.selectedBudgetIds!) {
-      this.budgetPlannedPaymentsToCopy.set(budgetId, {
-        plannedPaymentDto: clonedPlannedPayment
-      } as PlannedPaymentStatus);
+    for (let budgetId of this.selectedBudgetIds) {
+      let clonedPlannedPayment = structuredClone(this.plannedPaymentToCopy);
+      clonedPlannedPayment.id = '';
+      clonedPlannedPayment.isPaid = false;
+
+      const plannedPaymentStatus: PlannedPaymentStatus = {
+        getPlannedPaymentDto: clonedPlannedPayment,
+        status: new Status()
+      };
+
+      this.plannedPaymentsToCopy.set(budgetId, plannedPaymentStatus);
     }
   }
 
@@ -176,18 +183,14 @@ export class CopyPaymentModalComponent implements OnInit, OnDestroy {
   }
 
   protected getPlannedPaymentData(budgetId: string): GetPlannedPaymentDto {
-    return this.budgetPlannedPaymentsToCopy.get(budgetId)?.plannedPaymentDto!;
+    return this.plannedPaymentsToCopy.get(budgetId)!.getPlannedPaymentDto;
   }
 
   protected getPlannedPaymentStatus(budgetId: string): Status {
-    let status = this.budgetPlannedPaymentsToCopy.get(budgetId)?.status;
-    if (!status) {
-      status = new Status();
-    }
-    return status;
+    return this.plannedPaymentsToCopy.get(budgetId)!.status;
   }
 
-  protected displayErrorBorder(
+  protected setPlannedPaymentError(
     inputName: NgModel, inputEstimated: NgModel,
     inputReal: NgModel, textareaComment: NgModel,
     budgetId: string): boolean {
@@ -197,13 +200,9 @@ export class CopyPaymentModalComponent implements OnInit, OnDestroy {
       inputReal,
       textareaComment);
 
-    const plannedPaymentStatus = this.budgetPlannedPaymentsToCopy.get(budgetId)?.status;
-    let responseStatus: boolean = false;
-    if (plannedPaymentStatus) {
-      responseStatus = !plannedPaymentStatus.isSuccess;
-    }
-
-    return isFormInvalid || responseStatus;
+    const plannedPaymentStatus = this.plannedPaymentsToCopy.get(budgetId)!.status;
+    return isFormInvalid || (!ModalUtils.isUndefinedStatus(plannedPaymentStatus) &&
+      !plannedPaymentStatus.isSuccess);
   }
 
   protected goNext(): void {
@@ -212,25 +211,84 @@ export class CopyPaymentModalComponent implements OnInit, OnDestroy {
   }
 
   protected goBack(): void {
-    this.selectedBudgetId = "";
+    this.clickedBudgetId = "";
     this.currentStep = this.currentStep - 1;
   }
 
   protected save(): void {
-    //this is for tests
-    this.budgetPlannedPaymentsToCopy.forEach((value, key) => {
-      if (key === "d224c9fa-66ce-4185-075a-08ddb182f669") {
-        this.budgetPlannedPaymentsToCopy.set(key, {
-          plannedPaymentDto: value.plannedPaymentDto,
-          status: {isSuccess: true, message: 'some true'} as Status
-        } as PlannedPaymentStatus);
+    const plannedPaymentRequests: Observable<HttpResponse<{}> | HttpResponse<any>>[] = [];
+    this.plannedPaymentsToCopy.forEach((value, key): void => {
+      if (!value.status.isSuccess ||
+        ModalUtils.isUndefinedStatus(value.status)) {
+        const plannedPaymentToCreate = toPlannedPaymentDto(value.getPlannedPaymentDto);
+        plannedPaymentRequests.push(this.httpService
+          .createBudgetPlannedPayment(key, plannedPaymentToCreate).pipe(
+            catchError((err): Observable<HttpResponse<any>> => {
+              return of(err);
+            })
+          ));
       }
     });
 
+    this.subscriptions.push(
+      forkJoin(plannedPaymentRequests).subscribe({
+        next: (responses): void => {
+          for (let response of responses) {
+            const budgetId = response.url!.split("/")[5];
+            let plannedPayment = this.plannedPaymentsToCopy.get(budgetId)!;
+            if (response.status >= 200 && response.status <= 299) {
+              this.onRequestSuccess(plannedPayment);
+            } else {
+              this.onRequestFailed(plannedPayment, response);
+            }
+          }
+        },
+        complete: (): void => {
+          if (this.allSuccessResponses()) {
+            this.displayTimer = true;
+          }
+        }
+      })
+    )
   }
-  //TO DO...
-  //when all success - display timer
-  //when is success for one planned payment - disable all fields
+
+  private onRequestSuccess(plannedPaymentStatus: PlannedPaymentStatus): void {
+    plannedPaymentStatus.status = new Status();
+    plannedPaymentStatus.status.isSuccess = true;
+    plannedPaymentStatus.status.title = "Ok";
+  }
+
+  private onRequestFailed(plannedPaymentStatus: PlannedPaymentStatus, err: any): void {
+    plannedPaymentStatus.status = new Status();
+    plannedPaymentStatus.status.isSuccess = false;
+    plannedPaymentStatus.status.title = err.error["Title"];
+    plannedPaymentStatus.status.message = err.error["Message"];
+  }
+
+  protected onTimerFinishedEvent(modal: any): void {
+    modal.close();
+  }
+
+  protected disableForm(budgetId: string): boolean {
+    const createdPlannedPaymentStatus = this.plannedPaymentsToCopy.get(budgetId)?.status;
+    let isSuccess: boolean = false;
+    if (createdPlannedPaymentStatus) {
+      isSuccess = createdPlannedPaymentStatus.isSuccess;
+    }
+    return this.displayTimer || isSuccess;
+  }
+
+  protected atLeastSuccessResponse(): boolean {
+    let successResponses: boolean[] = [];
+    this.plannedPaymentsToCopy.forEach((value): void => {
+      let responsePlannedStatus = value.status;
+      if (responsePlannedStatus) {
+        successResponses.push(responsePlannedStatus.isSuccess);
+      }
+    });
+    return successResponses.some(s => s);
+  }
+
   private isFormInvalid(
     inputName: NgModel, inputEstimated: NgModel,
     inputReal: NgModel, textareaComment: NgModel): boolean {
@@ -242,5 +300,21 @@ export class CopyPaymentModalComponent implements OnInit, OnDestroy {
     ];
 
     return formErrors.find(e => e != null) != null;
+  }
+
+  private allSuccessResponses(): boolean {
+    let successResponses: boolean[] = [];
+    this.plannedPaymentsToCopy.forEach((value): void => {
+      let responsePlannedStatus = value.status;
+      if (responsePlannedStatus) {
+        successResponses.push(responsePlannedStatus.isSuccess);
+      }
+    });
+
+    if (successResponses.length > 0) {
+      return successResponses.every(s => s);
+    } else {
+      return false;
+    }
   }
 }
