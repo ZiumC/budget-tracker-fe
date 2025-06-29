@@ -121,6 +121,7 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy, AfterViewInit
 
   protected onRefreshPlannedPayment(): void {
     this.markPlannedPaymentsAsLoaded(false);
+    this.getPlannedPaymentTotalPages();
     this.getPlannedPayments();
   }
 
