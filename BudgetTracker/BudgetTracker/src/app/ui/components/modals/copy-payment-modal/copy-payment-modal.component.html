@@ -7,7 +7,7 @@
       type="button"
       class="btn-close"
       aria-label="Close"
-      (click)="modal.close()">
+      (click)="currentStep == 2 ? infoModal.open() : modal.close(); closeBtnClicked=true;">
     </button>
   </div>
   <div class="row my-3">
@@ -239,7 +239,9 @@
                          paymentNameInput,
                          plannedPaymentEstimatedInput,
                          plannedPaymentRealPriceInput,
-                         paymentCommentInput, budgetId)"
+                         paymentCommentInput,
+                         paymentAssignmentCommentInput,
+                         budgetId)"
                   >
                     <h2 ngbAccordionHeader>
                       <button ngbAccordionButton
@@ -430,6 +432,73 @@
                                     {{ formatString(formConfig.messages.minLength, formConfig.paymentModal.comment.minLength) }}
                                   </label>
                                   <label *ngIf="paymentCommentInput.errors?.['maxlength']">
+                                    {{ formatString(formConfig.messages.maxLength, formConfig.paymentModal.comment.maxLength) }}
+                                  </label>
+                                </div>
+                              }
+                            </div>
+                          </div>
+                        </div>
+                        <hr class="horizontal-light">
+                        <div class="text-center mb-3">
+                          <label for="planned-payment-category">Planned payment category</label>
+                        </div>
+                        <div id="planned-payment-category">
+                          <div class="row">
+                            <div class="col-md-6 mb-3">
+                              <label for="category-name">Category</label>
+                              <div class="input-group">
+                                <input type="text"
+                                       id="category-name"
+                                       class="form-control"
+                                       placeholder="Not assigned"
+                                       value="{{getPlannedPaymentData(budgetId).assignment?.category?.name}}"
+                                       aria-describedby="basic-addon2"
+                                       disabled>
+                                <div class="input-group-append">
+                              <span class="input-group-text"
+                                    id="basic-addon2">
+                                {{ getPaymentType(getPlannedPaymentData(budgetId).assignment, true, appConfig) }}
+                              </span>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                              <label for="category-date-updated">Date updated</label>
+                              <input
+                                type="text"
+                                id="category-date-updated"
+                                name="category-date-updated"
+                                class="form-control"
+                                disabled
+                                value="{{DateUtils.format(getPlannedPaymentData(budgetId).assignment?.category?.dateUpdated)}}"/>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div [className]="ModalUtils.displayMarginFor(paymentAssignmentCommentInput)">
+                              <label for="{{budgetId}}-assignment-comment">Comment</label>
+                              <textarea
+                                id="{{budgetId}}-assignment-comment"
+                                name="{{budgetId}}-assignment-comment"
+                                class="form-control"
+                                rows="{{ displayMobileView() ? 4 : 2 }}"
+                                minlength="{{ formConfig.paymentModal.comment.minLength }}"
+                                maxlength="{{ formConfig.paymentModal.comment.maxLength }}"
+                                #paymentAssignmentCommentInput="ngModel"
+                                [disabled]="disableForm(budgetId)"
+                                [(ngModel)]="getPlannedPaymentData(budgetId).assignment!.comment"
+                                [ngClass]="{
+                                  'is-invalid': paymentAssignmentCommentInput.invalid &&
+                                    (paymentAssignmentCommentInput.dirty || paymentAssignmentCommentInput.touched),
+                                  'is-valid': paymentAssignmentCommentInput.valid }">
+                                </textarea>
+                              @if (paymentAssignmentCommentInput.invalid &&
+                              (paymentAssignmentCommentInput.dirty || paymentAssignmentCommentInput.touched)) {
+                                <div class="invalid-feedback">
+                                  <label *ngIf="paymentAssignmentCommentInput.errors?.['minlength']">
+                                    {{ formatString(formConfig.messages.minLength, formConfig.paymentModal.comment.minLength) }}
+                                  </label>
+                                  <label *ngIf="paymentAssignmentCommentInput.errors?.['maxlength']">
                                     {{ formatString(formConfig.messages.maxLength, formConfig.paymentModal.comment.maxLength) }}
                                   </label>
                                 </div>
