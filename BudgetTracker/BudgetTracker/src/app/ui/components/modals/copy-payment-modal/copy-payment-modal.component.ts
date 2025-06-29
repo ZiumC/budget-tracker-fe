@@ -22,6 +22,7 @@ import {TimerUtils} from "../../../../util/timer.utils";
 import {SpinnerSize} from "../../shared/spinner/spinner.component";
 import {PlannedPaymentStatus} from "../../../../models/modal/copy-payment.model.modal";
 import {toPlannedPaymentDto} from "../../../../util/mapper.utils";
+import {getPaymentType} from "../../../../util/category.utils";
 
 @Component({
   selector: 'app-copy-payment-modal',
@@ -30,7 +31,7 @@ import {toPlannedPaymentDto} from "../../../../util/mapper.utils";
 })
 export class CopyPaymentModalComponent implements OnInit, OnDestroy {
   @ViewChild('copyPaymentModal') copyModal: TemplateRef<HTMLElement>;
-  @ViewChild('infoModal') infoModal: TemplateRef<HTMLElement>;
+  @ViewChild('infoModal') infoModal: any;
   @ViewChild('errorModal') errorModal: any;
   protected readonly formatString = formatString;
   protected readonly format = format;
@@ -54,6 +55,7 @@ export class CopyPaymentModalComponent implements OnInit, OnDestroy {
   protected appConfig: AppConfig;
   protected formConfig: FormConfig;
   protected displayTimer: boolean;
+  protected closeBtnClicked: boolean;
   private plannedPaymentsToCopy: Map<string, PlannedPaymentStatus> = new Map();
   private plannedPaymentToCopy: GetPlannedPaymentDto;
   private pageWidth: number;
@@ -148,6 +150,7 @@ export class CopyPaymentModalComponent implements OnInit, OnDestroy {
     this.selectedBudgetIds = [];
     this.setDefaultDates();
     this.searchBudgets();
+    this.closeBtnClicked = false;
     this.displayTimer = false;
     this.modalService.open(this.copyModal, ModalOptions.default(ModalSize.BIG));
   }
@@ -195,12 +198,13 @@ export class CopyPaymentModalComponent implements OnInit, OnDestroy {
   protected setPlannedPaymentError(
     inputName: NgModel, inputEstimated: NgModel,
     inputReal: NgModel, textareaComment: NgModel,
-    budgetId: string): boolean {
+    inputCategoryAssignment: NgModel, budgetId: string): boolean {
     const isFormInvalid = this.isFormInvalid(
       inputName,
       inputEstimated,
       inputReal,
-      textareaComment);
+      textareaComment,
+      inputCategoryAssignment);
 
     const plannedPaymentStatus = this.plannedPaymentsToCopy.get(budgetId)!.status;
     return isFormInvalid || (!ModalUtils.isUndefinedStatus(plannedPaymentStatus) &&
@@ -212,8 +216,11 @@ export class CopyPaymentModalComponent implements OnInit, OnDestroy {
     this.currentStep = this.currentStep + 1;
   }
 
-  protected onCancel(canceled: boolean) {
+  protected onCancel(canceled: boolean): void {
     if (canceled) {
+      if (this.closeBtnClicked) {
+        this.modalService.dismissAll();
+      }
       this.selectedBudget = "";
       this.currentStep = this.currentStep - 1;
     }
@@ -295,12 +302,14 @@ export class CopyPaymentModalComponent implements OnInit, OnDestroy {
 
   private isFormInvalid(
     inputName: NgModel, inputEstimated: NgModel,
-    inputReal: NgModel, textareaComment: NgModel): boolean {
+    inputReal: NgModel, textareaComment: NgModel,
+    categoryAssignment: NgModel): boolean {
     const formErrors = [
       inputName.control.errors,
       inputEstimated.control.errors,
       inputReal.control.errors,
-      textareaComment.control.errors
+      textareaComment.control.errors,
+      categoryAssignment.control.errors
     ];
 
     return formErrors.find(e => e != null) != null;
@@ -321,4 +330,6 @@ export class CopyPaymentModalComponent implements OnInit, OnDestroy {
       return false;
     }
   }
+
+  protected readonly getPaymentType = getPaymentType;
 }
