@@ -132,6 +132,7 @@ export class PaymentComponent implements OnInit, OnDestroy, AfterViewInit {
 
   protected onRefreshPayment(): void {
     this.markPaymentsAsLoaded(false);
+    this.getPaymentTotalPages();
     this.getPayments();
   }
 

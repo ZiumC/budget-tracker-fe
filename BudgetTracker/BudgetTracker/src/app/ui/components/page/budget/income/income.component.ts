@@ -113,6 +113,7 @@ export class IncomeComponent implements OnInit, OnDestroy, AfterViewInit {
 
   protected onRefreshIncome(): void {
     this.markIncomesAsLoaded(false);
+    this.getIncomeTotalPages();
     this.getIncomes();
   }
 
