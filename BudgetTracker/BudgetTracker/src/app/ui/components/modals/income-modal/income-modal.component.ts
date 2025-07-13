@@ -65,6 +65,7 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
   }
 
   open(incomeData?: GetIncomeDto): void {
+    this.getCategories();
     this.setDefaultIncomeForm();
     this.isEditing = incomeData != null;
 
@@ -146,7 +147,7 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
     } as GetIncomeDto;
   }
 
-  private getCategories(): void {
+  protected getCategories(): void {
     const categoriesOrder = this.appConfig.request.order;
     const params: RequestParams = {
       page: 1,
@@ -163,6 +164,6 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
           this.incomeCategoriesDto = response.body;
         }
       })
-    )
+    );
   }
 }

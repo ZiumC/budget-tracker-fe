@@ -1,1 +1,74 @@
-<p>typehead works!</p>
+<div id="category" class="form-control">
+  <div class="row mb-2">
+    <div class="my-1">
+      <label for="category-model">Name</label>
+      <span class="text-danger">*</span>
+      <div class="input-group">
+        <input #typeahead="ngbTypeahead"
+               id="category-model"
+               name="category-model"
+               type="text"
+               class="form-control"
+               [(ngModel)]="selectedCategoryDto"
+               [resultFormatter]="typeaheadFormatter"
+               [inputFormatter]="typeaheadFormatter"
+               [ngbTypeahead]="typeaheadSearch"
+               (focus)="focusSubject.next($any($event).target.value)"
+               (click)="clickSubject.next($any($event).target.value)"
+               (ngModelChange)="onTypeaheadChange()"
+               placeholder="Search for a category..."
+               [ngModelOptions]="{standalone: true}"/>
+        <div class="input-group-append">
+          <button class="btn btn-outline-danger"
+                  type="button"
+                  (click)="typeheadClear()">
+            <i class="bi bi-x-circle"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row"
+       [style]="selectedCategoryDto.description ? '' : 'display: none'">
+    <div class="col-md-6 mb-2">
+      <label for="category-description">Category description</label>
+      <textarea
+        id="category-description"
+        class="form-control"
+        rows="4"
+        required
+        [value]="selectedCategoryDto.description"
+        disabled>
+              </textarea>
+    </div>
+    <div class="col-md-6">
+      <div [className]="ModalUtils.displayMarginFor(paymentAssignmentCommentInput)">
+        <label for="category-assignment-comment">Comment</label>
+        <textarea
+          id="category-assignment-comment"
+          name="category-assignment-comment"
+          class="form-control"
+          rows="4"
+          minlength="{{ formConfig.paymentModal.comment.minLength }}"
+          maxlength="{{ formConfig.paymentModal.comment.maxLength }}"
+          #paymentAssignmentCommentInput="ngModel"
+          [(ngModel)]="assignmentComment"
+          [ngClass]="{'is-invalid': paymentAssignmentCommentInput.invalid &&
+                     (paymentAssignmentCommentInput.dirty || paymentAssignmentCommentInput.touched),
+                     'is-valid': paymentAssignmentCommentInput.valid }">
+          </textarea>
+        @if (paymentAssignmentCommentInput.invalid &&
+        (paymentAssignmentCommentInput.dirty || paymentAssignmentCommentInput.touched)) {
+          <div class="invalid-feedback">
+            <label *ngIf="paymentAssignmentCommentInput.errors?.['minlength']">
+              {{ formatString(formConfig.messages.minLength, formConfig.paymentModal.comment.minLength) }}
+            </label>
+            <label *ngIf="paymentAssignmentCommentInput.errors?.['maxlength']">
+              {{ formatString(formConfig.messages.maxLength, formConfig.paymentModal.comment.maxLength) }}
+            </label>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>
