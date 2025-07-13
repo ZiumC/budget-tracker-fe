@@ -9,7 +9,7 @@ import {PageDto} from "../../models/dto/page.model.dto";
 import {PaymentCategoryDto, CategoryType, GetPaymentCategoryDto} from "../../models/dto/category.model.dto";
 import {BudgetUrls, CategoryUrls, IncomeUrls, PaginationUrls, PaymentUrls} from "./http";
 import {PlannedPaymentDto} from "../../models/dto/planned-payment.model.dto";
-import {GetPaymentAssignmentDto} from "../../models/dto/assignment.model.dto";
+import {GetIncomeAssignmentDto, GetPaymentAssignmentDto} from "../../models/dto/assignment.model.dto";
 
 @Injectable({
   providedIn: 'root',
@@ -137,6 +137,14 @@ export class HttpService {
     requestParams: RequestParams): Observable<HttpResponse<GetPaymentCategoryDto[]>> {
     return this.httpClient.get<GetPaymentCategoryDto[]>(
       CategoryUrls.incomeCategory(requestParams),
+      {observe: 'response'}
+    )
+  }
+
+  public getIncomeAssignment(idIncome: string):
+    Observable<HttpResponse<GetIncomeAssignmentDto>> {
+    return this.httpClient.get<GetIncomeAssignmentDto>(
+      IncomeUrls.incomeAssignment(idIncome),
       {observe: 'response'}
     )
   }

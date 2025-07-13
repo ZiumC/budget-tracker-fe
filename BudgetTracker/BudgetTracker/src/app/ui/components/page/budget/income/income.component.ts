@@ -16,6 +16,7 @@ import {generateErrorModel} from "../../../../../util/http.util";
 import {TimerUtils} from "../../../../../util/timer.utils";
 import {OrderOptions} from "../../../shared/order/order.component";
 import {PageDto} from "../../../../../models/dto/page.model.dto";
+import {GetIncomeAssignmentDto} from "../../../../../models/dto/assignment.model.dto";
 
 @Component({
   selector: 'app-income',
@@ -40,6 +41,7 @@ export class IncomeComponent implements OnInit, OnDestroy, AfterViewInit {
   protected incomeTotalPages: number | undefined;
   protected incomeRequestModel: RequestParams;
   protected incomeResponseModel: ResponseModel;
+  protected assignmentStatusCode: number = 0;
   protected incomeLoader: boolean;
 
   constructor(
@@ -122,6 +124,13 @@ export class IncomeComponent implements OnInit, OnDestroy, AfterViewInit {
       this.componentDimension.width <= this.appConfig.componentMobileWidth;
   }
 
+  protected onIncomeSelect(income: GetIncomeDto): void {
+    if (this.selectedIncome !== income) {
+      this.getIncomeAssignment(income.id);
+    }
+    this.selectedIncome = income;
+  }
+
   private getIncomes(): void {
     this.subscriptions.push(
       this.httpService.getBudgetIncomes(
@@ -182,5 +191,24 @@ export class IncomeComponent implements OnInit, OnDestroy, AfterViewInit {
   private setComponentDimensions(): void {
     this.componentDimension.width = this.element.nativeElement.offsetWidth;
     this.componentDimension.height = this.element.nativeElement.offsetHeight;
+  }
+
+  private getIncomeAssignment(idIncome: string): void {
+    this.subscriptions.push(
+      this.httpService.getIncomeAssignment(
+        idIncome).subscribe({
+        next: (response: HttpResponse<GetIncomeAssignmentDto>): void => {
+          for (let income of this.incomesDto!) {
+            if (income.id == idIncome) {
+              income.assignment = response.body;
+            }
+          }
+          this.assignmentStatusCode = response.status;
+        },
+        error: (err): void => {
+          this.assignmentStatusCode = err.status;
+        },
+      })
+    )
   }
 }
