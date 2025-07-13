@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {formatString} from "../../../../util/string.utils";
 import {ModalUtils} from "../../../../util/modal.utils";
 import {ConfigService} from "../../../../services/config/config.service";
@@ -16,6 +16,7 @@ export class TypeheadComponent implements OnInit {
   @Input() categoriesDto: GetPaymentCategoryDto[] | GetIncomeCategoryDto[] | null;
   @Input() selectedCategoryDto: GetPaymentCategoryDto | GetIncomeCategoryDto;
   @Input() isPaymentCategories: boolean;
+  @Input() assignmentComment: string;
   @Input() paymentCategoryType: CategoryType;
   @Output() validationEvent = new EventEmitter<boolean>();
   @Output() categoryEvent = new EventEmitter<{
@@ -24,9 +25,9 @@ export class TypeheadComponent implements OnInit {
   }>();
   @Input() isEditing: boolean;
   @Input() assignmentStatusCode: number;
+  @ViewChild('form') typeheadForm: any;
   protected readonly formatString = formatString;
   protected readonly ModalUtils = ModalUtils;
-  protected assignmentComment: string;
   protected formConfig: FormConfig;
   protected appConfig: AppConfig;
   protected focusSubject = new Subject<string>();
@@ -55,12 +56,6 @@ export class TypeheadComponent implements OnInit {
       this.typeheadClear();
     }
 
-    if (this.isPaymentCategories) {
-      this.selectedCategoryDto = new GetPaymentCategoryDto();
-    } else {
-      this.selectedCategoryDto = new GetIncomeCategoryDto();
-    }
-
     this.emitValidation();
   }
 
@@ -84,11 +79,15 @@ export class TypeheadComponent implements OnInit {
       }));
   }
 
-  protected onTypeaheadChange(): void {
+  protected onTypeaheadNameChange(): void {
     if (this.selectedCategoryDto?.name == this.formConfig.messages.typeahead.notfound) {
       this.typeheadClear();
     }
+    this.emitCategoryData();
+    this.emitValidation();
+  }
 
+  protected onTypeaheadCommentChange(): void {
     this.emitCategoryData();
     this.emitValidation();
   }
@@ -100,6 +99,8 @@ export class TypeheadComponent implements OnInit {
       this.selectedCategoryDto = new GetIncomeCategoryDto();
     }
     this.assignmentComment = "";
+
+    this.emitValidation();
   }
 
   protected emitCategoryData(): void {
@@ -110,18 +111,28 @@ export class TypeheadComponent implements OnInit {
   }
 
   private emitValidation(): void {
-    let result = false;
+    let result: boolean[] = [];
 
     if (this.isPaymentCategories) {
       if (this.paymentCategoryType && this.selectedCategoryDto.id) {
-        result = true;
+        result.push(true);
+      } else {
+        result.push(false);
       }
     } else {
       if (this.selectedCategoryDto.id) {
-        result = true;
+        result.push(true);
+      } else {
+        result.push(false);
       }
     }
 
-    this.validationEvent.emit(result);
+    if (this.typeheadForm) {
+      result.push(this.typeheadForm.valid);
+    }
+
+    this.validationEvent.emit(result.every(e => {
+      return e;
+    }));
   }
 }

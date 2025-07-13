@@ -6,7 +6,7 @@ import {ResponseModel} from "../../../../models/response.model";
 import {SubscriptionUtils} from "../../../../util/subscription.utils";
 import {SpinnerSize} from "../../shared/spinner/spinner.component";
 import {HttpResponse} from "@angular/common/http";
-import {ModalOptions, ModalUtils} from "../../../../util/modal.utils";
+import {ModalOptions, ModalSize, ModalUtils} from "../../../../util/modal.utils";
 import {GetIncomeDto, IncomeDto} from "../../../../models/dto/income.model.dto";
 import {AppConfig} from "../../../../models/config/config";
 import {FormConfig} from "../../../../models/config/form.model.config";
@@ -26,6 +26,7 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
   @ViewChild('incomeModal') incomeModal: any;
   @ViewChild('errorModal') errorModal: any;
   @Input() idBudget: string;
+  @Input() assignmentStatusCode: number;
   @Output() refreshIncomeEvent = new EventEmitter<boolean>();
   protected readonly SpinnerSize = SpinnerSize;
   protected readonly ModalUtils = ModalUtils;
@@ -78,9 +79,15 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
       this.incomeDto.name = incomeData.name;
       this.incomeDto.wage = incomeData.wage;
       this.incomeDto.isSurplus = incomeData.isSurplus;
+
+      const incomeAssignment = incomeData.assignment;
+      if (incomeAssignment) {
+        this.assignedCategoryDto = incomeAssignment.category;
+        this.incomeDto.assignmentComment = incomeAssignment.comment;
+      }
     }
 
-    this.modalService.open(this.incomeModal, ModalOptions.default());
+    this.modalService.open(this.incomeModal, ModalOptions.default(ModalSize.BIG));
   }
 
   protected saveIncome(): void {
@@ -88,6 +95,7 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
 
     const surplus = String(this.incomeDto.isSurplus);
     this.incomeDto.isSurplus = JSON.parse(surplus);
+    this.incomeDto.idIncomeCategory = this.assignedCategoryDto.id;
 
     new TimerUtils(this.appConfig.animation.duration.default).start()
       .subscribe(finished => {
@@ -158,7 +166,7 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
       name: "",
       isSurplus: false,
       idIncomeCategory: "",
-      assignmentComment: "",
+      assignmentComment: ""
     } as IncomeDto;
   }
 

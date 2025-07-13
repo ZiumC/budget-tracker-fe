@@ -1,10 +1,10 @@
-<div id="category" class="form-control">
+<form ngbAutofocus #form="ngForm" class="form-control">
   <div class="row mb-2">
     <div class="my-1">
       <label for="category-model">Name</label>
       <span class="text-danger">*</span>
       <div class="input-group">
-        <input #typeahead="ngbTypeahead"
+        <input
                id="category-model"
                name="category-model"
                type="text"
@@ -15,7 +15,7 @@
                [ngbTypeahead]="typeaheadSearch"
                (focus)="focusSubject.next($any($event).target.value)"
                (click)="clickSubject.next($any($event).target.value)"
-               (ngModelChange)="onTypeaheadChange()"
+               (ngModelChange)="onTypeaheadNameChange()"
                placeholder="Search for a category..."
                [ngModelOptions]="{standalone: true}"/>
         <div class="input-group-append">
@@ -29,20 +29,21 @@
     </div>
   </div>
   <div class="row"
-       [style]="selectedCategoryDto.description ? '' : 'display: none'">
+       [style]="selectedCategoryDto.id ? '' : 'display: none'">
     <div class="col-md-6 mb-2">
       <label for="category-description">Category description</label>
       <textarea
         id="category-description"
         class="form-control"
         rows="4"
+        placeholder="No description"
         required
         [value]="selectedCategoryDto.description"
         disabled>
               </textarea>
     </div>
     <div class="col-md-6">
-      <div [className]="ModalUtils.displayMarginFor(paymentAssignmentCommentInput)">
+      <div [className]="ModalUtils.displayMarginFor(assignmentCommentInput)">
         <label for="category-assignment-comment">Comment</label>
         <textarea
           id="category-assignment-comment"
@@ -51,19 +52,20 @@
           rows="4"
           minlength="{{ formConfig.paymentModal.comment.minLength }}"
           maxlength="{{ formConfig.paymentModal.comment.maxLength }}"
-          #paymentAssignmentCommentInput="ngModel"
+          #assignmentCommentInput="ngModel"
           [(ngModel)]="assignmentComment"
-          [ngClass]="{'is-invalid': paymentAssignmentCommentInput.invalid &&
-                     (paymentAssignmentCommentInput.dirty || paymentAssignmentCommentInput.touched),
-                     'is-valid': paymentAssignmentCommentInput.valid }">
+          (ngModelChange)="onTypeaheadCommentChange()"
+          [ngClass]="{'is-invalid': assignmentCommentInput.invalid &&
+                     (assignmentCommentInput.dirty || assignmentCommentInput.touched),
+                     'is-valid': assignmentCommentInput.valid }">
           </textarea>
-        @if (paymentAssignmentCommentInput.invalid &&
-        (paymentAssignmentCommentInput.dirty || paymentAssignmentCommentInput.touched)) {
+        @if (assignmentCommentInput.invalid &&
+        (assignmentCommentInput.dirty || assignmentCommentInput.touched)) {
           <div class="invalid-feedback">
-            <label *ngIf="paymentAssignmentCommentInput.errors?.['minlength']">
+            <label *ngIf="assignmentCommentInput.errors?.['minlength']">
               {{ formatString(formConfig.messages.minLength, formConfig.paymentModal.comment.minLength) }}
             </label>
-            <label *ngIf="paymentAssignmentCommentInput.errors?.['maxlength']">
+            <label *ngIf="assignmentCommentInput.errors?.['maxlength']">
               {{ formatString(formConfig.messages.maxLength, formConfig.paymentModal.comment.maxLength) }}
             </label>
           </div>
@@ -71,4 +73,4 @@
       </div>
     </div>
   </div>
-</div>
+</form>

@@ -127,8 +127,11 @@
             }
           </div>
           <app-typehead [categoriesDto]="incomeCategoriesDto"
+                        [selectedCategoryDto]="assignedCategoryDto"
+                        [assignmentComment]="incomeDto.assignmentComment"
                         [isPaymentCategories]="false"
                         [isEditing]="isEditing"
+                        [assignmentStatusCode]="assignmentStatusCode"
                         (validationEvent)="onTypeheadChanged($event)"
                         (categoryEvent)="onCategoryChanged($event)">
 
