@@ -9,7 +9,7 @@ import {PageDto} from "../../models/dto/page.model.dto";
 import {PaymentCategoryDto, CategoryType, GetPaymentCategoryDto} from "../../models/dto/category.model.dto";
 import {BudgetUrls, CategoryUrls, IncomeUrls, PaginationUrls, PaymentUrls} from "./http";
 import {PlannedPaymentDto} from "../../models/dto/planned-payment.model.dto";
-import {GetAssignmentDto} from "../../models/dto/assignment.model.dto";
+import {GetPaymentAssignmentDto} from "../../models/dto/assignment.model.dto";
 
 @Injectable({
   providedIn: 'root',
@@ -234,8 +234,8 @@ export class HttpService {
   }
 
   public getPaymentAssignment(idPayment: string, isPlanned: boolean):
-    Observable<HttpResponse<GetAssignmentDto>> {
-    return this.httpClient.get<GetAssignmentDto>(
+    Observable<HttpResponse<GetPaymentAssignmentDto>> {
+    return this.httpClient.get<GetPaymentAssignmentDto>(
       PaymentUrls.paymentAssignment(idPayment, isPlanned),
       {observe: 'response'}
     )

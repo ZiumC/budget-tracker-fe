@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import {GetAssignmentDto} from "./assignment.model.dto";
+import {GetPaymentAssignmentDto} from "./assignment.model.dto";
 
 export class GetPlannedPaymentDto {
   id: string;
@@ -9,7 +9,7 @@ export class GetPlannedPaymentDto {
   isPaid: boolean;
   comment: string;
   dateUpdated: Date;
-  assignment: GetAssignmentDto | null;
+  assignment: GetPaymentAssignmentDto | null;
 }
 
 export class PlannedPaymentDto {

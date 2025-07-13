@@ -1,10 +1,10 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {formatString} from "../../../../util/string.utils";
 import {ModalUtils} from "../../../../util/modal.utils";
 import {ConfigService} from "../../../../services/config/config.service";
 import {FormConfig} from "../../../../models/config/form.model.config";
 import {AppConfig} from "../../../../models/config/config";
-import {GetIncomeCategoryDto, GetPaymentCategoryDto} from "../../../../models/dto/category.model.dto";
+import {CategoryType, GetIncomeCategoryDto, GetPaymentCategoryDto} from "../../../../models/dto/category.model.dto";
 import {debounceTime, distinctUntilChanged, map, merge, Observable, Subject} from "rxjs";
 
 @Component({
@@ -14,10 +14,18 @@ import {debounceTime, distinctUntilChanged, map, merge, Observable, Subject} fro
 })
 export class TypeheadComponent implements OnInit {
   @Input() categoriesDto: GetPaymentCategoryDto[] | GetIncomeCategoryDto[] | null;
+  @Input() selectedCategoryDto: GetPaymentCategoryDto | GetIncomeCategoryDto;
   @Input() isPaymentCategories: boolean;
+  @Input() paymentCategoryType: CategoryType;
+  @Output() validationEvent = new EventEmitter<boolean>();
+  @Output() categoryEvent = new EventEmitter<{
+    category: GetPaymentCategoryDto | GetIncomeCategoryDto,
+    assignmentComment: string
+  }>();
+  @Input() isEditing: boolean;
+  @Input() assignmentStatusCode: number;
   protected readonly formatString = formatString;
   protected readonly ModalUtils = ModalUtils;
-  protected selectedCategoryDto: GetPaymentCategoryDto | GetIncomeCategoryDto;
   protected assignmentComment: string;
   protected formConfig: FormConfig;
   protected appConfig: AppConfig;
@@ -37,8 +45,14 @@ export class TypeheadComponent implements OnInit {
       throw Error("Config not provided")
     }
 
-    if (this.isPaymentCategories == undefined){
+    if (this.isPaymentCategories == undefined) {
       throw Error("Unknown is this payment category or income category");
+    } else if (this.isPaymentCategories && this.paymentCategoryType == undefined) {
+      throw Error("Payment category type is not provided");
+    }
+
+    if (!this.isEditing || this.assignmentStatusCode != 200) {
+      this.typeheadClear();
     }
 
     if (this.isPaymentCategories) {
@@ -46,6 +60,8 @@ export class TypeheadComponent implements OnInit {
     } else {
       this.selectedCategoryDto = new GetIncomeCategoryDto();
     }
+
+    this.emitValidation();
   }
 
   protected typeaheadFormatter = (x: GetPaymentCategoryDto | GetIncomeCategoryDto): string => x.name;
@@ -72,14 +88,40 @@ export class TypeheadComponent implements OnInit {
     if (this.selectedCategoryDto?.name == this.formConfig.messages.typeahead.notfound) {
       this.typeheadClear();
     }
+
+    this.emitCategoryData();
+    this.emitValidation();
   }
 
   protected typeheadClear(): void {
-    if (this.isPaymentCategories){
+    if (this.isPaymentCategories) {
       this.selectedCategoryDto = new GetPaymentCategoryDto();
     } else {
       this.selectedCategoryDto = new GetIncomeCategoryDto();
     }
     this.assignmentComment = "";
+  }
+
+  protected emitCategoryData(): void {
+    this.categoryEvent.emit({
+      category: this.selectedCategoryDto,
+      assignmentComment: this.assignmentComment
+    });
+  }
+
+  private emitValidation(): void {
+    let result = false;
+
+    if (this.isPaymentCategories) {
+      if (this.paymentCategoryType && this.selectedCategoryDto.id) {
+        result = true;
+      }
+    } else {
+      if (this.selectedCategoryDto.id) {
+        result = true;
+      }
+    }
+
+    this.validationEvent.emit(result);
   }
 }

@@ -1,9 +1,9 @@
 import {AppConfig} from "../models/config/config";
-import {GetAssignmentDto} from "../models/dto/assignment.model.dto";
+import {GetPaymentAssignmentDto} from "../models/dto/assignment.model.dto";
 
 
 export function getPaymentType(
-  assignmentDto: GetAssignmentDto | null,
+  assignmentDto: GetPaymentAssignmentDto | null,
   toUpper: boolean,
   appCfg: AppConfig): string {
 
