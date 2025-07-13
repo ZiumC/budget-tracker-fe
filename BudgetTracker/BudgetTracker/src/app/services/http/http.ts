@@ -218,9 +218,17 @@ export class CategoryUrls {
 
 export class IncomeUrls {
   private static CONTROLLER = "/Incomes";
+  private static ACTIONS = {
+    ASSIGNMENT: "/assignment"
+  }
 
   static incomeId(idIncome: string): string {
     return HostUrl.getHostUrl() + IncomeUrls.CONTROLLER + "/" + idIncome;
+  }
+
+  static incomeAssignment(idIncome: string): string {
+    return HostUrl.getHostUrl() + IncomeUrls.CONTROLLER + "/" + idIncome + IncomeUrls.ACTIONS.ASSIGNMENT;
+
   }
 }
 

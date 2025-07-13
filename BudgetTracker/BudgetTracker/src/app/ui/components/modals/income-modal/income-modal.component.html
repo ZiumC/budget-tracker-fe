@@ -138,7 +138,7 @@
     </div>
     <div class="modal-footer">
       <button
-        [disabled]="form.invalid"
+        [disabled]="!(form.valid && isChildValid)"
         type="button"
         class="btn btn-outline-secondary"
         (click)="saveIncome()">

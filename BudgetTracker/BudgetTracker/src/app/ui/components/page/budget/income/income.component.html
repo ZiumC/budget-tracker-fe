@@ -23,15 +23,12 @@
                [class.surplus-border]="income.isSurplus">
             <h2 ngbAccordionHeader>
               <button ngbAccordionButton
-                      (click)="selectedIncome = income"
+                      (click)="onIncomeSelect(income)"
                       class="light-gray-bg accordion-button-header">
                 <table>
                   <tr class="table-header">
                     <th>Name</th>
                     <th>Income (PLN)</th>
-                    <th [style.display]="displayMobileView() ? 'none' : ''">
-                      Appropriation
-                    </th>
                     <th [style.display]="displayMobileView() ? 'none' : ''">
                       Date created
                     </th>
@@ -39,9 +36,6 @@
                   <tr>
                     <td>{{ income.name }}</td>
                     <td>{{ format(income.wage) }}</td>
-                    <td [style.display]="displayMobileView() ? 'none' : ''">
-                      #Category
-                    </td>
                     <td [style.display]="displayMobileView() ? 'none' : ''">
                       {{ DateUtils.format(income.dateUpdated) }}
                     </td>
@@ -57,23 +51,24 @@
                   </div>
                 </div>
                 <div class="row">
-                  <div [style.display]="displayMobileView() ? '' : 'none'"
-                       class="mb-3 condition-container">
+                  <div class="mb-3 condition-container">
                     <div class="form-group">
-                      <label for="income-category">Category
+                      <label for="category-assignment">Category
                       </label>
                       <input type="text"
-                             id="income-category"
+                             id="category-assignment"
                              class="form-control mb-2"
-                             value="#category"
+                             placeholder="Not assigned"
+                             value="{{income.assignment?.category?.name}}"
                              disabled>
-                      <label for="income-date-updated">Date updated
+                      <label for="category-assignment-comment">Assignment Comment
                       </label>
-                      <input type="text"
-                             id="income-date-updated"
-                             class="form-control mb-2"
-                             value="{{DateUtils.formatWithTime(income.dateUpdated)}}"
-                             disabled>
+                      <textarea type="text"
+                                id="category-assignment-comment"
+                                class="form-control"
+                                placeholder="{{income.assignment ? '' : 'Not assigned'}}"
+                                value="{{ income.assignment?.comment }}"
+                                disabled></textarea>
                     </div>
                   </div>
                 </div>
