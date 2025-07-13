@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
-import {CategoryType, GetCategoryDto} from "../../../../models/dto/category.model.dto";
+import {CategoryType, GetPaymentCategoryDto} from "../../../../models/dto/category.model.dto";
 import {formatString} from "../../../../util/string.utils";
 import {ModalUtils} from "../../../../util/modal.utils";
 import {debounceTime, distinctUntilChanged, map, merge, Observable, Subject, Subscription} from "rxjs";
@@ -19,19 +19,19 @@ import {AppConfig} from "../../../../models/config/config";
 export class TypeheadCategoryComponent implements OnInit, OnDestroy {
   @ViewChild('typeahead') typeahead: any;
   @Input() categoryType: CategoryType | null;
-  @Input() selectedCategoryDto: GetCategoryDto = new GetCategoryDto();
+  @Input() selectedCategoryDto: GetPaymentCategoryDto = new GetPaymentCategoryDto();
   @Input() assignmentComment: string;
   @Input() isEditing: boolean;
   @Input() assignmentStatusCode: number;
   @Output() validationEvent = new EventEmitter<boolean>();
-  @Output() categoryEvent = new EventEmitter<{ category: GetCategoryDto, assignmentComment: string }>();
+  @Output() categoryEvent = new EventEmitter<{ category: GetPaymentCategoryDto, assignmentComment: string }>();
   protected readonly CategoryType = CategoryType;
   protected readonly formatString = formatString;
   protected readonly ModalUtils = ModalUtils;
   protected formConfig: FormConfig;
   protected appConfig: AppConfig;
   protected subscriptions: Subscription[] = [];
-  protected categoriesDto: GetCategoryDto[] | null;
+  protected categoriesDto: GetPaymentCategoryDto[] | null;
   protected focusSubject = new Subject<string>();
   protected clickSubject = new Subject<string>();
   protected deleteSubject = new Subject<string>();
@@ -62,19 +62,19 @@ export class TypeheadCategoryComponent implements OnInit, OnDestroy {
     SubscriptionUtils.unsubscribeAll(this.subscriptions);
   }
 
-  protected typeaheadFormatter = (x: GetCategoryDto): string => x.name;
+  protected typeaheadFormatter = (x: GetPaymentCategoryDto): string => x.name;
 
-  protected typeaheadSearch = (text$: Observable<string>): Observable<GetCategoryDto[]> => {
+  protected typeaheadSearch = (text$: Observable<string>): Observable<GetPaymentCategoryDto[]> => {
     const debouncedText = text$.pipe(debounceTime(200), distinctUntilChanged());
     return merge(debouncedText, this.focusSubject, this.clickSubject, this.deleteSubject).pipe(
       map(term => {
-        let result: GetCategoryDto[] = [];
+        let result: GetPaymentCategoryDto[] = [];
         if (this.categoriesDto) {
           result = this.categoriesDto;
           if (term.length >= 1) {
             result = this.categoriesDto.filter(v => v.name.toLowerCase().includes(term.toLowerCase())).slice(0, 5);
             if (result.length == 0) {
-              result = [{name: this.formConfig.messages.typeahead.notfound} as GetCategoryDto];
+              result = [{name: this.formConfig.messages.typeahead.notfound} as GetPaymentCategoryDto];
             }
           }
         }
@@ -115,7 +115,7 @@ export class TypeheadCategoryComponent implements OnInit, OnDestroy {
   }
 
   protected typeheadClear(): void {
-    this.selectedCategoryDto = new GetCategoryDto();
+    this.selectedCategoryDto = new GetPaymentCategoryDto();
     this.assignmentComment = "";
     this.emitValidation();
   }
@@ -131,11 +131,11 @@ export class TypeheadCategoryComponent implements OnInit, OnDestroy {
 
     if (this.categoryType) {
       this.subscriptions.push(
-        this.httpService.getCategories(
+        this.httpService.getPaymentCategories(
           this.categoryType,
           params
         ).subscribe({
-          next: (response: HttpResponse<GetCategoryDto[]>): void => {
+          next: (response: HttpResponse<GetPaymentCategoryDto[]>): void => {
             this.categoriesDto = response.body;
           }
         })

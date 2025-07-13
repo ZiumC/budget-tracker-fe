@@ -166,6 +166,7 @@ export class CategoryUrls {
   private static CONTROLLER = "/Categories";
   private static ACTIONS = {
     PAYMENT: "/payment",
+    INCOME: "/income",
   }
 
   static paymentCategory(type: string | null, requestParam: RequestParams | null): string {
@@ -191,6 +192,24 @@ export class CategoryUrls {
     return result;
   }
 
+  static incomeCategory(requestParam: RequestParams | null): string {
+    let result = HostUrl.getHostUrl() + CategoryUrls.CONTROLLER;
+    result = result + CategoryUrls.ACTIONS.INCOME;
+
+    if (requestParam) {
+      let orderQuery = ParamsQuery.getOrderQuery(requestParam);
+      if (orderQuery) {
+        result = result + "&" + orderQuery;
+      }
+
+      let paginationQuery = ParamsQuery.getPaginationQuery(requestParam);
+      if (paginationQuery) {
+        result = result + "&" + paginationQuery;
+      }
+    }
+    return result;
+  }
+
   static paymentId(idPayment: string): string {
     let result = HostUrl.getHostUrl() + CategoryUrls.CONTROLLER;
     return result + CategoryUrls.ACTIONS.PAYMENT + "/" + idPayment;
@@ -212,9 +231,11 @@ export class PaginationUrls {
     CATEGORIES: "/categories",
   }
   private static SUB_ACTIONS = {
+    PAYMENT: "/payment",
     REGULAR_PAYMENTS: "/payments",
     PLANNED_PAYMENTS: "/payments/planned",
-    INCOMES: "/incomes"
+    INCOMES: "/incomes",
+    INCOME: "/income"
   }
 
   static regularPaymentsPagination(idBudget: string, requestParam: RequestParams): string {
@@ -261,7 +282,7 @@ export class PaginationUrls {
 
   static paymentCategories(type: CategoryType, requestParam: RequestParams): string {
     let result = HostUrl.getHostUrl() + PaginationUrls.CONTROLLER;
-    result = result + PaginationUrls.ACTIONS.CATEGORIES;
+    result = result + PaginationUrls.ACTIONS.CATEGORIES + PaginationUrls.SUB_ACTIONS.PAYMENT;
     return result + "?type=" + type.valueOf() + "&pageSize=" + requestParam.pageSize;
   }
 }

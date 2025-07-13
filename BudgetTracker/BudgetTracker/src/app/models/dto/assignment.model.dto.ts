@@ -1,8 +1,8 @@
-import {GetCategoryDto} from "./category.model.dto";
+import {GetPaymentCategoryDto} from "./category.model.dto";
 
 export class GetAssignmentDto {
   id: string;
-  category: GetCategoryDto;
+  category: GetPaymentCategoryDto;
   comment: string;
   dateUpdated: Date;
 }

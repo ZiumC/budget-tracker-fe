@@ -6,7 +6,7 @@ import {GetIncomeDto, IncomeDto} from "../../models/dto/income.model.dto";
 import {PaymentDto, PaymentStatusDto} from "../../models/dto/payment.model.dto";
 import {BudgetDto, GetBudgetDto} from "../../models/dto/budget.model.dto";
 import {PageDto} from "../../models/dto/page.model.dto";
-import {CategoryDto, CategoryType, GetCategoryDto} from "../../models/dto/category.model.dto";
+import {PaymentCategoryDto, CategoryType, GetPaymentCategoryDto} from "../../models/dto/category.model.dto";
 import {BudgetUrls, CategoryUrls, IncomeUrls, PaginationUrls, PaymentUrls} from "./http";
 import {PlannedPaymentDto} from "../../models/dto/planned-payment.model.dto";
 import {GetAssignmentDto} from "../../models/dto/assignment.model.dto";
@@ -133,6 +133,14 @@ export class HttpService {
     )
   }
 
+  public getIncomeCategories(
+    requestParams: RequestParams): Observable<HttpResponse<GetPaymentCategoryDto[]>> {
+    return this.httpClient.get<GetPaymentCategoryDto[]>(
+      CategoryUrls.incomeCategory(requestParams),
+      {observe: 'response'}
+    )
+  }
+
   public updatePayment(
     idPayment: string,
     paymentDto: PaymentDto | PlannedPaymentDto,
@@ -181,10 +189,10 @@ export class HttpService {
     )
   }
 
-  public getCategories(
+  public getPaymentCategories(
     type: CategoryType,
-    requestParams: RequestParams): Observable<HttpResponse<GetCategoryDto[]>> {
-    return this.httpClient.get<GetCategoryDto[]>(
+    requestParams: RequestParams): Observable<HttpResponse<GetPaymentCategoryDto[]>> {
+    return this.httpClient.get<GetPaymentCategoryDto[]>(
       CategoryUrls.paymentCategory(type, requestParams),
       {observe: 'response'}
     )
@@ -199,7 +207,7 @@ export class HttpService {
     )
   }
 
-  public createCategory(categoryDto: CategoryDto):
+  public createCategory(categoryDto: PaymentCategoryDto):
     Observable<HttpResponse<{}>> {
     return this.httpClient.post(
       CategoryUrls.paymentCategory(null, null),
@@ -208,7 +216,7 @@ export class HttpService {
     )
   }
 
-  public updateCategory(idCategory: string, categoryDto: CategoryDto):
+  public updateCategory(idCategory: string, categoryDto: PaymentCategoryDto):
     Observable<HttpResponse<{}>> {
     return this.httpClient.put(
       CategoryUrls.paymentId(idCategory),

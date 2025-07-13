@@ -37,6 +37,7 @@ import { CategoryModalComponent } from './ui/components/modals/category-modal/ca
 import { TypeheadCategoryComponent } from './ui/components/shared/typehead-category/typehead-category.component';
 import { CopyPaymentModalComponent } from './ui/components/modals/copy-payment-modal/copy-payment-modal.component';
 import { InfoModalComponent } from './ui/components/modals/info-modal/info-modal.component';
+import { TypeheadComponent } from './ui/components/shared/typehead/typehead.component';
 
 export function loadConfig(configService: ConfigService): () => Promise<Config> {
   return (): Promise<Config> => firstValueFrom(configService.loadConfig());
@@ -71,6 +72,7 @@ export function loadConfig(configService: ConfigService): () => Promise<Config> 
     TypeheadCategoryComponent,
     CopyPaymentModalComponent,
     InfoModalComponent,
+    TypeheadComponent,
   ],
   imports: [
     BrowserModule,
