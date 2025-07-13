@@ -14,6 +14,8 @@ import {ConfigService} from "../../../../services/config/config.service";
 import {formatString} from "../../../../util/string.utils";
 import {TimerUtils} from "../../../../util/timer.utils";
 import {generateErrorModel} from "../../../../util/http.util";
+import {RequestParams} from "../../../../models/requestParams";
+import {GetIncomeCategoryDto} from "../../../../models/dto/category.model.dto";
 
 @Component({
   selector: 'app-income-modal',
@@ -35,6 +37,7 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
   protected incomeDto: IncomeDto;
   protected displayLoader: boolean;
   protected isEditing: boolean;
+  protected incomeCategoriesDto: GetIncomeCategoryDto[] | null;
   private idIncome: string;
 
   constructor(
@@ -141,5 +144,25 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
       name: "",
       isSurplus: false
     } as GetIncomeDto;
+  }
+
+  private getCategories(): void {
+    const categoriesOrder = this.appConfig.request.order;
+    const params: RequestParams = {
+      page: 1,
+      pageSize: 300,
+      orderBy: categoriesOrder.paymentCategoryTypes[0].value,
+      order: categoriesOrder.orderDirections[0].value
+    } as RequestParams;
+
+    this.subscriptions.push(
+      this.httpService.getIncomeCategories(
+        params
+      ).subscribe({
+        next: (response: HttpResponse<GetIncomeCategoryDto[]>): void => {
+          this.incomeCategoriesDto = response.body;
+        }
+      })
+    )
   }
 }

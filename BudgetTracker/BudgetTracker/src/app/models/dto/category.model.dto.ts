@@ -4,17 +4,24 @@ export enum CategoryType {
   SAVINGS = "savings"
 }
 
-export class GetCategoryDto {
+class GetCategoryDto {
   id: string;
   name: string;
   description: string;
-  isNeeds: boolean;
-  isWants: boolean;
-  isSavings: boolean;
   dateUpdated: Date;
 }
 
-export class CategoryDto {
+export class GetPaymentCategoryDto extends GetCategoryDto {
+  isNeeds: boolean;
+  isWants: boolean;
+  isSavings: boolean;
+}
+
+export class GetIncomeCategoryDto extends GetCategoryDto {
+
+}
+
+export class PaymentCategoryDto {
   name: string;
   description: string;
   isNeeds: boolean;

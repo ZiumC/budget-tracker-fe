@@ -1,7 +1,7 @@
 import {Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {SpinnerSize} from "../../shared/spinner/spinner.component";
 import {ModalOptions, ModalUtils} from "../../../../util/modal.utils";
-import {CategoryDto, GetCategoryDto} from "../../../../models/dto/category.model.dto";
+import {GetPaymentCategoryDto, PaymentCategoryDto} from "../../../../models/dto/category.model.dto";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {HttpService} from "../../../../services/http/http.service";
 import {ConfigService} from "../../../../services/config/config.service";
@@ -31,7 +31,7 @@ export class CategoryModalComponent implements OnInit, OnDestroy {
   protected responseModel: ResponseModel;
   protected appConfig: AppConfig;
   protected formConfig: FormConfig;
-  protected categoryDto: GetCategoryDto;
+  protected categoryDto: GetPaymentCategoryDto;
   protected categoryType: string;
   protected selectedCategoryName: string;
   protected displayLoader: boolean;
@@ -46,7 +46,7 @@ export class CategoryModalComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.setDefaultCategoryForm();
     this.responseModel = new ResponseModel();
-    this.categoryDto = new GetCategoryDto();
+    this.categoryDto = new GetPaymentCategoryDto();
     ModalUtils.defaultSettings(this.displayLoader, this.isEditing);
 
     const appCfg = this.configService.getAppConfig();
@@ -62,7 +62,7 @@ export class CategoryModalComponent implements OnInit, OnDestroy {
     SubscriptionUtils.unsubscribeAll(this.subscriptions);
   }
 
-  open(categoryType: string, categoryData?: GetCategoryDto): void {
+  open(categoryType: string, categoryData?: GetPaymentCategoryDto): void {
     this.setDefaultCategoryForm();
     this.isEditing = categoryData != null;
     this.categoryType = categoryType;
@@ -93,7 +93,7 @@ export class CategoryModalComponent implements OnInit, OnDestroy {
       isNeeds: JSON.parse(String(this.categoryDto.isNeeds)),
       isWants: JSON.parse(String(this.categoryDto.isWants)),
       isSavings: JSON.parse(String(this.categoryDto.isSavings)),
-    } as CategoryDto;
+    } as PaymentCategoryDto;
 
     this.displayLoader = true;
 
@@ -109,7 +109,7 @@ export class CategoryModalComponent implements OnInit, OnDestroy {
       });
   }
 
-  private updateCategory(categoryId: string, categoryToSave: CategoryDto): void {
+  private updateCategory(categoryId: string, categoryToSave: PaymentCategoryDto): void {
     this.subscriptions.push(
       this.httpService.updateCategory(
         categoryId,
@@ -125,7 +125,7 @@ export class CategoryModalComponent implements OnInit, OnDestroy {
     );
   }
 
-  private createCategory(categoryToSave: CategoryDto): void {
+  private createCategory(categoryToSave: PaymentCategoryDto): void {
     this.subscriptions.push(
       this.httpService.createCategory(
         categoryToSave
@@ -155,6 +155,6 @@ export class CategoryModalComponent implements OnInit, OnDestroy {
   }
 
   private setDefaultCategoryForm(): void {
-    this.categoryDto = new GetCategoryDto();
+    this.categoryDto = new GetPaymentCategoryDto();
   }
 }

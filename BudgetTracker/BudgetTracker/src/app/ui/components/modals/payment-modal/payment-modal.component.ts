@@ -15,7 +15,7 @@ import {formatString} from "../../../../util/string.utils";
 import {subtract} from "../../../../util/number.util";
 import {GetPaymentDto, PaymentDto} from "../../../../models/dto/payment.model.dto";
 import {generateErrorModel} from "../../../../util/http.util";
-import {CategoryType, GetCategoryDto} from "../../../../models/dto/category.model.dto";
+import {CategoryType, GetPaymentCategoryDto} from "../../../../models/dto/category.model.dto";
 import {getPaymentType} from "../../../../util/category.utils";
 
 @Component({
@@ -43,7 +43,7 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
   protected displayLoader: boolean;
   protected isChildValid: boolean;
   protected categoryType: CategoryType | null;
-  protected assignedCategoryDto: GetCategoryDto;
+  protected assignedCategoryDto: GetPaymentCategoryDto;
   protected innerWidth: any;
 
   constructor(
@@ -118,7 +118,7 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
     this.isChildValid = isValid;
   }
 
-  protected onCategoryChanged(result: { category: GetCategoryDto, assignmentComment: string }): void {
+  protected onCategoryChanged(result: { category: GetPaymentCategoryDto, assignmentComment: string }): void {
     this.assignedCategoryDto = result.category;
     this.paymentDto.assignmentComment = result.assignmentComment;
   }

@@ -14,7 +14,7 @@ import {FormConfig} from "../../../../models/config/form.model.config";
 import {HttpResponse} from "@angular/common/http";
 import {generateErrorModel} from "../../../../util/http.util";
 import {TimerUtils} from "../../../../util/timer.utils";
-import {CategoryType, GetCategoryDto} from "../../../../models/dto/category.model.dto";
+import {CategoryType, GetPaymentCategoryDto} from "../../../../models/dto/category.model.dto";
 import {getPaymentType} from "../../../../util/category.utils";
 
 @Component({
@@ -42,7 +42,7 @@ export class PlannedPaymentModalComponent implements OnInit, OnDestroy {
   protected idPlannedPayment: string;
   protected isChildValid: boolean;
   protected categoryType: CategoryType | null;
-  protected assignedCategoryDto: GetCategoryDto;
+  protected assignedCategoryDto: GetPaymentCategoryDto;
   public innerWidth: any;
 
   constructor(
@@ -115,7 +115,7 @@ export class PlannedPaymentModalComponent implements OnInit, OnDestroy {
     this.isChildValid = isValid;
   }
 
-  protected onCategoryChanged(result: { category: GetCategoryDto, assignmentComment: string }): void {
+  protected onCategoryChanged(result: { category: GetPaymentCategoryDto, assignmentComment: string }): void {
     this.assignedCategoryDto = result.category;
     this.plannedPaymentDto.assignmentComment = result.assignmentComment;
   }

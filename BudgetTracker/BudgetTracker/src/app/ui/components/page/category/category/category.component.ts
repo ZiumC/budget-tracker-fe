@@ -3,7 +3,7 @@ import {SubscriptionUtils} from "../../../../../util/subscription.utils";
 import {AppConfig} from "../../../../../models/config/config";
 import {Observable, Subscription} from "rxjs";
 import {ResponseModel} from "../../../../../models/response.model";
-import {CategoryType, GetCategoryDto} from "../../../../../models/dto/category.model.dto";
+import {CategoryType, GetPaymentCategoryDto} from "../../../../../models/dto/category.model.dto";
 import {HttpService} from "../../../../../services/http/http.service";
 import {ConfigService} from "../../../../../services/config/config.service";
 import {formatString} from "../../../../../util/string.utils";
@@ -34,8 +34,8 @@ export class CategoryComponent implements OnInit, OnDestroy {
   protected subscriptions: Subscription[];
   protected categoryResponseModel: ResponseModel;
   protected categoryRequestParams: RequestParams = new RequestParams();
-  protected categoriesDto: GetCategoryDto[] | null;
-  protected selectedCategory: GetCategoryDto;
+  protected categoriesDto: GetPaymentCategoryDto[] | null;
+  protected selectedCategory: GetPaymentCategoryDto;
   protected categoriesLoader: boolean;
   protected categoriesTotalPages: number;
   private lastSearchedPhrase: string | undefined;
@@ -128,10 +128,10 @@ export class CategoryComponent implements OnInit, OnDestroy {
 
   private getCategories(): void {
     this.subscriptions.push(
-      this.httpService.getCategories(
+      this.httpService.getPaymentCategories(
         this.type,
         this.categoryRequestParams).subscribe({
-        next: (response: HttpResponse<GetCategoryDto[]>): void => {
+        next: (response: HttpResponse<GetPaymentCategoryDto[]>): void => {
           this.categoriesDto = response.body;
           this.categoryResponseModel.statusCode = response.status;
         },
