@@ -199,7 +199,7 @@ export class CategoryUrls {
     if (requestParam) {
       let orderQuery = ParamsQuery.getOrderQuery(requestParam);
       if (orderQuery) {
-        result = result + "&" + orderQuery;
+        result = result + "?" + orderQuery;
       }
 
       let paginationQuery = ParamsQuery.getPaginationQuery(requestParam);
