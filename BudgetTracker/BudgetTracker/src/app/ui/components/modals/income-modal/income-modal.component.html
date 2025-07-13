@@ -127,7 +127,10 @@
             }
           </div>
           <app-typehead [categoriesDto]="incomeCategoriesDto"
-                        [isPaymentCategories]="false">
+                        [isPaymentCategories]="false"
+                        [isEditing]="isEditing"
+                        (validationEvent)="onTypeheadChanged($event)"
+                        (categoryEvent)="onCategoryChanged($event)">
 
           </app-typehead>
         </div>

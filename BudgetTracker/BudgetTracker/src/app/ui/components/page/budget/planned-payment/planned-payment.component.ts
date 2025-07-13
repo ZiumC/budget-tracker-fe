@@ -17,7 +17,7 @@ import {OrderOptions} from "../../../shared/order/order.component";
 import {PageDto} from "../../../../../models/dto/page.model.dto";
 import BigNumber from "bignumber.js";
 import {PaymentStatusDto} from "../../../../../models/dto/payment.model.dto";
-import {GetAssignmentDto} from "../../../../../models/dto/assignment.model.dto";
+import {GetPaymentAssignmentDto} from "../../../../../models/dto/assignment.model.dto";
 import {getPaymentType} from "../../../../../util/category.utils";
 
 @Component({
@@ -222,7 +222,7 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy, AfterViewInit
       this.httpService.getPaymentAssignment(
         idPayment,
         true).subscribe({
-        next: (response: HttpResponse<GetAssignmentDto>): void => {
+        next: (response: HttpResponse<GetPaymentAssignmentDto>): void => {
           for (let payment of this.plannedPaymentsDto!) {
             if (payment.id == idPayment) {
               payment.assignment = response.body;

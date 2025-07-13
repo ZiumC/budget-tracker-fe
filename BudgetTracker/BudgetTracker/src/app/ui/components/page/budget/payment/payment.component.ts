@@ -17,7 +17,7 @@ import {PageDto} from "../../../../../models/dto/page.model.dto";
 import {OrderOptions} from "../../../shared/order/order.component";
 import {SortPayment} from "../../../../../util/arrays.utils";
 import {getPaymentType} from "../../../../../util/category.utils";
-import {GetAssignmentDto} from "../../../../../models/dto/assignment.model.dto";
+import {GetPaymentAssignmentDto} from "../../../../../models/dto/assignment.model.dto";
 
 @Component({
   selector: 'app-payment',
@@ -172,7 +172,7 @@ export class PaymentComponent implements OnInit, OnDestroy, AfterViewInit {
       this.httpService.getPaymentAssignment(
         idPayment,
         false).subscribe({
-        next: (response: HttpResponse<GetAssignmentDto>): void => {
+        next: (response: HttpResponse<GetPaymentAssignmentDto>): void => {
           for (let payment of this.paymentsDto!) {
             if (payment.id == idPayment) {
               payment.assignment = response.body;

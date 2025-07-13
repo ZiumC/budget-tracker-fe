@@ -37,7 +37,9 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
   protected incomeDto: IncomeDto;
   protected displayLoader: boolean;
   protected isEditing: boolean;
+  protected isChildValid: boolean;
   protected incomeCategoriesDto: GetIncomeCategoryDto[] | null;
+  protected assignedCategoryDto: GetIncomeCategoryDto;
   private idIncome: string;
 
   constructor(
@@ -62,6 +64,8 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
     } else {
       throw Error("Config not provided")
     }
+
+    this.isChildValid = false;
   }
 
   open(incomeData?: GetIncomeDto): void {
@@ -95,6 +99,15 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
           }
         }
       })
+  }
+
+  protected onTypeheadChanged(isValid: boolean): void {
+    this.isChildValid = isValid;
+  }
+
+  protected onCategoryChanged(result: { category: GetIncomeCategoryDto, assignmentComment: string }): void {
+    this.assignedCategoryDto = result.category;
+    this.incomeDto.assignmentComment = result.assignmentComment;
   }
 
   private updateIncome(): void {
@@ -143,11 +156,13 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
   private setDefaultIncomeForm(): void {
     this.incomeDto = {
       name: "",
-      isSurplus: false
-    } as GetIncomeDto;
+      isSurplus: false,
+      idIncomeCategory: "",
+      assignmentComment: "",
+    } as IncomeDto;
   }
 
-  protected getCategories(): void {
+  private getCategories(): void {
     const categoriesOrder = this.appConfig.request.order;
     const params: RequestParams = {
       page: 1,
