@@ -78,6 +78,7 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
       this.idIncome = incomeData.id;
       this.incomeDto.name = incomeData.name;
       this.incomeDto.wage = incomeData.wage;
+      this.incomeDto.savings = incomeData.savings;
       this.incomeDto.isSurplus = incomeData.isSurplus;
 
       const incomeAssignment = incomeData.assignment;
@@ -171,17 +172,9 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
   }
 
   private getCategories(): void {
-    const categoriesOrder = this.appConfig.request.order;
-    const params: RequestParams = {
-      page: 1,
-      pageSize: 300,
-      orderBy: categoriesOrder.paymentCategoryTypes[0].value,
-      order: categoriesOrder.orderDirections[0].value
-    } as RequestParams;
-
     this.subscriptions.push(
       this.httpService.getIncomeCategories(
-        params
+        this.getRequestParams()
       ).subscribe({
         next: (response: HttpResponse<GetIncomeCategoryDto[]>): void => {
           this.incomeCategoriesDto = response.body;
@@ -189,4 +182,15 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
       })
     );
   }
+
+  private getRequestParams(): RequestParams {
+    const categoriesOrder = this.appConfig.request.order;
+    return {
+      page: 1,
+      pageSize: 300,
+      orderBy: categoriesOrder.paymentCategoryTypes[0].value,
+      order: categoriesOrder.orderDirections[0].value
+    } as RequestParams;
+  }
+
 }
