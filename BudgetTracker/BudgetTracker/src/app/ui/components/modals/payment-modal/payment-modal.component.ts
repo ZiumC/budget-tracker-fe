@@ -17,6 +17,7 @@ import {GetPaymentDto, PaymentDto} from "../../../../models/dto/payment.model.dt
 import {generateErrorModel} from "../../../../util/http.util";
 import {CategoryType, GetPaymentCategoryDto} from "../../../../models/dto/category.model.dto";
 import {getPaymentType} from "../../../../util/category.utils";
+import {RequestParams} from "../../../../models/requestParams";
 
 @Component({
   selector: 'app-payment-modal',
@@ -26,6 +27,7 @@ import {getPaymentType} from "../../../../util/category.utils";
 export class PaymentModalComponent implements OnInit, OnDestroy {
   @ViewChild('paymentModal') paymentModal: any;
   @ViewChild('errorModal') errorModal: any;
+  @ViewChild('typeheadComponent') typeheadComponent: any;
   @Input() idBudget: string;
   @Input() assignmentStatusCode: number;
   @Output() refreshPaymentEvent = new EventEmitter<boolean>();
@@ -37,12 +39,13 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
   protected formConfig: FormConfig;
   protected subscriptions: Subscription[] = [];
   protected responseModel: ResponseModel;
+  protected categoriesDto: GetPaymentCategoryDto[] | null;
   protected paymentDto: PaymentDto;
   protected idPayment: string;
   protected isEditing: boolean;
   protected displayLoader: boolean;
   protected isChildValid: boolean;
-  protected categoryType: CategoryType | null;
+  protected selectedPaymentCategoryType: CategoryType | null;
   protected assignedCategoryDto: GetPaymentCategoryDto;
   protected innerWidth: any;
 
@@ -89,16 +92,16 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
         let paymentType: string = getPaymentType(paymentAssignment, false, this.appConfig);
         switch (paymentType) {
           case this.formConfig.categoryModal.needsName:
-            this.categoryType = CategoryType.NEEDS;
+            this.selectedPaymentCategoryType = CategoryType.NEEDS;
             break;
           case this.formConfig.categoryModal.wantsName:
-            this.categoryType = CategoryType.WANTS;
+            this.selectedPaymentCategoryType = CategoryType.WANTS;
             break;
           case this.formConfig.categoryModal.savingsName:
-            this.categoryType = CategoryType.SAVINGS;
+            this.selectedPaymentCategoryType = CategoryType.SAVINGS;
             break;
           default:
-            this.categoryType = null;
+            this.selectedPaymentCategoryType = null;
         }
 
         this.assignedCategoryDto = paymentAssignment.category;
@@ -140,6 +143,13 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
           }
         }
       });
+  }
+
+  protected onClickedCategory(type?: CategoryType): void {
+    if (type && type != this.selectedPaymentCategoryType) {
+      this.selectedPaymentCategoryType = type;
+    }
+    this.getCategories();
   }
 
   private updatePayment(): void {
@@ -187,7 +197,7 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
   }
 
   private setDefaultPaymentForm(): void {
-    this.categoryType = null;
+    this.selectedPaymentCategoryType = null;
     this.paymentDto = {
       name: "",
       isPaid: false,
@@ -196,4 +206,29 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
       assignmentComment: ""
     } as PaymentDto;
   }
+
+  private getCategories(): void {
+    const categoriesOrder = this.appConfig.request.order;
+    const params: RequestParams = {
+      page: 1,
+      pageSize: 300,
+      orderBy: categoriesOrder.paymentCategoryTypes[0].value,
+      order: categoriesOrder.orderDirections[0].value
+    } as RequestParams;
+
+    if (this.selectedPaymentCategoryType) {
+      this.subscriptions.push(
+        this.httpService.getPaymentCategories(
+          this.selectedPaymentCategoryType,
+          params
+        ).subscribe({
+          next: (response: HttpResponse<GetPaymentCategoryDto[]>): void => {
+            this.categoriesDto = response.body;
+          }
+        })
+      )
+    }
+  }
+
+  protected readonly CategoryType = CategoryType;
 }
