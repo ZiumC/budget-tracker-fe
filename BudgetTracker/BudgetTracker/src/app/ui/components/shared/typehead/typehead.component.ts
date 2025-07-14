@@ -102,10 +102,6 @@ export class TypeheadComponent implements OnInit {
     this.emitValidation();
   }
 
-  protected isUndefined(): boolean {
-    return this.selectedCategoryDto == undefined;
-  }
-
   protected emitCategoryData(): void {
     this.categoryEvent.emit({
       category: this.selectedCategoryDto,

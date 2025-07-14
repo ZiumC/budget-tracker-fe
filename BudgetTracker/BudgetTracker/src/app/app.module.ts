@@ -34,7 +34,6 @@ import { PlannedPaymentModalComponent } from './ui/components/modals/planned-pay
 import { CategoryPageComponent } from './ui/pages/category-page/category-page.component';
 import { CategoryComponent } from './ui/components/page/category/category/category.component';
 import { CategoryModalComponent } from './ui/components/modals/category-modal/category-modal.component';
-import { TypeheadCategoryComponent } from './ui/components/shared/typehead-category/typehead-category.component';
 import { CopyPaymentModalComponent } from './ui/components/modals/copy-payment-modal/copy-payment-modal.component';
 import { InfoModalComponent } from './ui/components/modals/info-modal/info-modal.component';
 import { TypeheadComponent } from './ui/components/shared/typehead/typehead.component';
@@ -69,7 +68,6 @@ export function loadConfig(configService: ConfigService): () => Promise<Config> 
     CategoryPageComponent,
     CategoryComponent,
     CategoryModalComponent,
-    TypeheadCategoryComponent,
     CopyPaymentModalComponent,
     InfoModalComponent,
     TypeheadComponent,

@@ -16,6 +16,7 @@ import {generateErrorModel} from "../../../../util/http.util";
 import {TimerUtils} from "../../../../util/timer.utils";
 import {CategoryType, GetPaymentCategoryDto} from "../../../../models/dto/category.model.dto";
 import {getPaymentType} from "../../../../util/category.utils";
+import {RequestParams} from "../../../../models/requestParams";
 
 @Component({
   selector: 'app-planned-payments-modal',
@@ -42,7 +43,9 @@ export class PlannedPaymentModalComponent implements OnInit, OnDestroy {
   protected idPlannedPayment: string;
   protected isChildValid: boolean;
   protected categoryType: CategoryType | null;
+  protected selectedPaymentCategoryType: CategoryType | null;
   protected assignedCategoryDto: GetPaymentCategoryDto;
+  protected categoriesDto: GetPaymentCategoryDto[] | null;
   public innerWidth: any;
 
   constructor(
@@ -120,6 +123,13 @@ export class PlannedPaymentModalComponent implements OnInit, OnDestroy {
     this.plannedPaymentDto.assignmentComment = result.assignmentComment;
   }
 
+  protected onClickedCategory(type?: CategoryType): void {
+    if (type && type != this.selectedPaymentCategoryType) {
+      this.selectedPaymentCategoryType = type;
+    }
+    this.getCategories();
+  }
+
   protected savePlannedPayment(): void {
     this.displayLoader = true;
 
@@ -193,4 +203,29 @@ export class PlannedPaymentModalComponent implements OnInit, OnDestroy {
       assignmentComment: ""
     } as PlannedPaymentDto;
   }
+
+  private getCategories(): void {
+    const categoriesOrder = this.appConfig.request.order;
+    const params: RequestParams = {
+      page: 1,
+      pageSize: 300,
+      orderBy: categoriesOrder.paymentCategoryTypes[0].value,
+      order: categoriesOrder.orderDirections[0].value
+    } as RequestParams;
+
+    if (this.selectedPaymentCategoryType) {
+      this.subscriptions.push(
+        this.httpService.getPaymentCategories(
+          this.selectedPaymentCategoryType,
+          params
+        ).subscribe({
+          next: (response: HttpResponse<GetPaymentCategoryDto[]>): void => {
+            this.categoriesDto = response.body;
+          }
+        })
+      )
+    }
+  }
+
+  protected readonly CategoryType = CategoryType;
 }
