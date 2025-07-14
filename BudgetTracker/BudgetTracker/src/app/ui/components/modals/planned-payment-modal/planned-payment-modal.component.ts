@@ -33,6 +33,7 @@ export class PlannedPaymentModalComponent implements OnInit, OnDestroy {
   protected readonly SpinnerSize = SpinnerSize;
   protected readonly ModalUtils = ModalUtils;
   protected readonly formatString = formatString;
+  protected readonly CategoryType = CategoryType;
   protected subscriptions: Subscription[] = [];
   protected appConfig: AppConfig;
   protected formConfig: FormConfig;
@@ -194,6 +195,7 @@ export class PlannedPaymentModalComponent implements OnInit, OnDestroy {
   }
 
   private setDefaultPlannedPaymentForm(): void {
+    this.selectedPaymentCategoryType = null;
     this.categoryType = null;
     this.plannedPaymentDto = {
       name: "",
@@ -205,19 +207,11 @@ export class PlannedPaymentModalComponent implements OnInit, OnDestroy {
   }
 
   private getCategories(): void {
-    const categoriesOrder = this.appConfig.request.order;
-    const params: RequestParams = {
-      page: 1,
-      pageSize: 300,
-      orderBy: categoriesOrder.paymentCategoryTypes[0].value,
-      order: categoriesOrder.orderDirections[0].value
-    } as RequestParams;
-
     if (this.selectedPaymentCategoryType) {
       this.subscriptions.push(
         this.httpService.getPaymentCategories(
           this.selectedPaymentCategoryType,
-          params
+          this.getRequestParams()
         ).subscribe({
           next: (response: HttpResponse<GetPaymentCategoryDto[]>): void => {
             this.categoriesDto = response.body;
@@ -227,5 +221,13 @@ export class PlannedPaymentModalComponent implements OnInit, OnDestroy {
     }
   }
 
-  protected readonly CategoryType = CategoryType;
+  private getRequestParams(): RequestParams {
+    const categoriesOrder = this.appConfig.request.order;
+    return {
+      page: 1,
+      pageSize: 300,
+      orderBy: categoriesOrder.paymentCategoryTypes[0].value,
+      order: categoriesOrder.orderDirections[0].value
+    } as RequestParams;
+  }
 }

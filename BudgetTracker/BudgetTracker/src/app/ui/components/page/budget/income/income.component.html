@@ -51,25 +51,48 @@
                   </div>
                 </div>
                 <div class="row">
-                  <div class="mb-3 condition-container">
-                    <div class="form-group">
-                      <label for="category-assignment">Category
-                      </label>
-                      <input type="text"
-                             id="category-assignment"
-                             class="form-control mb-2"
-                             placeholder="Not assigned"
-                             value="{{income.assignment?.category?.name}}"
-                             disabled>
-                      <label for="category-assignment-comment">Assignment Comment
-                      </label>
-                      <textarea type="text"
-                                id="category-assignment-comment"
-                                class="form-control"
-                                placeholder="{{income.assignment ? '' : 'Not assigned'}}"
-                                value="{{ income.assignment?.comment }}"
-                                disabled></textarea>
-                    </div>
+                  <div [style.display]="displayMobileView() ? '' : 'none'">
+                    <label for="income-date-created">Date created
+                    </label>
+                    <input type="text"
+                           id="income-date-created"
+                           class="form-control mb-2"
+                           value="{{DateUtils.format(income.dateUpdated)}}"
+                           disabled>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 form-group">
+                    <label for="income-savings">Savings
+                    </label>
+                    <input type="text"
+                           id="income-savings"
+                           class="form-control mb-2"
+                           placeholder="0.00"
+                           value="{{format(income.savings)}}"
+                           disabled>
+                  </div>
+                  <div class="col-md-6 form-group">
+                    <label for="category-assignment">Category
+                    </label>
+                    <input type="text"
+                           id="category-assignment"
+                           class="form-control mb-2"
+                           placeholder="Not assigned"
+                           value="{{income.assignment?.category?.name}}"
+                           disabled>
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <div class="form-group">
+                    <label for="category-assignment-comment">Assignment Comment
+                    </label>
+                    <textarea type="text"
+                              id="category-assignment-comment"
+                              class="form-control"
+                              placeholder="{{income.assignment ? '' : 'Not assigned'}}"
+                              value="{{ income.assignment?.comment }}"
+                              disabled></textarea>
                   </div>
                 </div>
                 <div class="row">

@@ -63,39 +63,70 @@
               <div class="valid-feedback"></div>
             }
           </div>
-          <div [className]="ModalUtils.displayMarginFor(incomeWageInput)">
-            <label for="income-wage">Wage</label>
-            <span class="text-danger">*</span>
-            <input
-              type="text"
-              id="income-wage"
-              name="income-wage"
-              class="form-control"
-              [(ngModel)]="incomeDto.wage"
-              required
-              min="{{ formConfig.incomeModal.wage.minValue }}"
-              maxlength="{{ formConfig.incomeModal.wage.maxLength }}"
-              placeholder="{{ formConfig.incomeModal.placeholder }}"
-              pattern="{{ formConfig.regex.money }}"
-              #incomeWageInput="ngModel"
-              [ngClass]="{
+          <div class="row">
+            <div class="col-md-6">
+              <div [className]="ModalUtils.displayMarginFor(incomeWageInput)">
+                <label for="income-wage">Wage</label>
+                <span class="text-danger">*</span>
+                <input
+                  type="text"
+                  id="income-wage"
+                  name="income-wage"
+                  class="form-control"
+                  [(ngModel)]="incomeDto.wage"
+                  required
+                  min="{{ formConfig.incomeModal.wage.minValue }}"
+                  maxlength="{{ formConfig.incomeModal.wage.maxLength }}"
+                  placeholder="{{ formConfig.incomeModal.placeholder }}"
+                  pattern="{{ formConfig.regex.money }}"
+                  #incomeWageInput="ngModel"
+                  [ngClass]="{
               'is-invalid':incomeWageInput.invalid &&
                 (incomeWageInput.dirty || incomeWageInput.touched),
               'is-valid': incomeWageInput.valid }"/>
-            @if (incomeWageInput.invalid &&
-            (incomeWageInput.dirty || incomeWageInput.touched)) {
-              <div class="invalid-feedback">
-                <label *ngIf="incomeWageInput.errors?.['required']">
-                  {{ formConfig.messages.required }}
-                </label>
-                <label *ngIf="incomeWageInput.errors?.['min']">
-                  {{ formatString(formConfig.messages.minValue, formConfig.incomeModal.wage.minValue) }}
-                </label>
-                <label *ngIf="incomeWageInput.errors?.['pattern']">
-                  {{ formatString(formConfig.messages.invalidFormat, "number") }}
-                </label>
+                @if (incomeWageInput.invalid &&
+                (incomeWageInput.dirty || incomeWageInput.touched)) {
+                  <div class="invalid-feedback">
+                    <label *ngIf="incomeWageInput.errors?.['required']">
+                      {{ formConfig.messages.required }}
+                    </label>
+                    <label *ngIf="incomeWageInput.errors?.['min']">
+                      {{ formatString(formConfig.messages.minValue, formConfig.incomeModal.wage.minValue) }}
+                    </label>
+                    <label *ngIf="incomeWageInput.errors?.['pattern']">
+                      {{ formatString(formConfig.messages.invalidFormat, "number") }}
+                    </label>
+                  </div>
+                }
               </div>
-            }
+            </div>
+            <div class="col-md-6">
+              <div [className]="ModalUtils.displayMarginFor(incomeSavingsInput)">
+                <label for="income-savings">Savings</label>
+                <input
+                  type="text"
+                  id="income-savings"
+                  name="income-savings"
+                  class="form-control"
+                  [(ngModel)]="incomeDto.savings"
+                  maxlength="{{ formConfig.incomeModal.wage.maxLength }}"
+                  placeholder="{{ formConfig.incomeModal.placeholder }}"
+                  pattern="{{ formConfig.regex.money }}"
+                  #incomeSavingsInput="ngModel"
+                  [ngClass]="{
+              'is-invalid':incomeSavingsInput.invalid &&
+                (incomeSavingsInput.dirty || incomeSavingsInput.touched),
+              'is-valid': incomeSavingsInput.valid }"/>
+                @if (incomeSavingsInput.invalid &&
+                (incomeSavingsInput.dirty || incomeSavingsInput.touched)) {
+                  <div class="invalid-feedback">
+                    <label *ngIf="incomeSavingsInput.errors?.['pattern']">
+                      {{ formatString(formConfig.messages.invalidFormat, "number") }}
+                    </label>
+                  </div>
+                }
+              </div>
+            </div>
           </div>
           <div [className]="ModalUtils.displayMarginFor(incomeSurplusSelect)">
             <label for="income-surplus">Status</label>
