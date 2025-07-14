@@ -54,7 +54,7 @@ export class TypeheadCategoryComponent implements OnInit, OnDestroy {
       this.typeheadClear();
     }
 
-    this.getCategories();
+    // this.getCategories();
     this.emitValidation();
   }
 
@@ -110,7 +110,7 @@ export class TypeheadCategoryComponent implements OnInit, OnDestroy {
       this.typeheadClear();
       this.categoryType = type;
     }
-    this.getCategories();
+    // this.getCategories();
     this.emitValidation();
   }
 
@@ -120,26 +120,26 @@ export class TypeheadCategoryComponent implements OnInit, OnDestroy {
     this.emitValidation();
   }
 
-  private getCategories(): void {
-    const categoriesOrder = this.appConfig.request.order;
-    const params: RequestParams = {
-      page: 1,
-      pageSize: 300,
-      orderBy: categoriesOrder.paymentCategoryTypes[0].value,
-      order: categoriesOrder.orderDirections[0].value
-    } as RequestParams;
-
-    if (this.categoryType) {
-      this.subscriptions.push(
-        this.httpService.getPaymentCategories(
-          this.categoryType,
-          params
-        ).subscribe({
-          next: (response: HttpResponse<GetPaymentCategoryDto[]>): void => {
-            this.categoriesDto = response.body;
-          }
-        })
-      )
-    }
-  }
+  // private getCategories(): void {
+  //   const categoriesOrder = this.appConfig.request.order;
+  //   const params: RequestParams = {
+  //     page: 1,
+  //     pageSize: 300,
+  //     orderBy: categoriesOrder.paymentCategoryTypes[0].value,
+  //     order: categoriesOrder.orderDirections[0].value
+  //   } as RequestParams;
+  //
+  //   if (this.categoryType) {
+  //     this.subscriptions.push(
+  //       this.httpService.getPaymentCategories(
+  //         this.categoryType,
+  //         params
+  //       ).subscribe({
+  //         next: (response: HttpResponse<GetPaymentCategoryDto[]>): void => {
+  //           this.categoriesDto = response.body;
+  //         }
+  //       })
+  //     )
+  //   }
+  // }
 }

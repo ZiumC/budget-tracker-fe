@@ -16,11 +16,12 @@ export class TypeheadComponent implements OnInit {
   @Input() categoriesDto: GetPaymentCategoryDto[] | GetIncomeCategoryDto[] | null;
   @Input() selectedCategoryDto: GetPaymentCategoryDto | GetIncomeCategoryDto;
   @Input() isPaymentCategories: boolean;
+  @Input() reset: boolean;
   @Input() assignmentComment: string;
-  @Input() paymentCategoryType: CategoryType;
+  @Input() paymentCategoryType: CategoryType | null;
   @Output() validationEvent = new EventEmitter<boolean>();
   @Output() categoryEvent = new EventEmitter<{
-    category: GetPaymentCategoryDto | GetIncomeCategoryDto,
+    category: any,
     assignmentComment: string
   }>();
   @Input() isEditing: boolean;
@@ -48,13 +49,22 @@ export class TypeheadComponent implements OnInit {
 
     if (this.isPaymentCategories == undefined) {
       throw Error("Unknown is this payment category or income category");
-    } else if (this.isPaymentCategories && this.paymentCategoryType == undefined) {
-      throw Error("Payment category type is not provided");
     }
 
     if (!this.isEditing || this.assignmentStatusCode != 200) {
-      this.typeheadClear();
+      this.clear();
     }
+
+    this.emitValidation();
+  }
+
+  clear(): void {
+    if (this.isPaymentCategories) {
+      this.selectedCategoryDto = new GetPaymentCategoryDto();
+    } else {
+      this.selectedCategoryDto = new GetIncomeCategoryDto();
+    }
+    this.assignmentComment = "";
 
     this.emitValidation();
   }
@@ -81,7 +91,7 @@ export class TypeheadComponent implements OnInit {
 
   protected onTypeaheadNameChange(): void {
     if (this.selectedCategoryDto?.name == this.formConfig.messages.typeahead.notfound) {
-      this.typeheadClear();
+      this.clear();
     }
     this.emitCategoryData();
     this.emitValidation();
@@ -92,15 +102,8 @@ export class TypeheadComponent implements OnInit {
     this.emitValidation();
   }
 
-  protected typeheadClear(): void {
-    if (this.isPaymentCategories) {
-      this.selectedCategoryDto = new GetPaymentCategoryDto();
-    } else {
-      this.selectedCategoryDto = new GetIncomeCategoryDto();
-    }
-    this.assignmentComment = "";
-
-    this.emitValidation();
+  protected isUndefined(): boolean {
+    return this.selectedCategoryDto == undefined;
   }
 
   protected emitCategoryData(): void {

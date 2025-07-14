@@ -1,4 +1,4 @@
-<form ngbAutofocus #form="ngForm" class="form-control">
+<form ngbAutofocus #form="ngForm" [className]="!isPaymentCategories ? 'form-control' : ''">
   <div class="row mb-2">
     <div class="my-1">
       <label for="category-model">Name</label>
@@ -21,7 +21,7 @@
         <div class="input-group-append">
           <button class="btn btn-outline-danger"
                   type="button"
-                  (click)="typeheadClear()">
+                  (click)="clear()">
             <i class="bi bi-x-circle"></i>
           </button>
         </div>
