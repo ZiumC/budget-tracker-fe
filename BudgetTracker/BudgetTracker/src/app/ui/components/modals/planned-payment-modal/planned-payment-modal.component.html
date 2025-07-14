@@ -195,15 +195,64 @@
             </div>
           </div>
         </div>
-
-        <app-typehead-category [categoryType]="categoryType"
-                               [assignmentComment]="plannedPaymentDto.assignmentComment"
-                               [selectedCategoryDto]="assignedCategoryDto"
-                               [isEditing]="isEditing"
-                               [assignmentStatusCode]="assignmentStatusCode"
-                               (validationEvent)="onTypeheadChanged($event)"
-                               (categoryEvent)="onCategoryChanged($event)">
-        </app-typehead-category>
+        <div id="category" class="form-control">
+          <div class="text-center">
+            <label for="category" class="my-2">Payment category</label>
+          </div>
+          <div class="row mb-2">
+            <div class="col text-center">
+              <input id="needs"
+                     type="radio"
+                     class="btn-check"
+                     name="category"
+                     required
+                     (click)="onClickedCategory(CategoryType.NEEDS); typehead.clear()"
+                     [value]="formConfig.categoryModal.needsName"
+                     [(ngModel)]="selectedPaymentCategoryType">
+              <label class="btn btn-outline-primary" for="needs">
+                Needs
+              </label>
+            </div>
+            <div class="col text-center">
+              <input id="wants"
+                     type="radio"
+                     class="btn-check"
+                     name="category"
+                     required
+                     (click)="onClickedCategory(CategoryType.WANTS);  typehead.clear();"
+                     [value]="formConfig.categoryModal.wantsName"
+                     [(ngModel)]="selectedPaymentCategoryType">
+              <label class="btn btn-outline-primary" for="wants">
+                Wants
+              </label>
+            </div>
+            <div class="col text-center">
+              <input id="savings"
+                     type="radio"
+                     class="btn-check"
+                     name="category"
+                     required
+                     (click)="onClickedCategory(CategoryType.SAVINGS); typehead.clear()"
+                     [value]="formConfig.categoryModal.savingsName"
+                     [(ngModel)]="selectedPaymentCategoryType">
+              <label class="btn btn-outline-primary" for="savings">
+                Savings
+              </label>
+            </div>
+          </div>
+          <app-typehead #typehead
+                        [style]="!selectedPaymentCategoryType ? 'display:none' : ''"
+                        [paymentCategoryType]="selectedPaymentCategoryType"
+                        [categoriesDto]="categoriesDto"
+                        [selectedCategoryDto]="assignedCategoryDto"
+                        [assignmentComment]="plannedPaymentDto.assignmentComment"
+                        [isPaymentCategories]="true"
+                        [isEditing]="isEditing"
+                        [assignmentStatusCode]="assignmentStatusCode"
+                        (validationEvent)="onTypeheadChanged($event)"
+                        (categoryEvent)="onCategoryChanged($event)">
+          </app-typehead>
+        </div>
       </form>
     </div>
     <div class="modal-footer">
