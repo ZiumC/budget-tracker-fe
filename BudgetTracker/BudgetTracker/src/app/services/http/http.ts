@@ -228,7 +228,6 @@ export class IncomeUrls {
 
   static incomeAssignment(idIncome: string): string {
     return HostUrl.getHostUrl() + IncomeUrls.CONTROLLER + "/" + idIncome + IncomeUrls.ACTIONS.ASSIGNMENT;
-
   }
 }
 
@@ -292,6 +291,12 @@ export class PaginationUrls {
     let result = HostUrl.getHostUrl() + PaginationUrls.CONTROLLER;
     result = result + PaginationUrls.ACTIONS.CATEGORIES + PaginationUrls.SUB_ACTIONS.PAYMENT;
     return result + "?type=" + type.valueOf() + "&pageSize=" + requestParam.pageSize;
+  }
+
+  static incomeCategories(requestParam: RequestParams): string {
+    let result = HostUrl.getHostUrl() + PaginationUrls.CONTROLLER;
+    result = result + PaginationUrls.ACTIONS.CATEGORIES + PaginationUrls.SUB_ACTIONS.INCOME;
+    return result + "?pageSize=" + requestParam.pageSize;
   }
 }
 

@@ -206,11 +206,19 @@ export class HttpService {
     )
   }
 
-  public getCategoryPages(
+  public getPaymentCategoryPages(
     type: CategoryType,
     requestParams: RequestParams): Observable<HttpResponse<PageDto>> {
     return this.httpClient.get<PageDto>(
       PaginationUrls.paymentCategories(type, requestParams),
+      {observe: 'response'}
+    )
+  }
+
+  public getIncomeCategoryPages(
+    requestParams: RequestParams): Observable<HttpResponse<PageDto>> {
+    return this.httpClient.get<PageDto>(
+      PaginationUrls.incomeCategories(requestParams),
       {observe: 'response'}
     )
   }
