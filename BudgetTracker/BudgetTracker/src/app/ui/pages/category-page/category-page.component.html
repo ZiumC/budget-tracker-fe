@@ -1,70 +1,130 @@
 <div class="width-wrapper">
   <div class="component-wrapper component-bg">
-    <div class="input-group mt-3 mb-5">
-      <input type="text"
-             class="form-control"
-             placeholder="Search phrase..."
-             aria-label="Search phrase..."
-             aria-describedby="basic-addon2"
-             [(ngModel)]="searchBox"
-             (change)="emitSearchSubject()"
-             maxlength="{{ formConfig.budgetModal.name.maxLength }}"
-             #searchBoxNameInput="ngModel"
-             [ngClass]="{
+    <ul ngbNav class="nav-tabs">
+      <li ngbNavItem>
+        <button ngbNavLink (click)="onPaymentTabCategory()">Payment categories</button>
+      </li>
+      <li ngbNavItem>
+        <button ngbNavLink (click)="onIncomeTabCategory()">Income categories</button>
+      </li>
+    </ul>
+    <ng-container [ngSwitch]="currentTabId">
+      <ng-container *ngSwitchCase="1">
+        <div class="input-group mt-5 mb-3">
+          <input type="text"
+                 class="form-control"
+                 placeholder="Search phrase..."
+                 aria-label="Search phrase..."
+                 aria-describedby="basic-addon2"
+                 [(ngModel)]="searchBox"
+                 (change)="emitSearchSubject()"
+                 maxlength="{{ formConfig.budgetModal.name.maxLength }}"
+                 #searchBoxNameInput="ngModel"
+                 [ngClass]="{
                 'is-invalid': searchBoxNameInput.invalid &&
                   (searchBoxNameInput.dirty || searchBoxNameInput.touched),
                 'is-valid': '' }">
-      @if (searchBoxNameInput.invalid &&
-      (searchBoxNameInput.dirty || searchBoxNameInput.touched)) {
-        <div class="invalid-feedback">
-          <label *ngIf="searchBoxNameInput.errors?.['maxlength']">
-            {{ formatString(formConfig.messages.maxLength, formConfig.budgetModal.name.maxLength) }}
-          </label>
+          @if (searchBoxNameInput.invalid &&
+          (searchBoxNameInput.dirty || searchBoxNameInput.touched)) {
+            <div class="invalid-feedback">
+              <label *ngIf="searchBoxNameInput.errors?.['maxlength']">
+                {{ formatString(formConfig.messages.maxLength, formConfig.budgetModal.name.maxLength) }}
+              </label>
+            </div>
+          }
+          <div class="input-group-append">
+            <button id="clear-payment-search-box-btn"
+                    class="btn btn-outline-danger"
+                    type="button"
+                    data-bs-toggle="tooltip"
+                    data-bs-placement="bottom"
+                    (click)="clearInput()"
+                    title="Clear">
+              <i class="bi bi-x-circle"></i>
+            </button>
+          </div>
         </div>
-      }
-      <div class="input-group-append">
-        <button id="clear-btn"
-                class="btn btn-outline-danger"
-                type="button"
-                data-bs-toggle="tooltip"
-                data-bs-placement="bottom"
-                (click)="clearInput()"
-                title="Clear">
-          <i class="bi bi-x-circle"></i>
-        </button>
-      </div>
-    </div>
-    <div class="row">
-      <div id="needs-column" class="col mb-3">
-        <app-category [displayName]="'Needs category'"
-                      [type]="CategoryType.NEEDS"
-                      [searchEvent]="searchSubject"
-                      [clearEvent]="clearSubject"
-                      [refreshCategoryEvent]="refreshCategoriesSubject"
-                      (categoryChangeTypeEvent)="onCategoryChange($event)">
+        <div class="row">
+          <div id="needs-column" class="col mb-3">
+            <app-category [displayName]="'Needs category'"
+                          [type]="CategoryType.NEEDS"
+                          [searchEvent]="searchSubject"
+                          [clearEvent]="clearSubject"
+                          [refreshCategoryEvent]="refreshCategoriesSubject"
+                          (categoryChangeTypeEvent)="onCategoryChange($event)">
 
-        </app-category>
-      </div>
-      <div id="wants-column" class="col mb-3">
-        <app-category [displayName]="'Wants category'"
-                      [type]="CategoryType.WANTS"
-                      [searchEvent]="searchSubject"
-                      [clearEvent]="clearSubject"
-                      [refreshCategoryEvent]="refreshCategoriesSubject"
-                      (categoryChangeTypeEvent)="onCategoryChange($event)">
+            </app-category>
+          </div>
+          <div id="wants-column" class="col mb-3">
+            <app-category [displayName]="'Wants category'"
+                          [type]="CategoryType.WANTS"
+                          [searchEvent]="searchSubject"
+                          [clearEvent]="clearSubject"
+                          [refreshCategoryEvent]="refreshCategoriesSubject"
+                          (categoryChangeTypeEvent)="onCategoryChange($event)">
 
-        </app-category>
-      </div>
-      <div id="savings-column" class="col mb-3">
-        <app-category [displayName]="'Savings category'"
-                      [type]="CategoryType.SAVINGS"
-                      [searchEvent]="searchSubject"
-                      [clearEvent]="clearSubject"
-                      [refreshCategoryEvent]="refreshCategoriesSubject"
-                      (categoryChangeTypeEvent)="onCategoryChange($event)">
+            </app-category>
+          </div>
+          <div id="savings-column" class="col mb-3">
+            <app-category [displayName]="'Savings category'"
+                          [type]="CategoryType.SAVINGS"
+                          [searchEvent]="searchSubject"
+                          [clearEvent]="clearSubject"
+                          [refreshCategoryEvent]="refreshCategoriesSubject"
+                          (categoryChangeTypeEvent)="onCategoryChange($event)">
 
-        </app-category>
-      </div>
-    </div>
+            </app-category>
+          </div>
+        </div>
+      </ng-container>
+      <ng-container *ngSwitchCase="2">
+        <div class="input-group mt-5 mb-3">
+          <input type="text"
+                 class="form-control"
+                 placeholder="Search phrase..."
+                 aria-label="Search phrase..."
+                 aria-describedby="basic-addon2"
+                 [(ngModel)]="searchBox"
+                 (change)="emitSearchSubject()"
+                 maxlength="{{ formConfig.budgetModal.name.maxLength }}"
+                 #searchBoxNameInput="ngModel"
+                 [ngClass]="{
+                'is-invalid': searchBoxNameInput.invalid &&
+                  (searchBoxNameInput.dirty || searchBoxNameInput.touched),
+                'is-valid': '' }">
+          @if (searchBoxNameInput.invalid &&
+          (searchBoxNameInput.dirty || searchBoxNameInput.touched)) {
+            <div class="invalid-feedback">
+              <label *ngIf="searchBoxNameInput.errors?.['maxlength']">
+                {{ formatString(formConfig.messages.maxLength, formConfig.budgetModal.name.maxLength) }}
+              </label>
+            </div>
+          }
+          <div class="input-group-append">
+            <button id="clear-income-search-box-btn"
+                    class="btn btn-outline-danger"
+                    type="button"
+                    data-bs-toggle="tooltip"
+                    data-bs-placement="bottom"
+                    (click)="clearInput()"
+                    title="Clear">
+              <i class="bi bi-x-circle"></i>
+            </button>
+          </div>
+        </div>
+        <div class="row">
+          <div id="income-category-column" class="col mb-3">
+            <app-category [displayName]="'Income category'"
+                          [type]="CategoryType.NEEDS"
+                          [searchEvent]="searchSubject"
+                          [clearEvent]="clearSubject"
+                          [refreshCategoryEvent]="refreshCategoriesSubject"
+                          (categoryChangeTypeEvent)="onCategoryChange($event)">
+
+            </app-category>
+          </div>
+        </div>
+      </ng-container>
+    </ng-container>
   </div>
 </div>

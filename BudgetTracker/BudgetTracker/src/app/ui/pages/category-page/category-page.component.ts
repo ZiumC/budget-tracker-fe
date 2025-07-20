@@ -11,6 +11,7 @@ import {Arrays} from "../../../util/arrays.utils";
   templateUrl: './category-page.component.html',
   styleUrl: './category-page.component.css'
 })
+
 export class CategoryPageComponent implements OnInit {
   protected readonly formatString = formatString;
   protected readonly CategoryType = CategoryType;
@@ -19,6 +20,7 @@ export class CategoryPageComponent implements OnInit {
   protected refreshCategoriesSubject: Subject<string[]> = new Subject<string[]>();
   protected formConfig: FormConfig;
   protected searchBox: string;
+  protected currentTabId: number;
 
   constructor(
     private configService: ConfigService) {
@@ -33,6 +35,7 @@ export class CategoryPageComponent implements OnInit {
     }
 
     this.searchBox = "";
+    this.currentTabId = 1;
   }
 
   protected clearInput(): void {
@@ -42,6 +45,16 @@ export class CategoryPageComponent implements OnInit {
     } else {
       this.clearSubject.next(false);
     }
+  }
+
+  protected onPaymentTabCategory(): void {
+    this.searchBox = "";
+    this.currentTabId = 1;
+  }
+
+  protected onIncomeTabCategory(): void {
+    this.searchBox = "";
+    this.currentTabId = 2;
   }
 
   protected onCategoryChange(types: string[]): void {

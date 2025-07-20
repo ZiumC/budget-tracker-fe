@@ -1,7 +1,7 @@
 export enum CategoryType {
   NEEDS = "needs",
   WANTS = "wants",
-  SAVINGS = "savings"
+  SAVINGS = "savings",
 }
 
 class GetCategoryDto {

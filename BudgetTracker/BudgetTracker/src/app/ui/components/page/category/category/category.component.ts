@@ -23,6 +23,7 @@ import {PageDto} from "../../../../../models/dto/page.model.dto";
 export class CategoryComponent implements OnInit, OnDestroy {
   @ViewChild('errorModal') errorModal: any;
   @Input() type: CategoryType;
+  @Input() reloadAlways: boolean;
   @Input() displayName: string;
   @Input() searchEvent: Observable<string>;
   @Input() clearEvent: Observable<boolean>;
@@ -34,6 +35,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
   protected subscriptions: Subscription[];
   protected categoryResponseModel: ResponseModel;
   protected categoryRequestParams: RequestParams = new RequestParams();
+  protected copiedCategoriesDto: GetPaymentCategoryDto[] | null = [];
   protected categoriesDto: GetPaymentCategoryDto[] | null;
   protected selectedCategory: GetPaymentCategoryDto;
   protected categoriesLoader: boolean;
@@ -149,6 +151,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
           }
           this.getCategoriesTotalPages();
           this.markCategoriesAsLoaded(true);
+          this.copiedCategoriesDto?.push(... this.categoriesDto!);
         }
       })
     )
@@ -187,6 +190,8 @@ export class CategoryComponent implements OnInit, OnDestroy {
   }
 
   private searchInCategories(phrase: string): void {
+    this.categoriesDto = [];
+    this.categoriesDto.push(... this.copiedCategoriesDto!);
     const filteredResult = this.categoriesDto?.filter(
       category => category.name.toLowerCase().includes(phrase) ||
         category.description.toLowerCase().includes(phrase));
