@@ -15,7 +15,7 @@ import {AppConfig} from "../../../../models/config/config";
 import {TimerUtils} from "../../../../util/timer.utils";
 import {generateErrorModel} from "../../../../util/http.util";
 import {GetPlannedPaymentDto} from "../../../../models/dto/planned-payment.model.dto";
-import {GetPaymentCategoryDto} from "../../../../models/dto/category.model.dto";
+import {GetCategoryDto} from "../../../../models/dto/category.model.dto";
 
 @Component({
   selector: 'app-delete-modal',
@@ -39,7 +39,7 @@ export class DeleteModalComponent implements OnInit, OnDestroy {
   private plannedPaymentDto: GetPlannedPaymentDto | null;
   private budgetDto: GetBudgetDto | null;
   private incomeDto: GetIncomeDto | null;
-  private categoryDto: GetPaymentCategoryDto | null;
+  private categoryDto: GetCategoryDto | null;
 
   constructor(
     private modalService: NgbModal,
@@ -64,9 +64,9 @@ export class DeleteModalComponent implements OnInit, OnDestroy {
     SubscriptionUtils.unsubscribeAll(this.subscriptions);
   }
 
-  openWithCategory(category: GetPaymentCategoryDto): void {
+  openWithCategory(category: GetCategoryDto): void {
     this.displayLoader = false;
-    this.categoryDto = new GetPaymentCategoryDto();
+    this.categoryDto = new GetCategoryDto();
     this.categoryDto = category;
 
     this.modalService

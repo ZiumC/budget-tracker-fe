@@ -3,7 +3,7 @@ import {SubscriptionUtils} from "../../../../../util/subscription.utils";
 import {AppConfig} from "../../../../../models/config/config";
 import {Observable, Subscription} from "rxjs";
 import {ResponseModel} from "../../../../../models/response.model";
-import {CategoryType, GetPaymentCategoryDto} from "../../../../../models/dto/category.model.dto";
+import {CategoryType, GetCategoryDto} from "../../../../../models/dto/category.model.dto";
 import {HttpService} from "../../../../../services/http/http.service";
 import {ConfigService} from "../../../../../services/config/config.service";
 import {formatString} from "../../../../../util/string.utils";
@@ -23,7 +23,6 @@ import {PageDto} from "../../../../../models/dto/page.model.dto";
 export class CategoryComponent implements OnInit, OnDestroy {
   @ViewChild('errorModal') errorModal: any;
   @Input() type: CategoryType;
-  @Input() reloadAlways: boolean;
   @Input() displayName: string;
   @Input() searchEvent: Observable<string>;
   @Input() clearEvent: Observable<boolean>;
@@ -35,9 +34,9 @@ export class CategoryComponent implements OnInit, OnDestroy {
   protected subscriptions: Subscription[];
   protected categoryResponseModel: ResponseModel;
   protected categoryRequestParams: RequestParams = new RequestParams();
-  protected copiedCategoriesDto: GetPaymentCategoryDto[] | null = [];
-  protected categoriesDto: GetPaymentCategoryDto[] | null;
-  protected selectedCategory: GetPaymentCategoryDto;
+  protected copiedCategoriesDto: GetCategoryDto[] | null = [];
+  protected categoriesDto: GetCategoryDto[] | null;
+  protected selectedCategory: GetCategoryDto;
   protected categoriesLoader: boolean;
   protected categoriesTotalPages: number;
   private lastSearchedPhrase: string | undefined;
@@ -129,11 +128,17 @@ export class CategoryComponent implements OnInit, OnDestroy {
   }
 
   private getCategories(): void {
+    let getCategories = this.httpService
+      .getPaymentCategories(this.type, this.categoryRequestParams);
+
+    if (this.type == CategoryType.INCOMES) {
+      getCategories = this.httpService
+        .getIncomeCategories(this.categoryRequestParams);
+    }
+
     this.subscriptions.push(
-      this.httpService.getPaymentCategories(
-        this.type,
-        this.categoryRequestParams).subscribe({
-        next: (response: HttpResponse<GetPaymentCategoryDto[]>): void => {
+      getCategories.subscribe({
+        next: (response: HttpResponse<GetCategoryDto[]>): void => {
           this.categoriesDto = response.body;
           this.categoryResponseModel.statusCode = response.status;
         },
@@ -151,10 +156,9 @@ export class CategoryComponent implements OnInit, OnDestroy {
           }
           this.getCategoriesTotalPages();
           this.markCategoriesAsLoaded(true);
-          this.copiedCategoriesDto?.push(... this.categoriesDto!);
+          this.copiedCategoriesDto?.push(...this.categoriesDto!);
         }
-      })
-    )
+      }))
   }
 
   private markCategoriesAsLoaded(isLoaded: boolean): void {
@@ -171,10 +175,16 @@ export class CategoryComponent implements OnInit, OnDestroy {
   }
 
   private getCategoriesTotalPages(): void {
+    let categoryPages = this.httpService
+      .getPaymentCategoryPages(this.type, this.categoryRequestParams);
+
+    if (this.type == CategoryType.INCOMES) {
+      categoryPages = this.httpService
+        .getIncomeCategoryPages(this.categoryRequestParams);
+    }
+
     this.subscriptions.push(
-      this.httpService.getCategoryPages(
-        this.type,
-        this.categoryRequestParams).subscribe({
+      categoryPages.subscribe({
         next: (response: HttpResponse<PageDto>): void => {
           this.categoriesTotalPages = response.body!.pages;
         }
@@ -191,7 +201,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
 
   private searchInCategories(phrase: string): void {
     this.categoriesDto = [];
-    this.categoriesDto.push(... this.copiedCategoriesDto!);
+    this.categoriesDto.push(...this.copiedCategoriesDto!);
     const filteredResult = this.categoriesDto?.filter(
       category => category.name.toLowerCase().includes(phrase) ||
         category.description.toLowerCase().includes(phrase));

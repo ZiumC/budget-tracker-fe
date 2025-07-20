@@ -1,7 +1,12 @@
 import {Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {SpinnerSize} from "../../shared/spinner/spinner.component";
 import {ModalOptions, ModalUtils} from "../../../../util/modal.utils";
-import {GetPaymentCategoryDto, PaymentCategoryDto} from "../../../../models/dto/category.model.dto";
+import {
+  CategoryType,
+  GetCategoryDto,
+  GetPaymentCategoryDto,
+  PaymentCategoryDto
+} from "../../../../models/dto/category.model.dto";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {HttpService} from "../../../../services/http/http.service";
 import {ConfigService} from "../../../../services/config/config.service";
@@ -62,20 +67,23 @@ export class CategoryModalComponent implements OnInit, OnDestroy {
     SubscriptionUtils.unsubscribeAll(this.subscriptions);
   }
 
-  open(categoryType: string, categoryData?: GetPaymentCategoryDto): void {
+  open(categoryType: CategoryType, categoryData?: GetCategoryDto): void {
     this.setDefaultCategoryForm();
     this.isEditing = categoryData != null;
-    this.categoryType = categoryType;
-    this.selectedCategoryName = categoryType;
+    this.categoryType = categoryType.valueOf();
+    this.selectedCategoryName = categoryType.valueOf();
 
     if (categoryData) {
       this.categoryDto.id = categoryData.id;
       this.categoryDto.name = categoryData.name;
       this.categoryDto.dateUpdated = categoryData.dateUpdated;
       this.categoryDto.description = categoryData.description;
-      this.categoryDto.isSavings = categoryData.isSavings;
-      this.categoryDto.isNeeds = categoryData.isNeeds;
-      this.categoryDto.isWants = categoryData.isWants;
+
+      if (categoryType != CategoryType.INCOMES){
+        this.categoryDto.isSavings = (categoryData as GetPaymentCategoryDto).isSavings;
+        this.categoryDto.isNeeds = (categoryData as GetPaymentCategoryDto).isNeeds;
+        this.categoryDto.isWants = (categoryData as GetPaymentCategoryDto).isWants;
+      }
     }
 
     this.modalService.open(this.categoryModal, ModalOptions.default());
@@ -157,4 +165,6 @@ export class CategoryModalComponent implements OnInit, OnDestroy {
   private setDefaultCategoryForm(): void {
     this.categoryDto = new GetPaymentCategoryDto();
   }
+
+  protected readonly CategoryType = CategoryType;
 }

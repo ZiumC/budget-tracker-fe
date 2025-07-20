@@ -24,7 +24,7 @@
           <div class="mb-3">
             <button
               class="btn btn-success"
-              (click)="categoryModal.open(type.valueOf())">
+              (click)="categoryModal.open(type)">
               <i class="bi bi-plus-circle"></i> Create
             </button>
             <hr class="horizontal">
@@ -73,7 +73,7 @@
                           data-bs-toggle="tooltip"
                           data-bs-placement="bottom"
                           title="Edit category"
-                          (click)="categoryModal.open(type.valueOf(), category)">
+                          (click)="categoryModal.open(type, category)">
                           <i class="bi bi-pencil-square"></i> Edit
                         </button>
                         <button
