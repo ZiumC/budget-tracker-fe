@@ -22,9 +22,16 @@ export class GetIncomeCategoryDto extends GetCategoryDto {
 
 }
 
-export class PaymentCategoryDto {
+class CategoryDto {
   name: string;
   description: string;
+}
+
+export class IncomeCategoryDto extends CategoryDto {
+
+}
+
+export class PaymentCategoryDto extends CategoryDto {
   isNeeds: boolean;
   isWants: boolean;
   isSavings: boolean;
