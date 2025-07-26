@@ -15,7 +15,7 @@ import {AppConfig} from "../../../../models/config/config";
 import {TimerUtils} from "../../../../util/timer.utils";
 import {generateErrorModel} from "../../../../util/http.util";
 import {GetPlannedPaymentDto} from "../../../../models/dto/planned-payment.model.dto";
-import {GetCategoryDto} from "../../../../models/dto/category.model.dto";
+import {CategoryType, GetCategoryDto} from "../../../../models/dto/category.model.dto";
 
 @Component({
   selector: 'app-delete-modal',
@@ -35,6 +35,7 @@ export class DeleteModalComponent implements OnInit, OnDestroy {
   protected subscriptions: Subscription[];
   protected responseModel: ResponseModel;
   protected displayLoader: boolean;
+  private categoryType: CategoryType;
   private paymentDto: GetPaymentDto | null;
   private plannedPaymentDto: GetPlannedPaymentDto | null;
   private budgetDto: GetBudgetDto | null;
@@ -64,7 +65,8 @@ export class DeleteModalComponent implements OnInit, OnDestroy {
     SubscriptionUtils.unsubscribeAll(this.subscriptions);
   }
 
-  openWithCategory(category: GetCategoryDto): void {
+  openWithCategory(type: CategoryType, category: GetCategoryDto): void {
+    this.categoryType = type;
     this.displayLoader = false;
     this.categoryDto = new GetCategoryDto();
     this.categoryDto = category;
@@ -213,8 +215,13 @@ export class DeleteModalComponent implements OnInit, OnDestroy {
   }
 
   private deleteCategory(idCategory: string): void {
+    let httpDeleteCategory = this.httpService.deletePaymentCategory(idCategory);
+    if (this.categoryType == CategoryType.INCOMES){
+      httpDeleteCategory = this.httpService.deleteIncomeCategory(idCategory);
+    }
+    
     this.subscriptions.push(
-      this.httpService.deleteCategory(idCategory).subscribe({
+      httpDeleteCategory.subscribe({
         next: (response: HttpResponse<any>): void => {
           this.onRequestSuccess(response);
           this.refreshCategoryEvent.emit(true);
