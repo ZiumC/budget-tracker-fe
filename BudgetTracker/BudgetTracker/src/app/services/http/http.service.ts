@@ -263,7 +263,15 @@ export class HttpService {
     )
   }
 
-  public deleteCategory(idCategory: string):
+  public deleteIncomeCategory(idCategory: string):
+    Observable<HttpResponse<{}>> {
+    return this.httpClient.delete(
+      CategoryUrls.incomeCategoryId(idCategory),
+      {observe: 'response'}
+    )
+  }
+
+  public deletePaymentCategory(idCategory: string):
     Observable<HttpResponse<{}>> {
     return this.httpClient.delete(
       CategoryUrls.paymentCategoryId(idCategory),
