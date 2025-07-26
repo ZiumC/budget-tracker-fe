@@ -32,6 +32,7 @@ export class CategoryModalComponent implements OnInit, OnDestroy {
   protected readonly SpinnerSize = SpinnerSize;
   protected readonly ModalUtils = ModalUtils;
   protected readonly formatString = formatString;
+  protected readonly CategoryType = CategoryType;
   protected subscriptions: Subscription[] = [];
   protected responseModel: ResponseModel;
   protected appConfig: AppConfig;
@@ -103,6 +104,7 @@ export class CategoryModalComponent implements OnInit, OnDestroy {
       this.categoryDto.isNeeds = this.selectedCategoryName == categoryForm.needsName;
       this.categoryDto.isWants = this.selectedCategoryName == categoryForm.wantsName;
       this.categoryDto.isSavings = this.selectedCategoryName == categoryForm.savingsName;
+
       categoryToSave = {
         name: this.categoryDto.name,
         description: this.categoryDto.description,
@@ -125,8 +127,6 @@ export class CategoryModalComponent implements OnInit, OnDestroy {
   }
 
   private updateCategory(categoryId: string, categoryToSave: IncomeCategoryDto | PaymentCategoryDto): void {
-    console.log(typeof categoryToSave);
-    console.log(categoryToSave instanceof IncomeCategoryDto);
     if (categoryToSave instanceof IncomeCategoryDto) {
       this.subscriptions.push(
         this.httpService.updateIncomeCategory(
@@ -205,6 +205,4 @@ export class CategoryModalComponent implements OnInit, OnDestroy {
   private setDefaultCategoryForm(): void {
     this.categoryDto = new GetPaymentCategoryDto();
   }
-
-  protected readonly CategoryType = CategoryType;
 }
