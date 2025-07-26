@@ -219,7 +219,7 @@ export class DeleteModalComponent implements OnInit, OnDestroy {
     if (this.categoryType == CategoryType.INCOMES){
       httpDeleteCategory = this.httpService.deleteIncomeCategory(idCategory);
     }
-    
+
     this.subscriptions.push(
       httpDeleteCategory.subscribe({
         next: (response: HttpResponse<any>): void => {
