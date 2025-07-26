@@ -210,9 +210,14 @@ export class CategoryUrls {
     return result;
   }
 
-  static paymentId(idPayment: string): string {
+  static paymentCategoryId(idCategory: string): string {
     let result = HostUrl.getHostUrl() + CategoryUrls.CONTROLLER;
-    return result + CategoryUrls.ACTIONS.PAYMENT + "/" + idPayment;
+    return result + CategoryUrls.ACTIONS.PAYMENT + "/" + idCategory;
+  }
+
+  static incomeCategoryId(idIncome: string): string {
+    let result = HostUrl.getHostUrl() + CategoryUrls.CONTROLLER;
+    return result + CategoryUrls.ACTIONS.INCOME + "/" + idIncome;
   }
 }
 

@@ -4,7 +4,7 @@ import {ModalOptions, ModalUtils} from "../../../../util/modal.utils";
 import {
   CategoryType,
   GetCategoryDto,
-  GetPaymentCategoryDto,
+  GetPaymentCategoryDto, IncomeCategoryDto,
   PaymentCategoryDto
 } from "../../../../models/dto/category.model.dto";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
@@ -79,7 +79,7 @@ export class CategoryModalComponent implements OnInit, OnDestroy {
       this.categoryDto.dateUpdated = categoryData.dateUpdated;
       this.categoryDto.description = categoryData.description;
 
-      if (categoryType != CategoryType.INCOMES){
+      if (categoryType != CategoryType.INCOMES) {
         this.categoryDto.isSavings = (categoryData as GetPaymentCategoryDto).isSavings;
         this.categoryDto.isNeeds = (categoryData as GetPaymentCategoryDto).isNeeds;
         this.categoryDto.isWants = (categoryData as GetPaymentCategoryDto).isWants;
@@ -89,21 +89,28 @@ export class CategoryModalComponent implements OnInit, OnDestroy {
     this.modalService.open(this.categoryModal, ModalOptions.default());
   }
 
-  protected saveCategory(): void {
-    const categoryForm = this.formConfig.categoryModal;
-    this.categoryDto.isNeeds = this.selectedCategoryName == categoryForm.needsName;
-    this.categoryDto.isWants = this.selectedCategoryName == categoryForm.wantsName;
-    this.categoryDto.isSavings = this.selectedCategoryName == categoryForm.savingsName;
-
-    const categoryToSave = {
-      name: this.categoryDto.name,
-      description: this.categoryDto.description,
-      isNeeds: JSON.parse(String(this.categoryDto.isNeeds)),
-      isWants: JSON.parse(String(this.categoryDto.isWants)),
-      isSavings: JSON.parse(String(this.categoryDto.isSavings)),
-    } as PaymentCategoryDto;
-
+  protected save(): void {
     this.displayLoader = true;
+
+    let categoryToSave: PaymentCategoryDto | IncomeCategoryDto;
+    if (this.categoryType == CategoryType.INCOMES) {
+      categoryToSave = new IncomeCategoryDto();
+      categoryToSave.name = this.categoryDto.name;
+      categoryToSave.description = this.categoryDto.description;
+
+    } else {
+      const categoryForm = this.formConfig.categoryModal;
+      this.categoryDto.isNeeds = this.selectedCategoryName == categoryForm.needsName;
+      this.categoryDto.isWants = this.selectedCategoryName == categoryForm.wantsName;
+      this.categoryDto.isSavings = this.selectedCategoryName == categoryForm.savingsName;
+      categoryToSave = {
+        name: this.categoryDto.name,
+        description: this.categoryDto.description,
+        isNeeds: JSON.parse(String(this.categoryDto.isNeeds)),
+        isWants: JSON.parse(String(this.categoryDto.isWants)),
+        isSavings: JSON.parse(String(this.categoryDto.isSavings))
+      } as PaymentCategoryDto;
+    }
 
     new TimerUtils(this.appConfig.animation.duration.default).start()
       .subscribe(finished => {
@@ -117,35 +124,68 @@ export class CategoryModalComponent implements OnInit, OnDestroy {
       });
   }
 
-  private updateCategory(categoryId: string, categoryToSave: PaymentCategoryDto): void {
-    this.subscriptions.push(
-      this.httpService.updateCategory(
-        categoryId,
-        categoryToSave
-      ).subscribe({
-        next: (response: HttpResponse<any>): void => {
-          this.onRequestSuccess(response);
-        },
-        error: (err): void => {
-          this.onRequestFailed(err);
-        }
-      })
-    );
+  private updateCategory(categoryId: string, categoryToSave: IncomeCategoryDto | PaymentCategoryDto): void {
+    console.log(typeof categoryToSave);
+    console.log(categoryToSave instanceof IncomeCategoryDto);
+    if (categoryToSave instanceof IncomeCategoryDto) {
+      this.subscriptions.push(
+        this.httpService.updateIncomeCategory(
+          categoryId,
+          categoryToSave
+        ).subscribe({
+          next: (response: HttpResponse<any>): void => {
+            this.onRequestSuccess(response);
+          },
+          error: (err): void => {
+            this.onRequestFailed(err);
+          }
+        })
+      );
+    } else {
+      this.subscriptions.push(
+        this.httpService.updatePaymentCategory(
+          categoryId,
+          categoryToSave
+        ).subscribe({
+          next: (response: HttpResponse<any>): void => {
+            this.onRequestSuccess(response);
+          },
+          error: (err): void => {
+            this.onRequestFailed(err);
+          }
+        })
+      );
+    }
   }
 
-  private createCategory(categoryToSave: PaymentCategoryDto): void {
-    this.subscriptions.push(
-      this.httpService.createCategory(
-        categoryToSave
-      ).subscribe({
-        next: (response: HttpResponse<any>): void => {
-          this.onRequestSuccess(response);
-        },
-        error: (err): void => {
-          this.onRequestFailed(err);
-        }
-      })
-    );
+  private createCategory(categoryToSave: IncomeCategoryDto | PaymentCategoryDto): void {
+    if (categoryToSave instanceof IncomeCategoryDto) {
+      this.subscriptions.push(
+        this.httpService.createIncomeCategory(
+          categoryToSave
+        ).subscribe({
+          next: (response: HttpResponse<any>): void => {
+            this.onRequestSuccess(response);
+          },
+          error: (err): void => {
+            this.onRequestFailed(err);
+          }
+        })
+      );
+    } else {
+      this.subscriptions.push(
+        this.httpService.createPaymentCategory(
+          categoryToSave
+        ).subscribe({
+          next: (response: HttpResponse<any>): void => {
+            this.onRequestSuccess(response);
+          },
+          error: (err): void => {
+            this.onRequestFailed(err);
+          }
+        })
+      );
+    }
   }
 
   private onRequestSuccess(response: HttpResponse<any>): void {

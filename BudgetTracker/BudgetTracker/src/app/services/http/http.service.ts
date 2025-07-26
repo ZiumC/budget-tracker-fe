@@ -6,7 +6,11 @@ import {GetIncomeDto, IncomeDto} from "../../models/dto/income.model.dto";
 import {PaymentDto, PaymentStatusDto} from "../../models/dto/payment.model.dto";
 import {BudgetDto, GetBudgetDto} from "../../models/dto/budget.model.dto";
 import {PageDto} from "../../models/dto/page.model.dto";
-import {PaymentCategoryDto, CategoryType, GetPaymentCategoryDto} from "../../models/dto/category.model.dto";
+import {
+  PaymentCategoryDto,
+  CategoryType,
+  GetPaymentCategoryDto, IncomeCategoryDto,
+} from "../../models/dto/category.model.dto";
 import {BudgetUrls, CategoryUrls, IncomeUrls, PaginationUrls, PaymentUrls} from "./http";
 import {PlannedPaymentDto} from "../../models/dto/planned-payment.model.dto";
 import {GetIncomeAssignmentDto, GetPaymentAssignmentDto} from "../../models/dto/assignment.model.dto";
@@ -223,7 +227,7 @@ export class HttpService {
     )
   }
 
-  public createCategory(categoryDto: PaymentCategoryDto):
+  public createPaymentCategory(categoryDto: PaymentCategoryDto):
     Observable<HttpResponse<{}>> {
     return this.httpClient.post(
       CategoryUrls.paymentCategory(null, null),
@@ -232,10 +236,28 @@ export class HttpService {
     )
   }
 
-  public updateCategory(idCategory: string, categoryDto: PaymentCategoryDto):
+  public updatePaymentCategory(idCategory: string, categoryDto: PaymentCategoryDto):
     Observable<HttpResponse<{}>> {
     return this.httpClient.put(
-      CategoryUrls.paymentId(idCategory),
+      CategoryUrls.paymentCategoryId(idCategory),
+      categoryDto,
+      {observe: 'response'}
+    )
+  }
+
+  public updateIncomeCategory(idCategory: string, categoryDto: IncomeCategoryDto):
+    Observable<HttpResponse<{}>> {
+    return this.httpClient.put(
+      CategoryUrls.incomeCategoryId(idCategory),
+      categoryDto,
+      {observe: 'response'}
+    )
+  }
+
+  public createIncomeCategory(categoryDto: IncomeCategoryDto):
+    Observable<HttpResponse<{}>> {
+    return this.httpClient.post(
+      CategoryUrls.incomeCategory(null),
       categoryDto,
       {observe: 'response'}
     )
@@ -244,7 +266,7 @@ export class HttpService {
   public deleteCategory(idCategory: string):
     Observable<HttpResponse<{}>> {
     return this.httpClient.delete(
-      CategoryUrls.paymentId(idCategory),
+      CategoryUrls.paymentCategoryId(idCategory),
       {observe: 'response'}
     )
   }
