@@ -8,4 +8,5 @@ export interface RequiredStatus {
   paymentStatus: number;
   plannedPaymentStatus: number;
   categoryStatus: number;
+  budgetStatsStatus: number;
 }
