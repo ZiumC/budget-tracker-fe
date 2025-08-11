@@ -169,16 +169,29 @@
       </div>
     </div>
     <div class="row">
-      <div class="card text-center mb-lg-3">
-        <div class="card-header">
-          Payments
-        </div>
-        <div id="payments-card" class="card-body">
-          <app-payment #appPayment
-                       [idBudget]="idBudget"
-                       (refreshEvent)="onRefreshEvent($event)">
+      <div class="col">
+        <div class="card text-center mb-lg-3">
+          <div class="card-header">
+            Payments
+          </div>
+          <div id="payments-card" class="card-body">
+            <app-payment #appPayment
+                         [idBudget]="idBudget"
+                         (refreshEvent)="onRefreshEvent($event)">
 
-          </app-payment>
+            </app-payment>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <div class="card text-center mb-lg-3">
+          <div class="card-header">
+            Statistics
+          </div>
+          <div id="statistics-card" class="card-body">
+          </div>
         </div>
       </div>
     </div>
