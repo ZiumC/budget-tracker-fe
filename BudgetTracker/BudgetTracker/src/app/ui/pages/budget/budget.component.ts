@@ -33,7 +33,6 @@ export class BudgetComponent implements OnInit, OnDestroy {
   protected responseModels: BudgetResponse;
   protected idBudget: string;
   protected budgetLoader: boolean;
-  protected budgetStatsLoader: boolean;
   public innerWidth: any;
 
   constructor(
@@ -98,7 +97,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
     this.innerWidth = window.innerWidth;
   }
 
-  protected isMobileView(): boolean{
+  protected isMobileView(): boolean {
     return innerWidth <= this.appConfig.pageMobileWidth;
   }
 
@@ -106,7 +105,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
     this.router.navigate(['/']);
   }
 
-  protected getBudgetStatistics(): void{
+  protected getBudgetStatistics(): void {
     this.subscriptions.push(
       this.httpService.getBudgetStats(this.idBudget).subscribe({
         next: (response: HttpResponse<GetBudgetStatsDto>): void => {
@@ -118,6 +117,12 @@ export class BudgetComponent implements OnInit, OnDestroy {
         }
       })
     )
+  }
+
+  protected onRefreshEvent(refresh: boolean): void {
+    if (refresh) {
+      this.getBudgetStatistics();
+    }
   }
 
   private markBudgetAsLoaded(isLoaded: boolean): void {

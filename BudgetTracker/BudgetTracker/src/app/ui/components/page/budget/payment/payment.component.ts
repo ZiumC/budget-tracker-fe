@@ -1,4 +1,14 @@
-import {AfterViewInit, Component, ElementRef, HostListener, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  EventEmitter,
+  HostListener,
+  Input,
+  OnDestroy,
+  OnInit, Output,
+  ViewChild
+} from '@angular/core';
 import {format, subtract} from "../../../../../util/number.util";
 import {DateUtil} from "../../../../../util/date.util";
 import {formatString} from "../../../../../util/string.utils";
@@ -29,6 +39,7 @@ export class PaymentComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('errorModal') errorModal: any;
   @ViewChild('paymentModal') paymentModal: any;
   @Input() idBudget: string;
+  @Output() refreshEvent = new EventEmitter<boolean>();
   private pageWidth: any;
   private componentDimension = {width: 0, height: 0};
   protected readonly format = format;
@@ -75,7 +86,6 @@ export class PaymentComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.getPayments();
     this.defaultOrderParams();
-    this.getPaymentTotalPages();
   }
 
   openModal(): void {
@@ -132,7 +142,7 @@ export class PaymentComponent implements OnInit, OnDestroy, AfterViewInit {
 
   protected onRefreshPayment(): void {
     this.markPaymentsAsLoaded(false);
-    this.getPaymentTotalPages();
+    this.refreshEvent.next(true);
     this.getPayments();
   }
 
@@ -217,6 +227,7 @@ export class PaymentComponent implements OnInit, OnDestroy, AfterViewInit {
             this.errorModal.open(response);
           }
           this.markPaymentsAsLoaded(true);
+          this.refreshEvent.next(false);
         },
         complete: (): void => {
           this.getPaymentTotalPages();
