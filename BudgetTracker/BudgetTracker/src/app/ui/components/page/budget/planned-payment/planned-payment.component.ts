@@ -1,4 +1,14 @@
-import {AfterViewInit, Component, ElementRef, HostListener, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef, EventEmitter,
+  HostListener,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+  ViewChild
+} from '@angular/core';
 import {HttpService} from "../../../../../services/http/http.service";
 import {ConfigService} from "../../../../../services/config/config.service";
 import {Subscription} from "rxjs";
@@ -30,6 +40,7 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy, AfterViewInit
   @ViewChild('plannedPaymentModal') plannedPaymentModal: any;
   @ViewChild('errorModal') errorModal: any;
   @Input() idBudget: string;
+  @Output() refreshEvent = new EventEmitter<boolean>();
   private componentDimension = {width: 0, height: 0};
   protected pageWidth: number;
   protected readonly formatString = formatString;
@@ -79,7 +90,6 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy, AfterViewInit
 
     this.getPlannedPayments();
     this.defaultOrderParams();
-    this.getPlannedPaymentTotalPages();
   }
 
   @HostListener('window:resize', ['$event'])
@@ -121,7 +131,7 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy, AfterViewInit
 
   protected onRefreshPlannedPayment(): void {
     this.markPlannedPaymentsAsLoaded(false);
-    this.getPlannedPaymentTotalPages();
+    this.refreshEvent.next(true);
     this.getPlannedPayments();
   }
 
@@ -184,9 +194,11 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy, AfterViewInit
             this.errorModal.open(response);
           }
           this.markPlannedPaymentsAsLoaded(true);
+          this.refreshEvent.next(false);
         },
         complete: (): void => {
           this.markPlannedPaymentsAsLoaded(true);
+          this.getPlannedPaymentTotalPages();
         }
       })
     )

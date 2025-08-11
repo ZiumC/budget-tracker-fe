@@ -1,4 +1,14 @@
-import {AfterViewInit, Component, ElementRef, HostListener, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef, EventEmitter,
+  HostListener,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+  ViewChild
+} from '@angular/core';
 import {formatString} from "../../../../../util/string.utils";
 import {DateUtil} from "../../../../../util/date.util";
 import {format} from "../../../../../util/number.util";
@@ -28,6 +38,7 @@ export class IncomeComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('errorModal') errorModal: any;
   @ViewChild('incomeModal') incomeModal: any;
   @Input() idBudget: string;
+  @Output() refreshEvent = new EventEmitter<boolean>();
   private componentDimension = {width: 0, height: 0};
   private pageWidth: number;
   protected readonly formatString = formatString;
@@ -73,7 +84,6 @@ export class IncomeComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.getIncomes();
     this.defaultOrderParams();
-    this.getIncomeTotalPages();
   }
 
   openModal(): void {
@@ -115,7 +125,7 @@ export class IncomeComponent implements OnInit, OnDestroy, AfterViewInit {
 
   protected onRefreshIncome(): void {
     this.markIncomesAsLoaded(false);
-    this.getIncomeTotalPages();
+    this.refreshEvent.next(true);
     this.getIncomes();
   }
 
@@ -147,6 +157,7 @@ export class IncomeComponent implements OnInit, OnDestroy, AfterViewInit {
             this.errorModal.open(response);
           }
           this.markIncomesAsLoaded(true);
+          this.refreshEvent.next(false);
         },
         complete: (): void => {
           this.getIncomeTotalPages();

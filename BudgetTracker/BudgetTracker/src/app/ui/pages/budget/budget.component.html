@@ -37,9 +37,9 @@
                         [className]="innerWidth > appConfig.pageMobileWidth ? 'btn btn-success' : 'btn btn-success width-ex-20'"
                         data-bs-toggle="tooltip"
                         data-bs-placement="bottom"
-                        title="Add payment"
-                        (click)="appPayment.openModal()">
-                  <i class="bi bi-coin"></i> Payment
+                        title="Add income"
+                        (click)="appIncome.openModal()">
+                  <i class="bi bi-cash-coin"></i> Income
                 </button>
                 <button type="button"
                         [className]="innerWidth > appConfig.pageMobileWidth ? 'btn btn-success' : 'btn btn-success width-ex-20'"
@@ -53,9 +53,9 @@
                         [className]="innerWidth > appConfig.pageMobileWidth ? 'btn btn-success' : 'btn btn-success width-ex-20'"
                         data-bs-toggle="tooltip"
                         data-bs-placement="bottom"
-                        title="Add income"
-                        (click)="appIncome.openModal()">
-                  <i class="bi bi-cash-coin"></i> Income
+                        title="Add payment"
+                        (click)="appPayment.openModal()">
+                  <i class="bi bi-coin"></i> Payment
                 </button>
                 <button type="button"
                         [className]="innerWidth > appConfig.pageMobileWidth ? 'btn btn-danger' : 'btn btn-danger width-ex-20'"
@@ -146,7 +146,8 @@
           </div>
           <div id="incomes-card" class="card-body">
             <app-income #appIncome
-                        [idBudget]="idBudget">
+                        [idBudget]="idBudget"
+                        (refreshEvent)="onRefreshEvent($event)">
 
             </app-income>
           </div>
@@ -159,7 +160,8 @@
           </div>
           <div id="planned-payments-card" class="card-body">
             <app-planned-payment #appPlannedPayment
-                                 [idBudget]="idBudget">
+                                 [idBudget]="idBudget"
+                                 (refreshEvent)="onRefreshEvent($event)">
 
             </app-planned-payment>
           </div>
@@ -173,45 +175,13 @@
         </div>
         <div id="payments-card" class="card-body">
           <app-payment #appPayment
-                       [idBudget]="idBudget">
+                       [idBudget]="idBudget"
+                       (refreshEvent)="onRefreshEvent($event)">
 
           </app-payment>
         </div>
       </div>
     </div>
-    <!--    <div class="card text-center mb-3">-->
-    <!--      <div class="card-header">-->
-    <!--        Incomes-->
-    <!--      </div>-->
-    <!--      <div id="incomes-card" class="card-body">-->
-    <!--        <app-income #appIncome-->
-    <!--                    [idBudget]="idBudget">-->
-
-    <!--        </app-income>-->
-    <!--      </div>-->
-    <!--    </div>-->
-    <!--    <div class="card text-center mb-3">-->
-    <!--      <div class="card-header">-->
-    <!--        Planned payments-->
-    <!--      </div>-->
-    <!--      <div id="planned-payments-card" class="card-body">-->
-    <!--        <app-planned-payment #appPlannedPayment-->
-    <!--                             [idBudget]="idBudget">-->
-
-    <!--        </app-planned-payment>-->
-    <!--      </div>-->
-    <!--    </div>-->
-    <!--    <div class="card text-center mb-lg-3">-->
-    <!--      <div class="card-header">-->
-    <!--        Payments-->
-    <!--      </div>-->
-    <!--      <div id="payments-card" class="card-body">-->
-    <!--        <app-payment #appPayment-->
-    <!--                     [idBudget]="idBudget">-->
-
-    <!--        </app-payment>-->
-    <!--      </div>-->
-    <!--    </div>-->
     <app-delete-modal #deleteModal
                       (indexPageEvent)="onRedirectToIndex()">
 
