@@ -107,7 +107,6 @@ export class BudgetComponent implements OnInit, OnDestroy {
   }
 
   protected getBudgetStatistics(): void{
-    this.markBudgetStatsAsLoaded(false);
     this.subscriptions.push(
       this.httpService.getBudgetStats(this.idBudget).subscribe({
         next: (response: HttpResponse<GetBudgetStatsDto>): void => {
@@ -116,10 +115,6 @@ export class BudgetComponent implements OnInit, OnDestroy {
         },
         error: (err): void => {
           this.responseModels.budgetStats = generateErrorModel(err);
-          this.markBudgetAsLoaded(true);
-        },
-        complete: (): void => {
-          this.markBudgetAsLoaded(true);
         }
       })
     )
@@ -135,19 +130,6 @@ export class BudgetComponent implements OnInit, OnDestroy {
         });
     } else {
       this.budgetLoader = isLoaded;
-    }
-  }
-
-  private markBudgetStatsAsLoaded(isLoaded: boolean): void {
-    if (isLoaded) {
-      new TimerUtils(this.appConfig.animation.duration.default).start()
-        .subscribe(finished => {
-          if (finished) {
-            this.budgetStatsLoader = isLoaded;
-          }
-        });
-    } else {
-      this.budgetStatsLoader = isLoaded;
     }
   }
 }
