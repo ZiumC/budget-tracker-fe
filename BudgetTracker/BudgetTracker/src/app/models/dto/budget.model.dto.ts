@@ -1,3 +1,5 @@
+import BigNumber from "bignumber.js";
+
 export class BudgetDto {
   name: string;
   dateStart: Date;
@@ -9,4 +11,25 @@ export class GetBudgetDto {
   name: string;
   dateEnd: Date;
   dateStart: Date;
+}
+
+export class GetBudgetStatsDto {
+  plannedPayment: BudgetStatsPlannedPayment;
+  regularPayment: BudgetStatsRegularPayment;
+  income: BudgetStatsIncome
+}
+
+class BudgetStatsPlannedPayment {
+  estimated: BigNumber;
+  realPrice: BigNumber;
+}
+
+class BudgetStatsRegularPayment {
+  price: BigNumber;
+  refund: BigNumber;
+}
+
+class BudgetStatsIncome {
+  wage: BigNumber;
+  savings: BigNumber;
 }

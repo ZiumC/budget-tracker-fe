@@ -8,7 +8,7 @@ import {ActivatedRoute, Params, Router} from "@angular/router";
 import {HttpResponse} from "@angular/common/http";
 import {SubscriptionUtils} from "../../../util/subscription.utils";
 import {format} from "../../../util/number.util";
-import {GetBudgetDto} from "../../../models/dto/budget.model.dto";
+import {GetBudgetDto, GetBudgetStatsDto} from "../../../models/dto/budget.model.dto";
 import {AppConfig} from "../../../models/config/config";
 import {ConfigService} from "../../../services/config/config.service";
 import {formatString} from "../../../util/string.utils";
@@ -28,10 +28,12 @@ export class BudgetComponent implements OnInit, OnDestroy {
   protected readonly SpinnerSize = SpinnerSize;
   protected appConfig: AppConfig;
   protected budgetDto: GetBudgetDto | null;
+  protected budgetStatsDto: GetBudgetStatsDto | null;
   protected subscriptions: Subscription[];
   protected responseModels: BudgetResponse;
   protected idBudget: string;
   protected budgetLoader: boolean;
+  protected budgetStatsLoader: boolean;
   public innerWidth: any;
 
   constructor(
@@ -57,7 +59,8 @@ export class BudgetComponent implements OnInit, OnDestroy {
       budget: new ResponseModel(),
       incomes: new ResponseModel(),
       payments: new ResponseModel(),
-      paymentStatus: new ResponseModel()
+      paymentStatus: new ResponseModel(),
+      budgetStats: new ResponseModel()
     };
 
     this.innerWidth = window.innerWidth;
@@ -66,6 +69,8 @@ export class BudgetComponent implements OnInit, OnDestroy {
     this.activatedRoute.queryParams.subscribe((params: Params): void => {
       this.idBudget = params['id'];
     });
+
+    this.getBudgetStatistics();
 
     this.subscriptions.push(
       this.httpService.getBudget(this.idBudget).subscribe({
@@ -93,13 +98,31 @@ export class BudgetComponent implements OnInit, OnDestroy {
     this.innerWidth = window.innerWidth;
   }
 
+  protected isMobileView(): boolean{
+    return innerWidth <= this.appConfig.pageMobileWidth;
+  }
+
   protected onRedirectToIndex(): void {
     this.router.navigate(['/']);
   }
 
-  protected buttonOptionsClass(): string {
-    const isMobileView = innerWidth <= this.appConfig.pageMobileWidth;
-    return isMobileView ? "budget-button-options-rows" : "budget-button-options-4-cols";
+  protected getBudgetStatistics(): void{
+    this.markBudgetStatsAsLoaded(false);
+    this.subscriptions.push(
+      this.httpService.getBudgetStats(this.idBudget).subscribe({
+        next: (response: HttpResponse<GetBudgetStatsDto>): void => {
+          this.budgetStatsDto = response.body;
+          this.responseModels.budgetStats.statusCode = response.status;
+        },
+        error: (err): void => {
+          this.responseModels.budgetStats = generateErrorModel(err);
+          this.markBudgetAsLoaded(true);
+        },
+        complete: (): void => {
+          this.markBudgetAsLoaded(true);
+        }
+      })
+    )
   }
 
   private markBudgetAsLoaded(isLoaded: boolean): void {
@@ -112,6 +135,19 @@ export class BudgetComponent implements OnInit, OnDestroy {
         });
     } else {
       this.budgetLoader = isLoaded;
+    }
+  }
+
+  private markBudgetStatsAsLoaded(isLoaded: boolean): void {
+    if (isLoaded) {
+      new TimerUtils(this.appConfig.animation.duration.default).start()
+        .subscribe(finished => {
+          if (finished) {
+            this.budgetStatsLoader = isLoaded;
+          }
+        });
+    } else {
+      this.budgetStatsLoader = isLoaded;
     }
   }
 }

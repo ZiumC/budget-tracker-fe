@@ -4,14 +4,14 @@ import {Injectable} from "@angular/core";
 import {RequestParams} from "../../models/requestParams";
 import {GetIncomeDto, IncomeDto} from "../../models/dto/income.model.dto";
 import {PaymentDto, PaymentStatusDto} from "../../models/dto/payment.model.dto";
-import {BudgetDto, GetBudgetDto} from "../../models/dto/budget.model.dto";
+import {BudgetDto, GetBudgetDto, GetBudgetStatsDto} from "../../models/dto/budget.model.dto";
 import {PageDto} from "../../models/dto/page.model.dto";
 import {
   PaymentCategoryDto,
   CategoryType,
   GetPaymentCategoryDto, IncomeCategoryDto,
 } from "../../models/dto/category.model.dto";
-import {BudgetUrls, CategoryUrls, IncomeUrls, PaginationUrls, PaymentUrls} from "./http";
+import {BudgetUrls, CategoryUrls, IncomeUrls, PaginationUrls, PaymentUrls, StatisticUrls} from "./http";
 import {PlannedPaymentDto} from "../../models/dto/planned-payment.model.dto";
 import {GetIncomeAssignmentDto, GetPaymentAssignmentDto} from "../../models/dto/assignment.model.dto";
 
@@ -283,6 +283,14 @@ export class HttpService {
     Observable<HttpResponse<GetPaymentAssignmentDto>> {
     return this.httpClient.get<GetPaymentAssignmentDto>(
       PaymentUrls.paymentAssignment(idPayment, isPlanned),
+      {observe: 'response'}
+    )
+  }
+
+  public getBudgetStats(idBudget: string):
+    Observable<HttpResponse<GetBudgetStatsDto>> {
+    return this.httpClient.get<GetBudgetStatsDto>(
+      StatisticUrls.budgetStats(idBudget),
       {observe: 'response'}
     )
   }
