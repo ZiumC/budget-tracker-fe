@@ -32,7 +32,7 @@
             </table>
             <div class="mt-3">
               <div class="mb-1 text-center"
-                   [className]="buttonOptionsClass()">
+                   [className]="isMobileView() ? 'budget-button-options-rows' : 'budget-button-options-4-cols'">
                 <button type="button"
                         [className]="innerWidth > appConfig.pageMobileWidth ? 'btn btn-success' : 'btn btn-success width-ex-20'"
                         data-bs-toggle="tooltip"
@@ -66,6 +66,56 @@
                   <i class="bi bi-trash3-fill"></i> Delete
                 </button>
               </div>
+              <table class="mt-5" [style]="isMobileView() ? '' : 'display:none'">
+                <tr>
+                  <td>
+                    <strong>
+                      Incomes
+                    </strong>
+                  </td>
+                  <td>{{ format(budgetStatsDto?.income!.wage) }} PLN</td>
+                </tr>
+                <tr>
+                <td>
+                <strong>
+                      Planned payments
+                    </strong>
+                </td>
+                <td>{{ format(budgetStatsDto?.plannedPayment!.estimated) }} PLN</td>
+                </tr>
+                <tr>
+                <td>
+                <strong>
+                      Regular payments
+                    </strong>
+                </td>
+                <td>{{ format(budgetStatsDto?.regularPayment!.price) }} PLN</td>
+                </tr>
+              </table>
+              <table class="mt-5" [style]="isMobileView() ? 'display:none' : ''">
+                <tr class="w-100">
+                  <td class="col-md-4">
+                    <strong>
+                      Incomes
+                    </strong>
+                  </td>
+                  <td class="col-md-4">
+                    <strong>
+                      Planned payments
+                    </strong>
+                  </td>
+                  <td class="col-md-4">
+                    <strong>
+                      Regular payments
+                    </strong>
+                  </td>
+                </tr>
+                <tr>
+                  <td>{{ format(budgetStatsDto?.income!.wage) }} PLN</td>
+                  <td>{{ format(budgetStatsDto?.plannedPayment!.estimated) }} PLN</td>
+                  <td>{{ format(budgetStatsDto?.regularPayment!.price) }} PLN</td>
+                </tr>
+              </table>
             </div>
           </ng-template>
           <ng-template #budgetErrorBlock>

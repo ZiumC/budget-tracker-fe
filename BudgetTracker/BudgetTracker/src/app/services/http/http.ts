@@ -162,6 +162,18 @@ export class BudgetUrls {
   }
 }
 
+export class StatisticUrls {
+  private static CONTROLLER = '/Statistics';
+  private static ACTIONS = {
+    BUDGET: "/budget",
+  }
+
+  static budgetStats(idBudget: string): string {
+    let result = HostUrl.getHostUrl() + StatisticUrls.CONTROLLER;
+    return result + StatisticUrls.ACTIONS.BUDGET + "/" + idBudget;
+  }
+}
+
 export class CategoryUrls {
   private static CONTROLLER = "/Categories";
   private static ACTIONS = {
