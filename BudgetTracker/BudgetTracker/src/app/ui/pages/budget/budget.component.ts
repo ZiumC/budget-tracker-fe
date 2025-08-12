@@ -33,6 +33,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
   protected responseModels: BudgetResponse;
   protected idBudget: string;
   protected budgetLoader: boolean;
+  protected data: any;
   public innerWidth: any;
 
   constructor(
@@ -47,6 +48,13 @@ export class BudgetComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.data = [
+      { name: "Mobiles", value: 105000 },
+      { name: "Laptop", value: 55000 },
+      { name: "AC", value: 15000 },
+      { name: "Headset", value: 150000 },
+      { name: "Fridge", value: 20000 }
+    ];
     const appCfg = this.configService.getAppConfig();
     if (appCfg) {
       this.appConfig = appCfg;

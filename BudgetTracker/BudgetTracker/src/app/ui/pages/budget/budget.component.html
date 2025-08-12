@@ -191,13 +191,25 @@
             Statistics
           </div>
           <div id="statistics-card" class="card-body">
+            <ngx-charts-bar-vertical
+              [view]="[1000,400]"
+              [results]="data"
+              [xAxisLabel]="'Products'"
+              [legendTitle]="'Product Sale Chart'"
+              [yAxisLabel]="'Sale'"
+              [legend]="true"
+              [showXAxisLabel]="true"
+              [showYAxisLabel]="true"
+              [xAxis]="true"
+              [yAxis]="true"
+              [gradient]="true">
+            </ngx-charts-bar-vertical>
           </div>
         </div>
       </div>
     </div>
     <app-delete-modal #deleteModal
                       (indexPageEvent)="onRedirectToIndex()">
-
     </app-delete-modal>
   </div>
 </div>

@@ -1,4 +1,4 @@
-import {APP_INITIALIZER, NgModule} from '@angular/core';
+import {APP_INITIALIZER, importProvidersFrom, NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 import '@angular/common/locales/global/pl';
 import {AppRoutingModule} from './app-routing.module';
@@ -37,6 +37,8 @@ import { CategoryModalComponent } from './ui/components/modals/category-modal/ca
 import { CopyPaymentModalComponent } from './ui/components/modals/copy-payment-modal/copy-payment-modal.component';
 import { InfoModalComponent } from './ui/components/modals/info-modal/info-modal.component';
 import { TypeheadComponent } from './ui/components/shared/typehead/typehead.component';
+import {BarChartModule} from "@swimlane/ngx-charts";
+import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 
 export function loadConfig(configService: ConfigService): () => Promise<Config> {
   return (): Promise<Config> => firstValueFrom(configService.loadConfig());
@@ -72,18 +74,20 @@ export function loadConfig(configService: ConfigService): () => Promise<Config> 
     InfoModalComponent,
     TypeheadComponent,
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    NgbModule,
-    HttpClientModule,
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-  ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        NgbModule,
+        HttpClientModule,
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        BarChartModule,
+    ],
   providers: [
     {provide: NgbDateParserFormatter, useClass: DatepickerFormatter},
-    {provide: APP_INITIALIZER, useFactory: loadConfig, deps: [ConfigService], multi: true}
+    {provide: APP_INITIALIZER, useFactory: loadConfig, deps: [ConfigService], multi: true},
+    importProvidersFrom([BrowserModule, BrowserAnimationsModule])
   ],
   bootstrap: [AppComponent],
 })
