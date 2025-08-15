@@ -166,11 +166,17 @@ export class StatisticUrls {
   private static CONTROLLER = '/Statistics';
   private static ACTIONS = {
     BUDGET: "/budget",
+    INCOMES: "/incomes"
   }
 
   static budgetStats(idBudget: string): string {
     let result = HostUrl.getHostUrl() + StatisticUrls.CONTROLLER;
     return result + StatisticUrls.ACTIONS.BUDGET + "/" + idBudget;
+  }
+
+  static budgetIncomeStats(idBudget: string): string {
+    let result = HostUrl.getHostUrl() + StatisticUrls.CONTROLLER + StatisticUrls.ACTIONS.BUDGET;
+    return result + "/" + idBudget + StatisticUrls.ACTIONS.INCOMES;
   }
 }
 

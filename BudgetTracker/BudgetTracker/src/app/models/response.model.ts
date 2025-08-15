@@ -23,6 +23,7 @@ export class BudgetResponse {
   payments: ResponseModel;
   paymentStatus: ResponseModel;
   budgetStats: ResponseModel;
+  incomeStats: ResponseModel;
 }
 
 export class Status {

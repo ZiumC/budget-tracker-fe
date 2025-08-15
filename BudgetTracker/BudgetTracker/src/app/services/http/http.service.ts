@@ -14,6 +14,7 @@ import {
 import {BudgetUrls, CategoryUrls, IncomeUrls, PaginationUrls, PaymentUrls, StatisticUrls} from "./http";
 import {PlannedPaymentDto} from "../../models/dto/planned-payment.model.dto";
 import {GetIncomeAssignmentDto, GetPaymentAssignmentDto} from "../../models/dto/assignment.model.dto";
+import {GetCategoryStatsDto} from "../../models/dto/statistics.model.dto";
 
 @Injectable({
   providedIn: 'root',
@@ -293,5 +294,13 @@ export class HttpService {
       StatisticUrls.budgetStats(idBudget),
       {observe: 'response'}
     )
+  }
+
+  public getBudgetIncomeCategoriesStats(idBudget: string):
+    Observable<HttpResponse<GetCategoryStatsDto>> {
+    return this.httpClient.get<GetCategoryStatsDto>(
+      StatisticUrls.budgetIncomeStats(idBudget),
+      {observe: 'response'}
+    );
   }
 }

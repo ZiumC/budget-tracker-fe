@@ -1,5 +1,6 @@
 import {Component, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {SpinnerSize} from "../../components/shared/spinner/spinner.component";
+import BigNumber from "bignumber.js";
 import {Subscription} from "rxjs";
 import {BudgetResponse, ResponseModel} from "../../../models/response.model";
 import {DateUtil} from '../../../util/date.util';
@@ -14,8 +15,11 @@ import {ConfigService} from "../../../services/config/config.service";
 import {formatString} from "../../../util/string.utils";
 import {generateErrorModel} from "../../../util/http.util";
 import {TimerUtils} from "../../../util/timer.utils";
-import {ColorHelper, LegendPosition} from "@swimlane/ngx-charts";
-import {StatisticsDataResult} from "../../../models/dto/statistics.model.dto";
+import {LegendPosition} from "@swimlane/ngx-charts";
+import {
+  GetCategoryStatsDto,
+  StatisticsDataResult
+} from "../../../models/dto/statistics.model.dto";
 
 @Component({
   selector: 'app-budget',
@@ -28,6 +32,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
   protected readonly formatString = formatString;
   protected readonly DateUtils = DateUtil;
   protected readonly SpinnerSize = SpinnerSize;
+  protected readonly LegendPosition = LegendPosition;
   protected appConfig: AppConfig;
   protected budgetDto: GetBudgetDto | null;
   protected budgetStatsDto: GetBudgetStatsDto | null;
@@ -35,6 +40,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
   protected responseModels: BudgetResponse;
   protected idBudget: string;
   protected budgetLoader: boolean;
+  protected budgetIncomeLoader: boolean;
   protected incomeStatsData: StatisticsDataResult[] = [];
   protected currentTabId: number;
   public innerWidth: any;
@@ -52,37 +58,32 @@ export class BudgetComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.currentTabId = 1;
-
-    for (let i = 0; i < 21; i++) {
-      this.incomeStatsData.push({
-        name: 'Cat no. ' + i,
-        value: i * 10
-      } as StatisticsDataResult)
-    }
-
     const appCfg = this.configService.getAppConfig();
+
     if (appCfg) {
       this.appConfig = appCfg;
     } else {
       throw Error("Config not provided")
     }
-
     this.responseModels = {
       budget: new ResponseModel(),
       incomes: new ResponseModel(),
       payments: new ResponseModel(),
       paymentStatus: new ResponseModel(),
-      budgetStats: new ResponseModel()
+      budgetStats: new ResponseModel(),
+      incomeStats: new ResponseModel()
     };
 
     this.innerWidth = window.innerWidth;
-    this.subscriptions = [];
 
+    this.subscriptions = [];
     this.activatedRoute.queryParams.subscribe((params: Params): void => {
+
       this.idBudget = params['id'];
     });
 
     this.getBudgetStatistics();
+    this.getBudgetIncomeStats();
 
     this.subscriptions.push(
       this.httpService.getBudget(this.idBudget).subscribe({
@@ -150,9 +151,9 @@ export class BudgetComponent implements OnInit, OnDestroy {
     if (data.length <= 8) {
       return this.isMobileView() ? 'mobile-doughnut-height' : 'doughnut-height-s';
     } else if (data.length > 8 && data.length <= 15) {
-      return this.isMobileView() ? 'mobile-doughnut-height' :'doughnut-height-m';
+      return this.isMobileView() ? 'mobile-doughnut-height' : 'doughnut-height-m';
     } else {
-      return this.isMobileView() ? 'mobile-doughnut-height' :'doughnut-height-l';
+      return this.isMobileView() ? 'mobile-doughnut-height' : 'doughnut-height-l';
     }
   }
 
@@ -169,6 +170,38 @@ export class BudgetComponent implements OnInit, OnDestroy {
     }
   }
 
-  protected readonly LegendPosition = LegendPosition;
-  protected readonly ColorHelper = ColorHelper;
+  private getBudgetIncomeStats(): void {
+    let stats: GetCategoryStatsDto | null;
+    this.subscriptions.push(
+      this.httpService.getBudgetIncomeCategoriesStats(this.idBudget).subscribe({
+        next: (response: HttpResponse<GetCategoryStatsDto>): void => {
+          stats = response.body;
+          this.responseModels.incomeStats.statusCode = response.status;
+          this.transformToChartDataResult(stats);
+        },
+        error: (err): void => {
+          this.responseModels.incomeStats = generateErrorModel(err);
+        },
+        complete: () =>{
+          this.budgetIncomeLoader = true;
+        }
+      })
+    );
+  }
+
+  private transformToChartDataResult(data: GetCategoryStatsDto | null): void {
+    if (data) {
+      Object.entries(data).forEach(([key, value]): void => {
+        if ('IncomeSum' in value && 'SavingsSum' in value) {
+          console.log(key, new BigNumber(value.IncomeSum).toNumber(), new BigNumber(value.SavingsSum).toNumber());
+          this.incomeStatsData.push({
+            name: key,
+            value: new BigNumber(value.IncomeSum).toNumber()
+          } as StatisticsDataResult)
+        }
+      });
+    }
+  }
+
+
 }
