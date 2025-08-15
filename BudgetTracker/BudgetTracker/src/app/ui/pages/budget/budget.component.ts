@@ -148,11 +148,11 @@ export class BudgetComponent implements OnInit, OnDestroy {
 
   protected onDataSize(data: StatisticsDataResult[]): string {
     if (data.length <= 8) {
-      return 'doughnut-height-s';
+      return this.isMobileView() ? 'mobile-doughnut-height' : 'doughnut-height-s';
     } else if (data.length > 8 && data.length <= 15) {
-      return 'doughnut-height-m';
+      return this.isMobileView() ? 'mobile-doughnut-height' :'doughnut-height-m';
     } else {
-      return 'doughnut-height-xl'
+      return this.isMobileView() ? 'mobile-doughnut-height' :'doughnut-height-l';
     }
   }
 
