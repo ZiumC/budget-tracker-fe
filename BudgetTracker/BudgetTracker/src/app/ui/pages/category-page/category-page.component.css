@@ -2,14 +2,6 @@
   width: 11ex;
 }
 
-.nav-link {
-  color: var(--bs-secondary);
-}
-
-#nav-tab-payment-category {
-  margin-left: 3ex;
-}
-
 @media only screen and (max-width: 1400px) {
   #needs-column,
   #wants-column,

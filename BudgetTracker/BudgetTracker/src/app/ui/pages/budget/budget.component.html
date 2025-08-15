@@ -191,19 +191,40 @@
             Statistics
           </div>
           <div id="statistics-card" class="card-body">
-            <ngx-charts-bar-vertical
-              [view]="[1000,400]"
-              [results]="data"
-              [xAxisLabel]="'Products'"
-              [legendTitle]="'Product Sale Chart'"
-              [yAxisLabel]="'Sale'"
-              [legend]="true"
-              [showXAxisLabel]="true"
-              [showYAxisLabel]="true"
-              [xAxis]="true"
-              [yAxis]="true"
-              [gradient]="true">
-            </ngx-charts-bar-vertical>
+            <ul ngbNav class="nav-tabs">
+              <li id="nav-tabs" ngbNavItem>
+                <button ngbNavLink (click)="onIncomeStats()">Incomes</button>
+              </li>
+              <li ngbNavItem>
+                <button ngbNavLink (click)="onPaymentStats(true)">Planned payments</button>
+              </li>
+              <li ngbNavItem>
+                <button ngbNavLink (click)="onPaymentStats(false)">Regular payments</button>
+              </li>
+            </ul>
+            <div class="mt-5">
+              <ng-container [ngSwitch]="currentTabId">
+                <ng-container *ngSwitchCase="1">
+                  <div class="mx-2 my-2" [className]="onDataSize(incomeStatsData)">
+                    <ngx-charts-pie-chart
+                      [results]="incomeStatsData"
+                      [arcWidth]="0.4"
+                      [scheme]="'forest'"
+                      [labels]="true"
+                      [legend]="true"
+                      [legendPosition]="LegendPosition.Right"
+                      [legendTitle]="'Categories'"
+                      [animations]="true"
+                      [doughnut]="true">
+                    </ngx-charts-pie-chart>
+                  </div>
+                </ng-container>
+                <ng-container *ngSwitchCase="2">
+                </ng-container>
+                <ng-container *ngSwitchCase="3">
+                </ng-container>
+              </ng-container>
+            </div>
           </div>
         </div>
       </div>

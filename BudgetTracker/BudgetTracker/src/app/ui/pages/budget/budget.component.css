@@ -24,6 +24,19 @@ label {
   justify-content: normal;
 }
 
+.doughnut-height-s {
+  height: 60ex;
+}
+
+.doughnut-height-m {
+  height: 85ex;
+}
+
+.doughnut-height-xl {
+  height: 110ex;
+}
+
+
 @media only screen and (max-width: 475px) {
   .budget-buttons {
     gap: 0;

@@ -1,4 +1,3 @@
-import BigNumber from "bignumber.js";
 import {GetIncomeAssignmentDto} from "./assignment.model.dto";
 
 export class IncomeDto {
