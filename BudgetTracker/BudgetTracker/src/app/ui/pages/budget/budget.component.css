@@ -24,6 +24,10 @@ label {
   justify-content: normal;
 }
 
+.mobile-doughnut-height{
+  height: 20ex;
+}
+
 .doughnut-height-s {
   height: 60ex;
 }
@@ -32,7 +36,7 @@ label {
   height: 85ex;
 }
 
-.doughnut-height-xl {
+.doughnut-height-l {
   height: 110ex;
 }
 
