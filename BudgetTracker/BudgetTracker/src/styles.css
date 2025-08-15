@@ -226,6 +226,18 @@ hr.horizontal-light {
   border-radius: 0.5ex;
 }
 
+#nav-tabs{
+  margin-left: 3ex;
+}
+
+li button.nav-link {
+    color: var(--bs-secondary);
+}
+
+li button.nav-link:hover {
+  color: var(--bs-secondary);
+}
+
 @media only screen and (max-width: 770px) {
   .width-wrapper {
     width: 92%;

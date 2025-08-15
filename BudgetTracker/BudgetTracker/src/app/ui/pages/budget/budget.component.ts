@@ -14,6 +14,8 @@ import {ConfigService} from "../../../services/config/config.service";
 import {formatString} from "../../../util/string.utils";
 import {generateErrorModel} from "../../../util/http.util";
 import {TimerUtils} from "../../../util/timer.utils";
+import {ColorHelper, LegendPosition} from "@swimlane/ngx-charts";
+import {StatisticsDataResult} from "../../../models/dto/statistics.model.dto";
 
 @Component({
   selector: 'app-budget',
@@ -33,7 +35,8 @@ export class BudgetComponent implements OnInit, OnDestroy {
   protected responseModels: BudgetResponse;
   protected idBudget: string;
   protected budgetLoader: boolean;
-  protected data: any;
+  protected incomeStatsData: StatisticsDataResult[] = [];
+  protected currentTabId: number;
   public innerWidth: any;
 
   constructor(
@@ -48,13 +51,15 @@ export class BudgetComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.data = [
-      { name: "Mobiles", value: 105000 },
-      { name: "Laptop", value: 55000 },
-      { name: "AC", value: 15000 },
-      { name: "Headset", value: 150000 },
-      { name: "Fridge", value: 20000 }
-    ];
+    this.currentTabId = 1;
+
+    for (let i = 0; i < 21; i++) {
+      this.incomeStatsData.push({
+        name: 'Cat no. ' + i,
+        value: i * 10
+      } as StatisticsDataResult)
+    }
+
     const appCfg = this.configService.getAppConfig();
     if (appCfg) {
       this.appConfig = appCfg;
@@ -133,6 +138,24 @@ export class BudgetComponent implements OnInit, OnDestroy {
     }
   }
 
+  protected onIncomeStats(): void {
+    this.currentTabId = 1;
+  }
+
+  protected onPaymentStats(isPlanned: boolean): void {
+    this.currentTabId = isPlanned ? 2 : 3;
+  }
+
+  protected onDataSize(data: StatisticsDataResult[]): string {
+    if (data.length <= 8) {
+      return 'doughnut-height-s';
+    } else if (data.length > 8 && data.length <= 15) {
+      return 'doughnut-height-m';
+    } else {
+      return 'doughnut-height-xl'
+    }
+  }
+
   private markBudgetAsLoaded(isLoaded: boolean): void {
     if (isLoaded) {
       new TimerUtils(this.appConfig.animation.duration.default).start()
@@ -145,4 +168,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
       this.budgetLoader = isLoaded;
     }
   }
+
+  protected readonly LegendPosition = LegendPosition;
+  protected readonly ColorHelper = ColorHelper;
 }
