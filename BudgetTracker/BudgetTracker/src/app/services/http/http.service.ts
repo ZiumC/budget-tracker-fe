@@ -1,7 +1,7 @@
 import {HttpClient, HttpResponse} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {Injectable} from "@angular/core";
-import {RequestParams} from "../../models/requestParams";
+import {RequestModel} from "../../models/request.model";
 import {GetIncomeDto, IncomeDto} from "../../models/dto/income.model.dto";
 import {PaymentDto, PaymentStatusDto} from "../../models/dto/payment.model.dto";
 import {BudgetDto, GetBudgetDto, GetBudgetStatsDto} from "../../models/dto/budget.model.dto";
@@ -24,7 +24,7 @@ export class HttpService {
   constructor(private httpClient: HttpClient) {
   }
 
-  public getBudgets(requestModel: RequestParams):
+  public getBudgets(requestModel: RequestModel):
     Observable<HttpResponse<GetBudgetDto[]>> {
     return this.httpClient.get<GetBudgetDto[]>(
       BudgetUrls.budgets(requestModel),
@@ -66,7 +66,7 @@ export class HttpService {
     )
   }
 
-  public getBudgetIncomes(idBudget: string, requestParams: RequestParams):
+  public getBudgetIncomes(idBudget: string, requestParams: RequestModel):
     Observable<HttpResponse<GetIncomeDto[]>> {
     return this.httpClient.get<GetIncomeDto[]>(
       BudgetUrls.budgetIncomes(requestParams, idBudget),
@@ -76,7 +76,7 @@ export class HttpService {
 
   public getBudgetPayments<T>(
     idBudget: string,
-    requestParams: RequestParams,
+    requestParams: RequestModel,
     isPlanned: boolean): Observable<HttpResponse<T>> {
     return this.httpClient.get<T>(
       BudgetUrls.budgetPayments(idBudget, requestParams, isPlanned),
@@ -130,7 +130,7 @@ export class HttpService {
     )
   }
 
-  public getIncomePages(idBudget: string, requestParams: RequestParams):
+  public getIncomePages(idBudget: string, requestParams: RequestModel):
     Observable<HttpResponse<PageDto>> {
     return this.httpClient.get<PageDto>(
       PaginationUrls.incomesPagination(idBudget, requestParams),
@@ -139,7 +139,7 @@ export class HttpService {
   }
 
   public getIncomeCategories(
-    requestParams: RequestParams): Observable<HttpResponse<GetPaymentCategoryDto[]>> {
+    requestParams: RequestModel): Observable<HttpResponse<GetPaymentCategoryDto[]>> {
     return this.httpClient.get<GetPaymentCategoryDto[]>(
       CategoryUrls.incomeCategory(requestParams),
       {observe: 'response'}
@@ -186,7 +186,7 @@ export class HttpService {
 
   public getPaymentPages(
     idBudget: string,
-    requestParams: RequestParams): Observable<HttpResponse<PageDto>> {
+    requestParams: RequestModel): Observable<HttpResponse<PageDto>> {
     return this.httpClient.get<PageDto>(
       PaginationUrls.regularPaymentsPagination(idBudget, requestParams),
       {observe: 'response'}
@@ -195,7 +195,7 @@ export class HttpService {
 
   public getPlannedPaymentPages(
     idBudget: string,
-    requestParams: RequestParams): Observable<HttpResponse<PageDto>> {
+    requestParams: RequestModel): Observable<HttpResponse<PageDto>> {
     return this.httpClient.get<PageDto>(
       PaginationUrls.plannedPaymentsPagination(idBudget, requestParams),
       {observe: 'response'}
@@ -204,7 +204,7 @@ export class HttpService {
 
   public getPaymentCategories(
     type: CategoryType,
-    requestParams: RequestParams): Observable<HttpResponse<GetPaymentCategoryDto[]>> {
+    requestParams: RequestModel): Observable<HttpResponse<GetPaymentCategoryDto[]>> {
     return this.httpClient.get<GetPaymentCategoryDto[]>(
       CategoryUrls.paymentCategory(type, requestParams),
       {observe: 'response'}
@@ -213,7 +213,7 @@ export class HttpService {
 
   public getPaymentCategoryPages(
     type: CategoryType,
-    requestParams: RequestParams): Observable<HttpResponse<PageDto>> {
+    requestParams: RequestModel): Observable<HttpResponse<PageDto>> {
     return this.httpClient.get<PageDto>(
       PaginationUrls.paymentCategories(type, requestParams),
       {observe: 'response'}
@@ -221,7 +221,7 @@ export class HttpService {
   }
 
   public getIncomeCategoryPages(
-    requestParams: RequestParams): Observable<HttpResponse<PageDto>> {
+    requestParams: RequestModel): Observable<HttpResponse<PageDto>> {
     return this.httpClient.get<PageDto>(
       PaginationUrls.incomeCategories(requestParams),
       {observe: 'response'}

@@ -18,7 +18,7 @@ import {HttpService} from "../../../../../services/http/http.service";
 import {ConfigService} from "../../../../../services/config/config.service";
 import {AppConfig} from "../../../../../models/config/config";
 import {ResponseModel} from "../../../../../models/response.model";
-import {RequestParams} from "../../../../../models/requestParams";
+import {RequestModel} from "../../../../../models/request.model";
 import {GetPaymentDto, PaymentStatusDto} from "../../../../../models/dto/payment.model.dto";
 import {generateErrorModel} from "../../../../../util/http.util";
 import {TimerUtils} from "../../../../../util/timer.utils";
@@ -28,6 +28,7 @@ import {OrderOptions} from "../../../shared/order/order.component";
 import {SortPayment} from "../../../../../util/arrays.utils";
 import {getPaymentType} from "../../../../../util/category.utils";
 import {GetPaymentAssignmentDto} from "../../../../../models/dto/assignment.model.dto";
+import {ErrorImage, ErrorType} from "../../../../../models/error.model";
 
 @Component({
   selector: 'app-payment',
@@ -47,9 +48,11 @@ export class PaymentComponent implements OnInit, OnDestroy, AfterViewInit {
   protected readonly formatString = formatString;
   protected readonly subtract = subtract;
   protected readonly getPaymentType = getPaymentType;
+  protected readonly ErrorImage = ErrorImage;
+  protected readonly ErrorType = ErrorType;
   protected subscriptions: Subscription[];
   protected appConfig: AppConfig;
-  protected requestParams: RequestParams;
+  protected requestParams: RequestModel;
   protected paymentResponseModel: ResponseModel;
   protected paymentsDto: GetPaymentDto[] | null;
   protected selectedPayment: GetPaymentDto;
@@ -79,7 +82,7 @@ export class PaymentComponent implements OnInit, OnDestroy, AfterViewInit {
     this.paymentResponseModel = new ResponseModel();
     this.subscriptions = [];
 
-    this.requestParams = new RequestParams({
+    this.requestParams = new RequestModel({
       page: this.appConfig.request.pagination.defaultPage,
       pageSize: this.appConfig.request.pagination.defaultPageSizeOptions[0],
     });

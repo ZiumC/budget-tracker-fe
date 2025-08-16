@@ -14,7 +14,7 @@ import {ConfigService} from "../../../../services/config/config.service";
 import {formatString} from "../../../../util/string.utils";
 import {TimerUtils} from "../../../../util/timer.utils";
 import {generateErrorModel} from "../../../../util/http.util";
-import {RequestParams} from "../../../../models/requestParams";
+import {RequestModel} from "../../../../models/request.model";
 import {GetIncomeCategoryDto} from "../../../../models/dto/category.model.dto";
 
 @Component({
@@ -183,14 +183,14 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
     );
   }
 
-  private getRequestParams(): RequestParams {
+  private getRequestParams(): RequestModel {
     const categoriesOrder = this.appConfig.request.order;
     return {
       page: 1,
       pageSize: 300,
       orderBy: categoriesOrder.paymentCategoryTypes[0].value,
       order: categoriesOrder.orderDirections[0].value
-    } as RequestParams;
+    } as RequestModel;
   }
 
 }

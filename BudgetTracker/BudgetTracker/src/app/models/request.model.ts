@@ -1,4 +1,4 @@
-export class RequestParams {
+export class RequestModel {
   page: number = 1;
   pageSize: number = 12;
   fromDate: string | null;
@@ -6,7 +6,7 @@ export class RequestParams {
   orderBy: string | null;
   order: string | null;
 
-  public constructor(init?: Partial<RequestParams>) {
+  public constructor(init?: Partial<RequestModel>) {
     Object.assign(this, init);
   }
 }

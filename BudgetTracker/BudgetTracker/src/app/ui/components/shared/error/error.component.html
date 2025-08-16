@@ -1,47 +1,97 @@
 <div class="error-container">
   <div class="my-5">
-    @if (response.statusCode > 0 && response.statusCode != 200) {
-      @if (response.statusCode == 404) {
+    <ng-container [ngSwitch]="errorType">
+      <ng-container *ngSwitchCase="ErrorType.Request">
+        @if (response.statusCode > 0 && response.statusCode != 200) {
+          @if (response.statusCode == 404) {
+            <div class="text-center d-flex justify-content-center">
+              <h1 class="text-secondary mx-3">
+                <ng-container [ngSwitch]="errorImage">
+                  <ng-container *ngSwitchCase="ErrorImage.Notfound">
+                    <i class="bi bi-file-earmark-excel"></i>
+                  </ng-container>
+                  <ng-container *ngSwitchCase="ErrorImage.Database">
+                    <i class="bi bi-database-fill-exclamation"></i>
+                  </ng-container>
+                  <ng-container *ngSwitchCase="ErrorImage.DatabaseError">
+                    <i class="bi bi-database-fill-x"></i>
+                  </ng-container>
+                </ng-container>
+              </h1>
+              <h2>{{ notFoundErrorText }}</h2>
+            </div>
+          } @else {
+            <div class="text-center">
+              <h1 class="text-warning">
+                <ng-container [ngSwitch]="errorImage">
+                  <ng-container *ngSwitchCase="ErrorImage.Notfound">
+                    <i class="bi bi-file-earmark-excel"></i>
+                  </ng-container>
+                  <ng-container *ngSwitchCase="ErrorImage.Database">
+                    <i class="bi bi-database-fill-exclamation"></i>
+                  </ng-container>
+                  <ng-container *ngSwitchCase="ErrorImage.DatabaseError">
+                    <i class="bi bi-database-fill-x"></i>
+                  </ng-container>
+                </ng-container>
+              </h1>
+              <h2>Request error</h2>
+            </div>
+            <ul>
+              <li>
+                Status code:
+                <span class="text-danger"> {{ response.statusCode }} {{ response.error.title }} </span>
+              </li>
+              <li>
+                Trace id:
+                <span class="text-danger"> {{ response.traceId }} </span>
+              </li>
+              <li>
+                Message:
+                <span class="text-secondary"> {{ response.error.message }} </span>
+              </li>
+              <li>
+                Type:
+                <span class="text-secondary"> <a
+                  href="{{ response.error.type }}">{{ response.error.type }}</a> </span>
+              </li>
+            </ul>
+          }
+        } @else {
+          <h1 class="text-danger">
+            <ng-container [ngSwitch]="errorImage">
+              <ng-container *ngSwitchCase="ErrorImage.Notfound">
+                <i class="bi bi-file-earmark-excel"></i>
+              </ng-container>
+              <ng-container *ngSwitchCase="ErrorImage.Database">
+                <i class="bi bi-database-fill-exclamation"></i>
+              </ng-container>
+              <ng-container *ngSwitchCase="ErrorImage.DatabaseError">
+                <i class="bi bi-database-fill-x"></i>
+              </ng-container>
+            </ng-container>
+          </h1>
+          <h2>Unable connect to server</h2>
+        }
+      </ng-container>
+      <ng-container *ngSwitchCase="ErrorType.Application">
         <div class="text-center d-flex justify-content-center">
           <h1 class="text-secondary mx-3">
-            <i class="bi bi-file-earmark-excel"></i>
+            <ng-container [ngSwitch]="errorImage">
+              <ng-container *ngSwitchCase="ErrorImage.Notfound">
+                <i class="bi bi-file-earmark-excel"></i>
+              </ng-container>
+              <ng-container *ngSwitchCase="ErrorImage.Database">
+                <i class="bi bi-database-fill-exclamation"></i>
+              </ng-container>
+              <ng-container *ngSwitchCase="ErrorImage.DatabaseError">
+                <i class="bi bi-database-fill-x"></i>
+              </ng-container>
+            </ng-container>
           </h1>
           <h2>{{ notFoundErrorText }}</h2>
         </div>
-      } @else {
-        <div class="text-center">
-          <h1 class="text-warning">
-            <i class="bi bi-database-fill-exclamation"></i>
-          </h1>
-          <h2>Request error</h2>
-        </div>
-        <ul>
-          <li>
-            Status code:
-            <span class="text-danger">
-            {{ response.statusCode }} {{ response.error.title }}
-          </span>
-          </li>
-          <li>
-            Trace id:
-            <span class="text-danger"> {{ response.traceId }} </span>
-          </li>
-          <li>
-            Message:
-            <span class="text-secondary"> {{ response.error.message }} </span>
-          </li>
-          <li>
-            Type:
-            <span class="text-secondary"> <a
-              href="{{ response.error.type }}">{{ response.error.type }}</a> </span>
-          </li>
-        </ul>
-      }
-    } @else {
-      <h1 class="text-danger">
-        <i class="bi bi-database-fill-x"></i>
-      </h1>
-      <h2>Unable connect to server</h2>
-    }
+      </ng-container>
+    </ng-container>
   </div>
 </div>

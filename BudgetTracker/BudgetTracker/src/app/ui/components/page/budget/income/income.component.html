@@ -135,7 +135,9 @@
     </ng-template>
   </ng-template>
   <ng-template #errorIncomesBlock>
-    <app-error [response]="incomeResponseModel"
+    <app-error [errorType]="ErrorType.Request"
+               [errorImage]="ErrorImage.Notfound"
+               [response]="incomeResponseModel"
                [notFoundErrorText]="formatString(appConfig.form.messages.notFound,'Incomes data')">
 
     </app-error>

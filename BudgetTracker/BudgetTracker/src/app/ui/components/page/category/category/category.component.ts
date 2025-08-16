@@ -12,8 +12,9 @@ import {DateUtil} from "../../../../../util/date.util";
 import {OrderOptions} from "../../../shared/order/order.component";
 import {HttpResponse} from "@angular/common/http";
 import {generateErrorModel} from "../../../../../util/http.util";
-import {RequestParams} from "../../../../../models/requestParams";
+import {RequestModel} from "../../../../../models/request.model";
 import {PageDto} from "../../../../../models/dto/page.model.dto";
+import {ErrorImage, ErrorType} from "../../../../../models/error.model";
 
 @Component({
   selector: 'app-category',
@@ -30,10 +31,12 @@ export class CategoryComponent implements OnInit, OnDestroy {
   @Output() categoryChangeTypeEvent = new EventEmitter<string[]>();
   protected readonly formatString = formatString;
   protected readonly DateUtil = DateUtil;
+  protected readonly ErrorImage = ErrorImage;
+  protected readonly ErrorType = ErrorType;
   protected appConfig: AppConfig;
   protected subscriptions: Subscription[];
   protected categoryResponseModel: ResponseModel;
-  protected categoryRequestParams: RequestParams = new RequestParams();
+  protected categoryRequestParams: RequestModel = new RequestModel();
   protected copiedCategoriesDto: GetCategoryDto[] | null = [];
   protected categoriesDto: GetCategoryDto[] | null;
   protected selectedCategory: GetCategoryDto;

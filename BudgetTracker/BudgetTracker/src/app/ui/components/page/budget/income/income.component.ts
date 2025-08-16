@@ -18,7 +18,7 @@ import {Subscription} from "rxjs";
 import {SubscriptionUtils} from "../../../../../util/subscription.utils";
 import {AppConfig} from "../../../../../models/config/config";
 import {GetIncomeDto} from "../../../../../models/dto/income.model.dto";
-import {RequestParams} from "../../../../../models/requestParams";
+import {RequestModel} from "../../../../../models/request.model";
 import {ResponseModel} from "../../../../../models/response.model";
 import {SpinnerSize} from '../../../shared/spinner/spinner.component';
 import {HttpResponse} from "@angular/common/http";
@@ -27,6 +27,7 @@ import {TimerUtils} from "../../../../../util/timer.utils";
 import {OrderOptions} from "../../../shared/order/order.component";
 import {PageDto} from "../../../../../models/dto/page.model.dto";
 import {GetIncomeAssignmentDto} from "../../../../../models/dto/assignment.model.dto";
+import {ErrorImage, ErrorType} from "../../../../../models/error.model";
 
 @Component({
   selector: 'app-income',
@@ -45,12 +46,14 @@ export class IncomeComponent implements OnInit, OnDestroy, AfterViewInit {
   protected readonly DateUtils = DateUtil;
   protected readonly format = format;
   protected readonly SpinnerSize = SpinnerSize;
+  protected readonly ErrorImage = ErrorImage;
+  protected readonly ErrorType = ErrorType;
   protected subscriptions: Subscription[];
   protected appConfig: AppConfig;
   protected incomesDto: GetIncomeDto[] | null;
   protected selectedIncome: GetIncomeDto;
   protected incomeTotalPages: number | undefined;
-  protected incomeRequestModel: RequestParams;
+  protected incomeRequestModel: RequestModel;
   protected incomeResponseModel: ResponseModel;
   protected assignmentStatusCode: number = 0;
   protected incomeLoader: boolean;
@@ -77,7 +80,7 @@ export class IncomeComponent implements OnInit, OnDestroy, AfterViewInit {
     this.pageWidth = window.innerWidth;
     this.subscriptions = [];
 
-    this.incomeRequestModel = new RequestParams({
+    this.incomeRequestModel = new RequestModel({
       page: this.appConfig.request.pagination.defaultPage,
       pageSize: this.appConfig.request.pagination.defaultPageSizeOptions[0],
     })

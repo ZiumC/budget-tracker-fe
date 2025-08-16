@@ -233,8 +233,11 @@
         </div>
       </ng-template>
       <ng-template #errorBudgetsBlock>
-        <app-error [response]="indexResponse.budgets"
-                   [notFoundErrorText]="formatString(appConfig.form.messages.notFound, 'Budgets')"></app-error>
+        <app-error [errorType]="ErrorType.Request"
+                   [errorImage]="ErrorImage.Notfound"
+                   [response]="indexResponse.budgets"
+                   [notFoundErrorText]="formatString(appConfig.form.messages.notFound, 'Budgets')">
+        </app-error>
       </ng-template>
     </ng-template>
     <app-budget-modal #budgetModal
