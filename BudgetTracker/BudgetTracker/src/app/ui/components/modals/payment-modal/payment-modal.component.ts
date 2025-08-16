@@ -17,7 +17,7 @@ import {GetPaymentDto, PaymentDto} from "../../../../models/dto/payment.model.dt
 import {generateErrorModel} from "../../../../util/http.util";
 import {CategoryType, GetPaymentCategoryDto} from "../../../../models/dto/category.model.dto";
 import {getPaymentType} from "../../../../util/category.utils";
-import {RequestParams} from "../../../../models/requestParams";
+import {RequestModel} from "../../../../models/request.model";
 
 @Component({
   selector: 'app-payment-modal',
@@ -223,13 +223,13 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
     }
   }
 
-  private getRequestParams(): RequestParams {
+  private getRequestParams(): RequestModel {
     const categoriesOrder = this.appConfig.request.order;
     return {
       page: 1,
       pageSize: 300,
       orderBy: categoriesOrder.paymentCategoryTypes[0].value,
       order: categoriesOrder.orderDirections[0].value
-    } as RequestParams;
+    } as RequestModel;
   }
 }

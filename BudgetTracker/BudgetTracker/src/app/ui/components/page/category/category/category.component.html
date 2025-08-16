@@ -114,7 +114,9 @@
         }
       </ng-template>
       <ng-template #errorPaymentsBlock>
-        <app-error [response]=" categoryResponseModel"
+        <app-error [errorType]="ErrorType.Request"
+                   [errorImage]="ErrorImage.Notfound"
+                   [response]=" categoryResponseModel"
                    [notFoundErrorText]="formatString(appConfig.form.messages.notFound,'Categories data')">
 
         </app-error>

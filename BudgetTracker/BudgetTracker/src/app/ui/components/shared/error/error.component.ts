@@ -1,5 +1,6 @@
 import {Component, Input} from '@angular/core';
 import {ResponseModel} from "../../../../models/response.model";
+import {ErrorImage, ErrorType} from "../../../../models/error.model";
 
 @Component({
   selector: 'app-error',
@@ -9,4 +10,8 @@ import {ResponseModel} from "../../../../models/response.model";
 export class ErrorComponent {
   @Input() response: ResponseModel;
   @Input() notFoundErrorText: string = "Data not found";
+  @Input() errorType: ErrorType;
+  @Input() errorImage: ErrorImage;
+  protected readonly ErrorType = ErrorType;
+  protected readonly ErrorImage = ErrorImage;
 }

@@ -17,12 +17,13 @@ import {NgModel} from "@angular/forms";
 import {catchError, forkJoin, Observable, of, Subscription} from "rxjs";
 import {HttpResponse} from "@angular/common/http";
 import {generateErrorModel} from "../../../../util/http.util";
-import {RequestParams} from "../../../../models/requestParams";
+import {RequestModel} from "../../../../models/request.model";
 import {TimerUtils} from "../../../../util/timer.utils";
 import {SpinnerSize} from "../../shared/spinner/spinner.component";
 import {PlannedPaymentStatus} from "../../../../models/modal/copy-payment.model.modal";
 import {toPlannedPaymentDto} from "../../../../util/mapper.utils";
 import {getPaymentType} from "../../../../util/category.utils";
+import {ErrorImage, ErrorType} from "../../../../models/error.model";
 
 @Component({
   selector: 'app-copy-payment-modal',
@@ -37,16 +38,19 @@ export class CopyPaymentModalComponent implements OnInit, OnDestroy {
   protected readonly format = format;
   protected readonly BigNumber = BigNumber;
   protected readonly subtract = subtract;
+  protected readonly getPaymentType = getPaymentType;
   protected readonly SpinnerSize = SpinnerSize;
   protected readonly DateUtils = DateUtil;
   protected readonly ModalUtils = ModalUtils;
+  protected readonly ErrorImage = ErrorImage;
+  protected readonly ErrorType = ErrorType;
   protected monthsLimit: number;
   protected subscriptions: Subscription[] = [];
   protected selectedBudgetIds: string[] = [];
   protected selectedBudget: string;
   protected budgetLoader: boolean;
   protected budgets: GetBudgetDto[] | null;
-  protected budgetRequestParams: RequestParams;
+  protected budgetRequestParams: RequestModel;
   protected budgetsResponseModel: ResponseModel;
   protected budgetRequiredStatusCode: number;
   protected currentStep: number;
@@ -87,7 +91,7 @@ export class CopyPaymentModalComponent implements OnInit, OnDestroy {
 
     this.monthsLimit = appCfg.monthsLimit;
     this.budgetRequiredStatusCode = appCfg.response.required.budgetStatus;
-    this.budgetRequestParams = new RequestParams();
+    this.budgetRequestParams = new RequestModel();
     this.budgetsResponseModel = new ResponseModel();
     this.pageWidth = window.innerWidth;
 
@@ -330,6 +334,4 @@ export class CopyPaymentModalComponent implements OnInit, OnDestroy {
       return false;
     }
   }
-
-  protected readonly getPaymentType = getPaymentType;
 }

@@ -1,4 +1,4 @@
-import {RequestParams} from "../../models/requestParams";
+import {RequestModel} from "../../models/request.model";
 import {CategoryType} from "../../models/dto/category.model.dto";
 
 
@@ -12,7 +12,7 @@ class HostUrl {
 }
 
 class ParamsQuery {
-  static getDateRangeQuery(requestParam: RequestParams): string {
+  static getDateRangeQuery(requestParam: RequestModel): string {
     let queryResult: string = "";
     const fromDate = requestParam.fromDate;
     const toDate = requestParam.toDate;
@@ -28,7 +28,7 @@ class ParamsQuery {
     return queryResult;
   }
 
-  static getOrderQuery(requestParam: RequestParams): string {
+  static getOrderQuery(requestParam: RequestModel): string {
     let queryResult: string = "";
     const orderBy = requestParam.orderBy;
     const order = requestParam.order;
@@ -44,7 +44,7 @@ class ParamsQuery {
     return queryResult;
   }
 
-  static getPaginationQuery(requestParam: RequestParams): string {
+  static getPaginationQuery(requestParam: RequestModel): string {
     let queryResult: string = "";
     const page = requestParam.page;
     const pageSize = requestParam.pageSize;
@@ -73,7 +73,7 @@ export class BudgetUrls {
 
   static budgetPayments(
     idBudget: string,
-    requestParam: RequestParams | null,
+    requestParam: RequestModel | null,
     isPlanned: boolean): string {
 
     let result = HostUrl.getHostUrl() + BudgetUrls.CONTROLLER;
@@ -102,7 +102,7 @@ export class BudgetUrls {
   }
 
   static budgetIncomes(
-    requestParam: RequestParams,
+    requestParam: RequestModel,
     idBudget: string): string {
 
     let result = HostUrl.getHostUrl() + BudgetUrls.CONTROLLER + "/" + idBudget;
@@ -125,7 +125,7 @@ export class BudgetUrls {
     return HostUrl.getHostUrl() + BudgetUrls.CONTROLLER + "/" + idBudget;
   }
 
-  static budgets(requestParam: RequestParams): string {
+  static budgets(requestParam: RequestModel): string {
     let result = HostUrl.getHostUrl() + BudgetUrls.CONTROLLER + "?";
 
     let dateRangeQuery = ParamsQuery.getDateRangeQuery(requestParam);
@@ -187,7 +187,7 @@ export class CategoryUrls {
     INCOME: "/income",
   }
 
-  static paymentCategory(type: string | null, requestParam: RequestParams | null): string {
+  static paymentCategory(type: string | null, requestParam: RequestModel | null): string {
     let result = HostUrl.getHostUrl() + CategoryUrls.CONTROLLER;
     result = result + CategoryUrls.ACTIONS.PAYMENT;
 
@@ -210,7 +210,7 @@ export class CategoryUrls {
     return result;
   }
 
-  static incomeCategory(requestParam: RequestParams | null): string {
+  static incomeCategory(requestParam: RequestModel | null): string {
     let result = HostUrl.getHostUrl() + CategoryUrls.CONTROLLER;
     result = result + CategoryUrls.ACTIONS.INCOME;
 
@@ -268,7 +268,7 @@ export class PaginationUrls {
     INCOME: "/income"
   }
 
-  static regularPaymentsPagination(idBudget: string, requestParam: RequestParams): string {
+  static regularPaymentsPagination(idBudget: string, requestParam: RequestModel): string {
     let result = HostUrl.getHostUrl() + PaginationUrls.CONTROLLER;
     result = result + PaginationUrls.ACTIONS.BUDGET + "/" + idBudget;
     result = result + PaginationUrls.SUB_ACTIONS.REGULAR_PAYMENTS;
@@ -282,7 +282,7 @@ export class PaginationUrls {
     return result;
   }
 
-  static incomesPagination(idBudget: string, requestParam: RequestParams): string {
+  static incomesPagination(idBudget: string, requestParam: RequestModel): string {
     let result = HostUrl.getHostUrl() + PaginationUrls.CONTROLLER;
     result = result + PaginationUrls.ACTIONS.BUDGET + "/" + idBudget;
     result = result + PaginationUrls.SUB_ACTIONS.INCOMES;
@@ -296,7 +296,7 @@ export class PaginationUrls {
     return result;
   }
 
-  static plannedPaymentsPagination(idBudget: string, requestParam: RequestParams): string {
+  static plannedPaymentsPagination(idBudget: string, requestParam: RequestModel): string {
     let result = HostUrl.getHostUrl() + PaginationUrls.CONTROLLER;
     result = result + PaginationUrls.ACTIONS.BUDGET + "/" + idBudget;
     result = result + PaginationUrls.SUB_ACTIONS.PLANNED_PAYMENTS;
@@ -310,13 +310,13 @@ export class PaginationUrls {
     return result;
   }
 
-  static paymentCategories(type: CategoryType, requestParam: RequestParams): string {
+  static paymentCategories(type: CategoryType, requestParam: RequestModel): string {
     let result = HostUrl.getHostUrl() + PaginationUrls.CONTROLLER;
     result = result + PaginationUrls.ACTIONS.CATEGORIES + PaginationUrls.SUB_ACTIONS.PAYMENT;
     return result + "?type=" + type.valueOf() + "&pageSize=" + requestParam.pageSize;
   }
 
-  static incomeCategories(requestParam: RequestParams): string {
+  static incomeCategories(requestParam: RequestModel): string {
     let result = HostUrl.getHostUrl() + PaginationUrls.CONTROLLER;
     result = result + PaginationUrls.ACTIONS.CATEGORIES + PaginationUrls.SUB_ACTIONS.INCOME;
     return result + "?pageSize=" + requestParam.pageSize;

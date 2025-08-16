@@ -3,12 +3,11 @@ import {HttpService} from '../../../services/http/http.service';
 import {Subscription} from 'rxjs';
 import {HttpResponse} from '@angular/common/http';
 import {SubscriptionUtils} from '../../../util/subscription.utils';
-import {DatePickerUtil, DateUtil, isInvalidDate} from "../../../util/date.util";
-import {RequestParams} from "../../../models/requestParams";
+import {DatePickerUtil, DateUtil} from "../../../util/date.util";
+import {RequestModel} from "../../../models/request.model";
 import {SpinnerSize} from "../../components/shared/spinner/spinner.component";
 import {DatePicker} from "../../../models/datepicker.model";
 import {TimerUtils} from "../../../util/timer.utils";
-import {NgModel} from "@angular/forms";
 import {getCookie, setCookie} from "../../../util/cookie.utils";
 import {GetBudgetDto} from "../../../models/dto/budget.model.dto";
 import {IndexResponse, ResponseModel} from "../../../models/response.model";
@@ -19,6 +18,7 @@ import {RequestConfig} from "../../../models/config/request.model.config";
 import {formatString} from "../../../util/string.utils";
 import {ModalUtils} from "../../../util/modal.utils";
 import {generateErrorModel} from "../../../util/http.util";
+import {ErrorImage, ErrorType} from "../../../models/error.model";
 
 @Component({
   selector: 'app-index',
@@ -31,13 +31,15 @@ export class IndexComponent implements OnInit, OnDestroy {
   protected readonly ModalUtils = ModalUtils;
   protected readonly DateUtils = DateUtil;
   protected readonly SpinnerSize = SpinnerSize;
+  protected readonly ErrorType = ErrorType;
+  protected readonly ErrorImage = ErrorImage;
   protected appConfig: AppConfig;
   protected formConfig: FormConfig;
   protected requestConfig: RequestConfig;
   protected budgets: GetBudgetDto[] | null;
   protected budget: GetBudgetDto | null;
   protected subscriptions: Subscription[];
-  protected requestModel: RequestParams;
+  protected requestModel: RequestModel;
   protected fromDatePicker: DatePicker;
   protected toDatePicker: DatePicker;
   protected toCurrentYear: boolean;
@@ -60,7 +62,7 @@ export class IndexComponent implements OnInit, OnDestroy {
       throw Error("Config not provided")
     }
 
-    this.requestModel = new RequestParams();
+    this.requestModel = new RequestModel();
     this.requestModel.page = this.requestConfig.pagination.defaultPage;
     this.requestModel.pageSize = this.requestConfig.pagination.defaultBudgetsPageSize;
 
@@ -219,7 +221,7 @@ export class IndexComponent implements OnInit, OnDestroy {
     )
   }
 
-  private getBudgets(requestParamModel: RequestParams): void {
+  private getBudgets(requestParamModel: RequestModel): void {
     this.subscriptions.push(
       this.httpService.getBudgets(requestParamModel).subscribe({
         next: (response: HttpResponse<GetBudgetDto[]>): void => {

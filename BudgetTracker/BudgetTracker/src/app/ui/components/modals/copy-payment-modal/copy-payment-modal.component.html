@@ -158,7 +158,9 @@
               <div class="col">
                 @if (!budgets || budgets.length == 0) {
                   <div class="text-center">
-                    <app-error [response]="budgetsResponseModel"
+                    <app-error [errorType]="ErrorType.Request"
+                               [errorImage]="ErrorImage.Notfound"
+                               [response]="budgetsResponseModel"
                                [notFoundErrorText]="formatString(appConfig.form.messages.notFound,'Budgets data')">
                     </app-error>
                   </div>

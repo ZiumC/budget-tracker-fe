@@ -14,7 +14,7 @@ import {ConfigService} from "../../../../../services/config/config.service";
 import {Subscription} from "rxjs";
 import {SubscriptionUtils} from "../../../../../util/subscription.utils";
 import {AppConfig} from "../../../../../models/config/config";
-import {RequestParams} from "../../../../../models/requestParams";
+import {RequestModel} from "../../../../../models/request.model";
 import {HttpResponse} from "@angular/common/http";
 import {GetPlannedPaymentDto} from "../../../../../models/dto/planned-payment.model.dto";
 import {ResponseModel} from "../../../../../models/response.model";
@@ -29,6 +29,7 @@ import BigNumber from "bignumber.js";
 import {PaymentStatusDto} from "../../../../../models/dto/payment.model.dto";
 import {GetPaymentAssignmentDto} from "../../../../../models/dto/assignment.model.dto";
 import {getPaymentType} from "../../../../../util/category.utils";
+import {ErrorImage, ErrorType} from "../../../../../models/error.model";
 
 @Component({
   selector: 'app-planned-payment',
@@ -49,11 +50,13 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy, AfterViewInit
   protected readonly subtract = subtract;
   protected readonly BigNumber = BigNumber;
   protected readonly getPaymentType = getPaymentType;
+  protected readonly ErrorImage = ErrorImage;
+  protected readonly ErrorType = ErrorType;
   protected subscriptions: Subscription[];
   protected appConfig: AppConfig;
   protected plannedPaymentsDto: GetPlannedPaymentDto[] | null;
   protected selectedPlannedPayment: GetPlannedPaymentDto;
-  protected requestParams: RequestParams;
+  protected requestParams: RequestModel;
   protected paymentResponseModel: ResponseModel;
   protected requiredStatusCode: number;
   protected plannedPaymentsLoader: boolean;
@@ -83,7 +86,7 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy, AfterViewInit
     this.paymentResponseModel = new ResponseModel();
     this.subscriptions = [];
 
-    this.requestParams = new RequestParams({
+    this.requestParams = new RequestModel({
       page: this.appConfig.request.pagination.defaultPage,
       pageSize: this.appConfig.request.pagination.defaultPageSizeOptions[0],
     })

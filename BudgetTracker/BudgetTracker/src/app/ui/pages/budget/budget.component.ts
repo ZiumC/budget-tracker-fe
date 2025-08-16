@@ -20,6 +20,7 @@ import {
   GetCategoryStatsDto,
   StatisticsDataResult
 } from "../../../models/dto/statistics.model.dto";
+import {ErrorImage, ErrorType} from "../../../models/error.model";
 
 @Component({
   selector: 'app-budget',
@@ -33,6 +34,8 @@ export class BudgetComponent implements OnInit, OnDestroy {
   protected readonly DateUtils = DateUtil;
   protected readonly SpinnerSize = SpinnerSize;
   protected readonly LegendPosition = LegendPosition;
+  protected readonly ErrorType = ErrorType;
+  protected readonly ErrorImage = ErrorImage;
   protected appConfig: AppConfig;
   protected budgetDto: GetBudgetDto | null;
   protected budgetStatsDto: GetBudgetStatsDto | null;
@@ -148,12 +151,14 @@ export class BudgetComponent implements OnInit, OnDestroy {
   }
 
   protected onDataSize(data: StatisticsDataResult[]): string {
-    if (data.length <= 8) {
+    if (data.length > 0 && data.length <= 0) {
       return this.isMobileView() ? 'mobile-doughnut-height' : 'doughnut-height-s';
     } else if (data.length > 8 && data.length <= 15) {
       return this.isMobileView() ? 'mobile-doughnut-height' : 'doughnut-height-m';
-    } else {
+    } else if (data.length > 15) {
       return this.isMobileView() ? 'mobile-doughnut-height' : 'doughnut-height-l';
+    } else {
+      return '';
     }
   }
 
@@ -182,7 +187,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
         error: (err): void => {
           this.responseModels.incomeStats = generateErrorModel(err);
         },
-        complete: () =>{
+        complete: () => {
           this.budgetIncomeLoader = true;
         }
       })
@@ -202,6 +207,4 @@ export class BudgetComponent implements OnInit, OnDestroy {
       });
     }
   }
-
-
 }

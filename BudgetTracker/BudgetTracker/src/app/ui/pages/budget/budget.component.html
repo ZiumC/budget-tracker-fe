@@ -130,7 +130,9 @@
             </div>
           </ng-template>
           <ng-template #budgetErrorBlock>
-            <app-error [response]="responseModels.budget"
+            <app-error [errorType]="ErrorType.Request"
+                       [errorImage]="ErrorImage.Notfound"
+                       [response]="responseModels.budget"
                        [notFoundErrorText]="formatString(appConfig.form.messages.notFound,'Budget data')">
 
             </app-error>
@@ -214,30 +216,39 @@
                     <app-spinner-grow></app-spinner-grow>
                   </ng-template>
                   <ng-template #loadedIncomeStats>
-                    <div class="mx-2 my-2" [className]="onDataSize(incomeStatsData)">
-                      <ng-container [ngSwitch]="isMobileView()">
-                        <ng-container *ngSwitchCase="true">
-                          <ngx-charts-advanced-pie-chart
-                            [results]="incomeStatsData"
-                            [scheme]="'forest'"
-                            [animations]="true">
-                          </ngx-charts-advanced-pie-chart>
+                    <ng-template [ngIf]="incomeStatsData.length == 0"
+                                 [ngIfElse]="displayIncomeChart">
+                      <app-error [errorType]="ErrorType.Application"
+                                 [errorImage]="ErrorImage.Notfound"
+                                 [notFoundErrorText]="'Chart data not found'">
+                      </app-error>
+                    </ng-template>
+                    <ng-template #displayIncomeChart>
+                      <div class="mx-2 my-2" [className]="onDataSize(incomeStatsData)">
+                        <ng-container [ngSwitch]="isMobileView()">
+                          <ng-container *ngSwitchCase="true">
+                            <ngx-charts-advanced-pie-chart
+                              [results]="incomeStatsData"
+                              [scheme]="'forest'"
+                              [animations]="true">
+                            </ngx-charts-advanced-pie-chart>
+                          </ng-container>
+                          <ng-container *ngSwitchCase="false">
+                            <ngx-charts-pie-chart
+                              [results]="incomeStatsData"
+                              [arcWidth]="0.4"
+                              [scheme]="'forest'"
+                              [labels]="true"
+                              [legend]="true"
+                              [legendPosition]="LegendPosition.Right"
+                              [legendTitle]="'Categories'"
+                              [animations]="true"
+                              [doughnut]="true">
+                            </ngx-charts-pie-chart>
+                          </ng-container>
                         </ng-container>
-                        <ng-container *ngSwitchCase="false">
-                          <ngx-charts-pie-chart
-                            [results]="incomeStatsData"
-                            [arcWidth]="0.4"
-                            [scheme]="'forest'"
-                            [labels]="true"
-                            [legend]="true"
-                            [legendPosition]="LegendPosition.Right"
-                            [legendTitle]="'Categories'"
-                            [animations]="true"
-                            [doughnut]="true">
-                          </ngx-charts-pie-chart>
-                        </ng-container>
-                      </ng-container>
-                    </div>
+                      </div>
+                    </ng-template>
                   </ng-template>
                 </ng-container>
                 <ng-container *ngSwitchCase="2">

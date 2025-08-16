@@ -191,7 +191,9 @@
       }
     </ng-template>
     <ng-template #errorPaymentsBlock>
-      <app-error [response]=" paymentResponseModel"
+      <app-error [errorType]="ErrorType.Request"
+                 [errorImage]="ErrorImage.Notfound"
+                 [response]=" paymentResponseModel"
                  [notFoundErrorText]="formatString(appConfig.form.messages.notFound,'Payments data')">
 
       </app-error>
