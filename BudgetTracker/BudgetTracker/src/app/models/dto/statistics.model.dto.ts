@@ -5,22 +5,28 @@ export class StatisticsDataResult {
   value: number;
 }
 
-export class HorizontalBarDataResult{
+export class PieChartDataResult extends StatisticsDataResult {
+}
+
+export class HorizontalBarDataResult {
   name: string;
   series: StatisticsDataResult[];
 }
 
 export class IncomeCategoryDetails {
+  name: string;
   IncomeSum: BigNumber;
   SavingsSum: BigNumber
 }
 
 export class RegularPaymentCategoryDetails {
+  name: string;
   PriceSum: BigNumber;
   RefundSum: BigNumber
 }
 
-export class PlannedPaymentCategoryDetails{
+export class PlannedPaymentCategoryDetails {
+  name: string;
   PriceSum: BigNumber;
   EstimatedSum: BigNumber
 }

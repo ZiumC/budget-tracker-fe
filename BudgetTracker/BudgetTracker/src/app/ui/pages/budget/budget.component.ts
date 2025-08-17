@@ -8,7 +8,6 @@ import {HttpService} from "../../../services/http/http.service";
 import {ActivatedRoute, Params, Router} from "@angular/router";
 import {HttpResponse} from "@angular/common/http";
 import {SubscriptionUtils} from "../../../util/subscription.utils";
-import {add, format, subtract} from "../../../util/number.util";
 import {GetBudgetDto, GetBudgetStatsDto} from "../../../models/dto/budget.model.dto";
 import {AppConfig} from "../../../models/config/config";
 import {ConfigService} from "../../../services/config/config.service";
@@ -18,12 +17,28 @@ import {TimerUtils} from "../../../util/timer.utils";
 import {LegendPosition} from "@swimlane/ngx-charts";
 import {
   GetCategoryStatsDto,
-  HorizontalBarDataResult,
-  StatisticsDataResult
+  IncomeCategoryDetails, PlannedPaymentCategoryDetails,
+  RegularPaymentCategoryDetails
 } from "../../../models/dto/statistics.model.dto";
 import {ErrorImage, ErrorType} from "../../../models/error.model";
-import {BudgetTabs} from "../../../models/components/budget.component";
-import {formatPercent, getPieChartClassFor, transformToPieChartDataResult} from "../../../util/chart.utils";
+import {
+  BudgetCategoryDetails,
+  BudgetHorizontalChartData,
+  BudgetLoaders,
+  BudgetPieChartData,
+  BudgetTabs
+} from "../../../models/components/budget.component";
+import {
+  formatPercent,
+  getPieChartClassFor,
+  transformIncomeToPieChartData,
+  transformPlannedPaymentToPieChartData,
+  transformRegularPaymentToPieChartData,
+  transformToIncomeDetails,
+  transformToPlannedDetails,
+  transformToRegularDetails
+} from "../../../util/chart.utils";
+import {format} from "../../../util/number.util";
 
 @Component({
   selector: 'app-budget',
@@ -32,8 +47,8 @@ import {formatPercent, getPieChartClassFor, transformToPieChartDataResult} from 
 })
 export class BudgetComponent implements OnInit, OnDestroy {
   @ViewChild('errorModal') errorModal: any;
-  protected readonly format = format;
   protected readonly formatString = formatString;
+  protected readonly format = format;
   protected readonly DateUtils = DateUtil;
   protected readonly SpinnerSize = SpinnerSize;
   protected readonly LegendPosition = LegendPosition;
@@ -49,14 +64,10 @@ export class BudgetComponent implements OnInit, OnDestroy {
   protected subscriptions: Subscription[];
   protected responseModels: BudgetResponse;
   protected idBudget: string;
-  protected budgetLoader: boolean;
-  protected incomeStatsLoader: boolean;
-  protected regularPaymentStatsLoader: boolean;
-  protected plannedPaymentStatsLoader: boolean;
-  protected incomeStatsData: StatisticsDataResult[] = [];
-  protected regularPaymentStatsData: StatisticsDataResult[] = [];
-  protected plannedPaymentStatsData: StatisticsDataResult[] = [];
-  protected mockResult: HorizontalBarDataResult[] = [];
+  protected loaders: BudgetLoaders;
+  protected budgetStatisticDetails: BudgetCategoryDetails;
+  protected pieChartDataResult: BudgetPieChartData;
+  protected horizontalChartDataResult: BudgetHorizontalChartData;
   protected currentTab: BudgetTabs;
   public innerWidth: any;
 
@@ -73,24 +84,35 @@ export class BudgetComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     const appCfg = this.configService.getAppConfig();
-
-    this.mockResult.push({
-      name: "Budget",
-      series: [
-        {
-          name: "money spend",
-          value: 2312,
-        },
-        {
-          name: "money left",
-          value: 233,
-        }]
-    } as HorizontalBarDataResult)
     if (appCfg) {
       this.appConfig = appCfg;
     } else {
       throw Error("Config not provided")
     }
+
+    this.innerWidth = window.innerWidth;
+    this.subscriptions = [];
+    this.activatedRoute.queryParams.subscribe((params: Params): void => {
+
+      this.idBudget = params['id'];
+    });
+
+    this.currentTab = BudgetTabs.IncomeTab;
+    this.pieChartDataResult = {
+      income: [],
+      planned: [],
+      regular: []
+    }
+
+    this.budgetStatisticDetails = {
+      income: [],
+      planned: [],
+      regular: []
+    }
+
+    this.horizontalChartDataResult = new BudgetHorizontalChartData();
+    this.loaders = new BudgetLoaders();
+
     this.responseModels = {
       budget: new ResponseModel(),
       incomes: new ResponseModel(),
@@ -98,20 +120,15 @@ export class BudgetComponent implements OnInit, OnDestroy {
       paymentStatus: new ResponseModel(),
       budgetStats: new ResponseModel(),
       incomeStats: new ResponseModel(),
-      regularPaymentStats: new ResponseModel(),
-      plannedPaymentStats: new ResponseModel()
+      regularStats: new ResponseModel(),
+      plannedStats: new ResponseModel()
     };
 
-    this.innerWidth = window.innerWidth;
-
-    this.subscriptions = [];
-    this.activatedRoute.queryParams.subscribe((params: Params): void => {
-
-      this.idBudget = params['id'];
-    });
 
     this.getBudgetStatistics();
-    this.onTabChange(BudgetTabs.IncomeTab);
+    this.getPlannedPaymentStats();
+    this.getRegularPaymentStats();
+    this.getIncomeStats();
 
     this.subscriptions.push(
       this.httpService.getBudget(this.idBudget).subscribe({
@@ -167,35 +184,16 @@ export class BudgetComponent implements OnInit, OnDestroy {
     }
   }
 
-  protected onTabChange(selectedTab: BudgetTabs): void {
-    this.currentTab = selectedTab;
-    switch (selectedTab) {
-      case BudgetTabs.IncomeTab:
-        this.getIncomeStats();
-        break;
-      case BudgetTabs.PlannedPaymentTab:
-        this.getPlannedPaymentStats();
-        break;
-      case BudgetTabs.RegularPaymentTab:
-        this.getRegularPaymentStats();
-        break;
-      default:
-        this.currentTab = BudgetTabs.IncomeTab;
-        this.getIncomeStats();
-        break;
-    }
-  }
-
   private markBudgetAsLoaded(isLoaded: boolean): void {
     if (isLoaded) {
       new TimerUtils(this.appConfig.animation.duration.default).start()
         .subscribe(finished => {
           if (finished) {
-            this.budgetLoader = isLoaded;
+            this.loaders.budget = isLoaded;
           }
         });
     } else {
-      this.budgetLoader = isLoaded;
+      this.loaders.budget = isLoaded;
     }
   }
 
@@ -204,11 +202,11 @@ export class BudgetComponent implements OnInit, OnDestroy {
       new TimerUtils(this.appConfig.animation.duration.default).start()
         .subscribe(finished => {
           if (finished) {
-            this.incomeStatsLoader = isLoaded;
+            this.loaders.incomeStats = isLoaded;
           }
         });
     } else {
-      this.incomeStatsLoader = isLoaded;
+      this.loaders.incomeStats = isLoaded;
     }
   }
 
@@ -217,11 +215,11 @@ export class BudgetComponent implements OnInit, OnDestroy {
       new TimerUtils(this.appConfig.animation.duration.default).start()
         .subscribe(finished => {
           if (finished) {
-            this.regularPaymentStatsLoader = isLoaded;
+            this.loaders.regularStats = isLoaded;
           }
         });
     } else {
-      this.regularPaymentStatsLoader = isLoaded;
+      this.loaders.regularStats = isLoaded;
     }
   }
 
@@ -230,11 +228,11 @@ export class BudgetComponent implements OnInit, OnDestroy {
       new TimerUtils(this.appConfig.animation.duration.default).start()
         .subscribe(finished => {
           if (finished) {
-            this.plannedPaymentStatsLoader = isLoaded;
+            this.loaders.plannedStats = isLoaded;
           }
         });
     } else {
-      this.plannedPaymentStatsLoader = isLoaded;
+      this.loaders.plannedStats = isLoaded;
     }
   }
 
@@ -246,14 +244,16 @@ export class BudgetComponent implements OnInit, OnDestroy {
         next: (response: HttpResponse<GetCategoryStatsDto>): void => {
           stats = response.body;
           this.responseModels.incomeStats.statusCode = response.status;
-          this.incomeStatsData = transformToPieChartDataResult(stats);
+          this.budgetStatisticDetails.income = transformToIncomeDetails(stats);
         },
         error: (err): void => {
           this.responseModels.incomeStats = generateErrorModel(err);
           this.markIncomeStatsAsLoaded(true);
         },
         complete: (): void => {
+          this.pieChartDataResult.income = transformIncomeToPieChartData(this.budgetStatisticDetails.income);
           this.markIncomeStatsAsLoaded(true);
+
         }
       })
     );
@@ -266,14 +266,15 @@ export class BudgetComponent implements OnInit, OnDestroy {
       this.httpService.getRegularPaymentCategoriesStats(this.idBudget).subscribe({
         next: (response: HttpResponse<GetCategoryStatsDto>): void => {
           stats = response.body;
-          this.responseModels.regularPaymentStats.statusCode = response.status;
-          this.regularPaymentStatsData = transformToPieChartDataResult(stats);
+          this.responseModels.regularStats.statusCode = response.status;
+          this.budgetStatisticDetails.regular = transformToRegularDetails(stats);
         },
         error: (err): void => {
-          this.responseModels.regularPaymentStats = generateErrorModel(err);
+          this.responseModels.regularStats = generateErrorModel(err);
           this.markRegularPaymentStatsAsLoaded(true);
         },
         complete: (): void => {
+          this.pieChartDataResult.regular = transformRegularPaymentToPieChartData(this.budgetStatisticDetails.regular);
           this.markRegularPaymentStatsAsLoaded(true);
         }
       })
@@ -287,17 +288,19 @@ export class BudgetComponent implements OnInit, OnDestroy {
       this.httpService.getPlannedPaymentCategoriesStats(this.idBudget).subscribe({
         next: (response: HttpResponse<GetCategoryStatsDto>): void => {
           stats = response.body;
-          this.responseModels.plannedPaymentStats.statusCode = response.status;
-          this.plannedPaymentStatsData = transformToPieChartDataResult(stats);
+          this.responseModels.plannedStats.statusCode = response.status;
+          this.budgetStatisticDetails.planned = transformToPlannedDetails(stats);
         },
         error: (err): void => {
-          this.responseModels.plannedPaymentStats = generateErrorModel(err);
+          this.responseModels.plannedStats = generateErrorModel(err);
           this.markPlannedPaymentStatsAsLoaded(true);
         },
         complete: (): void => {
+          this.pieChartDataResult.planned = transformPlannedPaymentToPieChartData(this.budgetStatisticDetails.planned);
           this.markPlannedPaymentStatsAsLoaded(true);
         }
       })
     );
   }
+
 }
