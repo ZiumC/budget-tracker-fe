@@ -5,6 +5,11 @@ export class StatisticsDataResult {
   value: number;
 }
 
+export class HorizontalBarDataResult{
+  name: string;
+  series: StatisticsDataResult[];
+}
+
 export class IncomeCategoryDetails {
   IncomeSum: BigNumber;
   SavingsSum: BigNumber

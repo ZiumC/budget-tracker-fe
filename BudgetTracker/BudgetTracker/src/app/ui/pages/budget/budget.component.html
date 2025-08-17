@@ -224,13 +224,19 @@
                       </app-error>
                     </ng-template>
                     <ng-template #displayIncomeChart>
-                      <div class="mx-2 my-2" [className]="onDataSize(incomeStatsData)">
+                      <label for="income-categories">Income categories</label>
+                      <div id="income-categories" class="mx-2 my-2" [className]="getPieChartClassFor(incomeStatsData, isMobileView())">
                         <ng-container [ngSwitch]="isMobileView()">
                           <ng-container *ngSwitchCase="true">
                             <ngx-charts-advanced-pie-chart
                               [results]="incomeStatsData"
                               [scheme]="'forest'"
                               [animations]="true">
+                              <ng-template #tooltipTemplate let-model="model">
+                                <div class="my-2">
+                                  {{ model.name }} <br> {{ model.value }} PLN
+                                </div>
+                              </ng-template>
                             </ngx-charts-advanced-pie-chart>
                           </ng-container>
                           <ng-container *ngSwitchCase="false">
@@ -244,6 +250,11 @@
                               [legendTitle]="'Categories'"
                               [animations]="true"
                               [doughnut]="true">
+                              <ng-template #tooltipTemplate let-model="model">
+                                <div class="my-2">
+                                  {{ model.name }} <br> {{ model.value }} PLN
+                                </div>
+                              </ng-template>
                             </ngx-charts-pie-chart>
                           </ng-container>
                         </ng-container>
@@ -265,13 +276,19 @@
                       </app-error>
                     </ng-template>
                     <ng-template #displayPlannedPaymentChart>
-                      <div class="mx-2 my-2" [className]="onDataSize(plannedPaymentStatsData)">
+                      <label for="planned-payment-categories">Planned payment categories</label>
+                      <div id="planned-payment-categories" class="mx-2 my-2" [className]="getPieChartClassFor(plannedPaymentStatsData, isMobileView())">
                         <ng-container [ngSwitch]="isMobileView()">
                           <ng-container *ngSwitchCase="true">
                             <ngx-charts-advanced-pie-chart
                               [results]="plannedPaymentStatsData"
                               [scheme]="'forest'"
                               [animations]="true">
+                              <ng-template #tooltipTemplate let-model="model">
+                                <div class="my-2">
+                                  {{ model.name }} <br> {{ model.value }} PLN
+                                </div>
+                              </ng-template>
                             </ngx-charts-advanced-pie-chart>
                           </ng-container>
                           <ng-container *ngSwitchCase="false">
@@ -285,6 +302,11 @@
                               [legendTitle]="'Categories'"
                               [animations]="true"
                               [doughnut]="true">
+                              <ng-template #tooltipTemplate let-model="model">
+                                <div class="my-2">
+                                  {{ model.name }} <br> {{ model.value }} PLN
+                                </div>
+                              </ng-template>
                             </ngx-charts-pie-chart>
                           </ng-container>
                         </ng-container>
@@ -306,13 +328,19 @@
                       </app-error>
                     </ng-template>
                     <ng-template #displayRegularPaymentChart>
-                      <div class="mx-2 my-2" [className]="onDataSize(regularPaymentStatsData)">
+                      <label for="regular-payment-categories">Regular payment categories</label>
+                      <div id="regular-payment-categories" class="mx-2 my-2" [className]="getPieChartClassFor(regularPaymentStatsData, isMobileView())">
                         <ng-container [ngSwitch]="isMobileView()">
                           <ng-container *ngSwitchCase="true">
                             <ngx-charts-advanced-pie-chart
                               [results]="regularPaymentStatsData"
                               [scheme]="'forest'"
                               [animations]="true">
+                              <ng-template #tooltipTemplate let-model="model">
+                                <div class="my-2">
+                                  {{ model.name }} <br> {{ model.value }} PLN
+                                </div>
+                              </ng-template>
                             </ngx-charts-advanced-pie-chart>
                           </ng-container>
                           <ng-container *ngSwitchCase="false">
@@ -326,6 +354,11 @@
                               [legendTitle]="'Categories'"
                               [animations]="true"
                               [doughnut]="true">
+                              <ng-template #tooltipTemplate let-model="model">
+                                <div class="my-2">
+                                  {{ model.name }} <br> {{ model.value }} PLN
+                                </div>
+                              </ng-template>
                             </ngx-charts-pie-chart>
                           </ng-container>
                         </ng-container>
@@ -334,6 +367,16 @@
                   </ng-template>
                 </ng-container>
               </ng-container>
+            </div>
+            <label for="budget-usage">Budget usage</label>
+            <div id="budget-usage" class="horizontal-bar-chart mx-3">
+              <ngx-charts-bar-horizontal-normalized
+                [results]="mockResult"
+                [scheme]="'vivid'"
+                [xAxisTickFormatting]="formatPercent"
+                [animations]="true"
+                [xAxis]="true">
+              </ngx-charts-bar-horizontal-normalized>
             </div>
           </div>
         </div>

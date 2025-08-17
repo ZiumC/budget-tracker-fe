@@ -16,9 +16,14 @@ import {formatString} from "../../../util/string.utils";
 import {generateErrorModel} from "../../../util/http.util";
 import {TimerUtils} from "../../../util/timer.utils";
 import {LegendPosition} from "@swimlane/ngx-charts";
-import {GetCategoryStatsDto, StatisticsDataResult} from "../../../models/dto/statistics.model.dto";
+import {
+  GetCategoryStatsDto,
+  HorizontalBarDataResult,
+  StatisticsDataResult
+} from "../../../models/dto/statistics.model.dto";
 import {ErrorImage, ErrorType} from "../../../models/error.model";
 import {BudgetTabs} from "../../../models/components/budget.component";
+import {formatPercent, getPieChartClassFor, transformToPieChartDataResult} from "../../../util/chart.utils";
 
 @Component({
   selector: 'app-budget',
@@ -35,6 +40,9 @@ export class BudgetComponent implements OnInit, OnDestroy {
   protected readonly ErrorType = ErrorType;
   protected readonly ErrorImage = ErrorImage;
   protected readonly BudgetTabs = BudgetTabs;
+  protected readonly formatPercent = formatPercent;
+  protected readonly BigNumber = BigNumber;
+  protected readonly getPieChartClassFor = getPieChartClassFor;
   protected appConfig: AppConfig;
   protected budgetDto: GetBudgetDto | null;
   protected budgetStatsDto: GetBudgetStatsDto | null;
@@ -48,6 +56,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
   protected incomeStatsData: StatisticsDataResult[] = [];
   protected regularPaymentStatsData: StatisticsDataResult[] = [];
   protected plannedPaymentStatsData: StatisticsDataResult[] = [];
+  protected mockResult: HorizontalBarDataResult[] = [];
   protected currentTab: BudgetTabs;
   public innerWidth: any;
 
@@ -65,6 +74,18 @@ export class BudgetComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     const appCfg = this.configService.getAppConfig();
 
+    this.mockResult.push({
+      name: "Budget",
+      series: [
+        {
+          name: "money spend",
+          value: 2312,
+        },
+        {
+          name: "money left",
+          value: 233,
+        }]
+    } as HorizontalBarDataResult)
     if (appCfg) {
       this.appConfig = appCfg;
     } else {
@@ -143,18 +164,6 @@ export class BudgetComponent implements OnInit, OnDestroy {
   protected onRefreshEvent(refresh: boolean): void {
     if (refresh) {
       this.getBudgetStatistics();
-    }
-  }
-
-  protected onDataSize(data: StatisticsDataResult[]): string {
-    if (data.length > 0 && data.length <= 0) {
-      return this.isMobileView() ? 'mobile-doughnut-height' : 'doughnut-height-s';
-    } else if (data.length > 8 && data.length <= 15) {
-      return this.isMobileView() ? 'mobile-doughnut-height' : 'doughnut-height-m';
-    } else if (data.length > 15) {
-      return this.isMobileView() ? 'mobile-doughnut-height' : 'doughnut-height-l';
-    } else {
-      return '';
     }
   }
 
@@ -237,8 +246,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
         next: (response: HttpResponse<GetCategoryStatsDto>): void => {
           stats = response.body;
           this.responseModels.incomeStats.statusCode = response.status;
-          this.incomeStatsData = [];
-          this.transformToPieChartDataResult(stats);
+          this.incomeStatsData = transformToPieChartDataResult(stats);
         },
         error: (err): void => {
           this.responseModels.incomeStats = generateErrorModel(err);
@@ -259,8 +267,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
         next: (response: HttpResponse<GetCategoryStatsDto>): void => {
           stats = response.body;
           this.responseModels.regularPaymentStats.statusCode = response.status;
-          this.regularPaymentStatsData = [];
-          this.transformToPieChartDataResult(stats);
+          this.regularPaymentStatsData = transformToPieChartDataResult(stats);
         },
         error: (err): void => {
           this.responseModels.regularPaymentStats = generateErrorModel(err);
@@ -281,8 +288,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
         next: (response: HttpResponse<GetCategoryStatsDto>): void => {
           stats = response.body;
           this.responseModels.plannedPaymentStats.statusCode = response.status;
-          this.plannedPaymentStatsData = [];
-          this.transformToPieChartDataResult(stats);
+          this.plannedPaymentStatsData = transformToPieChartDataResult(stats);
         },
         error: (err): void => {
           this.responseModels.plannedPaymentStats = generateErrorModel(err);
@@ -293,47 +299,5 @@ export class BudgetComponent implements OnInit, OnDestroy {
         }
       })
     );
-  }
-
-  private transformToPieChartDataResult(data: GetCategoryStatsDto | null): void {
-    if (data) {
-      let totalSavings = new BigNumber(0);
-      let totalRefund = new BigNumber(0);
-
-      Object.entries(data).forEach(([key, value]): void => {
-        if ('IncomeSum' in value && 'SavingsSum' in value) {
-          totalSavings = add(new BigNumber(totalSavings), new BigNumber(value.SavingsSum));
-          this.incomeStatsData.push({
-            name: key,
-            value: subtract(new BigNumber(value.IncomeSum), new BigNumber(value.SavingsSum)).toNumber()
-          } as StatisticsDataResult);
-        } else if ('PriceSum' in value && 'RefundSum' in value) {
-          totalRefund = add(new BigNumber(totalRefund), new BigNumber(value.RefundSum));
-          this.regularPaymentStatsData.push({
-            name: key,
-            value: subtract(new BigNumber(value.PriceSum), new BigNumber(value.RefundSum)).toNumber()
-          } as StatisticsDataResult);
-        } else if ('PriceSum' in value && 'EstimatedSum' in value) {
-          this.plannedPaymentStatsData.push({
-            name: key,
-            value: new BigNumber(value.PriceSum).toNumber()
-          } as StatisticsDataResult);
-        }
-      });
-
-      if (totalSavings.toNumber() > 0) {
-        this.incomeStatsData.push({
-          name: 'Savings',
-          value: totalSavings.toNumber()
-        } as StatisticsDataResult);
-      }
-
-      if (totalRefund.toNumber() > 0) {
-        this.regularPaymentStatsData.push({
-          name: 'Refund',
-          value: totalRefund.toNumber()
-        } as StatisticsDataResult)
-      }
-    }
   }
 }
