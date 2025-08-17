@@ -34,3 +34,15 @@ export function subtract(num1: BigNumber, num2: BigNumber): BigNumber {
 
   return new BigNumber(result);
 }
+
+export function add(num1: BigNumber, num2: BigNumber): BigNumber {
+  let bigNum1 = new BigNumber(num1);
+  let bigNum2 = new BigNumber(num2);
+
+  if ((num1 && isNaN(bigNum1.toNumber())) ||
+    (num2 && isNaN(bigNum2.toNumber()))) {
+    return new BigNumber(0);
+  }
+
+  return new BigNumber(bigNum1.plus(bigNum2));
+}

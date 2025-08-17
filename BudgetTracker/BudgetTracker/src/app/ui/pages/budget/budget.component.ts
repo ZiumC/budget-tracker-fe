@@ -8,7 +8,7 @@ import {HttpService} from "../../../services/http/http.service";
 import {ActivatedRoute, Params, Router} from "@angular/router";
 import {HttpResponse} from "@angular/common/http";
 import {SubscriptionUtils} from "../../../util/subscription.utils";
-import {format} from "../../../util/number.util";
+import {add, format, subtract} from "../../../util/number.util";
 import {GetBudgetDto, GetBudgetStatsDto} from "../../../models/dto/budget.model.dto";
 import {AppConfig} from "../../../models/config/config";
 import {ConfigService} from "../../../services/config/config.service";
@@ -43,7 +43,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
   protected responseModels: BudgetResponse;
   protected idBudget: string;
   protected budgetLoader: boolean;
-  protected budgetIncomeLoader: boolean;
+  protected budgetIncomeStatsLoader: boolean;
   protected incomeStatsData: StatisticsDataResult[] = [];
   protected currentTabId: number;
   public innerWidth: any;
@@ -175,7 +175,21 @@ export class BudgetComponent implements OnInit, OnDestroy {
     }
   }
 
+  private markBudgetIncomeStatsAsLoaded(isLoaded: boolean): void {
+    if (isLoaded) {
+      new TimerUtils(this.appConfig.animation.duration.default).start()
+        .subscribe(finished => {
+          if (finished) {
+            this.budgetIncomeStatsLoader = isLoaded;
+          }
+        });
+    } else {
+      this.budgetIncomeStatsLoader = isLoaded;
+    }
+  }
+
   private getBudgetIncomeStats(): void {
+    this.markBudgetIncomeStatsAsLoaded(false);
     let stats: GetCategoryStatsDto | null;
     this.subscriptions.push(
       this.httpService.getBudgetIncomeCategoriesStats(this.idBudget).subscribe({
@@ -186,9 +200,10 @@ export class BudgetComponent implements OnInit, OnDestroy {
         },
         error: (err): void => {
           this.responseModels.incomeStats = generateErrorModel(err);
+          this.markBudgetIncomeStatsAsLoaded(true);
         },
-        complete: () => {
-          this.budgetIncomeLoader = true;
+        complete: (): void => {
+          this.markBudgetIncomeStatsAsLoaded(true);
         }
       })
     );
@@ -196,15 +211,24 @@ export class BudgetComponent implements OnInit, OnDestroy {
 
   private transformToChartDataResult(data: GetCategoryStatsDto | null): void {
     if (data) {
+      let totalSavings = new BigNumber(0);
+
       Object.entries(data).forEach(([key, value]): void => {
         if ('IncomeSum' in value && 'SavingsSum' in value) {
-          console.log(key, new BigNumber(value.IncomeSum).toNumber(), new BigNumber(value.SavingsSum).toNumber());
+          totalSavings = add(new BigNumber(totalSavings), new BigNumber(value.SavingsSum));
           this.incomeStatsData.push({
             name: key,
-            value: new BigNumber(value.IncomeSum).toNumber()
-          } as StatisticsDataResult)
+            value: subtract(new BigNumber(value.IncomeSum), new BigNumber(value.SavingsSum)).toNumber()
+          } as StatisticsDataResult);
         }
       });
+
+      if (totalSavings.toNumber() > 0) {
+        this.incomeStatsData.push({
+          name: 'Savings',
+          value: totalSavings.toNumber()
+        } as StatisticsDataResult);
+      }
     }
   }
 }
