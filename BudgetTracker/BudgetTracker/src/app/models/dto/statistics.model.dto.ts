@@ -10,9 +10,14 @@ export class IncomeCategoryDetails {
   SavingsSum: BigNumber
 }
 
-export class PaymentCategoryDetails {
+export class RegularPaymentCategoryDetails {
   PriceSum: BigNumber;
   RefundSum: BigNumber
 }
 
-export type GetCategoryStatsDto = Record<string, IncomeCategoryDetails | PaymentCategoryDetails>;
+export class PlannedPaymentCategoryDetails{
+  PriceSum: BigNumber;
+  EstimatedSum: BigNumber
+}
+
+export type GetCategoryStatsDto = Record<string, IncomeCategoryDetails | RegularPaymentCategoryDetails | PlannedPaymentCategoryDetails>;
