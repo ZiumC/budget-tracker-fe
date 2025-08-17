@@ -296,10 +296,18 @@ export class HttpService {
     )
   }
 
-  public getBudgetIncomeCategoriesStats(idBudget: string):
+  public getIncomeCategoriesStats(idBudget: string):
     Observable<HttpResponse<GetCategoryStatsDto>> {
     return this.httpClient.get<GetCategoryStatsDto>(
       StatisticUrls.budgetIncomeStats(idBudget),
+      {observe: 'response'}
+    );
+  }
+
+  public getRegularPaymentCategoriesStats(idBudget: string):
+    Observable<HttpResponse<GetCategoryStatsDto>> {
+    return this.httpClient.get<GetCategoryStatsDto>(
+      StatisticUrls.budgetRegularPaymentStats(idBudget),
       {observe: 'response'}
     );
   }
