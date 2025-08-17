@@ -211,7 +211,7 @@
             <div [className]="isMobileView() ? 'mt-3' : 'mt-5'">
               <ng-container [ngSwitch]="currentTabId">
                 <ng-container *ngSwitchCase="1">
-                  <ng-template [ngIf]="!budgetIncomeLoader"
+                  <ng-template [ngIf]="!budgetIncomeStatsLoader"
                                [ngIfElse]="loadedIncomeStats">
                     <app-spinner-grow></app-spinner-grow>
                   </ng-template>
