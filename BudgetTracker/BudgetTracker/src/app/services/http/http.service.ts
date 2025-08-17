@@ -311,4 +311,12 @@ export class HttpService {
       {observe: 'response'}
     );
   }
+
+  public getPlannedPaymentCategoriesStats(idBudget: string):
+    Observable<HttpResponse<GetCategoryStatsDto>> {
+    return this.httpClient.get<GetCategoryStatsDto>(
+      StatisticUrls.budgetPlannedPaymentStats(idBudget),
+      {observe: 'response'}
+    );
+  }
 }

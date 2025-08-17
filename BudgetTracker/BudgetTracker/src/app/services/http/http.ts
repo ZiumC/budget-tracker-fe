@@ -167,7 +167,8 @@ export class StatisticUrls {
   private static ACTIONS = {
     BUDGET: "/budget",
     INCOMES: "/incomes",
-    PAYMENTS: "/payments"
+    REGULAR_PAYMENTS: "/payments",
+    PLANNED_PAYMENTS: "/planned-payments"
   }
 
   static budgetStats(idBudget: string): string {
@@ -182,7 +183,12 @@ export class StatisticUrls {
 
   static budgetRegularPaymentStats(idBudget: string): string {
     let result = HostUrl.getHostUrl() + StatisticUrls.CONTROLLER + StatisticUrls.ACTIONS.BUDGET;
-    return result + "/" + idBudget + StatisticUrls.ACTIONS.PAYMENTS;
+    return result + "/" + idBudget + StatisticUrls.ACTIONS.REGULAR_PAYMENTS;
+  }
+
+  static budgetPlannedPaymentStats(idBudget: string): string {
+    let result = HostUrl.getHostUrl() + StatisticUrls.CONTROLLER + StatisticUrls.ACTIONS.BUDGET;
+    return result + "/" + idBudget + StatisticUrls.ACTIONS.PLANNED_PAYMENTS;
   }
 }
 
