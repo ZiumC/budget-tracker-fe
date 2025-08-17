@@ -211,7 +211,7 @@
             <div [className]="isMobileView() ? 'mt-3' : 'mt-5'">
               <ng-container [ngSwitch]="currentTabId">
                 <ng-container *ngSwitchCase="1">
-                  <ng-template [ngIf]="!budgetIncomeStatsLoader"
+                  <ng-template [ngIf]="!incomeStatsLoader"
                                [ngIfElse]="loadedIncomeStats">
                     <app-spinner-grow></app-spinner-grow>
                   </ng-template>
@@ -254,6 +254,45 @@
                 <ng-container *ngSwitchCase="2">
                 </ng-container>
                 <ng-container *ngSwitchCase="3">
+                  <ng-template [ngIf]="!regularPaymentStatsLoader"
+                               [ngIfElse]="loadedRegularPaymentStats">
+                    <app-spinner-grow></app-spinner-grow>
+                  </ng-template>
+                  <ng-template #loadedRegularPaymentStats>
+                    <ng-template [ngIf]="regularPaymentStatsData.length == 0"
+                                 [ngIfElse]="displayRegularPaymentChart">
+                      <app-error [errorType]="ErrorType.Application"
+                                 [errorImage]="ErrorImage.Notfound"
+                                 [notFoundErrorText]="'Chart data not found'">
+                      </app-error>
+                    </ng-template>
+                    <ng-template #displayRegularPaymentChart>
+                      <div class="mx-2 my-2" [className]="onDataSize(regularPaymentStatsData)">
+                        <ng-container [ngSwitch]="isMobileView()">
+                          <ng-container *ngSwitchCase="true">
+                            <ngx-charts-advanced-pie-chart
+                              [results]="regularPaymentStatsData"
+                              [scheme]="'forest'"
+                              [animations]="true">
+                            </ngx-charts-advanced-pie-chart>
+                          </ng-container>
+                          <ng-container *ngSwitchCase="false">
+                            <ngx-charts-pie-chart
+                              [results]="regularPaymentStatsData"
+                              [arcWidth]="0.4"
+                              [scheme]="'forest'"
+                              [labels]="true"
+                              [legend]="true"
+                              [legendPosition]="LegendPosition.Right"
+                              [legendTitle]="'Categories'"
+                              [animations]="true"
+                              [doughnut]="true">
+                            </ngx-charts-pie-chart>
+                          </ng-container>
+                        </ng-container>
+                      </div>
+                    </ng-template>
+                  </ng-template>
                 </ng-container>
               </ng-container>
             </div>

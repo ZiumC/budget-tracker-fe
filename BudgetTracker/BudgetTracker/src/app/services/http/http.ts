@@ -166,7 +166,8 @@ export class StatisticUrls {
   private static CONTROLLER = '/Statistics';
   private static ACTIONS = {
     BUDGET: "/budget",
-    INCOMES: "/incomes"
+    INCOMES: "/incomes",
+    PAYMENTS: "/payments"
   }
 
   static budgetStats(idBudget: string): string {
@@ -177,6 +178,11 @@ export class StatisticUrls {
   static budgetIncomeStats(idBudget: string): string {
     let result = HostUrl.getHostUrl() + StatisticUrls.CONTROLLER + StatisticUrls.ACTIONS.BUDGET;
     return result + "/" + idBudget + StatisticUrls.ACTIONS.INCOMES;
+  }
+
+  static budgetRegularPaymentStats(idBudget: string): string {
+    let result = HostUrl.getHostUrl() + StatisticUrls.CONTROLLER + StatisticUrls.ACTIONS.BUDGET;
+    return result + "/" + idBudget + StatisticUrls.ACTIONS.PAYMENTS;
   }
 }
 
