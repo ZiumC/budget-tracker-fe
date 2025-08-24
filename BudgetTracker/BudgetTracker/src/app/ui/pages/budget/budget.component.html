@@ -356,6 +356,20 @@
                     </ng-template>
                   </ng-container>
                 </ng-container>
+                <div class="mb-2">
+                  <label for="budget-summary">Budget summary</label>
+                  <div id="budget-summary" class="mobile-doughnut-height mx-3">
+                    <ngx-charts-pie-grid
+                      [results]="mockData"
+                      [customColors]="[
+                     {name: 'Needs',value: '#ff3d00'},
+                     {name: 'Wands',value: '#1f7bc6'},
+                     {name: 'Savings',value: '#00b862'},
+                   ]"
+                      [animations]="true">
+                    </ngx-charts-pie-grid>
+                  </div>
+                </div>
                 <label for="budget-usage">Budget usage</label>
                 <div id="budget-usage" class="horizontal-bar-chart mx-3">
                   <ngx-charts-bar-horizontal-normalized
@@ -364,6 +378,11 @@
                     [xAxisTickFormatting]="formatPercent"
                     [animations]="true"
                     [xAxis]="true">
+                    <ng-template #tooltipTemplate let-model="model">
+                      <div class="my-2">
+                        {{ model.name }} ({{ computePercent(model.value) }}) <br> {{ model.value }} PLN
+                      </div>
+                    </ng-template>
                   </ngx-charts-bar-horizontal-normalized>
                 </div>
               </ng-template>

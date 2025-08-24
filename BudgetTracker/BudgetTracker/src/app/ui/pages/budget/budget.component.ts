@@ -30,12 +30,13 @@ import {
   getPieChartClassFor,
   incomeToPieChartData,
   plannedPaymentToPieChartData,
-  regularPaymentToPieChartData,
+  regularPaymentToPieChartData, budgetUsageToHorizontalChartDataResult,
   transformToIncomeDetails,
   transformToPlannedDetails,
-  transformToRegularDetails
+  transformToRegularDetails,
+
 } from "../../../util/chart.utils";
-import {format} from "../../../util/number.util";
+import {add, format} from "../../../util/number.util";
 import {getStatisticType, StatisticType} from "../../../util/statistic.utils";
 import {HorizontalChartData,} from "../../../models/charts.model";
 
@@ -66,6 +67,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
   protected statisticDetails: StatisticDetails;
   protected chartData: DataResult = new DataResult();
   protected currentTab: StatisticsTab;
+  protected mockData: any;
   public innerWidth: any;
 
   constructor(
@@ -80,6 +82,20 @@ export class BudgetComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.mockData = [
+      {
+        name: "Needs",
+        value: 40632,
+      },
+      {
+        name: "Wants",
+        value: 50000,
+      },
+      {
+        name: "Savings",
+        value: 36745,
+      }
+    ];
     const appCfg = this.configService.getAppConfig();
     if (appCfg) {
       this.appConfig = appCfg;
@@ -165,6 +181,14 @@ export class BudgetComponent implements OnInit, OnDestroy {
     }
   }
 
+  protected computePercent(moneyCategory: number): string {
+    let totalMoney = new BigNumber(0);
+    for (let money of this.chartData.horizontalChart.moneyLeftData[0].series) {
+      totalMoney = add(totalMoney, new BigNumber(money.value));
+    }
+    return format(new BigNumber((moneyCategory / totalMoney.toNumber()) * 100)) + "%";
+  }
+
   private getBudgetStats(): void {
     this.markStatsAsLoaded(false);
 
@@ -216,7 +240,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
     this.chartData.pieChart.income = incomeToPieChartData(this.statisticDetails.income);
     this.chartData.pieChart.planned = plannedPaymentToPieChartData(this.statisticDetails.planned);
     this.chartData.pieChart.regular = regularPaymentToPieChartData(this.statisticDetails.regular);
-    // this.chartData.horizontalChart =
+    this.chartData.horizontalChart.moneyLeftData = budgetUsageToHorizontalChartDataResult(this.statisticDetails);
   }
 
 
