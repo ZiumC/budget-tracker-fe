@@ -1,12 +1,12 @@
 import {
-  GetCategoryStatsDto,
+  GetIncomeStatsDto, GetPlannedPaymentStatsDto, GetRegularPaymentStatsDto,
   HorizontalBarDataResult, IncomeCategoryDetails,
   PieChartDataResult, PlannedPaymentCategoryDetails, RegularPaymentCategoryDetails,
   StatisticsDataResult
 } from "../models/dto/statistics.model.dto";
 import {add, subtract} from "./number.util";
 import BigNumber from "bignumber.js";
-import {BudgetPieChartData} from "../models/components/budget.component";
+import {BudgetStatistics, BudgetPieChartData} from "../models/components/budget.component";
 
 export function formatPercent(input: string): string {
   return `${input}%`
@@ -25,7 +25,7 @@ export function getPieChartClassFor(data: StatisticsDataResult[], isMobileView: 
 }
 
 
-export function transformToIncomeDetails(data: GetCategoryStatsDto | null): IncomeCategoryDetails[] {
+export function transformToIncomeDetails(data: GetIncomeStatsDto | null): IncomeCategoryDetails[] {
   let result: IncomeCategoryDetails[] = [];
   if (data) {
     Object.entries(data).forEach(([key, value]): void => {
@@ -41,7 +41,7 @@ export function transformToIncomeDetails(data: GetCategoryStatsDto | null): Inco
   return result;
 }
 
-export function transformToRegularDetails(data: GetCategoryStatsDto | null): RegularPaymentCategoryDetails[] {
+export function transformToRegularDetails(data: GetRegularPaymentStatsDto | null): RegularPaymentCategoryDetails[] {
   let result: RegularPaymentCategoryDetails[] = [];
   if (data) {
     Object.entries(data).forEach(([key, value]): void => {
@@ -57,7 +57,7 @@ export function transformToRegularDetails(data: GetCategoryStatsDto | null): Reg
   return result;
 }
 
-export function transformToPlannedDetails(data: GetCategoryStatsDto | null): PlannedPaymentCategoryDetails[] {
+export function transformToPlannedDetails(data: GetPlannedPaymentStatsDto | null): PlannedPaymentCategoryDetails[] {
   let result: PlannedPaymentCategoryDetails[] = [];
   if (data) {
     Object.entries(data).forEach(([key, value]): void => {
@@ -131,53 +131,10 @@ export function transformPlannedPaymentToPieChartData(plannedDetails: PlannedPay
   return result;
 }
 
-
-// export function transformToPieChartDataResult(data: GetCategoryStatsDto | null): PieChartDataResult[] {
-//   let result: PieChartDataResult[] = [];
-//   if (data) {
-//     let totalSavings = new BigNumber(0);
-//     let totalRefund = new BigNumber(0);
-//
-//     Object.entries(data).forEach(([key, value]): void => {
-//       if ('IncomeSum' in value && 'SavingsSum' in value) {
-//         totalSavings = add(new BigNumber(totalSavings), new BigNumber(value.SavingsSum));
-//         result.push({
-//           name: key,
-//           value: subtract(new BigNumber(value.IncomeSum), new BigNumber(value.SavingsSum)).toNumber()
-//         } as PieChartDataResult);
-//       } else if ('PriceSum' in value && 'RefundSum' in value) {
-//         totalRefund = add(new BigNumber(totalRefund), new BigNumber(value.RefundSum));
-//         result.push({
-//           name: key,
-//           value: subtract(new BigNumber(value.PriceSum), new BigNumber(value.RefundSum)).toNumber()
-//         } as PieChartDataResult);
-//       } else if ('PriceSum' in value && 'EstimatedSum' in value) {
-//         result.push({
-//           name: key,
-//           value: subtract(new BigNumber(value.EstimatedSum), BigNumber(value.PriceSum)).abs().toNumber()
-//         } as PieChartDataResult);
-//       }
-//     });
-//
-//     if (totalSavings.toNumber() > 0) {
-//       result.push({
-//         name: 'Savings',
-//         value: totalSavings.toNumber()
-//       } as PieChartDataResult);
-//     }
-//
-//     if (totalRefund.toNumber() > 0) {
-//       result.push({
-//         name: 'Refund',
-//         value: totalRefund.toNumber()
-//       } as PieChartDataResult)
-//     }
-//   }
-//   return result;
-// }
-
-export function transformToHorizontalChartDataResult(data: BudgetPieChartData): HorizontalBarDataResult[] {
+export function transformToHorizontalChartDataResult(data: BudgetStatistics): HorizontalBarDataResult[] {
+  debugger
   let result: HorizontalBarDataResult[] = [];
+
   const moneySpend = calculateMoneySpend(data.regular, data.planned);
   const incomeLeft = calculateIncomeLeft(data.income);
 
@@ -199,35 +156,44 @@ export function transformToHorizontalChartDataResult(data: BudgetPieChartData): 
   return result;
 }
 
-function calculateIncomeLeft(incomeData: PieChartDataResult[]): BigNumber | null {
+function calculateIncomeLeft(incomeData: IncomeCategoryDetails[]): BigNumber | null {
   let result = null;
   if (incomeData) {
     let totalIncome = new BigNumber(0);
+    let totalSavings = new BigNumber(0);
 
     for (let income of incomeData) {
-      totalIncome = add(totalIncome, new BigNumber(income.value))
+      totalIncome = add(totalIncome, new BigNumber(income.IncomeSum));
+      totalSavings = add(totalSavings, new BigNumber(income.SavingsSum));
     }
 
-    result = totalIncome;
+    result = subtract(totalIncome, totalSavings);
   }
   return result;
 }
 
-function calculateMoneySpend(regularData: PieChartDataResult[], plannedData: PieChartDataResult[]): BigNumber | null {
+function calculateMoneySpend(regularData: RegularPaymentCategoryDetails[], plannedData: PlannedPaymentCategoryDetails[]): BigNumber | null {
   let result = null;
   if (regularData && plannedData) {
     let totalRegularPrice = new BigNumber(0);
+    let totalRefund = new BigNumber(0);
+
     let totalPlannedPrice = new BigNumber(0);
+    let totalEstimated = new BigNumber(0);
 
     for (let regular of regularData) {
-      totalPlannedPrice = add(totalRegularPrice, new BigNumber(regular.value));
+      totalRefund = add(totalRefund, new BigNumber(regular.RefundSum));
+      totalPlannedPrice = add(totalRegularPrice, new BigNumber(regular.PriceSum));
     }
 
     for (let planned of plannedData) {
-      totalPlannedPrice = add(totalPlannedPrice, new BigNumber(planned.value));
+      totalEstimated = add(totalEstimated, new BigNumber(planned.EstimatedSum));
+      totalPlannedPrice = add(totalPlannedPrice, new BigNumber(planned.PriceSum));
     }
 
-    result = add(totalRegularPrice, totalPlannedPrice);
+    let realRegular = subtract(totalRegularPrice, totalRefund);
+    let realPlanned = subtract(totalEstimated, totalPlannedPrice).abs();
+    result = add(realRegular, realPlanned);
   }
   return result;
 }

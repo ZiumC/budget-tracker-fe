@@ -14,7 +14,11 @@ import {
 import {BudgetUrls, CategoryUrls, IncomeUrls, PaginationUrls, PaymentUrls, StatisticUrls} from "./http";
 import {PlannedPaymentDto} from "../../models/dto/planned-payment.model.dto";
 import {GetIncomeAssignmentDto, GetPaymentAssignmentDto} from "../../models/dto/assignment.model.dto";
-import {GetCategoryStatsDto} from "../../models/dto/statistics.model.dto";
+import {
+  GetIncomeStatsDto,
+  GetPlannedPaymentStatsDto,
+  GetRegularPaymentStatsDto
+} from "../../models/dto/statistics.model.dto";
 
 @Injectable({
   providedIn: 'root',
@@ -297,24 +301,24 @@ export class HttpService {
   }
 
   public getIncomeCategoriesStats(idBudget: string):
-    Observable<HttpResponse<GetCategoryStatsDto>> {
-    return this.httpClient.get<GetCategoryStatsDto>(
+    Observable<HttpResponse<GetIncomeStatsDto>> {
+    return this.httpClient.get<GetIncomeStatsDto>(
       StatisticUrls.budgetIncomeStats(idBudget),
       {observe: 'response'}
     );
   }
 
   public getRegularPaymentCategoriesStats(idBudget: string):
-    Observable<HttpResponse<GetCategoryStatsDto>> {
-    return this.httpClient.get<GetCategoryStatsDto>(
+    Observable<HttpResponse<GetRegularPaymentStatsDto>> {
+    return this.httpClient.get<GetRegularPaymentStatsDto>(
       StatisticUrls.budgetRegularPaymentStats(idBudget),
       {observe: 'response'}
     );
   }
 
   public getPlannedPaymentCategoriesStats(idBudget: string):
-    Observable<HttpResponse<GetCategoryStatsDto>> {
-    return this.httpClient.get<GetCategoryStatsDto>(
+    Observable<HttpResponse<GetPlannedPaymentStatsDto>> {
+    return this.httpClient.get<GetPlannedPaymentStatsDto>(
       StatisticUrls.budgetPlannedPaymentStats(idBudget),
       {observe: 'response'}
     );
