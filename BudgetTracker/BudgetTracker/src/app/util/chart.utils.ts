@@ -23,7 +23,6 @@ export function getPieChartClassFor(data: StatisticsDataResult[], isMobileView: 
   }
 }
 
-
 export function transformToIncomeDetails(data: GetIncomeStatsDto | null): IncomeCategoryDetails[] {
   let result: IncomeCategoryDetails[] = [];
   if (data) {
@@ -116,7 +115,6 @@ export function regularPaymentToPieChartData(regularDetails: RegularPaymentCateg
   return result;
 }
 
-
 export function plannedPaymentToPieChartData(plannedDetails: PlannedPaymentCategoryDetails[]): PieChartDataResult[] {
   let result: PieChartDataResult[] = [];
 
@@ -130,32 +128,38 @@ export function plannedPaymentToPieChartData(plannedDetails: PlannedPaymentCateg
   return result;
 }
 
-export function transformToHorizontalChartDataResult(data: StatisticDetails): HorizontalBarDataResult[] {
-  debugger
+export function budgetUsageToHorizontalChartDataResult(data: StatisticDetails): HorizontalBarDataResult[] {
   let result: HorizontalBarDataResult[] = [];
 
   const moneySpend = calculateMoneySpend(data.regular, data.planned);
-  const incomeLeft = calculateIncomeLeft(data.income);
+  const income = calculateIncome(data.income);
 
-  if (moneySpend && incomeLeft) {
+  if (moneySpend && income) {
+    const incomeLeft = subtract(income, moneySpend);
+
     result.push({
       name: 'Budget',
       series: [
         {
-          name: "money spend",
+          name: "Money spend",
           value: moneySpend.toNumber(),
         },
         {
-          name: "money left",
+          name: "Money left",
           value: incomeLeft.toNumber() < 0 ? 0 : incomeLeft.toNumber(),
+        },
+        {
+          name: "Overuse",
+          value: incomeLeft.toNumber() < 0 ? incomeLeft.abs().toNumber() : 0,
         }
       ]
     } as HorizontalBarDataResult)
   }
+
   return result;
 }
 
-function calculateIncomeLeft(incomeData: IncomeCategoryDetails[]): BigNumber | null {
+function calculateIncome(incomeData: IncomeCategoryDetails[]): BigNumber | null {
   let result = null;
   if (incomeData) {
     let totalIncome = new BigNumber(0);
@@ -177,12 +181,12 @@ function calculateMoneySpend(regularData: RegularPaymentCategoryDetails[], plann
     let totalRegularPrice = new BigNumber(0);
     let totalRefund = new BigNumber(0);
 
-    let totalPlannedPrice = new BigNumber(0);
     let totalEstimated = new BigNumber(0);
+    let totalPlannedPrice = new BigNumber(0);
 
     for (let regular of regularData) {
       totalRefund = add(totalRefund, new BigNumber(regular.RefundSum));
-      totalPlannedPrice = add(totalRegularPrice, new BigNumber(regular.PriceSum));
+      totalRegularPrice = add(totalRegularPrice, new BigNumber(regular.PriceSum));
     }
 
     for (let planned of plannedData) {
@@ -191,7 +195,8 @@ function calculateMoneySpend(regularData: RegularPaymentCategoryDetails[], plann
     }
 
     let realRegular = subtract(totalRegularPrice, totalRefund);
-    let realPlanned = subtract(totalEstimated, totalPlannedPrice).abs();
+    let realPlanned = subtract(totalEstimated, totalPlannedPrice);
+
     result = add(realRegular, realPlanned);
   }
   return result;
