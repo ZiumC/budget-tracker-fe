@@ -19,27 +19,25 @@ import {
   GetIncomeStatsDto,
   GetPlannedPaymentStatsDto,
   GetRegularPaymentStatsDto
-} from "../../../models/dto/statistics.model.dto";
+} from "../../../models/statistics.model";
 import {ErrorImage, ErrorType} from "../../../models/error.model";
 import {
-  BudgetStatistics,
-  BudgetHorizontalChartData,
-  BudgetLoaders,
-  BudgetPieChartData,
-  BudgetTabs
+  Loaders,
+  StatisticsTab, DataResult, StatisticDetails
 } from "../../../models/components/budget.component";
 import {
   formatPercent,
   getPieChartClassFor,
-  transformIncomeToPieChartData,
-  transformPlannedPaymentToPieChartData,
-  transformRegularPaymentToPieChartData,
+  incomeToPieChartData,
+  plannedPaymentToPieChartData,
+  regularPaymentToPieChartData,
   transformToIncomeDetails,
   transformToPlannedDetails,
   transformToRegularDetails
 } from "../../../util/chart.utils";
 import {format} from "../../../util/number.util";
 import {getStatisticType, StatisticType} from "../../../util/statistic.utils";
+import {HorizontalChartData,} from "../../../models/charts.model";
 
 @Component({
   selector: 'app-budget',
@@ -55,7 +53,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
   protected readonly LegendPosition = LegendPosition;
   protected readonly ErrorType = ErrorType;
   protected readonly ErrorImage = ErrorImage;
-  protected readonly BudgetTabs = BudgetTabs;
+  protected readonly BudgetTabs = StatisticsTab;
   protected readonly formatPercent = formatPercent;
   protected readonly BigNumber = BigNumber;
   protected readonly getPieChartClassFor = getPieChartClassFor;
@@ -64,11 +62,10 @@ export class BudgetComponent implements OnInit, OnDestroy {
   protected subscriptions: Subscription[];
   protected responseModels: BudgetResponse;
   protected idBudget: string;
-  protected loaders: BudgetLoaders;
-  protected statistics: BudgetStatistics;
-  protected pieChartDataResult: BudgetPieChartData;
-  protected horizontalChartDataResult: BudgetHorizontalChartData;
-  protected currentTab: BudgetTabs;
+  protected loaders: Loaders;
+  protected statisticDetails: StatisticDetails;
+  protected chartData: DataResult = new DataResult();
+  protected currentTab: StatisticsTab;
   public innerWidth: any;
 
   constructor(
@@ -93,26 +90,25 @@ export class BudgetComponent implements OnInit, OnDestroy {
     this.innerWidth = window.innerWidth;
     this.subscriptions = [];
     this.activatedRoute.queryParams.subscribe((params: Params): void => {
-
       this.idBudget = params['id'];
     });
 
-    this.currentTab = BudgetTabs.IncomeTab;
-    this.pieChartDataResult = {
+    this.currentTab = StatisticsTab.IncomeTab;
+    this.chartData.pieChart = {
       income: [],
       planned: [],
       regular: []
     }
+    this.chartData.horizontalChart = new HorizontalChartData();
 
-    this.statistics = {
+    this.statisticDetails = {
       budget: new GetBudgetStatsDto(),
       income: [],
       planned: [],
       regular: []
     }
 
-    this.horizontalChartDataResult = new BudgetHorizontalChartData();
-    this.loaders = new BudgetLoaders();
+    this.loaders = new Loaders();
 
     this.responseModels = {
       budget: new ResponseModel(),
@@ -185,22 +181,22 @@ export class BudgetComponent implements OnInit, OnDestroy {
           for (let response of responses) {
             switch (getStatisticType(response.body)) {
               case StatisticType.BUDGET:
-                this.statistics.budget = response.body as GetBudgetStatsDto;
+                this.statisticDetails.budget = response.body as GetBudgetStatsDto;
                 this.responseModels.budgetStats.statusCode = response.status;
                 break;
               case StatisticType.INCOME:
                 let incomeStats = response.body as GetIncomeStatsDto;
-                this.statistics.income = transformToIncomeDetails(incomeStats);
+                this.statisticDetails.income = transformToIncomeDetails(incomeStats);
                 this.responseModels.incomeStats.statusCode = response.status;
                 break;
               case StatisticType.PLANNED_PAYMENT:
                 let plannedStats = response.body as GetPlannedPaymentStatsDto;
-                this.statistics.planned = transformToPlannedDetails(plannedStats);
+                this.statisticDetails.planned = transformToPlannedDetails(plannedStats);
                 this.responseModels.plannedStats.statusCode = response.status;
                 break;
               case StatisticType.REGULAR_PAYMENT:
                 let regularStats = response.body as GetRegularPaymentStatsDto;
-                this.statistics.regular = transformToRegularDetails(regularStats);
+                this.statisticDetails.regular = transformToRegularDetails(regularStats);
                 this.responseModels.regularStats.statusCode = response.status;
                 break;
               default:
@@ -209,12 +205,20 @@ export class BudgetComponent implements OnInit, OnDestroy {
           }
         },
         complete: (): void => {
+          this.transformToChartData();
           this.markStatsAsLoaded(true);
-          console.log(this.statistics);
         }
       })
     )
   }
+
+  private transformToChartData(): void {
+    this.chartData.pieChart.income = incomeToPieChartData(this.statisticDetails.income);
+    this.chartData.pieChart.planned = plannedPaymentToPieChartData(this.statisticDetails.planned);
+    this.chartData.pieChart.regular = regularPaymentToPieChartData(this.statisticDetails.regular);
+    // this.chartData.horizontalChart =
+  }
+
 
   private markBudgetAsLoaded(isLoaded: boolean): void {
     if (isLoaded) {

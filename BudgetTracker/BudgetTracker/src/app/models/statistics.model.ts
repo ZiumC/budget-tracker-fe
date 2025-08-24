@@ -1,17 +1,5 @@
 import BigNumber from "bignumber.js";
 
-export class StatisticsDataResult {
-  name: string;
-  value: number;
-}
-
-export class PieChartDataResult extends StatisticsDataResult {
-}
-
-export class HorizontalBarDataResult {
-  name: string;
-  series: StatisticsDataResult[];
-}
 
 export class IncomeCategoryDetails {
   name: string;
