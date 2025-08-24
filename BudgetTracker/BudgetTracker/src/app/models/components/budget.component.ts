@@ -4,6 +4,7 @@ import {
   PieChartDataResult,
   PlannedPaymentCategoryDetails, RegularPaymentCategoryDetails
 } from "../dto/statistics.model.dto";
+import {GetBudgetStatsDto} from "../dto/budget.model.dto";
 
 export enum BudgetTabs {
   IncomeTab = "incomeTab",
@@ -21,7 +22,8 @@ export class BudgetHorizontalChartData {
   moneyLeftData: HorizontalBarDataResult[];
 }
 
-export class BudgetCategoryDetails {
+export class BudgetStatistics {
+  budget: GetBudgetStatsDto;
   income: IncomeCategoryDetails[];
   planned: PlannedPaymentCategoryDetails[];
   regular: RegularPaymentCategoryDetails[];
@@ -29,7 +31,5 @@ export class BudgetCategoryDetails {
 
 export class BudgetLoaders {
   budget: boolean;
-  incomeStats: boolean;
-  plannedStats: boolean;
-  regularStats: boolean;
+  statistics: boolean;
 }

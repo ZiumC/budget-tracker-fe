@@ -1,7 +1,7 @@
 import {Component, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {SpinnerSize} from "../../components/shared/spinner/spinner.component";
 import BigNumber from "bignumber.js";
-import {Subscription} from "rxjs";
+import {forkJoin, Subscription} from "rxjs";
 import {BudgetResponse, ResponseModel} from "../../../models/response.model";
 import {DateUtil} from '../../../util/date.util';
 import {HttpService} from "../../../services/http/http.service";
@@ -16,13 +16,13 @@ import {generateErrorModel} from "../../../util/http.util";
 import {TimerUtils} from "../../../util/timer.utils";
 import {LegendPosition} from "@swimlane/ngx-charts";
 import {
-  GetCategoryStatsDto,
-  IncomeCategoryDetails, PlannedPaymentCategoryDetails,
-  RegularPaymentCategoryDetails
+  GetIncomeStatsDto,
+  GetPlannedPaymentStatsDto,
+  GetRegularPaymentStatsDto
 } from "../../../models/dto/statistics.model.dto";
 import {ErrorImage, ErrorType} from "../../../models/error.model";
 import {
-  BudgetCategoryDetails,
+  BudgetStatistics,
   BudgetHorizontalChartData,
   BudgetLoaders,
   BudgetPieChartData,
@@ -39,6 +39,7 @@ import {
   transformToRegularDetails
 } from "../../../util/chart.utils";
 import {format} from "../../../util/number.util";
+import {getStatisticType, StatisticType} from "../../../util/statistic.utils";
 
 @Component({
   selector: 'app-budget',
@@ -60,12 +61,11 @@ export class BudgetComponent implements OnInit, OnDestroy {
   protected readonly getPieChartClassFor = getPieChartClassFor;
   protected appConfig: AppConfig;
   protected budgetDto: GetBudgetDto | null;
-  protected budgetStatsDto: GetBudgetStatsDto | null;
   protected subscriptions: Subscription[];
   protected responseModels: BudgetResponse;
   protected idBudget: string;
   protected loaders: BudgetLoaders;
-  protected budgetStatisticDetails: BudgetCategoryDetails;
+  protected statistics: BudgetStatistics;
   protected pieChartDataResult: BudgetPieChartData;
   protected horizontalChartDataResult: BudgetHorizontalChartData;
   protected currentTab: BudgetTabs;
@@ -104,7 +104,8 @@ export class BudgetComponent implements OnInit, OnDestroy {
       regular: []
     }
 
-    this.budgetStatisticDetails = {
+    this.statistics = {
+      budget: new GetBudgetStatsDto(),
       income: [],
       planned: [],
       regular: []
@@ -124,11 +125,8 @@ export class BudgetComponent implements OnInit, OnDestroy {
       plannedStats: new ResponseModel()
     };
 
+    this.getBudgetStats();
 
-    this.getBudgetStatistics();
-    this.getPlannedPaymentStats();
-    this.getRegularPaymentStats();
-    this.getIncomeStats();
 
     this.subscriptions.push(
       this.httpService.getBudget(this.idBudget).subscribe({
@@ -164,24 +162,58 @@ export class BudgetComponent implements OnInit, OnDestroy {
     this.router.navigate(['/']);
   }
 
-  protected getBudgetStatistics(): void {
-    this.subscriptions.push(
-      this.httpService.getBudgetStats(this.idBudget).subscribe({
-        next: (response: HttpResponse<GetBudgetStatsDto>): void => {
-          this.budgetStatsDto = response.body;
-          this.responseModels.budgetStats.statusCode = response.status;
-        },
-        error: (err): void => {
-          this.responseModels.budgetStats = generateErrorModel(err);
-        }
-      })
-    )
-  }
 
   protected onRefreshEvent(refresh: boolean): void {
     if (refresh) {
-      this.getBudgetStatistics();
+      this.getBudgetStats();
     }
+  }
+
+  private getBudgetStats(): void {
+    this.markStatsAsLoaded(false);
+
+    const budgetRequestStats = [
+      this.httpService.getBudgetStats(this.idBudget),
+      this.httpService.getIncomeCategoriesStats(this.idBudget),
+      this.httpService.getRegularPaymentCategoriesStats(this.idBudget),
+      this.httpService.getPlannedPaymentCategoriesStats(this.idBudget)
+    ];
+
+    this.subscriptions.push(
+      forkJoin(budgetRequestStats).subscribe({
+        next: (responses): void => {
+          for (let response of responses) {
+            switch (getStatisticType(response.body)) {
+              case StatisticType.BUDGET:
+                this.statistics.budget = response.body as GetBudgetStatsDto;
+                this.responseModels.budgetStats.statusCode = response.status;
+                break;
+              case StatisticType.INCOME:
+                let incomeStats = response.body as GetIncomeStatsDto;
+                this.statistics.income = transformToIncomeDetails(incomeStats);
+                this.responseModels.incomeStats.statusCode = response.status;
+                break;
+              case StatisticType.PLANNED_PAYMENT:
+                let plannedStats = response.body as GetPlannedPaymentStatsDto;
+                this.statistics.planned = transformToPlannedDetails(plannedStats);
+                this.responseModels.plannedStats.statusCode = response.status;
+                break;
+              case StatisticType.REGULAR_PAYMENT:
+                let regularStats = response.body as GetRegularPaymentStatsDto;
+                this.statistics.regular = transformToRegularDetails(regularStats);
+                this.responseModels.regularStats.statusCode = response.status;
+                break;
+              default:
+                break;
+            }
+          }
+        },
+        complete: (): void => {
+          this.markStatsAsLoaded(true);
+          console.log(this.statistics);
+        }
+      })
+    )
   }
 
   private markBudgetAsLoaded(isLoaded: boolean): void {
@@ -197,110 +229,16 @@ export class BudgetComponent implements OnInit, OnDestroy {
     }
   }
 
-  private markIncomeStatsAsLoaded(isLoaded: boolean): void {
+  private markStatsAsLoaded(isLoaded: boolean): void {
     if (isLoaded) {
       new TimerUtils(this.appConfig.animation.duration.default).start()
         .subscribe(finished => {
           if (finished) {
-            this.loaders.incomeStats = isLoaded;
+            this.loaders.statistics = isLoaded;
           }
         });
     } else {
-      this.loaders.incomeStats = isLoaded;
+      this.loaders.statistics = isLoaded;
     }
   }
-
-  private markRegularPaymentStatsAsLoaded(isLoaded: boolean): void {
-    if (isLoaded) {
-      new TimerUtils(this.appConfig.animation.duration.default).start()
-        .subscribe(finished => {
-          if (finished) {
-            this.loaders.regularStats = isLoaded;
-          }
-        });
-    } else {
-      this.loaders.regularStats = isLoaded;
-    }
-  }
-
-  private markPlannedPaymentStatsAsLoaded(isLoaded: boolean): void {
-    if (isLoaded) {
-      new TimerUtils(this.appConfig.animation.duration.default).start()
-        .subscribe(finished => {
-          if (finished) {
-            this.loaders.plannedStats = isLoaded;
-          }
-        });
-    } else {
-      this.loaders.plannedStats = isLoaded;
-    }
-  }
-
-  private getIncomeStats(): void {
-    this.markIncomeStatsAsLoaded(false);
-    let stats: GetCategoryStatsDto | null;
-    this.subscriptions.push(
-      this.httpService.getIncomeCategoriesStats(this.idBudget).subscribe({
-        next: (response: HttpResponse<GetCategoryStatsDto>): void => {
-          stats = response.body;
-          this.responseModels.incomeStats.statusCode = response.status;
-          this.budgetStatisticDetails.income = transformToIncomeDetails(stats);
-        },
-        error: (err): void => {
-          this.responseModels.incomeStats = generateErrorModel(err);
-          this.markIncomeStatsAsLoaded(true);
-        },
-        complete: (): void => {
-          this.pieChartDataResult.income = transformIncomeToPieChartData(this.budgetStatisticDetails.income);
-          this.markIncomeStatsAsLoaded(true);
-
-        }
-      })
-    );
-  }
-
-  private getRegularPaymentStats(): void {
-    this.markRegularPaymentStatsAsLoaded(false);
-    let stats: GetCategoryStatsDto | null;
-    this.subscriptions.push(
-      this.httpService.getRegularPaymentCategoriesStats(this.idBudget).subscribe({
-        next: (response: HttpResponse<GetCategoryStatsDto>): void => {
-          stats = response.body;
-          this.responseModels.regularStats.statusCode = response.status;
-          this.budgetStatisticDetails.regular = transformToRegularDetails(stats);
-        },
-        error: (err): void => {
-          this.responseModels.regularStats = generateErrorModel(err);
-          this.markRegularPaymentStatsAsLoaded(true);
-        },
-        complete: (): void => {
-          this.pieChartDataResult.regular = transformRegularPaymentToPieChartData(this.budgetStatisticDetails.regular);
-          this.markRegularPaymentStatsAsLoaded(true);
-        }
-      })
-    );
-  }
-
-  private getPlannedPaymentStats(): void {
-    this.markPlannedPaymentStatsAsLoaded(false);
-    let stats: GetCategoryStatsDto | null;
-    this.subscriptions.push(
-      this.httpService.getPlannedPaymentCategoriesStats(this.idBudget).subscribe({
-        next: (response: HttpResponse<GetCategoryStatsDto>): void => {
-          stats = response.body;
-          this.responseModels.plannedStats.statusCode = response.status;
-          this.budgetStatisticDetails.planned = transformToPlannedDetails(stats);
-        },
-        error: (err): void => {
-          this.responseModels.plannedStats = generateErrorModel(err);
-          this.markPlannedPaymentStatsAsLoaded(true);
-        },
-        complete: (): void => {
-          this.pieChartDataResult.planned = transformPlannedPaymentToPieChartData(this.budgetStatisticDetails.planned);
-          this.markPlannedPaymentStatsAsLoaded(true);
-        }
-      })
-    );
-  }
-
 }

@@ -83,7 +83,7 @@
                         Incomes
                       </strong>
                     </td>
-                    <td>{{ format(budgetStatsDto?.income!.wage) }} PLN</td>
+                    <td>{{ format(statistics.budget.income.wage) }} PLN</td>
                   </tr>
                   <tr>
                     <td>
@@ -91,7 +91,7 @@
                         Planned payments
                       </strong>
                     </td>
-                    <td>{{ format(budgetStatsDto?.plannedPayment!.estimated) }} PLN</td>
+                    <td>{{ format(statistics.budget.plannedPayment.estimated) }} PLN</td>
                   </tr>
                   <tr>
                     <td>
@@ -99,7 +99,7 @@
                         Regular payments
                       </strong>
                     </td>
-                    <td>{{ format(budgetStatsDto?.regularPayment!.price) }} PLN</td>
+                    <td>{{ format(statistics.budget.regularPayment.price) }} PLN</td>
                   </tr>
                 </table>
                 <table class="mt-5" [style]="isMobileView() ? 'display:none' : ''">
@@ -121,9 +121,9 @@
                     </td>
                   </tr>
                   <tr>
-                    <td>{{ format(budgetStatsDto?.income!.wage) }} PLN</td>
-                    <td>{{ format(budgetStatsDto?.plannedPayment!.estimated) }} PLN</td>
-                    <td>{{ format(budgetStatsDto?.regularPayment!.price) }} PLN</td>
+                    <td>{{ format(statistics.budget.income.wage) }} PLN</td>
+                    <td>{{ format(statistics.budget.plannedPayment.estimated) }} PLN</td>
+                    <td>{{ format(statistics.budget.regularPayment.price) }} PLN</td>
                   </tr>
                 </table>
               </ng-template>
@@ -211,7 +211,7 @@
             <div [className]="isMobileView() ? 'mt-3' : 'mt-5'">
               <ng-container [ngSwitch]="currentTab">
                 <ng-container *ngSwitchCase="BudgetTabs.IncomeTab">
-                  <ng-template [ngIf]="!loaders.incomeStats"
+                  <ng-template [ngIf]="!loaders.statistics"
                                [ngIfElse]="loadedIncomeStats">
                     <app-spinner-grow></app-spinner-grow>
                   </ng-template>
@@ -263,7 +263,7 @@
                   </ng-template>
                 </ng-container>
                 <ng-container *ngSwitchCase="BudgetTabs.PlannedPaymentTab">
-                  <ng-template [ngIf]="!loaders.plannedStats"
+                  <ng-template [ngIf]="!loaders.statistics"
                                [ngIfElse]="loadedPlannedPaymentStats">
                     <app-spinner-grow></app-spinner-grow>
                   </ng-template>
@@ -315,7 +315,7 @@
                   </ng-template>
                 </ng-container>
                 <ng-container *ngSwitchCase="BudgetTabs.RegularPaymentTab">
-                  <ng-template [ngIf]="!loaders.regularStats"
+                  <ng-template [ngIf]="!loaders.statistics"
                                [ngIfElse]="loadedRegularPaymentStats">
                     <app-spinner-grow></app-spinner-grow>
                   </ng-template>

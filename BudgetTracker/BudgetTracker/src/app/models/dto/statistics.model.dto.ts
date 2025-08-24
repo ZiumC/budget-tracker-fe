@@ -31,4 +31,7 @@ export class PlannedPaymentCategoryDetails {
   EstimatedSum: BigNumber
 }
 
-export type GetCategoryStatsDto = Record<string, IncomeCategoryDetails | RegularPaymentCategoryDetails | PlannedPaymentCategoryDetails>;
+
+export type GetIncomeStatsDto = Record<string, IncomeCategoryDetails>;
+export type GetRegularPaymentStatsDto = Record<string, RegularPaymentCategoryDetails>;
+export type GetPlannedPaymentStatsDto = Record<string, PlannedPaymentCategoryDetails>;
