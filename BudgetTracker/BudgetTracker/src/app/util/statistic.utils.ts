@@ -3,7 +3,7 @@ import {
   GetIncomeStatsDto,
   GetPlannedPaymentStatsDto,
   GetRegularPaymentStatsDto
-} from "../models/dto/statistics.model.dto";
+} from "../models/statistics.model";
 
 export enum StatisticType {
   BUDGET = 'budget',

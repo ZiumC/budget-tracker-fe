@@ -18,7 +18,7 @@ import {
   GetIncomeStatsDto,
   GetPlannedPaymentStatsDto,
   GetRegularPaymentStatsDto
-} from "../../models/dto/statistics.model.dto";
+} from "../../models/statistics.model";
 
 @Injectable({
   providedIn: 'root',

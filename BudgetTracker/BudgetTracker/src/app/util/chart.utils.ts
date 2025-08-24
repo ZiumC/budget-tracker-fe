@@ -1,12 +1,11 @@
 import {
   GetIncomeStatsDto, GetPlannedPaymentStatsDto, GetRegularPaymentStatsDto,
-  HorizontalBarDataResult, IncomeCategoryDetails,
-  PieChartDataResult, PlannedPaymentCategoryDetails, RegularPaymentCategoryDetails,
-  StatisticsDataResult
-} from "../models/dto/statistics.model.dto";
+  IncomeCategoryDetails, PlannedPaymentCategoryDetails, RegularPaymentCategoryDetails
+} from "../models/statistics.model";
 import {add, subtract} from "./number.util";
 import BigNumber from "bignumber.js";
-import {BudgetStatistics, BudgetPieChartData} from "../models/components/budget.component";
+import {StatisticDetails} from "../models/components/budget.component";
+import {HorizontalBarDataResult, PieChartDataResult, StatisticsDataResult} from "../models/charts.model";
 
 export function formatPercent(input: string): string {
   return `${input}%`
@@ -73,7 +72,7 @@ export function transformToPlannedDetails(data: GetPlannedPaymentStatsDto | null
   return result;
 }
 
-export function transformIncomeToPieChartData(incomeDetails: IncomeCategoryDetails[]): PieChartDataResult[] {
+export function incomeToPieChartData(incomeDetails: IncomeCategoryDetails[]): PieChartDataResult[] {
   let result: PieChartDataResult[] = [];
   let totalSavings = new BigNumber(0);
 
@@ -95,7 +94,7 @@ export function transformIncomeToPieChartData(incomeDetails: IncomeCategoryDetai
   return result;
 }
 
-export function transformRegularPaymentToPieChartData(regularDetails: RegularPaymentCategoryDetails[]): PieChartDataResult[] {
+export function regularPaymentToPieChartData(regularDetails: RegularPaymentCategoryDetails[]): PieChartDataResult[] {
   let result: PieChartDataResult[] = [];
   let totalRefund = new BigNumber(0);
 
@@ -118,7 +117,7 @@ export function transformRegularPaymentToPieChartData(regularDetails: RegularPay
 }
 
 
-export function transformPlannedPaymentToPieChartData(plannedDetails: PlannedPaymentCategoryDetails[]): PieChartDataResult[] {
+export function plannedPaymentToPieChartData(plannedDetails: PlannedPaymentCategoryDetails[]): PieChartDataResult[] {
   let result: PieChartDataResult[] = [];
 
   for (let plannedDetail of plannedDetails) {
@@ -131,7 +130,7 @@ export function transformPlannedPaymentToPieChartData(plannedDetails: PlannedPay
   return result;
 }
 
-export function transformToHorizontalChartDataResult(data: BudgetStatistics): HorizontalBarDataResult[] {
+export function transformToHorizontalChartDataResult(data: StatisticDetails): HorizontalBarDataResult[] {
   debugger
   let result: HorizontalBarDataResult[] = [];
 

@@ -83,7 +83,7 @@
                         Incomes
                       </strong>
                     </td>
-                    <td>{{ format(statistics.budget.income.wage) }} PLN</td>
+                    <td>{{ format(statisticDetails.budget.income.wage) }} PLN</td>
                   </tr>
                   <tr>
                     <td>
@@ -91,7 +91,7 @@
                         Planned payments
                       </strong>
                     </td>
-                    <td>{{ format(statistics.budget.plannedPayment.estimated) }} PLN</td>
+                    <td>{{ format(statisticDetails.budget.plannedPayment.estimated) }} PLN</td>
                   </tr>
                   <tr>
                     <td>
@@ -99,7 +99,7 @@
                         Regular payments
                       </strong>
                     </td>
-                    <td>{{ format(statistics.budget.regularPayment.price) }} PLN</td>
+                    <td>{{ format(statisticDetails.budget.regularPayment.price) }} PLN</td>
                   </tr>
                 </table>
                 <table class="mt-5" [style]="isMobileView() ? 'display:none' : ''">
@@ -121,9 +121,9 @@
                     </td>
                   </tr>
                   <tr>
-                    <td>{{ format(statistics.budget.income.wage) }} PLN</td>
-                    <td>{{ format(statistics.budget.plannedPayment.estimated) }} PLN</td>
-                    <td>{{ format(statistics.budget.regularPayment.price) }} PLN</td>
+                    <td>{{ format(statisticDetails.budget.income.wage) }} PLN</td>
+                    <td>{{ format(statisticDetails.budget.plannedPayment.estimated) }} PLN</td>
+                    <td>{{ format(statisticDetails.budget.regularPayment.price) }} PLN</td>
                   </tr>
                 </table>
               </ng-template>
@@ -180,7 +180,6 @@
             <app-payment #appPayment
                          [idBudget]="idBudget"
                          (refreshEvent)="onRefreshEvent($event)">
-
             </app-payment>
           </div>
         </div>
@@ -209,14 +208,14 @@
               </li>
             </ul>
             <div [className]="isMobileView() ? 'mt-3' : 'mt-5'">
-              <ng-container [ngSwitch]="currentTab">
-                <ng-container *ngSwitchCase="BudgetTabs.IncomeTab">
-                  <ng-template [ngIf]="!loaders.statistics"
-                               [ngIfElse]="loadedIncomeStats">
-                    <app-spinner-grow></app-spinner-grow>
-                  </ng-template>
-                  <ng-template #loadedIncomeStats>
-                    <ng-template [ngIf]="pieChartDataResult.income.length == 0"
+              <ng-template [ngIf]="!loaders.statistics"
+                           [ngIfElse]="loadedStats">
+                <app-spinner-grow></app-spinner-grow>
+              </ng-template>
+              <ng-template #loadedStats>
+                <ng-container [ngSwitch]="currentTab">
+                  <ng-container *ngSwitchCase="BudgetTabs.IncomeTab">
+                    <ng-template [ngIf]="chartData.pieChart.income.length == 0"
                                  [ngIfElse]="displayIncomeChart">
                       <app-error [errorType]="ErrorType.Application"
                                  [errorImage]="ErrorImage.Notfound"
@@ -225,11 +224,12 @@
                     </ng-template>
                     <ng-template #displayIncomeChart>
                       <label for="income-categories">Income categories</label>
-                      <div id="income-categories" class="mx-2 my-2" [className]="getPieChartClassFor(pieChartDataResult.income, isMobileView())">
+                      <div id="income-categories" class="mx-2 my-2"
+                           [className]="getPieChartClassFor(chartData.pieChart.income, isMobileView())">
                         <ng-container [ngSwitch]="isMobileView()">
                           <ng-container *ngSwitchCase="true">
                             <ngx-charts-advanced-pie-chart
-                              [results]="pieChartDataResult.income"
+                              [results]="chartData.pieChart.income"
                               [scheme]="'forest'"
                               [animations]="true">
                               <ng-template #tooltipTemplate let-model="model">
@@ -241,7 +241,7 @@
                           </ng-container>
                           <ng-container *ngSwitchCase="false">
                             <ngx-charts-pie-chart
-                              [results]="pieChartDataResult.income"
+                              [results]="chartData.pieChart.income"
                               [arcWidth]="0.4"
                               [scheme]="'forest'"
                               [labels]="true"
@@ -260,15 +260,9 @@
                         </ng-container>
                       </div>
                     </ng-template>
-                  </ng-template>
-                </ng-container>
-                <ng-container *ngSwitchCase="BudgetTabs.PlannedPaymentTab">
-                  <ng-template [ngIf]="!loaders.statistics"
-                               [ngIfElse]="loadedPlannedPaymentStats">
-                    <app-spinner-grow></app-spinner-grow>
-                  </ng-template>
-                  <ng-template #loadedPlannedPaymentStats>
-                    <ng-template [ngIf]="pieChartDataResult.planned.length == 0"
+                  </ng-container>
+                  <ng-container *ngSwitchCase="BudgetTabs.PlannedPaymentTab">
+                    <ng-template [ngIf]="chartData.pieChart.planned.length == 0"
                                  [ngIfElse]="displayPlannedPaymentChart">
                       <app-error [errorType]="ErrorType.Application"
                                  [errorImage]="ErrorImage.Notfound"
@@ -277,11 +271,12 @@
                     </ng-template>
                     <ng-template #displayPlannedPaymentChart>
                       <label for="planned-payment-categories">Planned payment categories</label>
-                      <div id="planned-payment-categories" class="mx-2 my-2" [className]="getPieChartClassFor(pieChartDataResult.planned, isMobileView())">
+                      <div id="planned-payment-categories" class="mx-2 my-2"
+                           [className]="getPieChartClassFor(chartData.pieChart.planned, isMobileView())">
                         <ng-container [ngSwitch]="isMobileView()">
                           <ng-container *ngSwitchCase="true">
                             <ngx-charts-advanced-pie-chart
-                              [results]="pieChartDataResult.planned"
+                              [results]="chartData.pieChart.planned"
                               [scheme]="'forest'"
                               [animations]="true">
                               <ng-template #tooltipTemplate let-model="model">
@@ -293,7 +288,7 @@
                           </ng-container>
                           <ng-container *ngSwitchCase="false">
                             <ngx-charts-pie-chart
-                              [results]="pieChartDataResult.planned"
+                              [results]="chartData.pieChart.planned"
                               [arcWidth]="0.4"
                               [scheme]="'forest'"
                               [labels]="true"
@@ -312,15 +307,9 @@
                         </ng-container>
                       </div>
                     </ng-template>
-                  </ng-template>
-                </ng-container>
-                <ng-container *ngSwitchCase="BudgetTabs.RegularPaymentTab">
-                  <ng-template [ngIf]="!loaders.statistics"
-                               [ngIfElse]="loadedRegularPaymentStats">
-                    <app-spinner-grow></app-spinner-grow>
-                  </ng-template>
-                  <ng-template #loadedRegularPaymentStats>
-                    <ng-template [ngIf]="pieChartDataResult.regular.length == 0"
+                  </ng-container>
+                  <ng-container *ngSwitchCase="BudgetTabs.RegularPaymentTab">
+                    <ng-template [ngIf]="chartData.pieChart.regular.length == 0"
                                  [ngIfElse]="displayRegularPaymentChart">
                       <app-error [errorType]="ErrorType.Application"
                                  [errorImage]="ErrorImage.Notfound"
@@ -329,11 +318,12 @@
                     </ng-template>
                     <ng-template #displayRegularPaymentChart>
                       <label for="regular-payment-categories">Regular payment categories</label>
-                      <div id="regular-payment-categories" class="mx-2 my-2" [className]="getPieChartClassFor(pieChartDataResult.regular, isMobileView())">
+                      <div id="regular-payment-categories" class="mx-2 my-2"
+                           [className]="getPieChartClassFor(chartData.pieChart.regular, isMobileView())">
                         <ng-container [ngSwitch]="isMobileView()">
                           <ng-container *ngSwitchCase="true">
                             <ngx-charts-advanced-pie-chart
-                              [results]="pieChartDataResult.regular"
+                              [results]="chartData.pieChart.regular"
                               [scheme]="'forest'"
                               [animations]="true">
                               <ng-template #tooltipTemplate let-model="model">
@@ -345,7 +335,7 @@
                           </ng-container>
                           <ng-container *ngSwitchCase="false">
                             <ngx-charts-pie-chart
-                              [results]="pieChartDataResult.regular"
+                              [results]="chartData.pieChart.regular"
                               [arcWidth]="0.4"
                               [scheme]="'forest'"
                               [labels]="true"
@@ -364,19 +354,19 @@
                         </ng-container>
                       </div>
                     </ng-template>
-                  </ng-template>
+                  </ng-container>
                 </ng-container>
-              </ng-container>
-            </div>
-            <label for="budget-usage">Budget usage</label>
-            <div id="budget-usage" class="horizontal-bar-chart mx-3">
-              <ngx-charts-bar-horizontal-normalized
-                [results]="horizontalChartDataResult.moneyLeftData"
-                [scheme]="'vivid'"
-                [xAxisTickFormatting]="formatPercent"
-                [animations]="true"
-                [xAxis]="true">
-              </ngx-charts-bar-horizontal-normalized>
+                <label for="budget-usage">Budget usage</label>
+                <div id="budget-usage" class="horizontal-bar-chart mx-3">
+                  <ngx-charts-bar-horizontal-normalized
+                    [results]="chartData.horizontalChart.moneyLeftData"
+                    [scheme]="'vivid'"
+                    [xAxisTickFormatting]="formatPercent"
+                    [animations]="true"
+                    [xAxis]="true">
+                  </ngx-charts-bar-horizontal-normalized>
+                </div>
+              </ng-template>
             </div>
           </div>
         </div>
