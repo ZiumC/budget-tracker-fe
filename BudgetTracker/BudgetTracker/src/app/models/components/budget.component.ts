@@ -3,7 +3,7 @@ import {
   PlannedPaymentCategoryDetails, RegularPaymentCategoryDetails
 } from "../statistics.model";
 import {GetBudgetStatsDto} from "../dto/budget.model.dto";
-import {HorizontalChartData, PieChartData} from "../charts.model";
+import {HorizontalChartData, PieChartData, PieChartGridData} from "../charts.model";
 
 export enum StatisticsTab {
   IncomeTab = "incomeTab",
@@ -20,6 +20,7 @@ export class StatisticDetails {
 
 export class DataResult {
   pieChart: PieChartData;
+  pieChartGrid: PieChartGridData;
   horizontalChart: HorizontalChartData;
 }
 
