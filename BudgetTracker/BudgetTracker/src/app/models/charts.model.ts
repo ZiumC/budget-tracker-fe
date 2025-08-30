@@ -1,22 +1,23 @@
-export class StatisticsDataResult {
+export class ChartDataResult {
   name: string;
   value: number;
 }
 
-export class PieChartDataResult extends StatisticsDataResult {
-}
-
 export class HorizontalBarDataResult {
   name: string;
-  series: StatisticsDataResult[];
+  series: ChartDataResult[];
 }
 
 export class PieChartData {
-  income: PieChartDataResult[];
-  planned: PieChartDataResult[];
-  regular: PieChartDataResult[];
+  income: ChartDataResult[];
+  planned: ChartDataResult[];
+  regular: ChartDataResult[];
 }
 
 export class HorizontalChartData {
   moneyLeftData: HorizontalBarDataResult[];
+}
+
+export class PieChartGridData{
+  summary: ChartDataResult[];
 }

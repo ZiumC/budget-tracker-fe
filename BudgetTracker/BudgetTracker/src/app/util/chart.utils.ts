@@ -5,13 +5,13 @@ import {
 import {add, subtract} from "./number.util";
 import BigNumber from "bignumber.js";
 import {StatisticDetails} from "../models/components/budget.component";
-import {HorizontalBarDataResult, PieChartDataResult, StatisticsDataResult} from "../models/charts.model";
+import {HorizontalBarDataResult, ChartDataResult} from "../models/charts.model";
 
 export function formatPercent(input: string): string {
   return `${input}%`
 }
 
-export function getPieChartClassFor(data: StatisticsDataResult[], isMobileView: boolean): string {
+export function getPieChartClassFor(data: ChartDataResult[], isMobileView: boolean): string {
   if (data.length > 0 && data.length <= 8) {
     return isMobileView ? 'mobile-doughnut-height' : 'doughnut-height-s';
   } else if (data.length > 8 && data.length <= 15) {
@@ -23,7 +23,7 @@ export function getPieChartClassFor(data: StatisticsDataResult[], isMobileView: 
   }
 }
 
-export function getPieChartGridClassFor(isMobileView: boolean): string{
+export function getPieChartGridClassFor(isMobileView: boolean): string {
   return isMobileView ? 'doughnut-height-m' : 'mobile-doughnut-height';
 }
 
@@ -75,8 +75,8 @@ export function transformToPlannedDetails(data: GetPlannedPaymentStatsDto | null
   return result;
 }
 
-export function incomeToPieChartData(incomeDetails: IncomeCategoryDetails[]): PieChartDataResult[] {
-  let result: PieChartDataResult[] = [];
+export function incomeToPieChartData(incomeDetails: IncomeCategoryDetails[]): ChartDataResult[] {
+  let result: ChartDataResult[] = [];
   let totalSavings = new BigNumber(0);
 
   for (let incomeDetail of incomeDetails) {
@@ -97,8 +97,8 @@ export function incomeToPieChartData(incomeDetails: IncomeCategoryDetails[]): Pi
   return result;
 }
 
-export function regularPaymentToPieChartData(regularDetails: RegularPaymentCategoryDetails[]): PieChartDataResult[] {
-  let result: PieChartDataResult[] = [];
+export function regularPaymentToPieChartData(regularDetails: RegularPaymentCategoryDetails[]): ChartDataResult[] {
+  let result: ChartDataResult[] = [];
   let totalRefund = new BigNumber(0);
 
   for (let regularDetail of regularDetails) {
@@ -113,14 +113,14 @@ export function regularPaymentToPieChartData(regularDetails: RegularPaymentCateg
     result.push({
       name: 'Refund',
       value: totalRefund.toNumber()
-    } as PieChartDataResult)
+    } as ChartDataResult)
   }
 
   return result;
 }
 
-export function plannedPaymentToPieChartData(plannedDetails: PlannedPaymentCategoryDetails[]): PieChartDataResult[] {
-  let result: PieChartDataResult[] = [];
+export function plannedPaymentToPieChartData(plannedDetails: PlannedPaymentCategoryDetails[]): ChartDataResult[] {
+  let result: ChartDataResult[] = [];
 
   for (let plannedDetail of plannedDetails) {
     result.push({
@@ -162,6 +162,29 @@ export function budgetUsageToHorizontalChartDataResult(data: StatisticDetails): 
 
   return result;
 }
+
+export function budgetSummaryToPieChartGrid(budgetData: StatisticDetails): ChartDataResult[] {
+  let result: ChartDataResult[] = [];
+  let totalNeeds = new BigNumber(0);
+  let totalWants = new BigNumber(0);
+  let totalSavings = new BigNumber(0);
+
+  result.push({
+      name: "Needs",
+      value: totalNeeds.toNumber()
+    } as ChartDataResult,
+    {
+      name: "Wants",
+      value: totalWants.toNumber()
+    } as ChartDataResult,
+    {
+      name: "Savings",
+      value: totalSavings.toNumber()
+    } as ChartDataResult)
+
+  return result;
+}
+
 
 function calculateIncome(incomeData: IncomeCategoryDetails[]): BigNumber | null {
   let result = null;
