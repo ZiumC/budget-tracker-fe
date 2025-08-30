@@ -23,6 +23,10 @@ export function getPieChartClassFor(data: StatisticsDataResult[], isMobileView: 
   }
 }
 
+export function getPieChartGridClassFor(isMobileView: boolean): string{
+  return isMobileView ? 'doughnut-height-m' : 'mobile-doughnut-height';
+}
+
 export function transformToIncomeDetails(data: GetIncomeStatsDto | null): IncomeCategoryDetails[] {
   let result: IncomeCategoryDetails[] = [];
   if (data) {

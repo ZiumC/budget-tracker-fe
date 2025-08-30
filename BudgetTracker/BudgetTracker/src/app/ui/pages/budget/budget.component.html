@@ -356,11 +356,13 @@
                     </ng-template>
                   </ng-container>
                 </ng-container>
-                <div class="mb-2">
+                <div class="mb-2 mx-3">
                   <label for="budget-summary">Budget summary</label>
-                  <div id="budget-summary" class="mobile-doughnut-height mx-3">
+                  <div id="budget-summary" class="mx-auto"
+                       [className]="getPieChartGridClassFor(isMobileView())">
                     <ngx-charts-pie-grid
                       [results]="mockData"
+                      [tooltipDisabled]="true"
                       [customColors]="[
                      {name: 'Needs',value: '#ff3d00'},
                      {name: 'Wands',value: '#1f7bc6'},

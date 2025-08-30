@@ -33,7 +33,7 @@ import {
   regularPaymentToPieChartData, budgetUsageToHorizontalChartDataResult,
   transformToIncomeDetails,
   transformToPlannedDetails,
-  transformToRegularDetails,
+  transformToRegularDetails, getPieChartGridClassFor,
 
 } from "../../../util/chart.utils";
 import {add, format} from "../../../util/number.util";
@@ -47,17 +47,18 @@ import {HorizontalChartData,} from "../../../models/charts.model";
 })
 export class BudgetComponent implements OnInit, OnDestroy {
   @ViewChild('errorModal') errorModal: any;
-  protected readonly formatString = formatString;
-  protected readonly format = format;
   protected readonly DateUtils = DateUtil;
   protected readonly SpinnerSize = SpinnerSize;
   protected readonly LegendPosition = LegendPosition;
   protected readonly ErrorType = ErrorType;
   protected readonly ErrorImage = ErrorImage;
   protected readonly BudgetTabs = StatisticsTab;
+  protected readonly format = format;
+  protected readonly formatString = formatString;
   protected readonly formatPercent = formatPercent;
   protected readonly BigNumber = BigNumber;
   protected readonly getPieChartClassFor = getPieChartClassFor;
+  protected readonly getPieChartGridClassFor = getPieChartGridClassFor;
   protected appConfig: AppConfig;
   protected budgetDto: GetBudgetDto | null;
   protected subscriptions: Subscription[];
