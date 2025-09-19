@@ -8,7 +8,7 @@ import {HttpService} from "../../../services/http/http.service";
 import {ActivatedRoute, Params, Router} from "@angular/router";
 import {HttpResponse} from "@angular/common/http";
 import {SubscriptionUtils} from "../../../util/subscription.utils";
-import {GetBudgetDto, GetBudgetStatsDto} from "../../../models/dto/budget.model.dto";
+import {GetBudgetDto, GetBudgetGeneralCategoryDto, GetBudgetStatsDto} from "../../../models/dto/budget.model.dto";
 import {AppConfig} from "../../../models/config/config";
 import {ConfigService} from "../../../services/config/config.service";
 import {formatString} from "../../../util/string.utils";
@@ -21,20 +21,18 @@ import {
   GetRegularPaymentStatsDto
 } from "../../../models/statistics.model";
 import {ErrorImage, ErrorType} from "../../../models/error.model";
+import {DataResult, Loaders, StatisticDetails, StatisticsTab} from "../../../models/components/budget.component";
 import {
-  Loaders,
-  StatisticsTab, DataResult, StatisticDetails
-} from "../../../models/components/budget.component";
-import {
-  formatPercent,
+  budgetUsageToHorizontalChartDataResult,
+  formatPercent, generalCategoriesToPieChartGrid,
   getPieChartClassFor,
+  getPieChartGridClassFor,
   incomeToPieChartData,
   plannedPaymentToPieChartData,
-  regularPaymentToPieChartData, budgetUsageToHorizontalChartDataResult,
+  regularPaymentToPieChartData,
   transformToIncomeDetails,
   transformToPlannedDetails,
-  transformToRegularDetails, getPieChartGridClassFor, budgetSummaryToPieChartGrid,
-
+  transformToRegularDetails,
 } from "../../../util/chart.utils";
 import {add, format} from "../../../util/number.util";
 import {getStatisticType, StatisticType} from "../../../util/statistic.utils";
@@ -106,6 +104,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
 
     this.statisticDetails = {
       budget: new GetBudgetStatsDto(),
+      generalCategories: new GetBudgetGeneralCategoryDto(),
       income: [],
       planned: [],
       regular: []
@@ -121,7 +120,8 @@ export class BudgetComponent implements OnInit, OnDestroy {
       budgetStats: new ResponseModel(),
       incomeStats: new ResponseModel(),
       regularStats: new ResponseModel(),
-      plannedStats: new ResponseModel()
+      plannedStats: new ResponseModel(),
+      generalCategories: new ResponseModel()
     };
 
     this.getBudgetStats();
@@ -180,6 +180,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
 
     const budgetRequestStats = [
       this.httpService.getBudgetStats(this.idBudget),
+      this.httpService.getBudgetGeneralCategories(this.idBudget),
       this.httpService.getIncomeCategoriesStats(this.idBudget),
       this.httpService.getRegularPaymentCategoriesStats(this.idBudget),
       this.httpService.getPlannedPaymentCategoriesStats(this.idBudget)
@@ -209,8 +210,12 @@ export class BudgetComponent implements OnInit, OnDestroy {
                 this.statisticDetails.regular = transformToRegularDetails(regularStats);
                 this.responseModels.regularStats.statusCode = response.status;
                 break;
-              default:
+              case StatisticType.BUDGET_GENERAL_CATEGORIES:
+                this.statisticDetails.generalCategories = response.body as GetBudgetGeneralCategoryDto;
+                this.responseModels.generalCategories.statusCode = response.status;
                 break;
+              default:
+                throw Error("Unknown statistic type");
             }
           }
         },
@@ -227,7 +232,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
     this.chartData.pieChart.planned = plannedPaymentToPieChartData(this.statisticDetails.planned);
     this.chartData.pieChart.regular = regularPaymentToPieChartData(this.statisticDetails.regular);
     this.chartData.horizontalChart.moneyLeftData = budgetUsageToHorizontalChartDataResult(this.statisticDetails);
-    this.chartData.pieChartGrid.summary = budgetSummaryToPieChartGrid(this.statisticDetails);
+    this.chartData.pieChartGrid.generalCategories = generalCategoriesToPieChartGrid(this.statisticDetails.generalCategories);
   }
 
 

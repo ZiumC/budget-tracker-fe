@@ -19,6 +19,12 @@ export class GetBudgetStatsDto {
   income: BudgetStatsIncome
 }
 
+export class GetBudgetGeneralCategoryDto {
+  needs: BigNumber;
+  wants: BigNumber;
+  savings: BigNumber;
+}
+
 class BudgetStatsPlannedPayment {
   estimated: BigNumber;
   realPrice: BigNumber;

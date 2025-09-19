@@ -361,13 +361,14 @@
                   <div id="budget-summary" class="mx-auto"
                        [className]="getPieChartGridClassFor(isMobileView())">
                     <ngx-charts-pie-grid
-                      [results]="chartData.pieChartGrid.summary"
+                      [results]="chartData.pieChartGrid.generalCategories"
                       [tooltipDisabled]="true"
                       [animations]="true"
                       [customColors]="[
                          {name: 'Needs',value: '#ff3d00'},
                          {name: 'Wands',value: '#1f7bc6'},
                          {name: 'Savings',value: '#00b862'},
+                         {name: 'Uncategorized',value: '#6b6b6b'},
                        ]">
                     </ngx-charts-pie-grid>
                   </div>
