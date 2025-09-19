@@ -19,5 +19,5 @@ export class HorizontalChartData {
 }
 
 export class PieChartGridData{
-  summary: ChartDataResult[];
+  generalCategories: ChartDataResult[];
 }

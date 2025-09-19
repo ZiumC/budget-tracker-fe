@@ -6,6 +6,7 @@ import {add, subtract} from "./number.util";
 import BigNumber from "bignumber.js";
 import {StatisticDetails} from "../models/components/budget.component";
 import {HorizontalBarDataResult, ChartDataResult} from "../models/charts.model";
+import {GetBudgetGeneralCategoryDto} from "../models/dto/budget.model.dto";
 
 export function formatPercent(input: string): string {
   return `${input}%`
@@ -163,23 +164,25 @@ export function budgetUsageToHorizontalChartDataResult(data: StatisticDetails): 
   return result;
 }
 
-export function budgetSummaryToPieChartGrid(budgetData: StatisticDetails): ChartDataResult[] {
+export function generalCategoriesToPieChartGrid(generalCategories: GetBudgetGeneralCategoryDto): ChartDataResult[] {
   let result: ChartDataResult[] = [];
-  let totalNeeds = new BigNumber(0);
-  let totalWants = new BigNumber(0);
-  let totalSavings = new BigNumber(0);
+  let totalUncategorized = BigNumber(0);
 
   result.push({
       name: "Needs",
-      value: totalNeeds.toNumber()
+      value: new BigNumber(generalCategories.needs).toNumber()
     } as ChartDataResult,
     {
       name: "Wants",
-      value: totalWants.toNumber()
+      value: new BigNumber(generalCategories.wants).toNumber()
     } as ChartDataResult,
     {
       name: "Savings",
-      value: totalSavings.toNumber()
+      value: new BigNumber(generalCategories.savings).toNumber()
+    } as ChartDataResult,
+    {
+      name: "Uncategorized",
+      value: totalUncategorized.toNumber()
     } as ChartDataResult)
 
   return result;
