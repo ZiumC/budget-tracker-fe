@@ -22,11 +22,9 @@ export class BudgetResponse {
   incomes: ResponseModel;
   payments: ResponseModel;
   paymentStatus: ResponseModel;
-  budgetStats: ResponseModel;
   incomeStats: ResponseModel;
   regularStats: ResponseModel;
   plannedStats: ResponseModel;
-  generalCategories: ResponseModel;
 }
 
 export class Status {
