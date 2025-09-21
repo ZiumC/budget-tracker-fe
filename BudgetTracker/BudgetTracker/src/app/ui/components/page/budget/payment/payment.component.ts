@@ -41,6 +41,7 @@ export class PaymentComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('paymentModal') paymentModal: any;
   @Input() idBudget: string;
   @Output() refreshEvent = new EventEmitter<boolean>();
+  @Output() refreshSummaryEvent = new EventEmitter<boolean>();
   private pageWidth: any;
   private componentDimension = {width: 0, height: 0};
   protected readonly format = format;
@@ -175,6 +176,7 @@ export class PaymentComponent implements OnInit, OnDestroy, AfterViewInit {
         },
         complete: (): void => {
           this.paymentStatusLoader = false;
+          this.refreshSummaryEvent.emit(true);
         }
       })
     )
