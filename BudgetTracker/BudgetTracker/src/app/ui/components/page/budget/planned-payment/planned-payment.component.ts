@@ -41,7 +41,8 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy, AfterViewInit
   @ViewChild('plannedPaymentModal') plannedPaymentModal: any;
   @ViewChild('errorModal') errorModal: any;
   @Input() idBudget: string;
-  @Output() refreshEvent = new EventEmitter<boolean>();
+  @Output() refreshAllStatisticsEvent = new EventEmitter<boolean>();
+  @Output() refreshSummaryEvent = new EventEmitter<boolean>();
   private componentDimension = {width: 0, height: 0};
   protected pageWidth: number;
   protected readonly formatString = formatString;
@@ -134,7 +135,7 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy, AfterViewInit
 
   protected onRefreshPlannedPayment(): void {
     this.markPlannedPaymentsAsLoaded(false);
-    this.refreshEvent.next(true);
+    this.refreshAllStatisticsEvent.next(true);
     this.getPlannedPayments();
   }
 
@@ -169,6 +170,7 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy, AfterViewInit
         },
         complete: (): void => {
           this.plannedPaymentStatusLoader = false;
+          this.refreshSummaryEvent.emit(true);
         }
       })
     )
@@ -197,7 +199,7 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy, AfterViewInit
             this.errorModal.open(response);
           }
           this.markPlannedPaymentsAsLoaded(true);
-          this.refreshEvent.next(false);
+          this.refreshAllStatisticsEvent.next(false);
         },
         complete: (): void => {
           this.markPlannedPaymentsAsLoaded(true);

@@ -167,9 +167,16 @@ export class BudgetComponent implements OnInit, OnDestroy {
   }
 
 
-  protected onRefreshEvent(refresh: boolean): void {
+  protected onRefreshStatisticsEvent(refresh: boolean, allStatistics: boolean): void {
     if (refresh) {
-      this.getBudgetCategoryStats();
+      if (allStatistics) {
+        this.getBudgetCategoryStats();
+        this.getBudgetSummary();
+        this.getBudgetGeneralCategoryStats();
+      } else {
+        this.getBudgetSummary();
+        this.getBudgetGeneralCategoryStats();
+      }
     }
   }
 

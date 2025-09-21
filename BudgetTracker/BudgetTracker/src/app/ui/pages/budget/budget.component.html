@@ -149,7 +149,7 @@
           <div id="incomes-card" class="card-body">
             <app-income #appIncome
                         [idBudget]="idBudget"
-                        (refreshEvent)="onRefreshEvent($event)">
+                        (refreshEvent)="onRefreshStatisticsEvent($event, true)">
 
             </app-income>
           </div>
@@ -163,7 +163,8 @@
           <div id="planned-payments-card" class="card-body">
             <app-planned-payment #appPlannedPayment
                                  [idBudget]="idBudget"
-                                 (refreshEvent)="onRefreshEvent($event)">
+                                 (refreshAllStatisticsEvent)="onRefreshStatisticsEvent($event, true)"
+                                 (refreshSummaryEvent)="onRefreshStatisticsEvent($event, false)">
 
             </app-planned-payment>
           </div>
@@ -174,12 +175,13 @@
       <div class="col">
         <div class="card text-center mb-3">
           <div class="card-header">
-            Payments
+            Regular payments
           </div>
           <div id="payments-card" class="card-body">
             <app-payment #appPayment
                          [idBudget]="idBudget"
-                         (refreshEvent)="onRefreshEvent($event)">
+                         (refreshEvent)="onRefreshStatisticsEvent($event, true)"
+                         (refreshSummaryEvent)="onRefreshStatisticsEvent($event, false)">
             </app-payment>
           </div>
         </div>
