@@ -66,67 +66,67 @@
                   <i class="bi bi-trash3-fill"></i> Delete
                 </button>
               </div>
-<!--              <ng-template-->
-<!--                [ngIf]="responseModels.budgetStats.statusCode != appConfig.response.required.budgetStatsStatus"-->
-<!--                [ngIfElse]="loadedStats">-->
-<!--                <div class="mt-5">-->
-<!--                  <app-error [response]="responseModels.budgetStats"-->
-<!--                             [notFoundErrorText]="'Budget statistics not found'">-->
-<!--                  </app-error>-->
-<!--                </div>-->
-<!--              </ng-template>-->
-<!--              <ng-template #loadedStats>-->
-                <table class="mt-5" [style]="isMobileView() ? '' : 'display:none'">
-                  <tr>
-                    <td>
-                      <strong>
-                        Incomes
-                      </strong>
-                    </td>
-                    <td>{{ format(statisticDetails.budgetSummary?.income?.wage) }} PLN</td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <strong>
-                        Planned payments
-                      </strong>
-                    </td>
-                    <td>{{ format(statisticDetails.budgetSummary?.plannedPayment?.realPrice) }} PLN</td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <strong>
-                        Regular payments
-                      </strong>
-                    </td>
-                    <td>{{ format(statisticDetails.budgetSummary?.regularPayment?.price) }} PLN</td>
-                  </tr>
-                </table>
-                <table class="mt-5" [style]="isMobileView() ? 'display:none' : ''">
-                  <tr class="w-100">
-                    <td class="col-md-4">
-                      <strong>
-                        Incomes
-                      </strong>
-                    </td>
-                    <td class="col-md-4">
-                      <strong>
-                        Planned payments
-                      </strong>
-                    </td>
-                    <td class="col-md-4">
-                      <strong>
-                        Regular payments
-                      </strong>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>{{ format(statisticDetails.budgetSummary?.income?.wage) }} PLN</td>
-                    <td>{{ format(statisticDetails.budgetSummary?.plannedPayment?.estimated) }} PLN</td>
-                    <td>{{ format(statisticDetails.budgetSummary?.regularPayment?.price) }} PLN</td>
-                  </tr>
-                </table>
-<!--              </ng-template>-->
+              <!--              <ng-template-->
+              <!--                [ngIf]="responseModels.budgetStats.statusCode != appConfig.response.required.budgetStatsStatus"-->
+              <!--                [ngIfElse]="loadedStats">-->
+              <!--                <div class="mt-5">-->
+              <!--                  <app-error [response]="responseModels.budgetStats"-->
+              <!--                             [notFoundErrorText]="'Budget statistics not found'">-->
+              <!--                  </app-error>-->
+              <!--                </div>-->
+              <!--              </ng-template>-->
+              <!--              <ng-template #loadedStats>-->
+              <table class="mt-5" [style]="isMobileView() ? '' : 'display:none'">
+                <tr>
+                  <td>
+                    <strong>
+                      Incomes
+                    </strong>
+                  </td>
+                  <td>{{ format(statisticDetails.budgetSummary?.income?.wage) }} PLN</td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>
+                      Planned payments
+                    </strong>
+                  </td>
+                  <td>{{ format(statisticDetails.budgetSummary?.plannedPayment?.realPrice) }} PLN</td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>
+                      Regular payments
+                    </strong>
+                  </td>
+                  <td>{{ format(statisticDetails.budgetSummary?.regularPayment?.price) }} PLN</td>
+                </tr>
+              </table>
+              <table class="mt-5" [style]="isMobileView() ? 'display:none' : ''">
+                <tr class="w-100">
+                  <td class="col-md-4">
+                    <strong>
+                      Incomes
+                    </strong>
+                  </td>
+                  <td class="col-md-4">
+                    <strong>
+                      Planned payments
+                    </strong>
+                  </td>
+                  <td class="col-md-4">
+                    <strong>
+                      Regular payments
+                    </strong>
+                  </td>
+                </tr>
+                <tr>
+                  <td>{{ format(statisticDetails.budgetSummary?.income?.wage) }} PLN</td>
+                  <td>{{ format(statisticDetails.budgetSummary?.plannedPayment?.estimated) }} PLN</td>
+                  <td>{{ format(statisticDetails.budgetSummary?.regularPayment?.price) }} PLN</td>
+                </tr>
+              </table>
+              <!--              </ng-template>-->
             </div>
           </ng-template>
           <ng-template #budgetErrorBlock>
@@ -215,6 +215,7 @@
               <ng-template #loadedStats>
                 <ng-container [ngSwitch]="currentTab">
                   <ng-container *ngSwitchCase="BudgetTabs.IncomeTab">
+                    <label for="income-categories">Income categories</label>
                     <ng-template [ngIf]="chartData.pieChart.income.length == 0"
                                  [ngIfElse]="displayIncomeChart">
                       <app-error [errorType]="ErrorType.Application"
@@ -223,7 +224,6 @@
                       </app-error>
                     </ng-template>
                     <ng-template #displayIncomeChart>
-                      <label for="income-categories">Income categories</label>
                       <div id="income-categories" class="mx-2 my-2"
                            [className]="getPieChartClassFor(chartData.pieChart.income, isMobileView())">
                         <ng-container [ngSwitch]="isMobileView()">
@@ -262,6 +262,7 @@
                     </ng-template>
                   </ng-container>
                   <ng-container *ngSwitchCase="BudgetTabs.PlannedPaymentTab">
+                    <label for="planned-payment-categories">Planned payment categories</label>
                     <ng-template [ngIf]="chartData.pieChart.planned.length == 0"
                                  [ngIfElse]="displayPlannedPaymentChart">
                       <app-error [errorType]="ErrorType.Application"
@@ -270,7 +271,6 @@
                       </app-error>
                     </ng-template>
                     <ng-template #displayPlannedPaymentChart>
-                      <label for="planned-payment-categories">Planned payment categories</label>
                       <div id="planned-payment-categories" class="mx-2 my-2"
                            [className]="getPieChartClassFor(chartData.pieChart.planned, isMobileView())">
                         <ng-container [ngSwitch]="isMobileView()">
@@ -309,6 +309,7 @@
                     </ng-template>
                   </ng-container>
                   <ng-container *ngSwitchCase="BudgetTabs.RegularPaymentTab">
+                    <label for="regular-payment-categories">Regular payment categories</label>
                     <ng-template [ngIf]="chartData.pieChart.regular.length == 0"
                                  [ngIfElse]="displayRegularPaymentChart">
                       <app-error [errorType]="ErrorType.Application"
@@ -317,7 +318,6 @@
                       </app-error>
                     </ng-template>
                     <ng-template #displayRegularPaymentChart>
-                      <label for="regular-payment-categories">Regular payment categories</label>
                       <div id="regular-payment-categories" class="mx-2 my-2"
                            [className]="getPieChartClassFor(chartData.pieChart.regular, isMobileView())">
                         <ng-container [ngSwitch]="isMobileView()">
