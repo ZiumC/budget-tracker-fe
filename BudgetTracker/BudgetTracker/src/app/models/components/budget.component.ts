@@ -2,7 +2,7 @@ import {
   IncomeCategoryDetails,
   PlannedPaymentCategoryDetails, RegularPaymentCategoryDetails
 } from "../statistics.model";
-import {GetBudgetGeneralCategoryDto, GetBudgetStatsDto} from "../dto/budget.model.dto";
+import {GetBudgetGeneralCategoryDto, GetBudgetSummaryDto} from "../dto/budget.model.dto";
 import {HorizontalChartData, PieChartData, PieChartGridData} from "../charts.model";
 
 export enum StatisticsTab {
@@ -12,8 +12,8 @@ export enum StatisticsTab {
 }
 
 export class StatisticDetails {
-  budget: GetBudgetStatsDto;
-  generalCategories: GetBudgetGeneralCategoryDto;
+  budgetSummary: GetBudgetSummaryDto | null;
+  generalCategories: GetBudgetGeneralCategoryDto | null;
   income: IncomeCategoryDetails[];
   planned: PlannedPaymentCategoryDetails[];
   regular: RegularPaymentCategoryDetails[];

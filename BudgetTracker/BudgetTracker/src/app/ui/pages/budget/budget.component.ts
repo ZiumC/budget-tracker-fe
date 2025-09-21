@@ -8,7 +8,7 @@ import {HttpService} from "../../../services/http/http.service";
 import {ActivatedRoute, Params, Router} from "@angular/router";
 import {HttpResponse} from "@angular/common/http";
 import {SubscriptionUtils} from "../../../util/subscription.utils";
-import {GetBudgetDto, GetBudgetGeneralCategoryDto, GetBudgetStatsDto} from "../../../models/dto/budget.model.dto";
+import {GetBudgetDto, GetBudgetGeneralCategoryDto, GetBudgetSummaryDto} from "../../../models/dto/budget.model.dto";
 import {AppConfig} from "../../../models/config/config";
 import {ConfigService} from "../../../services/config/config.service";
 import {formatString} from "../../../util/string.utils";
@@ -36,7 +36,6 @@ import {
 } from "../../../util/chart.utils";
 import {add, format} from "../../../util/number.util";
 import {getStatisticType, StatisticType} from "../../../util/statistic.utils";
-import {HorizontalChartData, PieChartGridData,} from "../../../models/charts.model";
 
 @Component({
   selector: 'app-budget',
@@ -99,12 +98,16 @@ export class BudgetComponent implements OnInit, OnDestroy {
       planned: [],
       regular: []
     }
-    this.chartData.pieChartGrid = new PieChartGridData()
-    this.chartData.horizontalChart = new HorizontalChartData();
+    this.chartData.pieChartGrid = {
+      generalCategories: []
+    }
+    this.chartData.horizontalChart = {
+      moneyLeftData: []
+    }
 
     this.statisticDetails = {
-      budget: new GetBudgetStatsDto(),
-      generalCategories: new GetBudgetGeneralCategoryDto(),
+      budgetSummary: null,
+      generalCategories: null,
       income: [],
       planned: [],
       regular: []
@@ -117,14 +120,14 @@ export class BudgetComponent implements OnInit, OnDestroy {
       incomes: new ResponseModel(),
       payments: new ResponseModel(),
       paymentStatus: new ResponseModel(),
-      budgetStats: new ResponseModel(),
       incomeStats: new ResponseModel(),
       regularStats: new ResponseModel(),
-      plannedStats: new ResponseModel(),
-      generalCategories: new ResponseModel()
+      plannedStats: new ResponseModel()
     };
 
-    this.getBudgetStats();
+    this.getBudgetSummary();
+    this.getBudgetGeneralCategoryStats();
+    this.getBudgetCategoryStats();
 
     this.subscriptions.push(
       this.httpService.getBudget(this.idBudget).subscribe({
@@ -163,7 +166,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
 
   protected onRefreshEvent(refresh: boolean): void {
     if (refresh) {
-      this.getBudgetStats();
+      this.getBudgetCategoryStats();
     }
   }
 
@@ -175,12 +178,36 @@ export class BudgetComponent implements OnInit, OnDestroy {
     return format(new BigNumber((moneyCategory / totalMoney.toNumber()) * 100)) + "%";
   }
 
-  private getBudgetStats(): void {
+  private getBudgetGeneralCategoryStats(): void {
+    this.subscriptions.push(
+      this.httpService.getBudgetGeneralCategories(this.idBudget).subscribe({
+        next: (response: HttpResponse<GetBudgetGeneralCategoryDto>): void => {
+          this.statisticDetails.generalCategories = response.body;
+        },
+        complete: (): void => {
+          this.chartData.pieChartGrid.generalCategories = generalCategoriesToPieChartGrid(this.statisticDetails.generalCategories);
+        }
+      })
+    );
+  }
+
+  private getBudgetSummary(): void {
+    this.subscriptions.push(
+      this.httpService.getBudgetSummary(this.idBudget).subscribe({
+        next: (response: HttpResponse<GetBudgetSummaryDto>): void => {
+          this.statisticDetails.budgetSummary = response.body;
+        },
+        complete: (): void => {
+          this.chartData.horizontalChart.moneyLeftData = budgetUsageToHorizontalChartDataResult(this.statisticDetails.budgetSummary);
+        }
+      })
+    )
+  }
+
+  private getBudgetCategoryStats(): void {
     this.markStatsAsLoaded(false);
 
     const budgetRequestStats = [
-      this.httpService.getBudgetStats(this.idBudget),
-      this.httpService.getBudgetGeneralCategories(this.idBudget),
       this.httpService.getIncomeCategoriesStats(this.idBudget),
       this.httpService.getRegularPaymentCategoriesStats(this.idBudget),
       this.httpService.getPlannedPaymentCategoriesStats(this.idBudget)
@@ -191,10 +218,6 @@ export class BudgetComponent implements OnInit, OnDestroy {
         next: (responses): void => {
           for (let response of responses) {
             switch (getStatisticType(response.body)) {
-              case StatisticType.BUDGET:
-                this.statisticDetails.budget = response.body as GetBudgetStatsDto;
-                this.responseModels.budgetStats.statusCode = response.status;
-                break;
               case StatisticType.INCOME:
                 let incomeStats = response.body as GetIncomeStatsDto;
                 this.statisticDetails.income = transformToIncomeDetails(incomeStats);
@@ -210,29 +233,19 @@ export class BudgetComponent implements OnInit, OnDestroy {
                 this.statisticDetails.regular = transformToRegularDetails(regularStats);
                 this.responseModels.regularStats.statusCode = response.status;
                 break;
-              case StatisticType.BUDGET_GENERAL_CATEGORIES:
-                this.statisticDetails.generalCategories = response.body as GetBudgetGeneralCategoryDto;
-                this.responseModels.generalCategories.statusCode = response.status;
-                break;
               default:
                 throw Error("Unknown statistic type");
             }
           }
         },
         complete: (): void => {
-          this.transformToChartData();
+          this.chartData.pieChart.income = incomeToPieChartData(this.statisticDetails.income);
+          this.chartData.pieChart.planned = plannedPaymentToPieChartData(this.statisticDetails.planned);
+          this.chartData.pieChart.regular = regularPaymentToPieChartData(this.statisticDetails.regular);
           this.markStatsAsLoaded(true);
         }
       })
     )
-  }
-
-  private transformToChartData(): void {
-    this.chartData.pieChart.income = incomeToPieChartData(this.statisticDetails.income);
-    this.chartData.pieChart.planned = plannedPaymentToPieChartData(this.statisticDetails.planned);
-    this.chartData.pieChart.regular = regularPaymentToPieChartData(this.statisticDetails.regular);
-    this.chartData.horizontalChart.moneyLeftData = budgetUsageToHorizontalChartDataResult(this.statisticDetails);
-    this.chartData.pieChartGrid.generalCategories = generalCategoriesToPieChartGrid(this.statisticDetails.generalCategories);
   }
 
 

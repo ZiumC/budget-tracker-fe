@@ -4,9 +4,8 @@ import {
 } from "../models/statistics.model";
 import {add, subtract} from "./number.util";
 import BigNumber from "bignumber.js";
-import {StatisticDetails} from "../models/components/budget.component";
 import {HorizontalBarDataResult, ChartDataResult} from "../models/charts.model";
-import {GetBudgetGeneralCategoryDto} from "../models/dto/budget.model.dto";
+import {GetBudgetGeneralCategoryDto, GetBudgetSummaryDto} from "../models/dto/budget.model.dto";
 
 export function formatPercent(input: string): string {
   return `${input}%`
@@ -133,15 +132,13 @@ export function plannedPaymentToPieChartData(plannedDetails: PlannedPaymentCateg
   return result;
 }
 
-export function budgetUsageToHorizontalChartDataResult(data: StatisticDetails): HorizontalBarDataResult[] {
+export function budgetUsageToHorizontalChartDataResult(data: GetBudgetSummaryDto | null): HorizontalBarDataResult[] {
   let result: HorizontalBarDataResult[] = [];
 
-  const moneySpend = calculateMoneySpend(data.regular, data.planned);
-  const income = calculateIncome(data.income);
-
-  if (moneySpend && income) {
-    const incomeLeft = subtract(income, moneySpend);
-
+  if (data) {
+    const moneySpend = add(new BigNumber(data.regularPayment.paid), new BigNumber(data.plannedPayment.paid));
+    const onlyIncomes = subtract(new BigNumber(data.income.wage), new BigNumber(data.income.savings));
+    const incomeLeft = subtract(onlyIncomes, moneySpend);
     result.push({
       name: 'Budget',
       series: [
@@ -164,71 +161,24 @@ export function budgetUsageToHorizontalChartDataResult(data: StatisticDetails): 
   return result;
 }
 
-export function generalCategoriesToPieChartGrid(generalCategories: GetBudgetGeneralCategoryDto): ChartDataResult[] {
+export function generalCategoriesToPieChartGrid(data: GetBudgetGeneralCategoryDto | null): ChartDataResult[] {
   let result: ChartDataResult[] = [];
-  let totalUncategorized = BigNumber(0);
 
-  result.push({
-      name: "Needs",
-      value: new BigNumber(generalCategories.needs).toNumber()
-    } as ChartDataResult,
-    {
-      name: "Wants",
-      value: new BigNumber(generalCategories.wants).toNumber()
-    } as ChartDataResult,
-    {
-      name: "Savings",
-      value: new BigNumber(generalCategories.savings).toNumber()
-    } as ChartDataResult,
-    {
-      name: "Uncategorized",
-      value: totalUncategorized.toNumber()
-    } as ChartDataResult)
-
-  return result;
-}
-
-
-function calculateIncome(incomeData: IncomeCategoryDetails[]): BigNumber | null {
-  let result = null;
-  if (incomeData) {
-    let totalIncome = new BigNumber(0);
-    let totalSavings = new BigNumber(0);
-
-    for (let income of incomeData) {
-      totalIncome = add(totalIncome, new BigNumber(income.IncomeSum));
-      totalSavings = add(totalSavings, new BigNumber(income.SavingsSum));
-    }
-
-    result = subtract(totalIncome, totalSavings);
+  if (data) {
+    result.push({
+        name: "Needs",
+        value: new BigNumber(data.needs).toNumber()
+      } as ChartDataResult,
+      {
+        name: "Wants",
+        value: new BigNumber(data.wants).toNumber()
+      } as ChartDataResult,
+      {
+        name: "Savings",
+        value: new BigNumber(data.savings).toNumber()
+      } as ChartDataResult)
   }
-  return result;
-}
 
-function calculateMoneySpend(regularData: RegularPaymentCategoryDetails[], plannedData: PlannedPaymentCategoryDetails[]): BigNumber | null {
-  let result = null;
-  if (regularData && plannedData) {
-    let totalRegularPrice = new BigNumber(0);
-    let totalRefund = new BigNumber(0);
-
-    let totalEstimated = new BigNumber(0);
-    let totalPlannedPrice = new BigNumber(0);
-
-    for (let regular of regularData) {
-      totalRefund = add(totalRefund, new BigNumber(regular.RefundSum));
-      totalRegularPrice = add(totalRegularPrice, new BigNumber(regular.PriceSum));
-    }
-
-    for (let planned of plannedData) {
-      totalEstimated = add(totalEstimated, new BigNumber(planned.EstimatedSum));
-      totalPlannedPrice = add(totalPlannedPrice, new BigNumber(planned.PriceSum));
-    }
-
-    let realRegular = subtract(totalRegularPrice, totalRefund);
-    let realPlanned = subtract(totalEstimated, totalPlannedPrice);
-
-    result = add(realRegular, realPlanned);
-  }
   return result;
 }
 

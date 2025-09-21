@@ -13,10 +13,10 @@ export class GetBudgetDto {
   dateStart: Date;
 }
 
-export class GetBudgetStatsDto {
-  plannedPayment: BudgetStatsPlannedPayment;
-  regularPayment: BudgetStatsRegularPayment;
-  income: BudgetStatsIncome
+export class GetBudgetSummaryDto {
+  plannedPayment: BudgetSummaryPlannedPayment;
+  regularPayment: BudgetSummaryRegularPayment;
+  income: BudgetSummaryIncome
 }
 
 export class GetBudgetGeneralCategoryDto {
@@ -25,17 +25,19 @@ export class GetBudgetGeneralCategoryDto {
   savings: BigNumber;
 }
 
-class BudgetStatsPlannedPayment {
+class BudgetSummaryPlannedPayment {
   estimated: BigNumber;
   realPrice: BigNumber;
+  paid: BigNumber;
 }
 
-class BudgetStatsRegularPayment {
+class BudgetSummaryRegularPayment {
   price: BigNumber;
   refund: BigNumber;
+  paid: BigNumber;
 }
 
-class BudgetStatsIncome {
+class BudgetSummaryIncome {
   wage: BigNumber;
   savings: BigNumber;
 }

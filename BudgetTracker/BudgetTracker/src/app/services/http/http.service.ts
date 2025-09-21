@@ -4,7 +4,7 @@ import {Injectable} from "@angular/core";
 import {RequestModel} from "../../models/request.model";
 import {GetIncomeDto, IncomeDto} from "../../models/dto/income.model.dto";
 import {PaymentDto, PaymentStatusDto} from "../../models/dto/payment.model.dto";
-import {BudgetDto, GetBudgetGeneralCategoryDto, GetBudgetDto, GetBudgetStatsDto} from "../../models/dto/budget.model.dto";
+import {BudgetDto, GetBudgetGeneralCategoryDto, GetBudgetDto, GetBudgetSummaryDto} from "../../models/dto/budget.model.dto";
 import {PageDto} from "../../models/dto/page.model.dto";
 import {
   PaymentCategoryDto,
@@ -292,9 +292,9 @@ export class HttpService {
     )
   }
 
-  public getBudgetStats(idBudget: string):
-    Observable<HttpResponse<GetBudgetStatsDto>> {
-    return this.httpClient.get<GetBudgetStatsDto>(
+  public getBudgetSummary(idBudget: string):
+    Observable<HttpResponse<GetBudgetSummaryDto>> {
+    return this.httpClient.get<GetBudgetSummaryDto>(
       StatisticUrls.budgetStats(idBudget),
       {observe: 'response'}
     )
