@@ -113,7 +113,10 @@ export class BudgetComponent implements OnInit, OnDestroy {
       regular: []
     }
 
-    this.loaders = new Loaders();
+    this.loaders = {
+      budget: false,
+      statistics: false
+    }
 
     this.responseModels = {
       budget: new ResponseModel(),
@@ -199,6 +202,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
         },
         complete: (): void => {
           this.chartData.horizontalChart.moneyLeftData = budgetUsageToHorizontalChartDataResult(this.statisticDetails.budgetSummary);
+          console.log(this.chartData.horizontalChart.moneyLeftData.length)
         }
       })
     )
@@ -238,6 +242,9 @@ export class BudgetComponent implements OnInit, OnDestroy {
             }
           }
         },
+        error: (): void => {
+          this.markStatsAsLoaded(true);
+        },
         complete: (): void => {
           this.chartData.pieChart.income = incomeToPieChartData(this.statisticDetails.income);
           this.chartData.pieChart.planned = plannedPaymentToPieChartData(this.statisticDetails.planned);
@@ -247,7 +254,6 @@ export class BudgetComponent implements OnInit, OnDestroy {
       })
     )
   }
-
 
   private markBudgetAsLoaded(isLoaded: boolean): void {
     if (isLoaded) {

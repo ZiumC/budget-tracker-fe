@@ -3,7 +3,7 @@ import {
   IncomeCategoryDetails, PlannedPaymentCategoryDetails, RegularPaymentCategoryDetails
 } from "../models/statistics.model";
 import {add, subtract} from "./number.util";
-import BigNumber from "bignumber.js";
+import BigNumber, {DEBUG} from "bignumber.js";
 import {HorizontalBarDataResult, ChartDataResult} from "../models/charts.model";
 import {GetBudgetGeneralCategoryDto, GetBudgetSummaryDto} from "../models/dto/budget.model.dto";
 
