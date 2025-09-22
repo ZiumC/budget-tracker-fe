@@ -204,69 +204,6 @@
                   </div>
                 </div>
               </ng-template>
-
-
-              <!--              <ng-template-->
-              <!--                [ngIf]="responseModels.budgetStats.statusCode != appConfig.response.required.budgetStatsStatus"-->
-              <!--                [ngIfElse]="loadedStats">-->
-              <!--                <div class="mt-5">-->
-              <!--                  <app-error [response]="responseModels.budgetStats"-->
-              <!--                             [notFoundErrorText]="'Budget statistics not found'">-->
-              <!--                  </app-error>-->
-              <!--                </div>-->
-              <!--              </ng-template>-->
-              <!--              <ng-template #loadedStats>-->
-              <!--              <table class="mt-5" [style]="isMobileView() ? '' : 'display:none'">-->
-              <!--                <tr>-->
-              <!--                  <td>-->
-              <!--                    <strong>-->
-              <!--                      Incomes-->
-              <!--                    </strong>-->
-              <!--                  </td>-->
-              <!--                  <td>{{ format(statisticsDto.budgetSummary?.income?.wage) }} PLN</td>-->
-              <!--                </tr>-->
-              <!--                <tr>-->
-              <!--                  <td>-->
-              <!--                    <strong>-->
-              <!--                      Planned payments-->
-              <!--                    </strong>-->
-              <!--                  </td>-->
-              <!--                  <td>{{ format(statisticsDto.budgetSummary?.plannedPayment?.realPrice) }} PLN</td>-->
-              <!--                </tr>-->
-              <!--                <tr>-->
-              <!--                  <td>-->
-              <!--                    <strong>-->
-              <!--                      Regular payments-->
-              <!--                    </strong>-->
-              <!--                  </td>-->
-              <!--                  <td>{{ format(statisticsDto.budgetSummary?.regularPayment?.price) }} PLN</td>-->
-              <!--                </tr>-->
-              <!--              </table>-->
-              <!--              <table class="mt-5" [style]="isMobileView() ? 'display:none' : ''">-->
-              <!--                <tr class="w-100">-->
-              <!--                  <td class="col-md-4">-->
-              <!--                    <strong>-->
-              <!--                      Incomes-->
-              <!--                    </strong>-->
-              <!--                  </td>-->
-              <!--                  <td class="col-md-4">-->
-              <!--                    <strong>-->
-              <!--                      Planned payments-->
-              <!--                    </strong>-->
-              <!--                  </td>-->
-              <!--                  <td class="col-md-4">-->
-              <!--                    <strong>-->
-              <!--                      Regular payments-->
-              <!--                    </strong>-->
-              <!--                  </td>-->
-              <!--                </tr>-->
-              <!--                <tr>-->
-              <!--                  <td>{{ format(statisticsDto.budgetSummary?.income?.wage) }} PLN</td>-->
-              <!--                  <td>{{ format(statisticsDto.budgetSummary?.plannedPayment?.estimated) }} PLN</td>-->
-              <!--                  <td>{{ format(statisticsDto.budgetSummary?.regularPayment?.price) }} PLN</td>-->
-              <!--                </tr>-->
-              <!--              </table>-->
-              <!--              </ng-template>-->
             </div>
           </ng-template>
           <ng-template #budgetErrorBlock>
