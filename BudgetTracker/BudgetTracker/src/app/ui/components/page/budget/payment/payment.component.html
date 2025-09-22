@@ -151,6 +151,7 @@
                       data-bs-toggle="tooltip"
                       data-bs-placement="bottom"
                       title="Switch to paid status"
+                      [disabled]="!payment.assignment"
                       (click)="patchPaymentStatus(true, payment.id)">
                       <i class="bi bi-bag-check-fill"></i> Paid
                     </button>
