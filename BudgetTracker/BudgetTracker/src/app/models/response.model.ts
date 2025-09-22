@@ -25,6 +25,7 @@ export class BudgetResponse {
   incomeStats: ResponseModel;
   regularStats: ResponseModel;
   plannedStats: ResponseModel;
+  budgetSummary: ResponseModel;
 }
 
 export class Status {

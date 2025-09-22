@@ -238,6 +238,12 @@ li button.nav-link:hover {
   color: var(--bs-secondary);
 }
 
+.info-tooltip{
+  color: #495057;
+  margin-left: 1ex;
+  cursor: pointer;
+}
+
 @media only screen and (max-width: 770px) {
   .width-wrapper {
     width: 92%;

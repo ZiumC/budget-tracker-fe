@@ -230,7 +230,7 @@
         "paymentStatus": 200,
         "plannedPaymentStatus": 200,
         "categoryStatus": 200,
-        "budgetStatsStatus": 200
+        "budgetSummaryStatus": 200
       }
     },
     "monthsLimit": 7,
