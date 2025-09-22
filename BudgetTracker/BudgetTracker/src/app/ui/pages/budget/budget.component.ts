@@ -34,7 +34,7 @@ import {
   transformToPlannedDto,
   transformToRegularDto,
 } from "../../../util/chart.utils";
-import {add, format} from "../../../util/number.util";
+import {add, format, subtract} from "../../../util/number.util";
 import {getStatisticType, StatisticType} from "../../../util/statistic.utils";
 
 @Component({
@@ -128,7 +128,8 @@ export class BudgetComponent implements OnInit, OnDestroy {
       paymentStatus: new ResponseModel(),
       incomeStats: new ResponseModel(),
       regularStats: new ResponseModel(),
-      plannedStats: new ResponseModel()
+      plannedStats: new ResponseModel(),
+      budgetSummary: new ResponseModel()
     };
 
     this.getBudgetSummary();
@@ -208,6 +209,10 @@ export class BudgetComponent implements OnInit, OnDestroy {
       this.httpService.getBudgetSummary(this.idBudget).subscribe({
         next: (response: HttpResponse<GetBudgetSummaryDto>): void => {
           this.statisticsDto.budgetSummary = response.body;
+          this.responseModels.budgetSummary.statusCode = response.status;
+        },
+        error: (err): void => {
+          this.responseModels.budgetSummary.statusCode = err.status;
         },
         complete: (): void => {
           this.chartData.horizontalChart.moneyLeftData = budgetUsageToHorizontalChartData(this.statisticsDto.budgetSummary);
@@ -288,4 +293,6 @@ export class BudgetComponent implements OnInit, OnDestroy {
       this.loaders.statistics = isLoaded;
     }
   }
+
+  protected readonly subtract = subtract;
 }
