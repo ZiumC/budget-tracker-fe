@@ -21,18 +21,18 @@ import {
   GetRegularPaymentStatsDto
 } from "../../../models/statistics.model";
 import {ErrorImage, ErrorType} from "../../../models/error.model";
-import {DataResult, Loaders, StatisticDetails, StatisticsTab} from "../../../models/components/budget.component";
+import {DataResult, Loaders, StatisticsDto, StatisticsTab} from "../../../models/components/budget.component";
 import {
-  budgetUsageToHorizontalChartDataResult,
+  budgetUsageToHorizontalChartData,
   formatPercent, generalCategoriesToPieChartGrid,
   getPieChartClassFor,
   getPieChartGridClassFor,
   incomeToPieChartData,
   plannedPaymentToPieChartData,
   regularPaymentToPieChartData,
-  transformToIncomeDetails,
-  transformToPlannedDetails,
-  transformToRegularDetails,
+  transformToIncomeDto,
+  transformToPlannedDto,
+  transformToRegularDto,
 } from "../../../util/chart.utils";
 import {add, format} from "../../../util/number.util";
 import {getStatisticType, StatisticType} from "../../../util/statistic.utils";
@@ -62,7 +62,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
   protected responseModels: BudgetResponse;
   protected idBudget: string;
   protected loaders: Loaders;
-  protected statisticDetails: StatisticDetails;
+  protected statisticsDto: StatisticsDto;
   protected chartData: DataResult = new DataResult();
   protected currentTab: StatisticsTab;
   public innerWidth: any;
@@ -88,6 +88,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
 
     this.innerWidth = window.innerWidth;
     this.subscriptions = [];
+
     this.activatedRoute.queryParams.subscribe((params: Params): void => {
       this.idBudget = params['id'];
     });
@@ -98,14 +99,16 @@ export class BudgetComponent implements OnInit, OnDestroy {
       planned: [],
       regular: []
     }
+
     this.chartData.pieChartGrid = {
       generalCategories: []
     }
+
     this.chartData.horizontalChart = {
       moneyLeftData: []
     }
 
-    this.statisticDetails = {
+    this.statisticsDto = {
       budgetSummary: null,
       generalCategories: null,
       income: [],
@@ -166,7 +169,6 @@ export class BudgetComponent implements OnInit, OnDestroy {
     this.router.navigate(['/']);
   }
 
-
   protected onRefreshStatisticsEvent(refresh: boolean, allStatistics: boolean): void {
     if (refresh) {
       if (allStatistics) {
@@ -192,10 +194,10 @@ export class BudgetComponent implements OnInit, OnDestroy {
     this.subscriptions.push(
       this.httpService.getBudgetGeneralCategories(this.idBudget).subscribe({
         next: (response: HttpResponse<GetBudgetGeneralCategoryDto>): void => {
-          this.statisticDetails.generalCategories = response.body;
+          this.statisticsDto.generalCategories = response.body;
         },
         complete: (): void => {
-          this.chartData.pieChartGrid.generalCategories = generalCategoriesToPieChartGrid(this.statisticDetails.generalCategories);
+          this.chartData.pieChartGrid.generalCategories = generalCategoriesToPieChartGrid(this.statisticsDto.generalCategories);
         }
       })
     );
@@ -205,11 +207,10 @@ export class BudgetComponent implements OnInit, OnDestroy {
     this.subscriptions.push(
       this.httpService.getBudgetSummary(this.idBudget).subscribe({
         next: (response: HttpResponse<GetBudgetSummaryDto>): void => {
-          this.statisticDetails.budgetSummary = response.body;
+          this.statisticsDto.budgetSummary = response.body;
         },
         complete: (): void => {
-          this.chartData.horizontalChart.moneyLeftData = budgetUsageToHorizontalChartDataResult(this.statisticDetails.budgetSummary);
-          console.log(this.chartData.horizontalChart.moneyLeftData.length)
+          this.chartData.horizontalChart.moneyLeftData = budgetUsageToHorizontalChartData(this.statisticsDto.budgetSummary);
         }
       })
     )
@@ -231,17 +232,17 @@ export class BudgetComponent implements OnInit, OnDestroy {
             switch (getStatisticType(response.body)) {
               case StatisticType.INCOME:
                 let incomeStats = response.body as GetIncomeStatsDto;
-                this.statisticDetails.income = transformToIncomeDetails(incomeStats);
+                this.statisticsDto.income = transformToIncomeDto(incomeStats);
                 this.responseModels.incomeStats.statusCode = response.status;
                 break;
               case StatisticType.PLANNED_PAYMENT:
                 let plannedStats = response.body as GetPlannedPaymentStatsDto;
-                this.statisticDetails.planned = transformToPlannedDetails(plannedStats);
+                this.statisticsDto.planned = transformToPlannedDto(plannedStats);
                 this.responseModels.plannedStats.statusCode = response.status;
                 break;
               case StatisticType.REGULAR_PAYMENT:
                 let regularStats = response.body as GetRegularPaymentStatsDto;
-                this.statisticDetails.regular = transformToRegularDetails(regularStats);
+                this.statisticsDto.regular = transformToRegularDto(regularStats);
                 this.responseModels.regularStats.statusCode = response.status;
                 break;
               default:
@@ -253,9 +254,9 @@ export class BudgetComponent implements OnInit, OnDestroy {
           this.markStatsAsLoaded(true);
         },
         complete: (): void => {
-          this.chartData.pieChart.income = incomeToPieChartData(this.statisticDetails.income);
-          this.chartData.pieChart.planned = plannedPaymentToPieChartData(this.statisticDetails.planned);
-          this.chartData.pieChart.regular = regularPaymentToPieChartData(this.statisticDetails.regular);
+          this.chartData.pieChart.income = incomeToPieChartData(this.statisticsDto.income);
+          this.chartData.pieChart.planned = plannedPaymentToPieChartData(this.statisticsDto.planned);
+          this.chartData.pieChart.regular = regularPaymentToPieChartData(this.statisticsDto.regular);
           this.markStatsAsLoaded(true);
         }
       })
