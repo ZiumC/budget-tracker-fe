@@ -83,7 +83,7 @@
                       Incomes
                     </strong>
                   </td>
-                  <td>{{ format(statisticDetails.budgetSummary?.income?.wage) }} PLN</td>
+                  <td>{{ format(statisticsDto.budgetSummary?.income?.wage) }} PLN</td>
                 </tr>
                 <tr>
                   <td>
@@ -91,7 +91,7 @@
                       Planned payments
                     </strong>
                   </td>
-                  <td>{{ format(statisticDetails.budgetSummary?.plannedPayment?.realPrice) }} PLN</td>
+                  <td>{{ format(statisticsDto.budgetSummary?.plannedPayment?.realPrice) }} PLN</td>
                 </tr>
                 <tr>
                   <td>
@@ -99,7 +99,7 @@
                       Regular payments
                     </strong>
                   </td>
-                  <td>{{ format(statisticDetails.budgetSummary?.regularPayment?.price) }} PLN</td>
+                  <td>{{ format(statisticsDto.budgetSummary?.regularPayment?.price) }} PLN</td>
                 </tr>
               </table>
               <table class="mt-5" [style]="isMobileView() ? 'display:none' : ''">
@@ -121,9 +121,9 @@
                   </td>
                 </tr>
                 <tr>
-                  <td>{{ format(statisticDetails.budgetSummary?.income?.wage) }} PLN</td>
-                  <td>{{ format(statisticDetails.budgetSummary?.plannedPayment?.estimated) }} PLN</td>
-                  <td>{{ format(statisticDetails.budgetSummary?.regularPayment?.price) }} PLN</td>
+                  <td>{{ format(statisticsDto.budgetSummary?.income?.wage) }} PLN</td>
+                  <td>{{ format(statisticsDto.budgetSummary?.plannedPayment?.estimated) }} PLN</td>
+                  <td>{{ format(statisticsDto.budgetSummary?.regularPayment?.price) }} PLN</td>
                 </tr>
               </table>
               <!--              </ng-template>-->
@@ -367,7 +367,7 @@
                       <ngx-charts-pie-grid
                         [results]="chartData.pieChartGrid.generalCategories"
                         [tooltipDisabled]="true"
-                        [animations]="true"
+                        [animations]="false"
                         [customColors]="[
                          {name: 'Needs',value: '#ff3d00'},
                          {name: 'Wands',value: '#1f7bc6'},
@@ -391,7 +391,7 @@
                       [results]="chartData.horizontalChart.moneyLeftData"
                       [scheme]="'vivid'"
                       [xAxisTickFormatting]="formatPercent"
-                      [animations]="true"
+                      [animations]="false"
                       [xAxis]="true">
                       <ng-template #tooltipTemplate let-model="model">
                         <div class="my-2">

@@ -1,9 +1,9 @@
 import {
   GetIncomeStatsDto, GetPlannedPaymentStatsDto, GetRegularPaymentStatsDto,
-  IncomeCategoryDetails, PlannedPaymentCategoryDetails, RegularPaymentCategoryDetails
+  IncomeCategoryDto, PlannedPaymentCategoryDto, RegularPaymentCategoryDto
 } from "../models/statistics.model";
 import {add, subtract} from "./number.util";
-import BigNumber, {DEBUG} from "bignumber.js";
+import BigNumber from "bignumber.js";
 import {HorizontalBarDataResult, ChartDataResult} from "../models/charts.model";
 import {GetBudgetGeneralCategoryDto, GetBudgetSummaryDto} from "../models/dto/budget.model.dto";
 
@@ -27,8 +27,8 @@ export function getPieChartGridClassFor(isMobileView: boolean): string {
   return isMobileView ? 'doughnut-height-m' : 'mobile-doughnut-height';
 }
 
-export function transformToIncomeDetails(data: GetIncomeStatsDto | null): IncomeCategoryDetails[] {
-  let result: IncomeCategoryDetails[] = [];
+export function transformToIncomeDto(data: GetIncomeStatsDto | null): IncomeCategoryDto[] {
+  let result: IncomeCategoryDto[] = [];
   if (data) {
     Object.entries(data).forEach(([key, value]): void => {
       if ('IncomeSum' in value && 'SavingsSum' in value) {
@@ -36,15 +36,15 @@ export function transformToIncomeDetails(data: GetIncomeStatsDto | null): Income
           name: key,
           SavingsSum: value.SavingsSum,
           IncomeSum: value.IncomeSum
-        } as IncomeCategoryDetails);
+        } as IncomeCategoryDto);
       }
     });
   }
   return result;
 }
 
-export function transformToRegularDetails(data: GetRegularPaymentStatsDto | null): RegularPaymentCategoryDetails[] {
-  let result: RegularPaymentCategoryDetails[] = [];
+export function transformToRegularDto(data: GetRegularPaymentStatsDto | null): RegularPaymentCategoryDto[] {
+  let result: RegularPaymentCategoryDto[] = [];
   if (data) {
     Object.entries(data).forEach(([key, value]): void => {
       if ('PriceSum' in value && 'RefundSum' in value) {
@@ -52,15 +52,15 @@ export function transformToRegularDetails(data: GetRegularPaymentStatsDto | null
           name: key,
           PriceSum: value.PriceSum,
           RefundSum: value.RefundSum
-        } as RegularPaymentCategoryDetails);
+        } as RegularPaymentCategoryDto);
       }
     });
   }
   return result;
 }
 
-export function transformToPlannedDetails(data: GetPlannedPaymentStatsDto | null): PlannedPaymentCategoryDetails[] {
-  let result: PlannedPaymentCategoryDetails[] = [];
+export function transformToPlannedDto(data: GetPlannedPaymentStatsDto | null): PlannedPaymentCategoryDto[] {
+  let result: PlannedPaymentCategoryDto[] = [];
   if (data) {
     Object.entries(data).forEach(([key, value]): void => {
       if ('PriceSum' in value && 'EstimatedSum' in value) {
@@ -68,14 +68,14 @@ export function transformToPlannedDetails(data: GetPlannedPaymentStatsDto | null
           name: key,
           PriceSum: value.PriceSum,
           EstimatedSum: value.EstimatedSum
-        } as PlannedPaymentCategoryDetails);
+        } as PlannedPaymentCategoryDto);
       }
     });
   }
   return result;
 }
 
-export function incomeToPieChartData(incomeDetails: IncomeCategoryDetails[]): ChartDataResult[] {
+export function incomeToPieChartData(incomeDetails: IncomeCategoryDto[]): ChartDataResult[] {
   let result: ChartDataResult[] = [];
   let totalSavings = new BigNumber(0);
 
@@ -97,7 +97,7 @@ export function incomeToPieChartData(incomeDetails: IncomeCategoryDetails[]): Ch
   return result;
 }
 
-export function regularPaymentToPieChartData(regularDetails: RegularPaymentCategoryDetails[]): ChartDataResult[] {
+export function regularPaymentToPieChartData(regularDetails: RegularPaymentCategoryDto[]): ChartDataResult[] {
   let result: ChartDataResult[] = [];
   let totalRefund = new BigNumber(0);
 
@@ -119,7 +119,7 @@ export function regularPaymentToPieChartData(regularDetails: RegularPaymentCateg
   return result;
 }
 
-export function plannedPaymentToPieChartData(plannedDetails: PlannedPaymentCategoryDetails[]): ChartDataResult[] {
+export function plannedPaymentToPieChartData(plannedDetails: PlannedPaymentCategoryDto[]): ChartDataResult[] {
   let result: ChartDataResult[] = [];
 
   for (let plannedDetail of plannedDetails) {
@@ -132,7 +132,7 @@ export function plannedPaymentToPieChartData(plannedDetails: PlannedPaymentCateg
   return result;
 }
 
-export function budgetUsageToHorizontalChartDataResult(data: GetBudgetSummaryDto | null): HorizontalBarDataResult[] {
+export function budgetUsageToHorizontalChartData(data: GetBudgetSummaryDto | null): HorizontalBarDataResult[] {
   let result: HorizontalBarDataResult[] = [];
 
   if (data) {
