@@ -19,4 +19,5 @@ export class Loaders {
   regularPaymentCategories: boolean;
   plannedPaymentCategories: boolean;
   budgetGeneralCategories: boolean;
+  budgetSummary: boolean;
 }

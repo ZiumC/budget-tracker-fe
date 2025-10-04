@@ -5,8 +5,8 @@ export enum ErrorType {
 
 export enum ErrorImage {
   ChartIcon = 'chartIcon',
-  PaymentErrorIcon = 'paymentErrorIcon',
-  NotfoundFile = 'notfoundFile',
-  Database = 'database',
-  DatabaseError = 'databaseError'
+  CardIcon = 'cardIcon',
+  NotfoundFile = 'notfoundFileIcon',
+  Database = 'databaseIcon',
+  DatabaseError = 'databaseErrorIcon'
 }
