@@ -81,8 +81,8 @@
                         <tr class="text-start">
                           <td>
                             <ul class="mb-0">
-                              <li>Wage: {{ format(statisticsDto.budgetSummary!.income!.wage) }} PLN</li>
-                              <li>Savings: {{ format(statisticsDto.budgetSummary!.income!.savings) }} PLN</li>
+                              <li>Wage: {{ format(budgetSummary!.income!.wage) }} PLN</li>
+                              <li>Savings: {{ format(budgetSummary!.income!.savings) }} PLN</li>
                             </ul>
                           </td>
                         </tr>
@@ -91,8 +91,8 @@
                             <strong>Total</strong>: {{
                               format(
                                 subtract(
-                                  BigNumber(statisticsDto.budgetSummary!.income!.wage),
-                                  BigNumber(statisticsDto.budgetSummary!.income!.savings)
+                                  BigNumber(budgetSummary!.income!.wage),
+                                  BigNumber(budgetSummary!.income!.savings)
                                 )
                               )
                             }} PLN
@@ -126,16 +126,16 @@
                         <tr class="text-start">
                           <td>
                             <ul class="mb-0">
-                              <li>Estimated: {{ format(statisticsDto.budgetSummary!.plannedPayment!.estimated) }}PLN
+                              <li>Estimated: {{ format(budgetSummary!.plannedPayment!.estimated) }}PLN
                               </li>
-                              <li>Real price: {{ format(statisticsDto.budgetSummary!.plannedPayment!.realPrice) }}PLN
+                              <li>Real price: {{ format(budgetSummary!.plannedPayment!.realPrice) }}PLN
                               </li>
                             </ul>
                           </td>
                         </tr>
                         <tr>
                           <td class="table-active budget-overview-total">
-                            <strong>Total</strong>: {{ format(statisticsDto.budgetSummary!.plannedPayment!.estimated) }}
+                            <strong>Total</strong>: {{ format(budgetSummary!.plannedPayment!.estimated) }}
                             PLN
                             <a #tooltipPlanned="ngbTooltip"
                                class="info-tooltip"
@@ -167,8 +167,8 @@
                         <tr class="text-start">
                           <td>
                             <ul class="mb-0">
-                              <li>Price: {{ format(statisticsDto.budgetSummary!.regularPayment!.price) }} PLN</li>
-                              <li>Refund: {{ format(statisticsDto.budgetSummary!.regularPayment!.refund) }} PLN</li>
+                              <li>Price: {{ format(budgetSummary!.regularPayment!.price) }} PLN</li>
+                              <li>Refund: {{ format(budgetSummary!.regularPayment!.refund) }} PLN</li>
                             </ul>
                           </td>
                         </tr>
@@ -177,8 +177,8 @@
                             <strong>Total</strong>: {{
                               format(
                                 subtract(
-                                  BigNumber(statisticsDto.budgetSummary!.regularPayment!.price),
-                                  BigNumber(statisticsDto.budgetSummary!.regularPayment!.refund)
+                                  BigNumber(budgetSummary!.regularPayment!.price),
+                                  BigNumber(budgetSummary!.regularPayment!.refund)
                                 )
                               )
                             }} PLN
@@ -287,20 +287,22 @@
               </li>
             </ul>
             <div [className]="isMobileView() ? 'mt-3' : 'mt-5'">
-              <ng-template [ngIf]="!loaders.statistics"
-                           [ngIfElse]="loadedStats">
-                <app-spinner-grow></app-spinner-grow>
-              </ng-template>
-              <ng-template #loadedStats>
-                <ng-container [ngSwitch]="currentTab">
-                  <ng-container *ngSwitchCase="BudgetTabs.IncomeTab">
+              <ng-container [ngSwitch]="currentTab">
+                <ng-container *ngSwitchCase="BudgetTabs.IncomeTab">
+                  <ng-template [ngIf]="!loaders.incomeCategories"
+                               [ngIfElse]="loadedIncomes">
+                    <div class="my-3">
+                      <app-spinner-grow></app-spinner-grow>
+                    </div>
+                  </ng-template>
+                  <ng-template #loadedIncomes>
                     <label for="income-categories">Income categories</label>
-                    <ng-template [ngIf]="chartData.pieChart.income.length == 0"
+                    <ng-template [ngIf]="responseModels.incomeStats.statusCode != 200"
                                  [ngIfElse]="displayIncomeChart">
                       <app-error [errorType]="ErrorType.Application"
                                  [errorImage]="ErrorImage.ChartIcon"
                                  [notFoundErrorText]="'No incomes found'"
-                                 [secondaryErrorText]="'to display charts, create income'">
+                                 [secondaryErrorText]="'to display chart, create income'">
                       </app-error>
                     </ng-template>
                     <ng-template #displayIncomeChart>
@@ -340,15 +342,23 @@
                         </ng-container>
                       </div>
                     </ng-template>
-                  </ng-container>
-                  <ng-container *ngSwitchCase="BudgetTabs.PlannedPaymentTab">
+                  </ng-template>
+                </ng-container>
+                <ng-container *ngSwitchCase="BudgetTabs.PlannedPaymentTab">
+                  <ng-template [ngIf]="!loaders.plannedPaymentCategories"
+                               [ngIfElse]="loadedPlanned">
+                    <div class="my-3">
+                      <app-spinner-grow></app-spinner-grow>
+                    </div>
+                  </ng-template>
+                  <ng-template #loadedPlanned>
                     <label for="planned-payment-categories">Planned payment categories</label>
-                    <ng-template [ngIf]="chartData.pieChart.planned.length == 0"
+                    <ng-template [ngIf]="responseModels.plannedStats.statusCode != 200"
                                  [ngIfElse]="displayPlannedPaymentChart">
                       <app-error [errorType]="ErrorType.Application"
                                  [errorImage]="ErrorImage.ChartIcon"
-                                 [notFoundErrorText]="'No incomes found'"
-                                 [secondaryErrorText]="'to display charts, create income'">
+                                 [notFoundErrorText]="'No planned payments found'"
+                                 [secondaryErrorText]="'to display chart create and assign category to planned payment'">
                       </app-error>
                     </ng-template>
                     <ng-template #displayPlannedPaymentChart>
@@ -388,15 +398,23 @@
                         </ng-container>
                       </div>
                     </ng-template>
-                  </ng-container>
-                  <ng-container *ngSwitchCase="BudgetTabs.RegularPaymentTab">
+                  </ng-template>
+                </ng-container>
+                <ng-container *ngSwitchCase="BudgetTabs.RegularPaymentTab">
+                  <ng-template [ngIf]="!loaders.regularPaymentCategories"
+                               [ngIfElse]="loadedRegular">
+                    <div class="my-3">
+                      <app-spinner-grow></app-spinner-grow>
+                    </div>
+                  </ng-template>
+                  <ng-template #loadedRegular>
                     <label for="regular-payment-categories">Regular payment categories</label>
                     <ng-template [ngIf]="chartData.pieChart.regular.length == 0"
                                  [ngIfElse]="displayRegularPaymentChart">
                       <app-error [errorType]="ErrorType.Application"
                                  [errorImage]="ErrorImage.ChartIcon"
-                                 [notFoundErrorText]="'No incomes found'"
-                                 [secondaryErrorText]="'to display charts, create income'">
+                                 [notFoundErrorText]="'No regular payments found'"
+                                 [secondaryErrorText]="'to display chart create and assign category to regular payment'">
                       </app-error>
                     </ng-template>
                     <ng-template #displayRegularPaymentChart>
@@ -436,14 +454,28 @@
                         </ng-container>
                       </div>
                     </ng-template>
-                  </ng-container>
+                  </ng-template>
                 </ng-container>
+              </ng-container>
+              <ng-template [ngIf]="!loaders.budgetGeneralCategories && chartData.pieChartGrid.generalCategories.length == 0"
+                           [ngIfElse]="loadedBudgetCategories">
+                <div class="my-3">
+                  <app-spinner-grow></app-spinner-grow>
+                </div>
+              </ng-template>
+              <ng-template #loadedBudgetCategories>
                 <label for="budget-summary">Budget categories</label>
                 <div class="mb-2 mx-3">
                   <div id="budget-summary" class="mx-auto"
                        [className]="chartData.pieChartGrid.generalCategories.length > 0 ? getPieChartGridClassFor(isMobileView()) : ''">
-                    <ng-template [ngIf]="chartData.pieChartGrid.generalCategories.length > 0"
-                                 [ngIfElse]="generalCategoriesError">
+                    <ng-template [ngIf]="responseModels.budgetStats.statusCode != 200"
+                                 [ngIfElse]="displayBudgetChart">
+                      <app-error [errorType]="ErrorType.Application"
+                                 [errorImage]="ErrorImage.PaymentErrorIcon"
+                                 [notFoundErrorText]="'No paid payments found'">
+                      </app-error>
+                    </ng-template>
+                    <ng-template #displayBudgetChart>
                       <ngx-charts-pie-grid
                         [results]="chartData.pieChartGrid.generalCategories"
                         [tooltipDisabled]="true"
@@ -455,40 +487,34 @@
                        ]">
                       </ngx-charts-pie-grid>
                     </ng-template>
-                    <ng-template #generalCategoriesError>
-                      <app-error [errorType]="ErrorType.Application"
-                                 [errorImage]="ErrorImage.PaymentErrorIcon"
-                                 [notFoundErrorText]="'No paid payments found'">
-                      </app-error>
-                    </ng-template>
                   </div>
                 </div>
-                <label for="budget-usage">Budget usage</label>
-                <div id="budget-usage" class="horizontal-bar-chart mx-3">
-                  <ng-template [ngIf]="chartData.horizontalChart.moneyLeftData.length > 0"
-                               [ngIfElse]="budgetSummaryError">
-                    <ngx-charts-bar-horizontal-normalized
-                      [results]="chartData.horizontalChart.moneyLeftData"
-                      [scheme]="'vivid'"
-                      [xAxisTickFormatting]="formatPercent"
-                      [animations]="false"
-                      [xAxis]="true">
-                      <ng-template #tooltipTemplate let-model="model">
-                        <div class="my-2">
-                          {{ model.name }} ({{ computePercent(model.value) }}) <br> {{ model.value }} PLN
-                        </div>
-                      </ng-template>
-                    </ngx-charts-bar-horizontal-normalized>
-                  </ng-template>
-                  <ng-template #budgetSummaryError>
-                    <app-error [errorType]="ErrorType.Application"
-                               [errorImage]="ErrorImage.PaymentErrorIcon"
-                               [notFoundErrorText]="'Payments data not found'"
-                               [secondaryErrorText]="'to display chart, create any payment'">
-                    </app-error>
-                  </ng-template>
-                </div>
               </ng-template>
+              <label for="budget-usage">Budget usage</label>
+              <div id="budget-usage" class="horizontal-bar-chart mx-3">
+                <ng-template [ngIf]="chartData.horizontalChart.moneyLeftData.length > 0"
+                             [ngIfElse]="budgetSummaryError">
+                  <ngx-charts-bar-horizontal-normalized
+                    [results]="chartData.horizontalChart.moneyLeftData"
+                    [scheme]="'vivid'"
+                    [xAxisTickFormatting]="formatPercent"
+                    [animations]="false"
+                    [xAxis]="true">
+                    <ng-template #tooltipTemplate let-model="model">
+                      <div class="my-2">
+                        {{ model.name }} ({{ computePercent(model.value) }}) <br> {{ model.value }} PLN
+                      </div>
+                    </ng-template>
+                  </ngx-charts-bar-horizontal-normalized>
+                </ng-template>
+                <ng-template #budgetSummaryError>
+                  <app-error [errorType]="ErrorType.Application"
+                             [errorImage]="ErrorImage.PaymentErrorIcon"
+                             [notFoundErrorText]="'Payments data not found'"
+                             [secondaryErrorText]="'to display chart, create any payment'">
+                  </app-error>
+                </ng-template>
+              </div>
             </div>
           </div>
         </div>

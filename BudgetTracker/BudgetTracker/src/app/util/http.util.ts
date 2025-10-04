@@ -1,5 +1,6 @@
 import {ErrorModel, ResponseModel} from "../models/response.model";
 import {HttpResponse} from "@angular/common/http";
+import {TimerUtils} from "./timer.utils";
 
 export function generateErrorModel(err: any): ResponseModel {
   return {
