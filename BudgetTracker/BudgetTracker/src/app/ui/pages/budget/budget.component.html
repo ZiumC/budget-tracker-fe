@@ -208,7 +208,7 @@
           </ng-template>
           <ng-template #budgetErrorBlock>
             <app-error [errorType]="ErrorType.Request"
-                       [errorImage]="ErrorImage.Notfound"
+                       [errorImage]="ErrorImage.NotfoundFile"
                        [response]="responseModels.budget"
                        [notFoundErrorText]="formatString(appConfig.form.messages.notFound,'Budget data')">
 
@@ -298,8 +298,9 @@
                     <ng-template [ngIf]="chartData.pieChart.income.length == 0"
                                  [ngIfElse]="displayIncomeChart">
                       <app-error [errorType]="ErrorType.Application"
-                                 [errorImage]="ErrorImage.Notfound"
-                                 [notFoundErrorText]="'Chart data not found'">
+                                 [errorImage]="ErrorImage.ChartIcon"
+                                 [notFoundErrorText]="'No incomes found'"
+                                 [secondaryErrorText]="'to display charts, create income'">
                       </app-error>
                     </ng-template>
                     <ng-template #displayIncomeChart>
@@ -345,8 +346,9 @@
                     <ng-template [ngIf]="chartData.pieChart.planned.length == 0"
                                  [ngIfElse]="displayPlannedPaymentChart">
                       <app-error [errorType]="ErrorType.Application"
-                                 [errorImage]="ErrorImage.Notfound"
-                                 [notFoundErrorText]="'Chart data not found'">
+                                 [errorImage]="ErrorImage.ChartIcon"
+                                 [notFoundErrorText]="'No incomes found'"
+                                 [secondaryErrorText]="'to display charts, create income'">
                       </app-error>
                     </ng-template>
                     <ng-template #displayPlannedPaymentChart>
@@ -392,8 +394,9 @@
                     <ng-template [ngIf]="chartData.pieChart.regular.length == 0"
                                  [ngIfElse]="displayRegularPaymentChart">
                       <app-error [errorType]="ErrorType.Application"
-                                 [errorImage]="ErrorImage.Notfound"
-                                 [notFoundErrorText]="'Chart data not found'">
+                                 [errorImage]="ErrorImage.ChartIcon"
+                                 [notFoundErrorText]="'No incomes found'"
+                                 [secondaryErrorText]="'to display charts, create income'">
                       </app-error>
                     </ng-template>
                     <ng-template #displayRegularPaymentChart>
@@ -454,8 +457,8 @@
                     </ng-template>
                     <ng-template #generalCategoriesError>
                       <app-error [errorType]="ErrorType.Application"
-                                 [errorImage]="ErrorImage.Notfound"
-                                 [notFoundErrorText]="'Chart data not found'">
+                                 [errorImage]="ErrorImage.PaymentErrorIcon"
+                                 [notFoundErrorText]="'No paid payments found'">
                       </app-error>
                     </ng-template>
                   </div>
@@ -479,8 +482,9 @@
                   </ng-template>
                   <ng-template #budgetSummaryError>
                     <app-error [errorType]="ErrorType.Application"
-                               [errorImage]="ErrorImage.Notfound"
-                               [notFoundErrorText]="'Chart data not found'">
+                               [errorImage]="ErrorImage.PaymentErrorIcon"
+                               [notFoundErrorText]="'Payments data not found'"
+                               [secondaryErrorText]="'to display chart, create any payment'">
                     </app-error>
                   </ng-template>
                 </div>

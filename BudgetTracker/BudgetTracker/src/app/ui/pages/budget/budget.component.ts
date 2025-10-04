@@ -56,6 +56,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
   protected readonly BigNumber = BigNumber;
   protected readonly getPieChartClassFor = getPieChartClassFor;
   protected readonly getPieChartGridClassFor = getPieChartGridClassFor;
+  protected readonly subtract = subtract;
   protected appConfig: AppConfig;
   protected budgetDto: GetBudgetDto | null;
   protected subscriptions: Subscription[];
@@ -197,6 +198,9 @@ export class BudgetComponent implements OnInit, OnDestroy {
         next: (response: HttpResponse<GetBudgetGeneralCategoryDto>): void => {
           this.statisticsDto.generalCategories = response.body;
         },
+        error: (): void => {
+          this.chartData.pieChartGrid.generalCategories = [];
+        },
         complete: (): void => {
           this.chartData.pieChartGrid.generalCategories = generalCategoriesToPieChartGrid(this.statisticsDto.generalCategories);
         }
@@ -212,6 +216,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
           this.responseModels.budgetSummary.statusCode = response.status;
         },
         error: (err): void => {
+          this.chartData.horizontalChart.moneyLeftData = [];
           this.responseModels.budgetSummary.statusCode = err.status;
         },
         complete: (): void => {
@@ -255,7 +260,12 @@ export class BudgetComponent implements OnInit, OnDestroy {
             }
           }
         },
-        error: (): void => {
+        error: (err): void => {
+          if (err.status == 404) {
+            this.chartData.pieChart.income = [];
+            this.chartData.pieChart.planned = [];
+            this.chartData.pieChart.regular = [];
+          }
           this.markStatsAsLoaded(true);
         },
         complete: (): void => {
@@ -293,6 +303,4 @@ export class BudgetComponent implements OnInit, OnDestroy {
       this.loaders.statistics = isLoaded;
     }
   }
-
-  protected readonly subtract = subtract;
 }
