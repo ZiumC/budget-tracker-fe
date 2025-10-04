@@ -10,6 +10,7 @@ import {ErrorImage, ErrorType} from "../../../../models/error.model";
 export class ErrorComponent {
   @Input() response: ResponseModel;
   @Input() notFoundErrorText: string = "Data not found";
+  @Input() secondaryErrorText: string;
   @Input() errorType: ErrorType;
   @Input() errorImage: ErrorImage;
   protected readonly ErrorType = ErrorType;
