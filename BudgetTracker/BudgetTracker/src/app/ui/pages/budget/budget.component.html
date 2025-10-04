@@ -47,7 +47,7 @@
                         data-bs-placement="bottom"
                         title="Add planned payment"
                         (click)="appPlannedPayment.openModal()">
-                  <i class="bi bi-file-spreadsheet-fill"></i> Plan payment
+                  <i class="bi bi-file-spreadsheet-fill"></i> Planned
                 </button>
                 <button type="button"
                         [className]="innerWidth > appConfig.pageMobileWidth ? 'btn btn-success' : 'btn btn-success width-ex-20'"
@@ -55,7 +55,7 @@
                         data-bs-placement="bottom"
                         title="Add payment"
                         (click)="appPayment.openModal()">
-                  <i class="bi bi-coin"></i> Payment
+                  <i class="bi bi-coin"></i> Regular
                 </button>
                 <button type="button"
                         [className]="innerWidth > appConfig.pageMobileWidth ? 'btn btn-danger' : 'btn btn-danger width-ex-20'"
@@ -291,7 +291,7 @@
                 <ng-container *ngSwitchCase="BudgetTabs.IncomeTab">
                   <ng-template [ngIf]="!loaders.incomeCategories"
                                [ngIfElse]="loadedIncomes">
-                    <div class="my-3">
+                    <div class="my-5">
                       <app-spinner-grow></app-spinner-grow>
                     </div>
                   </ng-template>
@@ -347,7 +347,7 @@
                 <ng-container *ngSwitchCase="BudgetTabs.PlannedPaymentTab">
                   <ng-template [ngIf]="!loaders.plannedPaymentCategories"
                                [ngIfElse]="loadedPlanned">
-                    <div class="my-3">
+                    <div class="my-5">
                       <app-spinner-grow></app-spinner-grow>
                     </div>
                   </ng-template>
@@ -403,7 +403,7 @@
                 <ng-container *ngSwitchCase="BudgetTabs.RegularPaymentTab">
                   <ng-template [ngIf]="!loaders.regularPaymentCategories"
                                [ngIfElse]="loadedRegular">
-                    <div class="my-3">
+                    <div class="my-5">
                       <app-spinner-grow></app-spinner-grow>
                     </div>
                   </ng-template>
@@ -457,9 +457,10 @@
                   </ng-template>
                 </ng-container>
               </ng-container>
-              <ng-template [ngIf]="!loaders.budgetGeneralCategories && chartData.pieChartGrid.generalCategories.length == 0"
-                           [ngIfElse]="loadedBudgetCategories">
-                <div class="my-3">
+              <ng-template
+                [ngIf]="!loaders.budgetGeneralCategories && chartData.pieChartGrid.generalCategories.length == 0"
+                [ngIfElse]="loadedBudgetCategories">
+                <div class="my-5">
                   <app-spinner-grow></app-spinner-grow>
                 </div>
               </ng-template>
@@ -471,7 +472,7 @@
                     <ng-template [ngIf]="responseModels.budgetStats.statusCode != 200"
                                  [ngIfElse]="displayBudgetChart">
                       <app-error [errorType]="ErrorType.Application"
-                                 [errorImage]="ErrorImage.PaymentErrorIcon"
+                                 [errorImage]="ErrorImage.CardIcon"
                                  [notFoundErrorText]="'No paid payments found'">
                       </app-error>
                     </ng-template>
@@ -490,31 +491,39 @@
                   </div>
                 </div>
               </ng-template>
-              <label for="budget-usage">Budget usage</label>
-              <div id="budget-usage" class="horizontal-bar-chart mx-3">
-                <ng-template [ngIf]="chartData.horizontalChart.moneyLeftData.length > 0"
-                             [ngIfElse]="budgetSummaryError">
-                  <ngx-charts-bar-horizontal-normalized
-                    [results]="chartData.horizontalChart.moneyLeftData"
-                    [scheme]="'vivid'"
-                    [xAxisTickFormatting]="formatPercent"
-                    [animations]="false"
-                    [xAxis]="true">
-                    <ng-template #tooltipTemplate let-model="model">
-                      <div class="my-2">
-                        {{ model.name }} ({{ computePercent(model.value) }}) <br> {{ model.value }} PLN
-                      </div>
-                    </ng-template>
-                  </ngx-charts-bar-horizontal-normalized>
-                </ng-template>
-                <ng-template #budgetSummaryError>
-                  <app-error [errorType]="ErrorType.Application"
-                             [errorImage]="ErrorImage.PaymentErrorIcon"
-                             [notFoundErrorText]="'Payments data not found'"
-                             [secondaryErrorText]="'to display chart, create any payment'">
-                  </app-error>
-                </ng-template>
-              </div>
+              <ng-template [ngIf]="!loaders.budgetSummary && chartData.horizontalChart.moneyLeftData.length == 0"
+                           [ngIfElse]="loadedBudgetSummary">
+                <div class="my-5">
+                  <app-spinner-grow></app-spinner-grow>
+                </div>
+              </ng-template>
+              <ng-template #loadedBudgetSummary>
+                <label for="budget-usage">Budget usage</label>
+                <div id="budget-usage" class="horizontal-bar-chart mx-3">
+                  <ng-template [ngIf]="responseModels.budgetSummary.statusCode != 200"
+                               [ngIfElse]="displayBudgetSummary">
+                    <app-error [errorType]="ErrorType.Application"
+                               [errorImage]="ErrorImage.CardIcon"
+                               [notFoundErrorText]="'Payments data not found'"
+                               [secondaryErrorText]="'to display chart, create any payment'">
+                    </app-error>
+                  </ng-template>
+                  <ng-template #displayBudgetSummary>
+                    <ngx-charts-bar-horizontal-normalized
+                      [results]="chartData.horizontalChart.moneyLeftData"
+                      [scheme]="'vivid'"
+                      [xAxisTickFormatting]="formatPercent"
+                      [animations]="false"
+                      [xAxis]="true">
+                      <ng-template #tooltipTemplate let-model="model">
+                        <div class="my-2">
+                          {{ model.name }} ({{ computePercent(model.value) }}) <br> {{ model.value }} PLN
+                        </div>
+                      </ng-template>
+                    </ngx-charts-bar-horizontal-normalized>
+                  </ng-template>
+                </div>
+              </ng-template>
             </div>
           </div>
         </div>

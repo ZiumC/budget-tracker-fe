@@ -108,20 +108,13 @@ export class BudgetComponent implements OnInit, OnDestroy {
       moneyLeftData: []
     }
 
-    // this.statisticsDto = {
-    //   budgetSummary: null,
-    //   generalCategories: null,
-    //   income: [],
-    //   planned: [],
-    //   regular: []
-    // }
-
     this.loaders = {
       budget: false,
       incomeCategories: false,
       regularPaymentCategories: false,
       plannedPaymentCategories: false,
-      budgetGeneralCategories: false
+      budgetGeneralCategories: false,
+      budgetSummary: false
     }
 
     this.responseModels = {
@@ -219,6 +212,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
   }
 
   private getBudgetSummary(): void {
+    this.markBudgetSummaryAsLoaded(false);
     this.subscriptions.push(
       this.httpService.getBudgetSummary(this.idBudget).subscribe({
         next: (response: HttpResponse<GetBudgetSummaryDto>): void => {
@@ -226,10 +220,12 @@ export class BudgetComponent implements OnInit, OnDestroy {
           this.budgetSummary = responseData;
           this.responseModels.budgetSummary.statusCode = response.status;
           this.chartData.horizontalChart.moneyLeftData = budgetUsageToHorizontalChartData(responseData);
+          this.markBudgetSummaryAsLoaded(true);
         },
         error: (err): void => {
           this.chartData.horizontalChart.moneyLeftData = [];
           this.responseModels.budgetSummary.statusCode = err.status;
+          this.markBudgetSummaryAsLoaded(true);
         }
       })
     );
@@ -354,6 +350,19 @@ export class BudgetComponent implements OnInit, OnDestroy {
         });
     } else {
       this.loaders.budgetGeneralCategories = isLoaded;
+    }
+  }
+
+  private markBudgetSummaryAsLoaded(isLoaded: boolean): void {
+    if (isLoaded) {
+      new TimerUtils(this.appConfig.animation.duration.default).start()
+        .subscribe(finished => {
+          if (finished) {
+            this.loaders.budgetSummary = isLoaded;
+          }
+        });
+    } else {
+      this.loaders.budgetSummary = isLoaded;
     }
   }
 }
