@@ -18,6 +18,7 @@ import {generateErrorModel} from "../../../../util/http.util";
 import {CategoryType, GetPaymentCategoryDto} from "../../../../models/dto/category.model.dto";
 import {getPaymentType} from "../../../../util/category.utils";
 import {RequestModel} from "../../../../models/request.model";
+import BigNumber from "bignumber.js";
 
 @Component({
   selector: 'app-payment-modal',
@@ -133,6 +134,10 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
     const isPaid = String(this.paymentDto.isPaid);
     this.paymentDto.isPaid = JSON.parse(isPaid);
     this.paymentDto.idPaymentCategory = this.assignedCategoryDto.id;
+
+    if (!this.paymentDto.refund) {
+      this.paymentDto.refund = new BigNumber(0);
+    }
 
     new TimerUtils(this.appConfig.animation.duration.default).start()
       .subscribe(finished => {
