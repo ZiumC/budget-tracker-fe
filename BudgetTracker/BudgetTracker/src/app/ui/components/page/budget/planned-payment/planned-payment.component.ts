@@ -16,7 +16,7 @@ import {SubscriptionUtils} from "../../../../../util/subscription.utils";
 import {AppConfig} from "../../../../../models/config/config";
 import {RequestModel} from "../../../../../models/request.model";
 import {HttpResponse} from "@angular/common/http";
-import {GetPlannedPaymentDto} from "../../../../../models/dto/planned-payment.model.dto";
+import {GetPlannedPaymentDto, PlannedPaymentDto} from "../../../../../models/dto/planned-payment.model.dto";
 import {ResponseModel} from "../../../../../models/response.model";
 import {generateErrorModel} from "../../../../../util/http.util";
 import {formatString} from "../../../../../util/string.utils";
@@ -121,6 +121,17 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy, AfterViewInit
     this.onRefreshPlannedPayment();
   }
 
+  protected paidBtnDisabled(plannedPayment: GetPlannedPaymentDto): boolean {
+    let hasRealPrice = new BigNumber(plannedPayment.realPrice).toNumber() > 0;
+    let hasAssignment = false;
+
+    if (plannedPayment.assignment) {
+      hasAssignment = true;
+    }
+
+    return hasAssignment && hasRealPrice;
+  }
+
   protected onOrderEvent(orderOptions: OrderOptions): void {
     if (orderOptions.orderType.applyForApi) {
       this.requestParams.orderBy = orderOptions.orderType.value;
@@ -164,7 +175,6 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy, AfterViewInit
         },
         error: (err): void => {
           const response = generateErrorModel(err);
-          this.paymentResponseModel = response;
           this.errorModal.open(response);
           this.plannedPaymentStatusLoader = false;
         },
