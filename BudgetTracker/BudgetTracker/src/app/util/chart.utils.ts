@@ -138,7 +138,7 @@ export function budgetUsageToHorizontalChartData(data: GetBudgetSummaryDto | nul
   if (data) {
     const moneySpend = add(new BigNumber(data.regularPayment.paid), new BigNumber(data.plannedPayment.paid));
     const onlyIncomes = subtract(new BigNumber(data.income.wage), new BigNumber(data.income.savings));
-    const incomeLeft = subtract(onlyIncomes, moneySpend);
+    const incomeLeft = add(subtract(onlyIncomes, moneySpend), new BigNumber(data.income.surplus));
     result.push({
       name: 'Budget',
       series: [

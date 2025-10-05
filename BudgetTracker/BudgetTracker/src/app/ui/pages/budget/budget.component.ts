@@ -365,4 +365,6 @@ export class BudgetComponent implements OnInit, OnDestroy {
       this.loaders.budgetSummary = isLoaded;
     }
   }
+
+  protected readonly add = add;
 }
