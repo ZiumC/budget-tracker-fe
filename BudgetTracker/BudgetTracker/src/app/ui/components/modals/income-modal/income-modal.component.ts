@@ -36,13 +36,13 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
   protected appConfig: AppConfig;
   protected formConfig: FormConfig;
   protected subscriptions: Subscription[] = [];
-  protected responseModel: ResponseModel;
   protected incomeDto: IncomeDto;
   protected displayLoader: boolean;
   protected isEditing: boolean;
   protected isChildValid: boolean;
   protected incomeCategoriesDto: GetIncomeCategoryDto[] | null;
   protected assignedCategoryDto: GetIncomeCategoryDto;
+  protected selectedSurplusType: string = 'SurplusBudget';
   private idIncome: string;
 
   constructor(
@@ -58,7 +58,6 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.setDefaultIncomeForm();
     ModalUtils.defaultSettings(this.displayLoader, this.isEditing);
-    this.responseModel = new ResponseModel();
 
     const appCfg = this.configService.getAppConfig();
     if (appCfg) {
@@ -97,10 +96,10 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
     const wage = new BigNumber(this.incomeDto.wage).toNumber();
     const savings = new BigNumber(this.incomeDto.savings).toNumber();
 
-    if (savings > wage) {
+    if (wage < savings) {
       wageModel.control.setErrors({wageTooLow: true});
       savingsModel.control.setErrors({savingsTooBig: true});
-    } else {
+    } else if (wage >= savings) {
       wageModel.control.setErrors(null);
       savingsModel.control.setErrors(null);
     }
@@ -143,8 +142,8 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
       this.httpService.updateIncome(
         this.idIncome,
         this.incomeDto).subscribe({
-        next: (response: HttpResponse<any>): void => {
-          this.onRequestSuccess(response);
+        next: (): void => {
+          this.onRequestSuccess();
         },
         error: (err): void => {
           this.onRequestFailed(err);
@@ -158,8 +157,8 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
       this.httpService.createBudgetIncome(
         this.idBudget,
         this.incomeDto).subscribe({
-        next: (response: HttpResponse<any>): void => {
-          this.onRequestSuccess(response);
+        next: (): void => {
+          this.onRequestSuccess();
         },
         error: (err): void => {
           this.onRequestFailed(err);
@@ -168,17 +167,15 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
     )
   }
 
-  private onRequestSuccess(response: HttpResponse<any>): void {
+  private onRequestSuccess(): void {
     this.refreshIncomeEvent.emit(true);
-    this.responseModel.statusCode = response.status;
     this.modalService.dismissAll();
     this.displayLoader = false;
   }
 
   private onRequestFailed(err: any): void {
-    this.responseModel = generateErrorModel(err);
     this.displayLoader = false;
-    this.errorModal.open(this.responseModel);
+    this.errorModal.open(generateErrorModel(err));
   }
 
   private setDefaultIncomeForm(): void {

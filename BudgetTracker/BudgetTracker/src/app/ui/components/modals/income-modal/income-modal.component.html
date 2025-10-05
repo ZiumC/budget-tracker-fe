@@ -67,14 +67,17 @@
             <div class="col-md-6">
               <div [className]="ModalUtils.displayMarginFor(incomeWageInput)">
                 <label for="income-wage">Wage</label>
-                <span class="text-danger">*</span>
+                @if (selectedSurplusType != 'SurplusSavings'){
+                  <span class="text-danger">*</span>
+                }
                 <input
                   type="text"
                   id="income-wage"
                   name="income-wage"
                   class="form-control"
                   [(ngModel)]="incomeDto.wage"
-                  required
+                  [disabled]="selectedSurplusType == 'SurplusSavings'"
+                  [required]="selectedSurplusType == 'SurplusBudget'"
                   min="{{ formConfig.incomeModal.wage.minValue }}"
                   maxlength="{{ formConfig.incomeModal.wage.maxLength }}"
                   placeholder="{{ formConfig.incomeModal.placeholder }}"
@@ -107,6 +110,9 @@
             <div class="col-md-6">
               <div [className]="ModalUtils.displayMarginFor(incomeSavingsInput)">
                 <label for="income-savings">Savings</label>
+                @if (selectedSurplusType == 'SurplusSavings'){
+                  <span class="text-danger">*</span>
+                }
                 <input
                   type="text"
                   id="income-savings"
@@ -116,6 +122,7 @@
                   maxlength="{{ formConfig.incomeModal.wage.maxLength }}"
                   placeholder="{{ formConfig.incomeModal.placeholder }}"
                   pattern="{{ formConfig.regex.money }}"
+                  [required]="selectedSurplusType == 'SurplusSavings'"
                   (ngModelChange)="validateSavings(incomeWageInput, incomeSavingsInput)"
                   #incomeSavingsInput="ngModel"
                   [ngClass]="{
@@ -125,6 +132,9 @@
                 @if (incomeSavingsInput.invalid &&
                 (incomeSavingsInput.dirty || incomeSavingsInput.touched)) {
                   <div class="invalid-feedback">
+                    <label *ngIf="incomeSavingsInput.errors?.['required']">
+                      {{ formConfig.messages.required }}
+                    </label>
                     <label *ngIf="incomeSavingsInput.errors?.['pattern']">
                       {{ formatString(formConfig.messages.invalidFormat, "number") }}
                     </label>
@@ -165,6 +175,63 @@
               </div>
             }
           </div>
+          @if (incomeDto.isSurplus) {
+            <div class="mb-4">
+              <div class="row">
+                <div class="col justify-content-center d-flex">
+                  <div class="form-check">
+                    <input class="form-check-input"
+                           type="radio"
+                           id="surplusBudget"
+                           value="SurplusBudget"
+                           name="surplus-type"
+                           [(ngModel)]="selectedSurplusType"
+                           (click)="validateSavings(incomeWageInput, incomeSavingsInput)"
+                           checked>
+                    <label class="form-check-label" for="surplusBudget">
+                      Surplus goes to budget
+                      <a #tooltipSurplusBudget="ngbTooltip"
+                         class="info-tooltip"
+                         [ngbTooltip]="tipSurplusBudgetContent"
+                         (click)="tooltipSurplusBudget.open()">
+                        <i class="bi bi-info-circle-fill"></i>
+                      </a>
+                      <ng-template #tipSurplusBudgetContent>
+                        <p class="text-start mb-1">
+                          Surplus money will be added to budget and increases spend limit.
+                        </p>
+                      </ng-template>
+                    </label>
+                  </div>
+                </div>
+                <div class="col justify-content-center d-flex">
+                  <div class="form-check">
+                    <input class="form-check-input"
+                           type="radio"
+                           value="SurplusSavings"
+                           name="surplus-type"
+                           [(ngModel)]="selectedSurplusType"
+                           (click)="validateSavings(incomeWageInput, incomeSavingsInput)"
+                           id="surplusSavings">
+                    <label class="form-check-label" for="surplusSavings">
+                      Surplus goes to savings
+                      <a #tooltipSurplusSavings="ngbTooltip"
+                         class="info-tooltip"
+                         [ngbTooltip]="tipSurplusSavingsContent"
+                         (click)="tooltipSurplusSavings.open()">
+                        <i class="bi bi-info-circle-fill"></i>
+                      </a>
+                      <ng-template #tipSurplusSavingsContent>
+                        <p class="text-start mb-1">
+                          Surplus money will be added to savings.
+                        </p>
+                      </ng-template>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
           <app-typehead [categoriesDto]="incomeCategoriesDto"
                         [selectedCategoryDto]="assignedCategoryDto"
                         [assignmentComment]="incomeDto.assignmentComment"
