@@ -93,8 +93,11 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
   }
 
   protected validateSavings(wageModel: NgModel, savingsModel: NgModel): void {
-    const wage = new BigNumber(this.incomeDto.wage).toNumber();
+    const wage = new BigNumber(this.incomeDto.wage!).toNumber();
     const savings = new BigNumber(this.incomeDto.savings).toNumber();
+
+    wageModel.control.markAsTouched();
+    savingsModel.control.markAsTouched();
 
     if (wage < savings) {
       wageModel.control.setErrors({wageTooLow: true});
@@ -103,6 +106,11 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
       wageModel.control.setErrors(null);
       savingsModel.control.setErrors(null);
     }
+  }
+
+  protected onSurplusTypeChange(wageModel: NgModel): void {
+    wageModel.control.markAsTouched();
+    this.incomeDto.wage = null;
   }
 
   protected saveIncome(): void {
