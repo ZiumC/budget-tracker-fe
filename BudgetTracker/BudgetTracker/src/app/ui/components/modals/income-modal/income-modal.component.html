@@ -79,6 +79,7 @@
                   maxlength="{{ formConfig.incomeModal.wage.maxLength }}"
                   placeholder="{{ formConfig.incomeModal.placeholder }}"
                   pattern="{{ formConfig.regex.money }}"
+                  (ngModelChange)="validateSavings(incomeWageInput, incomeSavingsInput)"
                   #incomeWageInput="ngModel"
                   [ngClass]="{
               'is-invalid':incomeWageInput.invalid &&
@@ -96,6 +97,9 @@
                     <label *ngIf="incomeWageInput.errors?.['pattern']">
                       {{ formatString(formConfig.messages.invalidFormat, "number") }}
                     </label>
+                    <label *ngIf="incomeWageInput.errors?.['wageTooLow']">
+                      {{ formConfig.messages.wageTooLow }}
+                    </label>
                   </div>
                 }
               </div>
@@ -112,16 +116,20 @@
                   maxlength="{{ formConfig.incomeModal.wage.maxLength }}"
                   placeholder="{{ formConfig.incomeModal.placeholder }}"
                   pattern="{{ formConfig.regex.money }}"
+                  (ngModelChange)="validateSavings(incomeWageInput, incomeSavingsInput)"
                   #incomeSavingsInput="ngModel"
                   [ngClass]="{
-              'is-invalid':incomeSavingsInput.invalid &&
-                (incomeSavingsInput.dirty || incomeSavingsInput.touched),
-              'is-valid': incomeSavingsInput.valid }"/>
+                  'is-invalid':incomeSavingsInput.invalid &&
+                    (incomeSavingsInput.dirty || incomeSavingsInput.touched),
+                  'is-valid': incomeSavingsInput.valid }"/>
                 @if (incomeSavingsInput.invalid &&
                 (incomeSavingsInput.dirty || incomeSavingsInput.touched)) {
                   <div class="invalid-feedback">
                     <label *ngIf="incomeSavingsInput.errors?.['pattern']">
                       {{ formatString(formConfig.messages.invalidFormat, "number") }}
+                    </label>
+                    <label *ngIf="incomeSavingsInput.errors?.['savingsTooBig']">
+                      {{ formConfig.messages.savingsTooBig }}
                     </label>
                   </div>
                 }

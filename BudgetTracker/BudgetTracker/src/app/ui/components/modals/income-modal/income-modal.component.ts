@@ -16,6 +16,8 @@ import {TimerUtils} from "../../../../util/timer.utils";
 import {generateErrorModel} from "../../../../util/http.util";
 import {RequestModel} from "../../../../models/request.model";
 import {GetIncomeCategoryDto} from "../../../../models/dto/category.model.dto";
+import {NgModel} from "@angular/forms";
+import BigNumber from "bignumber.js";
 
 @Component({
   selector: 'app-income-modal',
@@ -89,6 +91,19 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
     }
 
     this.modalService.open(this.incomeModal, ModalOptions.default(ModalSize.BIG));
+  }
+
+  protected validateSavings(wageModel: NgModel, savingsModel: NgModel): void {
+    const wage = new BigNumber(this.incomeDto.wage).toNumber();
+    const savings = new BigNumber(this.incomeDto.savings).toNumber();
+
+    if (savings > wage) {
+      wageModel.control.setErrors({wageTooLow: true});
+      savingsModel.control.setErrors({savingsTooBig: true});
+    } else {
+      wageModel.control.setErrors(null);
+      savingsModel.control.setErrors(null);
+    }
   }
 
   protected saveIncome(): void {
