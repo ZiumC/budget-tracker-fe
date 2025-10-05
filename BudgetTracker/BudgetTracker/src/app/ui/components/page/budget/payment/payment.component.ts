@@ -170,7 +170,6 @@ export class PaymentComponent implements OnInit, OnDestroy, AfterViewInit {
         },
         error: (err): void => {
           const response = generateErrorModel(err);
-          this.paymentResponseModel = response;
           this.errorModal.open(response);
           this.paymentStatusLoader = false;
         },
