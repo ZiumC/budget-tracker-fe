@@ -113,6 +113,10 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
     this.incomeDto.isSurplus = JSON.parse(surplus);
     this.incomeDto.idIncomeCategory = this.assignedCategoryDto.id;
 
+    if (!this.incomeDto.savings) {
+      this.incomeDto.savings = new BigNumber(0);
+    }
+
     new TimerUtils(this.appConfig.animation.duration.default).start()
       .subscribe(finished => {
         if (finished) {

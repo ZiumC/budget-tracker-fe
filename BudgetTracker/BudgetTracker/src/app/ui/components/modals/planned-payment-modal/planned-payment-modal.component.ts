@@ -144,6 +144,10 @@ export class PlannedPaymentModalComponent implements OnInit, OnDestroy {
     this.plannedPaymentDto.isPaid = JSON.parse(isPaid);
     this.plannedPaymentDto.idPaymentCategory = this.assignedCategoryDto.id;
 
+    if (!this.plannedPaymentDto.realPrice){
+      this.plannedPaymentDto.realPrice = new BigNumber(0);
+    }
+
     new TimerUtils(this.appConfig.animation.duration.default).start()
       .subscribe(finished => {
         if (finished) {
