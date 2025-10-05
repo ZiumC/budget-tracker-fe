@@ -16,6 +16,7 @@ import {generateErrorModel} from "../../../../util/http.util";
 import {TimerUtils} from "../../../../util/timer.utils";
 import {CategoryType, GetPaymentCategoryDto} from "../../../../models/dto/category.model.dto";
 import {getPaymentType} from "../../../../util/category.utils";
+import BigNumber from "bignumber.js";
 import {RequestModel} from "../../../../models/request.model";
 
 @Component({
@@ -123,6 +124,10 @@ export class PlannedPaymentModalComponent implements OnInit, OnDestroy {
   protected onCategoryChanged(result: { category: GetPaymentCategoryDto, assignmentComment: string }): void {
     this.assignedCategoryDto = result.category;
     this.plannedPaymentDto.assignmentComment = result.assignmentComment;
+  }
+
+  protected paidStatusEnabled(): boolean {
+    return new BigNumber(this.plannedPaymentDto.realPrice).gt(0);
   }
 
   protected onClickedCategory(type?: CategoryType): void {
