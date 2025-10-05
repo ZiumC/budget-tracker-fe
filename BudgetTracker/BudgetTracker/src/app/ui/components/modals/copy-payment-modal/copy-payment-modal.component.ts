@@ -136,8 +136,10 @@ export class CopyPaymentModalComponent implements OnInit, OnDestroy {
           this.budgetsResponseModel.statusCode = response.status;
         },
         error: (err): void => {
+          if (err.status != 404){
+            this.errorModal.open(this.budgetsResponseModel);
+          }
           this.budgetsResponseModel = generateErrorModel(err);
-          this.errorModal.open(this.budgetsResponseModel);
           this.markBudgetsAsLoaded(true);
         },
         complete: (): void => {
