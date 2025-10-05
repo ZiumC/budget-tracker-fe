@@ -16,7 +16,7 @@ import {SubscriptionUtils} from "../../../../../util/subscription.utils";
 import {AppConfig} from "../../../../../models/config/config";
 import {RequestModel} from "../../../../../models/request.model";
 import {HttpResponse} from "@angular/common/http";
-import {GetPlannedPaymentDto, PlannedPaymentDto} from "../../../../../models/dto/planned-payment.model.dto";
+import {GetPlannedPaymentDto} from "../../../../../models/dto/planned-payment.model.dto";
 import {ResponseModel} from "../../../../../models/response.model";
 import {generateErrorModel} from "../../../../../util/http.util";
 import {formatString} from "../../../../../util/string.utils";
