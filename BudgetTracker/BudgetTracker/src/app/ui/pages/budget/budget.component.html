@@ -90,9 +90,12 @@
                           <td class="table-active budget-overview-total">
                             <strong>Total</strong>: {{
                               format(
-                                subtract(
-                                  BigNumber(budgetSummary!.income!.wage),
-                                  BigNumber(budgetSummary!.income!.savings)
+                                add(
+                                  subtract(
+                                    BigNumber(budgetSummary!.income!.wage),
+                                    BigNumber(budgetSummary!.income!.savings)
+                                  ),
+                                  BigNumber(budgetSummary!.income!.surplus)
                                 )
                               )
                             }} PLN
@@ -107,7 +110,7 @@
                                 Formula for <strong>total income</strong> calculation:<br>
                               </p>
                               <ul class="text-start mb-1">
-                                <li>Total = Wage - Savings</li>
+                                <li>Total = (Wage - Savings) + Surplus</li>
                               </ul>
                             </ng-template>
                           </td>
