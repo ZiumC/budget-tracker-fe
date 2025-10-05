@@ -26,6 +26,8 @@
         "tooFuture" : "{0} is too future",
         "equal": "{0} in both dates should be equal",
         "alreadyDefined": "Month already defined",
+        "savingsTooBig": "Savings can't be grater than Wage",
+        "wageTooLow": "Wage can't be less than Savings",
         "typeahead": {
           "notfound": "Categories not found"
         }

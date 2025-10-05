@@ -19,6 +19,8 @@ export interface Messages {
   range: string;
   equal: string;
   alreadyDefined: string;
+  wageTooLow: string;
+  savingsTooBig: string;
   typeahead: Typehead;
 }
 
