@@ -145,6 +145,7 @@
                   maxlength="{{ formConfig.paymentModal.refund.maxLength }}"
                   placeholder="{{formConfig.paymentModal.placeholder}}"
                   pattern="{{formConfig.regex.money}}"
+                  [disabled]="plannedPaymentDto.isPaid"
                   #plannedPaymentRealPriceInput="ngModel"
                   [ngClass]="{
                   'is-invalid': plannedPaymentRealPriceInput.invalid &&
