@@ -67,7 +67,7 @@
             <div class="col-md-6">
               <div [className]="ModalUtils.displayMarginFor(incomeWageInput)">
                 <label for="income-wage">Wage</label>
-                @if (selectedSurplusType != 'SurplusSavings'){
+                @if (selectedSurplusType != 'SurplusSavings') {
                   <span class="text-danger">*</span>
                 }
                 <input
@@ -85,9 +85,9 @@
                   (ngModelChange)="validateSavings(incomeWageInput, incomeSavingsInput)"
                   #incomeWageInput="ngModel"
                   [ngClass]="{
-              'is-invalid':incomeWageInput.invalid &&
-                (incomeWageInput.dirty || incomeWageInput.touched),
-              'is-valid': incomeWageInput.valid }"/>
+                  'is-invalid':incomeWageInput.invalid &&
+                    (incomeWageInput.dirty || incomeWageInput.touched),
+                  'is-valid': incomeWageInput.valid }"/>
                 @if (incomeWageInput.invalid &&
                 (incomeWageInput.dirty || incomeWageInput.touched)) {
                   <div class="invalid-feedback">
@@ -110,7 +110,7 @@
             <div class="col-md-6">
               <div [className]="ModalUtils.displayMarginFor(incomeSavingsInput)">
                 <label for="income-savings">Savings</label>
-                @if (selectedSurplusType == 'SurplusSavings'){
+                @if (selectedSurplusType == 'SurplusSavings') {
                   <span class="text-danger">*</span>
                 }
                 <input
@@ -186,7 +186,7 @@
                            value="SurplusBudget"
                            name="surplus-type"
                            [(ngModel)]="selectedSurplusType"
-                           (click)="validateSavings(incomeWageInput, incomeSavingsInput)"
+                           (ngModelChange)="onSurplusTypeChange(incomeWageInput)"
                            checked>
                     <label class="form-check-label" for="surplusBudget">
                       Surplus goes to budget
@@ -211,7 +211,7 @@
                            value="SurplusSavings"
                            name="surplus-type"
                            [(ngModel)]="selectedSurplusType"
-                           (click)="validateSavings(incomeWageInput, incomeSavingsInput)"
+                           (ngModelChange)="onSurplusTypeChange(incomeWageInput)"
                            id="surplusSavings">
                     <label class="form-check-label" for="surplusSavings">
                       Surplus goes to savings

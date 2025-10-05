@@ -2,7 +2,7 @@ import {GetIncomeAssignmentDto} from "./assignment.model.dto";
 
 export class IncomeDto {
   name: string;
-  wage: BigNumber;
+  wage: BigNumber | null;
   savings: BigNumber;
   isSurplus: boolean;
   idIncomeCategory: string;
