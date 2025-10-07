@@ -67,7 +67,7 @@
             <div class="col-md-6">
               <div [className]="ModalUtils.displayMarginFor(incomeWageInput)">
                 <label for="income-wage">Wage</label>
-                @if (selectedSurplusType != 'SurplusSavings') {
+                @if (!incomeDto.forSavings) {
                   <span class="text-danger">*</span>
                 }
                 <input
@@ -76,8 +76,8 @@
                   name="income-wage"
                   class="form-control"
                   [(ngModel)]="incomeDto.wage"
-                  [disabled]="selectedSurplusType == 'SurplusSavings'"
-                  [required]="selectedSurplusType == 'SurplusBudget'"
+                  [disabled]="incomeDto.forSavings"
+                  [required]="!incomeDto.forSavings"
                   min="{{ formConfig.incomeModal.wage.minValue }}"
                   maxlength="{{ formConfig.incomeModal.wage.maxLength }}"
                   placeholder="{{ formConfig.incomeModal.placeholder }}"
@@ -110,7 +110,7 @@
             <div class="col-md-6">
               <div [className]="ModalUtils.displayMarginFor(incomeSavingsInput)">
                 <label for="income-savings">Savings</label>
-                @if (selectedSurplusType == 'SurplusSavings') {
+                @if (incomeDto.forSavings) {
                   <span class="text-danger">*</span>
                 }
                 <input
@@ -122,7 +122,7 @@
                   maxlength="{{ formConfig.incomeModal.wage.maxLength }}"
                   placeholder="{{ formConfig.incomeModal.placeholder }}"
                   pattern="{{ formConfig.regex.money }}"
-                  [required]="selectedSurplusType == 'SurplusSavings'"
+                  [required]="incomeDto.forSavings"
                   (ngModelChange)="validateSavings(incomeWageInput, incomeSavingsInput)"
                   #incomeSavingsInput="ngModel"
                   [ngClass]="{
@@ -160,8 +160,8 @@
               'is-invalid': incomeSurplusSelect.invalid &&
                 (incomeSurplusSelect.dirty || incomeSurplusSelect.touched),
               'is-valid': incomeSurplusSelect.valid }">
-              <option value=false>Income isn't surplus</option>
-              <option value=true>Income is surplus</option>
+              <option [ngValue]="false">Income isn't surplus</option>
+              <option [ngValue]="true">Income is surplus</option>
             </select>
             @if (incomeSurplusSelect.invalid &&
             (incomeSurplusSelect.dirty || incomeSurplusSelect.touched)) {
@@ -183,11 +183,10 @@
                     <input class="form-check-input"
                            type="radio"
                            id="surplusBudget"
-                           value="SurplusBudget"
                            name="surplus-type"
-                           [(ngModel)]="selectedSurplusType"
-                           (ngModelChange)="onSurplusTypeChange(incomeWageInput)"
-                           checked>
+                           [value]="false"
+                           [(ngModel)]="incomeDto.forSavings"
+                           (ngModelChange)="onSurplusTypeChange(incomeWageInput)">
                     <label class="form-check-label" for="surplusBudget">
                       Surplus goes to budget
                       <a #tooltipSurplusBudget="ngbTooltip"
@@ -208,9 +207,9 @@
                   <div class="form-check">
                     <input class="form-check-input"
                            type="radio"
-                           value="SurplusSavings"
                            name="surplus-type"
-                           [(ngModel)]="selectedSurplusType"
+                           [value]="true"
+                           [(ngModel)]="incomeDto.forSavings"
                            (ngModelChange)="onSurplusTypeChange(incomeWageInput)"
                            id="surplusSavings">
                     <label class="form-check-label" for="surplusSavings">

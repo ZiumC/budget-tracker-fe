@@ -5,6 +5,7 @@ export class IncomeDto {
   wage: BigNumber | null;
   savings: BigNumber;
   isSurplus: boolean;
+  forSavings: boolean;
   idIncomeCategory: string;
   assignmentComment: string;
 }
@@ -15,6 +16,7 @@ export class GetIncomeDto {
   wage: BigNumber;
   savings: BigNumber;
   isSurplus: boolean;
+  forSavings: boolean;
   dateUpdated: Date;
   assignment: GetIncomeAssignmentDto | null;
 }
