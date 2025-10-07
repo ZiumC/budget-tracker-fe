@@ -2,7 +2,6 @@ import {Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} fr
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {Subscription} from "rxjs";
 import {HttpService} from "../../../../services/http/http.service";
-import {ResponseModel} from "../../../../models/response.model";
 import {SubscriptionUtils} from "../../../../util/subscription.utils";
 import {SpinnerSize} from "../../shared/spinner/spinner.component";
 import {HttpResponse} from "@angular/common/http";
@@ -42,7 +41,6 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
   protected isChildValid: boolean;
   protected incomeCategoriesDto: GetIncomeCategoryDto[] | null;
   protected assignedCategoryDto: GetIncomeCategoryDto;
-  protected selectedSurplusType: string = 'SurplusBudget';
   private idIncome: string;
 
   constructor(
@@ -81,6 +79,8 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
       this.incomeDto.wage = incomeData.wage;
       this.incomeDto.savings = incomeData.savings;
       this.incomeDto.isSurplus = incomeData.isSurplus;
+      this.incomeDto.forSavings = incomeData.forSavings;
+
 
       const incomeAssignment = incomeData.assignment;
       if (incomeAssignment) {
@@ -109,8 +109,8 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
   }
 
   protected onSurplusTypeChange(wageModel: NgModel): void {
-    wageModel.control.markAsTouched();
     this.incomeDto.wage = null;
+    wageModel.control.markAsTouched();
   }
 
   protected saveIncome(): void {
@@ -122,6 +122,10 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
 
     if (!this.incomeDto.savings) {
       this.incomeDto.savings = new BigNumber(0);
+    }
+
+    if (!this.incomeDto.wage) {
+      this.incomeDto.wage = new BigNumber(0);
     }
 
     new TimerUtils(this.appConfig.animation.duration.default).start()
@@ -190,6 +194,7 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
     this.incomeDto = {
       name: "",
       isSurplus: false,
+      forSavings: false,
       idIncomeCategory: "",
       assignmentComment: ""
     } as IncomeDto;
@@ -216,5 +221,4 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
       order: categoriesOrder.orderDirections[0].value
     } as RequestModel;
   }
-
 }
