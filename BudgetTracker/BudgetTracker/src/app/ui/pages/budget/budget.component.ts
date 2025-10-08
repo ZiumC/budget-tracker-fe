@@ -23,7 +23,7 @@ import {
 import {ErrorImage, ErrorType} from "../../../models/error.model";
 import {DataResult, Loaders, StatisticsTab} from "../../../models/components/budget.component";
 import {
-  budgetUsageToHorizontalChartData,
+  budgetUsageToHorizontalChartData, computePercent,
   formatPercent, generalCategoriesToPieChartGrid,
   getPieChartClassFor,
   getPieChartGridClassFor,
@@ -183,14 +183,6 @@ export class BudgetComponent implements OnInit, OnDestroy {
         this.getBudgetGeneralCategoryStats();
       }
     }
-  }
-
-  protected computePercent(moneyCategory: number): string {
-    let totalMoney = new BigNumber(0);
-    for (let money of this.chartData.horizontalChart.moneyLeftData[0].series) {
-      totalMoney = add(totalMoney, new BigNumber(money.value));
-    }
-    return format(new BigNumber((moneyCategory / totalMoney.toNumber()) * 100)) + "%";
   }
 
   private getBudgetGeneralCategoryStats(): void {
@@ -369,4 +361,5 @@ export class BudgetComponent implements OnInit, OnDestroy {
 
   protected readonly BudgetPlannedPayment = BudgetPlannedPayment;
   protected readonly BudgetRegularPayment = BudgetRegularPayment;
+  protected readonly computePercent = computePercent;
 }

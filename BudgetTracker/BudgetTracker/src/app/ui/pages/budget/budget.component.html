@@ -543,7 +543,13 @@
                       [xAxis]="true">
                       <ng-template #tooltipTemplate let-model="model">
                         <div class="my-2">
-                          {{ model.name }} ({{ computePercent(model.value) }}) <br> {{ model.value }} PLN
+                          {{ model.name }}
+                          ({{
+                            format(
+                              computePercent(model.value, chartData.horizontalChart.moneyLeftData[0].series)
+                            )
+                          }}%)
+                          <br> {{ model.value }} PLN
                         </div>
                       </ng-template>
                     </ngx-charts-bar-horizontal-normalized>
