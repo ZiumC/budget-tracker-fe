@@ -81,15 +81,27 @@
                         <tr class="text-start">
                           <td>
                             <ul class="mb-0">
-                              <li>Wage: {{ format(BudgetIncome.computeWage(budgetSummary)) }} PLN</li>
-                              <li>Savings: {{ format(BudgetIncome.computeSavings(budgetSummary)) }} PLN</li>
+                              <li>Wage: {{
+                                  format(
+                                    BudgetIncome.computeWage(budgetSummary)
+                                  )
+                                }} PLN
+                              </li>
+                              <li>Savings: {{
+                                  format(
+                                    BudgetIncome.computeSavings(budgetSummary)
+                                  )
+                                }} PLN
+                              </li>
                             </ul>
                           </td>
                         </tr>
                         <tr>
                           <td class="table-active budget-overview-total">
                             <strong>Total</strong>: {{
-                              format(BudgetIncome.computeTotal(budgetSummary))
+                              format(
+                                BudgetIncome.computeTotal(budgetSummary)
+                              )
                             }} PLN
                             <a #tooltipIncomes="ngbTooltip"
                                class="info-tooltip"
@@ -121,16 +133,28 @@
                         <tr class="text-start">
                           <td>
                             <ul class="mb-0">
-                              <li>Estimated: {{ format(BudgetPlannedPayment.computeEstimated(budgetSummary)) }}PLN
+                              <li>Estimated: {{
+                                  format(
+                                    BudgetPlannedPayment.computeEstimated(budgetSummary)
+                                  )
+                                }} PLN
                               </li>
-                              <li>Real price: {{ format(BudgetPlannedPayment.computeRealPrice(budgetSummary)) }}PLN
+                              <li>Real price: {{
+                                  format(
+                                    BudgetPlannedPayment.computeRealPrice(budgetSummary)
+                                  )
+                                }} PLN
                               </li>
                             </ul>
                           </td>
                         </tr>
                         <tr>
                           <td class="table-active budget-overview-total">
-                            <strong>Total</strong>: {{ format(BudgetPlannedPayment.computeEstimated(budgetSummary)) }}
+                            <strong>Total</strong>: {{
+                              format(
+                                BudgetPlannedPayment.computeTotal(budgetSummary)
+                              )
+                            }}
                             PLN
                             <a #tooltipPlanned="ngbTooltip"
                                class="info-tooltip"
@@ -162,13 +186,28 @@
                         <tr class="text-start">
                           <td>
                             <ul class="mb-0">
-                              <li>Price: {{ format(budgetSummary!.regularPayment!.price) }} PLN</li>
-                              <li>Refund: {{ format(budgetSummary!.regularPayment!.refund) }} PLN</li>
+                              <li>Price: {{
+                                  format(
+                                    BudgetRegularPayment.computePrice(budgetSummary)
+                                  )
+                                }} PLN
+                              </li>
+                              <li>Refund: {{
+                                  format(
+                                    BudgetRegularPayment.computeRefund(budgetSummary)
+                                  )
+                                }} PLN
+                              </li>
                             </ul>
                           </td>
                         </tr>
                         <tr>
                           <td class="table-active budget-overview-total">
+                            <strong>Total</strong>: {{
+                              format(
+                                BudgetRegularPayment.computeTotal(budgetSummary)
+                              )
+                            }} PLN PLN
                             <a #tooltipRegular="ngbTooltip"
                                class="info-tooltip"
                                [ngbTooltip]="tipRegularContent"

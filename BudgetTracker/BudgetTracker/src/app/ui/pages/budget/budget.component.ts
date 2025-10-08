@@ -35,7 +35,7 @@ import {
   transformToRegularDto,
 } from "../../../util/chart.utils";
 import {add, format} from "../../../util/number.util";
-import {BudgetIncome, BudgetPlannedPayment} from "../../../util/statistic.utils";
+import {BudgetIncome, BudgetPlannedPayment, BudgetRegularPayment} from "../../../util/statistic.utils";
 
 @Component({
   selector: 'app-budget',
@@ -368,4 +368,5 @@ export class BudgetComponent implements OnInit, OnDestroy {
   }
 
   protected readonly BudgetPlannedPayment = BudgetPlannedPayment;
+  protected readonly BudgetRegularPayment = BudgetRegularPayment;
 }
