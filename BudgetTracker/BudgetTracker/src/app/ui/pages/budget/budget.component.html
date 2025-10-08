@@ -81,23 +81,15 @@
                         <tr class="text-start">
                           <td>
                             <ul class="mb-0">
-                              <li>Wage: {{ format(budgetSummary!.income!.wage) }} PLN</li>
-                              <li>Savings: {{ format(budgetSummary!.income!.savings) }} PLN</li>
+                              <li>Wage: {{ format(BudgetIncome.computeWage(budgetSummary)) }} PLN</li>
+                              <li>Savings: {{ format(BudgetIncome.computeSavings(budgetSummary)) }} PLN</li>
                             </ul>
                           </td>
                         </tr>
                         <tr>
                           <td class="table-active budget-overview-total">
                             <strong>Total</strong>: {{
-                              format(
-                                add(
-                                  subtract(
-                                    BigNumber(budgetSummary!.income!.wage),
-                                    BigNumber(budgetSummary!.income!.savings)
-                                  ),
-                                  BigNumber(budgetSummary!.income!.surplus)
-                                )
-                              )
+                              format(BudgetIncome.computeTotal(budgetSummary))
                             }} PLN
                             <a #tooltipIncomes="ngbTooltip"
                                class="info-tooltip"
@@ -110,7 +102,7 @@
                                 Formula for <strong>total income</strong> calculation:<br>
                               </p>
                               <ul class="text-start mb-1">
-                                <li>Total = (Wage - Savings) + Surplus</li>
+                                <li>Total = (Wage + Budget surplus) - (Savings + Savings surplus)</li>
                               </ul>
                             </ng-template>
                           </td>
@@ -129,16 +121,16 @@
                         <tr class="text-start">
                           <td>
                             <ul class="mb-0">
-                              <li>Estimated: {{ format(budgetSummary!.plannedPayment!.estimated) }}PLN
+                              <li>Estimated: {{ format(BudgetPlannedPayment.computeEstimated(budgetSummary)) }}PLN
                               </li>
-                              <li>Real price: {{ format(budgetSummary!.plannedPayment!.realPrice) }}PLN
+                              <li>Real price: {{ format(BudgetPlannedPayment.computeRealPrice(budgetSummary)) }}PLN
                               </li>
                             </ul>
                           </td>
                         </tr>
                         <tr>
                           <td class="table-active budget-overview-total">
-                            <strong>Total</strong>: {{ format(budgetSummary!.plannedPayment!.estimated) }}
+                            <strong>Total</strong>: {{ format(BudgetPlannedPayment.computeEstimated(budgetSummary)) }}
                             PLN
                             <a #tooltipPlanned="ngbTooltip"
                                class="info-tooltip"
@@ -177,14 +169,6 @@
                         </tr>
                         <tr>
                           <td class="table-active budget-overview-total">
-                            <strong>Total</strong>: {{
-                              format(
-                                subtract(
-                                  BigNumber(budgetSummary!.regularPayment!.price),
-                                  BigNumber(budgetSummary!.regularPayment!.refund)
-                                )
-                              )
-                            }} PLN
                             <a #tooltipRegular="ngbTooltip"
                                class="info-tooltip"
                                [ngbTooltip]="tipRegularContent"

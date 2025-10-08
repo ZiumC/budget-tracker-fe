@@ -34,7 +34,8 @@ import {
   transformToPlannedDto,
   transformToRegularDto,
 } from "../../../util/chart.utils";
-import {add, format, subtract} from "../../../util/number.util";
+import {add, format} from "../../../util/number.util";
+import {BudgetIncome, BudgetPlannedPayment} from "../../../util/statistic.utils";
 
 @Component({
   selector: 'app-budget',
@@ -55,7 +56,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
   protected readonly BigNumber = BigNumber;
   protected readonly getPieChartClassFor = getPieChartClassFor;
   protected readonly getPieChartGridClassFor = getPieChartGridClassFor;
-  protected readonly subtract = subtract;
+  protected readonly BudgetIncome = BudgetIncome;
   protected appConfig: AppConfig;
   protected budgetDto: GetBudgetDto | null;
   protected subscriptions: Subscription[];
@@ -366,5 +367,5 @@ export class BudgetComponent implements OnInit, OnDestroy {
     }
   }
 
-  protected readonly add = add;
+  protected readonly BudgetPlannedPayment = BudgetPlannedPayment;
 }
