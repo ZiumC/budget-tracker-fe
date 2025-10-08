@@ -40,5 +40,6 @@ class BudgetSummaryRegularPayment {
 class BudgetSummaryIncome {
   wage: BigNumber;
   savings: BigNumber;
-  surplus: BigNumber;
+  budgetSurplus: BigNumber;
+  savingsSurplus: BigNumber;
 }

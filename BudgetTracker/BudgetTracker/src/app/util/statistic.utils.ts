@@ -1,33 +1,111 @@
-import {
-  GetIncomeStatsDto,
-  GetPlannedPaymentStatsDto,
-  GetRegularPaymentStatsDto
-} from "../models/statistics.model";
+import BigNumber from "bignumber.js";
+import {GetBudgetSummaryDto} from "../models/dto/budget.model.dto";
+import {add, subtract} from "./number.util";
 
-export enum StatisticType {
-  INCOME = 'income',
-  PLANNED_PAYMENT = 'planned payment',
-  REGULAR_PAYMENT = 'regular payment',
-  UNKNOWN = 'unknown'
-}
-
-export function getStatisticType(
-  data: GetIncomeStatsDto |
-    GetRegularPaymentStatsDto |
-    GetPlannedPaymentStatsDto |
-    null): StatisticType {
-
-  let result: StatisticType = StatisticType.UNKNOWN;
-  if (data) {
-    for (let [key, value] of Object.entries(data)) {
-      if ('IncomeSum' in value && 'SavingsSum' in value) {
-        return StatisticType.INCOME;
-      } else if ('PriceSum' in value && 'RefundSum' in value) {
-        return StatisticType.REGULAR_PAYMENT;
-      } else if ('PriceSum' in value && 'EstimatedSum' in value) {
-        return StatisticType.PLANNED_PAYMENT;
-      }
+export class BudgetIncome {
+  static computeSavings(budgetSummaryDto: GetBudgetSummaryDto | null): BigNumber {
+    if (!budgetSummaryDto) {
+      return new BigNumber(0);
     }
+
+    const budgetIncome = budgetSummaryDto.income;
+    if (!budgetIncome) {
+      return new BigNumber(0);
+    }
+
+    const savings = new BigNumber(budgetIncome.savings);
+    const surplusSavings = new BigNumber(budgetIncome.savingsSurplus);
+
+    return add(savings, surplusSavings);
   }
-  return result;
+
+  static computeWage(budgetSummaryDto: GetBudgetSummaryDto | null): BigNumber {
+    if (!budgetSummaryDto) {
+      return new BigNumber(0);
+    }
+
+    const budgetIncome = budgetSummaryDto.income;
+    if (!budgetIncome) {
+      return new BigNumber(0);
+    }
+
+    const wage = new BigNumber(budgetIncome.wage);
+    const budgetSurplus = new BigNumber(budgetIncome.budgetSurplus);
+
+    return add(wage, budgetSurplus);
+  }
+
+  static computeTotal(budgetSummaryDto: GetBudgetSummaryDto | null): BigNumber {
+    const budgetWage = BudgetIncome.computeWage(budgetSummaryDto);
+    const budgetSavings = BudgetIncome.computeSavings(budgetSummaryDto);
+
+    return subtract(budgetWage, budgetSavings);
+  }
 }
+
+export class BudgetPlannedPayment {
+  static computeEstimated(budgetSummaryDto: GetBudgetSummaryDto | null): BigNumber {
+    if (!budgetSummaryDto) {
+      return new BigNumber(0);
+    }
+
+    const budgetPlanned = budgetSummaryDto.plannedPayment;
+    if (!budgetPlanned) {
+      return new BigNumber(0);
+    }
+
+    return new BigNumber(budgetPlanned.estimated);
+  }
+
+  static computeRealPrice(budgetSummaryDto: GetBudgetSummaryDto | null): BigNumber {
+    if (!budgetSummaryDto) {
+      return new BigNumber(0);
+    }
+
+    const budgetPlanned = budgetSummaryDto.plannedPayment;
+    if (!budgetPlanned) {
+      return new BigNumber(0);
+    }
+
+    return new BigNumber(budgetPlanned.realPrice);
+  }
+
+  static computeTotal(budgetSummaryDto: GetBudgetSummaryDto | null): BigNumber {
+    return BudgetPlannedPayment.computeEstimated(budgetSummaryDto);
+  }
+}
+
+// static function computeBudgetSavings(budgetSummaryDto: GetBudgetSummaryDto | null): BigNumber {
+//   if (!budgetSummaryDto){
+//     return new BigNumber(0);
+//   }
+//
+//   const budgetIncome = budgetSummaryDto.income;
+//   if (!budgetIncome) {
+//     return new BigNumber(0);
+//   }
+//
+//   const savings = new BigNumber(budgetIncome.savings);
+//   const surplusSavings = new BigNumber(budgetIncome.savingsSurplus);
+//
+//   return add(savings, surplusSavings);
+// }
+
+// export function computeBudgetTotalIncome(budgetSummaryDto: GetBudgetSummaryDto | null): BigNumber {
+//   if (!budgetSummaryDto) {
+//     return new BigNumber(0);
+//   }
+//
+//   const budgetSavings = computeBudgetSavings(budgetSummaryDto);
+//   const budgetIncome = budgetSummaryDto.income;
+//   if (!budgetIncome) {
+//     return new BigNumber(0);
+//   }
+//
+//   const wage = new BigNumber(budgetIncome.wage);
+//   const budgetSurplus = new BigNumber(budgetIncome.budgetSurplus);
+//
+//   const budgetWage = add(wage, budgetSurplus);
+//
+//   return subtract(budgetWage, budgetSavings);
+// }
