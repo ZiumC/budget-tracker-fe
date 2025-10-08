@@ -182,5 +182,13 @@ export function generalCategoriesToPieChartGrid(data: GetBudgetGeneralCategoryDt
   return result;
 }
 
+export function computePercent(moneyCategory: number, chartData: ChartDataResult[]): BigNumber {
+  let totalMoney = new BigNumber(0);
+  for (let money of chartData) {
+    totalMoney = add(totalMoney, new BigNumber(money.value));
+  }
+  return new BigNumber((moneyCategory / totalMoney.toNumber()) * 100);
+}
+
 
 

@@ -3,22 +3,6 @@ import {GetBudgetSummaryDto} from "../models/dto/budget.model.dto";
 import {add, subtract} from "./number.util";
 
 export class BudgetIncome {
-  static computeSavings(budgetSummaryDto: GetBudgetSummaryDto | null): BigNumber {
-    if (!budgetSummaryDto) {
-      return new BigNumber(0);
-    }
-
-    const budgetIncome = budgetSummaryDto.income;
-    if (!budgetIncome) {
-      return new BigNumber(0);
-    }
-
-    const savings = new BigNumber(budgetIncome.savings);
-    const surplusSavings = new BigNumber(budgetIncome.savingsSurplus);
-
-    return add(savings, surplusSavings);
-  }
-
   static computeWage(budgetSummaryDto: GetBudgetSummaryDto | null): BigNumber {
     if (!budgetSummaryDto) {
       return new BigNumber(0);
@@ -33,6 +17,22 @@ export class BudgetIncome {
     const budgetSurplus = new BigNumber(budgetIncome.budgetSurplus);
 
     return add(wage, budgetSurplus);
+  }
+
+  static computeSavings(budgetSummaryDto: GetBudgetSummaryDto | null): BigNumber {
+    if (!budgetSummaryDto) {
+      return new BigNumber(0);
+    }
+
+    const budgetIncome = budgetSummaryDto.income;
+    if (!budgetIncome) {
+      return new BigNumber(0);
+    }
+
+    const savings = new BigNumber(budgetIncome.savings);
+    const surplusSavings = new BigNumber(budgetIncome.savingsSurplus);
+
+    return add(savings, surplusSavings);
   }
 
   static computeTotal(budgetSummaryDto: GetBudgetSummaryDto | null): BigNumber {
