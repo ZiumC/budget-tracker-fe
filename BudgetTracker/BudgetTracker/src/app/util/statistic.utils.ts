@@ -75,37 +75,38 @@ export class BudgetPlannedPayment {
   }
 }
 
-// static function computeBudgetSavings(budgetSummaryDto: GetBudgetSummaryDto | null): BigNumber {
-//   if (!budgetSummaryDto){
-//     return new BigNumber(0);
-//   }
-//
-//   const budgetIncome = budgetSummaryDto.income;
-//   if (!budgetIncome) {
-//     return new BigNumber(0);
-//   }
-//
-//   const savings = new BigNumber(budgetIncome.savings);
-//   const surplusSavings = new BigNumber(budgetIncome.savingsSurplus);
-//
-//   return add(savings, surplusSavings);
-// }
+export class BudgetRegularPayment {
+  static computePrice(budgetSummaryDto: GetBudgetSummaryDto | null) {
+    if (!budgetSummaryDto) {
+      return new BigNumber(0);
+    }
 
-// export function computeBudgetTotalIncome(budgetSummaryDto: GetBudgetSummaryDto | null): BigNumber {
-//   if (!budgetSummaryDto) {
-//     return new BigNumber(0);
-//   }
-//
-//   const budgetSavings = computeBudgetSavings(budgetSummaryDto);
-//   const budgetIncome = budgetSummaryDto.income;
-//   if (!budgetIncome) {
-//     return new BigNumber(0);
-//   }
-//
-//   const wage = new BigNumber(budgetIncome.wage);
-//   const budgetSurplus = new BigNumber(budgetIncome.budgetSurplus);
-//
-//   const budgetWage = add(wage, budgetSurplus);
-//
-//   return subtract(budgetWage, budgetSavings);
-// }
+    const budgetRegular = budgetSummaryDto.regularPayment;
+    if (!budgetRegular) {
+      return new BigNumber(0);
+    }
+
+    return new BigNumber(budgetRegular.price);
+  }
+
+  static computeRefund(budgetSummaryDto: GetBudgetSummaryDto | null) {
+    if (!budgetSummaryDto) {
+      return new BigNumber(0);
+    }
+
+    const budgetRegular = budgetSummaryDto.regularPayment;
+    if (!budgetRegular) {
+      return new BigNumber(0);
+    }
+
+    return new BigNumber(budgetRegular.refund);
+  }
+
+  static computeTotal(budgetSummaryDto: GetBudgetSummaryDto | null) {
+    const regularPrice = BudgetRegularPayment.computePrice(budgetSummaryDto);
+    const regularRefund = BudgetRegularPayment.computeRefund(budgetSummaryDto);
+
+    return subtract(regularPrice, regularRefund);
+  }
+}
+
