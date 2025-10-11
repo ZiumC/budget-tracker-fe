@@ -10,7 +10,7 @@ import {DatePicker} from "../../../models/datepicker.model";
 import {TimerUtils} from "../../../util/timer.utils";
 import {getCookie, setCookie} from "../../../util/cookie.utils";
 import {GetBudgetDto} from "../../../models/dto/budget.model.dto";
-import {IndexResponse, ResponseModel} from "../../../models/response.model";
+import {DashboardResponse, ResponseModel} from "../../../models/response.model";
 import {AppConfig} from "../../../models/config/config";
 import {FormConfig} from "../../../models/config/form.model.config";
 import {ConfigService} from "../../../services/config/config.service";
@@ -19,6 +19,7 @@ import {formatString} from "../../../util/string.utils";
 import {ModalUtils} from "../../../util/modal.utils";
 import {generateErrorModel} from "../../../util/http.util";
 import {ErrorImage, ErrorType} from "../../../models/error.model";
+import {Loaders} from "../../../models/components/dashboard.component";
 
 @Component({
   selector: 'app-dashboard',
@@ -43,9 +44,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
   protected fromDatePicker: DatePicker;
   protected toDatePicker: DatePicker;
   protected toCurrentYear: boolean;
-  protected indexResponse: IndexResponse;
+  protected responseModels: DashboardResponse;
   protected idRefreshBudget: string;
-  protected loaders: any;
+  protected loaders: Loaders;
   public innerWidth: any;
 
   constructor(private httpService: HttpService,
@@ -89,14 +90,16 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     this.budgets = [];
     this.subscriptions = [];
-    this.indexResponse = {
+    this.responseModels = {
       budgets: new ResponseModel(),
-      budget: new ResponseModel()
+      budget: new ResponseModel(),
+      statistics: new ResponseModel()
     }
 
     this.loaders = {
       page: false,
-      budget: false,
+      budgets: false,
+      statistics: false
     }
 
     this.getBudgets(this.requestModel);
@@ -115,7 +118,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   protected reloadPage(): void {
     this.markPageAsLoaded(false);
-    this.indexResponse.budgets = new ResponseModel();
+    this.responseModels.budgets = new ResponseModel();
     this.getBudgets(this.requestModel);
   }
 
@@ -123,10 +126,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     if (idBudget) {
       this.markBudgetAsLoaded(false);
       this.idRefreshBudget = idBudget;
-      this.indexResponse.budget = new ResponseModel();
+      this.responseModels.budget = new ResponseModel();
       this.getBudget(idBudget);
     } else {
-      this.errorModal.open(this.indexResponse);
+      this.errorModal.open(this.responseModels);
     }
   }
 
@@ -203,10 +206,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.httpService.getBudget(idBudget).subscribe({
         next: (response: HttpResponse<GetBudgetDto>): void => {
           this.budget = response.body;
-          this.indexResponse.budget.statusCode = response.status
+          this.responseModels.budget.statusCode = response.status
         },
         error: (err): void => {
-          this.indexResponse.budget = generateErrorModel(err);
+          this.responseModels.budget = generateErrorModel(err);
           this.markBudgetAsLoaded(true);
         },
         complete: (): void => {
@@ -226,10 +229,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.httpService.getBudgets(requestParamModel).subscribe({
         next: (response: HttpResponse<GetBudgetDto[]>): void => {
           this.budgets = response.body;
-          this.indexResponse.budgets.statusCode = response.status
+          this.responseModels.budgets.statusCode = response.status
         },
         error: (err): void => {
-          this.indexResponse.budgets = generateErrorModel(err);
+          this.responseModels.budgets = generateErrorModel(err);
           this.markPageAsLoaded(true);
         },
         complete: (): void => {
@@ -257,11 +260,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
       new TimerUtils(this.appConfig.timer.duration.default).start()
         .subscribe(finished => {
           if (finished) {
-            this.loaders.budget = value;
+            this.loaders.budgets = value;
           }
         });
     } else {
-      this.loaders.budget = value;
+      this.loaders.budgets = value;
     }
   }
 
