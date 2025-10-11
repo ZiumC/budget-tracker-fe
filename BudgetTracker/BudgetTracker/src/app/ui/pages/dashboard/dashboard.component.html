@@ -161,12 +161,12 @@
       <app-spinner [size]="SpinnerSize.BIG"></app-spinner>
     </ng-template>
     <ng-template #loadedDashboard>
-      <ng-template [ngIf]="indexResponse.budgets.statusCode == appConfig.response.required.budgetStatus"
+      <ng-template [ngIf]="responseModels.budgets.statusCode == appConfig.response.required.budgetStatus"
                    [ngIfElse]="errorBudgetsBlock">
         <div [className]="budgetCardContainerClass()">
           @for (budget of budgets; track budget.id; ) {
             <div class="card border-dark my-3 budget-card">
-              <ng-template [ngIf]="!loaders.budget && budget.id == idRefreshBudget"
+              <ng-template [ngIf]="!loaders.budgets && budget.id == idRefreshBudget"
                            [ngIfElse]="displayBudget">
                 <div class="mx-auto my-auto">
                   <div class="my-3 mx-3">
@@ -235,14 +235,44 @@
       <ng-template #errorBudgetsBlock>
         <app-error [errorType]="ErrorType.Request"
                    [errorImage]="ErrorImage.NotfoundFile"
-                   [response]="indexResponse.budgets"
+                   [response]="responseModels.budgets"
                    [notFoundErrorText]="formatString(appConfig.form.messages.notFound, 'Budgets')">
         </app-error>
       </ng-template>
     </ng-template>
-    <ng-template>
+    <div class="row mt-5">
+      <div class="col">
+        <div class="card text-center mb-3">
+          <div class="card-header">
+            Statistics
+          </div>
+          <div id="statistics-card" class="card-body">
+            <ng-template [ngIf]="!loaders.statistics"
+                         [ngIfElse]="loadedStatistics">
+              <div class="my-5">
+                <app-spinner-grow></app-spinner-grow>
+              </div>
+            </ng-template>
+            <ng-template #loadedStatistics>
+              <ng-template [ngIf]="responseModels.statistics.statusCode != 200"
+                           [ngIfElse]="displayCharts">
+                <app-error [errorType]="ErrorType.Application"
+                           [errorImage]="ErrorImage.ChartIcon"
+                           [notFoundErrorText]="'Unable to fetch charts'"
+                           [secondaryErrorText]="'or chart data not found'">
+                </app-error>
+              </ng-template>
+              <ng-template #displayCharts>
+                <label for="general-categories">Categories</label>
+                <div id="general-categories" class="mx-2 my-2">
 
-    </ng-template>
+                </div>
+              </ng-template>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+    </div>
     <app-budget-modal #budgetModal
                       (refreshPageEvent)="reloadPage()"
                       (updateBudgetEvent)="updateBudget($event)">
