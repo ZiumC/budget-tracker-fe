@@ -21,11 +21,11 @@ import {generateErrorModel} from "../../../util/http.util";
 import {ErrorImage, ErrorType} from "../../../models/error.model";
 
 @Component({
-  selector: 'app-index',
-  templateUrl: './index.component.html',
-  styleUrl: './index.component.css'
+  selector: 'app-dashboard',
+  templateUrl: './dashboard.component.html',
+  styleUrl: './dashboard.component.css'
 })
-export class IndexComponent implements OnInit, OnDestroy {
+export class DashboardComponent implements OnInit, OnDestroy {
   @ViewChild('errorModal') errorModal: any;
   protected readonly formatString = formatString;
   protected readonly ModalUtils = ModalUtils;
