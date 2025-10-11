@@ -92,6 +92,16 @@
                                     BudgetIncome.computeSavings(budgetSummary)
                                   )
                                 }} PLN
+                                <a #tooltipIncomeSavings="ngbTooltip"
+                                   class="info-tooltip"
+                                   [ngbTooltip]="tipIncomeSavingsContent"
+                                   (click)="tooltipIncomeSavings.open()">
+                                  <i class="bi bi-info-circle"></i>
+                                </a>
+                                <ng-template #tipIncomeSavingsContent>
+                                  Budget savings = {{ format(budgetSummary?.income?.savings) }} PLN
+                                  Surplus savings = {{ format(budgetSummary?.income?.savingsSurplus) }} PLN
+                                </ng-template>
                               </li>
                             </ul>
                           </td>
@@ -114,7 +124,7 @@
                                 Formula for <strong>total income</strong> calculation:<br>
                               </p>
                               <ul class="text-start mb-1">
-                                <li>Total = (Wage + Budget surplus) - (Savings + Savings surplus)</li>
+                                <li>Total = (Wage + Budget surplus) - Budget savings</li>
                               </ul>
                             </ng-template>
                           </td>
@@ -207,7 +217,7 @@
                               format(
                                 BudgetRegularPayment.computeTotal(budgetSummary)
                               )
-                            }} PLN PLN
+                            }} PLN
                             <a #tooltipRegular="ngbTooltip"
                                class="info-tooltip"
                                [ngbTooltip]="tipRegularContent"

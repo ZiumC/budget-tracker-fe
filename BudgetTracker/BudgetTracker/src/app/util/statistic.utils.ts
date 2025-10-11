@@ -37,9 +37,18 @@ export class BudgetIncome {
 
   static computeTotal(budgetSummaryDto: GetBudgetSummaryDto | null): BigNumber {
     const budgetWage = BudgetIncome.computeWage(budgetSummaryDto);
-    const budgetSavings = BudgetIncome.computeSavings(budgetSummaryDto);
+    if (!budgetSummaryDto) {
+      return new BigNumber(0);
+    }
 
-    return subtract(budgetWage, budgetSavings);
+    const budgetIncome = budgetSummaryDto.income;
+    if (!budgetIncome) {
+      return new BigNumber(0);
+    }
+
+    const savings = new BigNumber(budgetIncome.savings);
+
+    return subtract(budgetWage, savings);
   }
 }
 
