@@ -7,7 +7,7 @@ import {HeaderComponent} from './ui/components/shared/header/header.component';
 import {NgbDateParserFormatter, NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {HttpClientModule} from '@angular/common/http';
 import {CommonModule} from '@angular/common';
-import {IndexComponent} from './ui/pages/index/index.component';
+import {DashboardComponent} from './ui/pages/dashboard/dashboard.component';
 import {SpinnerComponent} from './ui/components/shared/spinner/spinner.component';
 import {ErrorComponent} from './ui/components/shared/error/error.component';
 import {BudgetComponent} from './ui/pages/budget/budget.component';
@@ -50,7 +50,7 @@ export function loadConfig(configService: ConfigService): () => Promise<Config> 
   declarations: [
     AppComponent,
     HeaderComponent,
-    IndexComponent,
+    DashboardComponent,
     SpinnerComponent,
     ErrorComponent,
     BudgetComponent,

@@ -156,11 +156,11 @@
       </div>
     </div>
     <ng-template [ngIf]="!loaders.page"
-                 [ngIfElse]="loadedBlock">
+                 [ngIfElse]="loadedDashboard">
       <div class="mt-5"></div>
       <app-spinner [size]="SpinnerSize.BIG"></app-spinner>
     </ng-template>
-    <ng-template #loadedBlock>
+    <ng-template #loadedDashboard>
       <ng-template [ngIf]="indexResponse.budgets.statusCode == appConfig.response.required.budgetStatus"
                    [ngIfElse]="errorBudgetsBlock">
         <div [className]="budgetCardContainerClass()">
@@ -239,6 +239,9 @@
                    [notFoundErrorText]="formatString(appConfig.form.messages.notFound, 'Budgets')">
         </app-error>
       </ng-template>
+    </ng-template>
+    <ng-template>
+
     </ng-template>
     <app-budget-modal #budgetModal
                       (refreshPageEvent)="reloadPage()"
