@@ -4,7 +4,13 @@ import {Injectable} from "@angular/core";
 import {RequestModel} from "../../models/request.model";
 import {GetIncomeDto, IncomeDto} from "../../models/dto/income.model.dto";
 import {PaymentDto, PaymentStatusDto} from "../../models/dto/payment.model.dto";
-import {BudgetDto, GetBudgetGeneralCategoryDto, GetBudgetDto, GetBudgetSummaryDto} from "../../models/dto/budget.model.dto";
+import {
+  BudgetDto,
+  GetBudgetGeneralCategoryDto,
+  GetBudgetDto,
+  GetBudgetStatisticsSummaryDto,
+  GetBudgetSummaryDto
+} from "../../models/dto/budget.model.dto";
 import {PageDto} from "../../models/dto/page.model.dto";
 import {
   PaymentCategoryDto,
@@ -293,9 +299,17 @@ export class HttpService {
   }
 
   public getBudgetSummary(idBudget: string):
-    Observable<HttpResponse<GetBudgetSummaryDto>> {
-    return this.httpClient.get<GetBudgetSummaryDto>(
+    Observable<HttpResponse<GetBudgetStatisticsSummaryDto>> {
+    return this.httpClient.get<GetBudgetStatisticsSummaryDto>(
       StatisticUrls.budgetStats(idBudget),
+      {observe: 'response'}
+    )
+  }
+
+  public getBudgetSummaryInRange(requestParams: RequestModel):
+    Observable<HttpResponse<GetBudgetSummaryDto[]>> {
+    return this.httpClient.get<GetBudgetSummaryDto[]>(
+      StatisticUrls.budgetStatsInRange(requestParams),
       {observe: 'response'}
     )
   }
@@ -328,6 +342,14 @@ export class HttpService {
     Observable<HttpResponse<GetBudgetGeneralCategoryDto>>{
     return this.httpClient.get<GetBudgetGeneralCategoryDto>(
       StatisticUrls.budgetGeneralCategories(idBudget),
+      {observe: 'response'}
+    );
+  }
+
+  public getBudgetGeneralCategoriesInRange(requestParams: RequestModel):
+    Observable<HttpResponse<GetBudgetGeneralCategoryDto[]>>{
+    return this.httpClient.get<GetBudgetGeneralCategoryDto[]>(
+      StatisticUrls.budgetGeneralCategoriesInRange(requestParams),
       {observe: 'response'}
     );
   }

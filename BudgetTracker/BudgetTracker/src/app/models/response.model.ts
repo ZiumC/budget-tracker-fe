@@ -12,12 +12,6 @@ export class ErrorModel {
   statusCode: string;
 }
 
-export class DashboardResponse {
-  budgets: ResponseModel;
-  budget: ResponseModel;
-  statistics: ResponseModel;
-}
-
 export class BudgetResponse {
   budget: ResponseModel;
   incomes: ResponseModel;

@@ -1,3 +1,6 @@
+import {ResponseModel} from "../response.model";
+import {RequestModel} from "../request.model";
+
 export enum IncomeStatisticsTab {
   BudgetTab = 'BudgetTab',
   SurplusTab = 'SurplusTab'
@@ -11,6 +14,19 @@ export enum PaymentStatisticsTab {
 export class Loaders {
   page: boolean;
   budgets: boolean;
-  statistics: boolean;
+  budgetSummary: boolean;
+  budgetCategories: boolean;
 }
 
+export class DashboardResponse {
+  budgets: ResponseModel;
+  budget: ResponseModel;
+  budgetSummary: ResponseModel;
+  budgetCategories: ResponseModel;
+}
+
+export class DashboardRequestModel {
+  budgets: RequestModel;
+  budgetSummary: RequestModel;
+  budgetCategories: RequestModel;
+}

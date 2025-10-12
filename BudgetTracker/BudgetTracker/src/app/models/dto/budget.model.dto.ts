@@ -14,6 +14,12 @@ export class GetBudgetDto {
 }
 
 export class GetBudgetSummaryDto {
+  budgetName: string;
+  dateStart: Date;
+  statistics: GetBudgetStatisticsSummaryDto;
+}
+
+export class GetBudgetStatisticsSummaryDto {
   plannedPayment: BudgetSummaryPlannedPayment;
   regularPayment: BudgetSummaryRegularPayment;
   income: BudgetSummaryIncome
