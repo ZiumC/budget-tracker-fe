@@ -247,28 +247,30 @@
             Statistics
           </div>
           <div id="statistics-card" class="card-body">
-            <ng-template [ngIf]="!loaders.statistics"
-                         [ngIfElse]="loadedStatistics">
-              <div class="my-5">
-                <app-spinner-grow></app-spinner-grow>
-              </div>
-            </ng-template>
-            <ng-template #loadedStatistics>
-              <ng-template [ngIf]="responseModels.statistics.statusCode != 200"
-                           [ngIfElse]="displayCharts">
-                <app-error [errorType]="ErrorType.Application"
-                           [errorImage]="ErrorImage.ChartIcon"
-                           [notFoundErrorText]="'Unable to fetch charts'"
-                           [secondaryErrorText]="'or chart data not found'">
-                </app-error>
-              </ng-template>
-              <ng-template #displayCharts>
-                <label for="general-categories">Categories</label>
-                <div id="general-categories" class="mx-2 my-2">
-
+            <div class="text-start">
+              <label for="general-categories">Budget categories</label>
+            </div>
+            <div id="general-categories" class="mx-2 my-2">
+              <ng-template [ngIf]="!loaders.budgetCategories"
+                           [ngIfElse]="loadedCategories">
+                <div class="my-5">
+                  <app-spinner-grow></app-spinner-grow>
                 </div>
               </ng-template>
-            </ng-template>
+              <ng-template #loadedCategories>
+                <ng-template [ngIf]="responseModels.budgetCategories.statusCode != 200"
+                             [ngIfElse]="displayCategoriesChart">
+                  <app-error [errorType]="ErrorType.Application"
+                             [errorImage]="ErrorImage.ChartIcon"
+                             [notFoundErrorText]="'Unable to fetch budget categories chart'"
+                             [secondaryErrorText]="'or chart data not found'">
+                  </app-error>
+                </ng-template>
+                <ng-template #displayCategoriesChart>
+                  <p>dupa</p>
+                </ng-template>
+              </ng-template>
+            </div>
           </div>
         </div>
       </div>

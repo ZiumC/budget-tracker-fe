@@ -5,7 +5,7 @@ import {
 import {add, subtract} from "./number.util";
 import BigNumber from "bignumber.js";
 import {HorizontalBarDataResult, ChartDataResult} from "../models/charts.model";
-import {GetBudgetGeneralCategoryDto, GetBudgetSummaryDto} from "../models/dto/budget.model.dto";
+import {GetBudgetGeneralCategoryDto, GetBudgetStatisticsSummaryDto} from "../models/dto/budget.model.dto";
 
 export function formatPercent(input: string): string {
   return `${input}%`
@@ -132,7 +132,7 @@ export function plannedPaymentToPieChartData(plannedDetails: PlannedPaymentCateg
   return result;
 }
 
-export function budgetUsageToHorizontalChartData(data: GetBudgetSummaryDto | null): HorizontalBarDataResult[] {
+export function budgetUsageToHorizontalChartData(data: GetBudgetStatisticsSummaryDto | null): HorizontalBarDataResult[] {
   let result: HorizontalBarDataResult[] = [];
 
   if (data) {

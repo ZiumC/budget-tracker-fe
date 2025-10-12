@@ -10,7 +10,7 @@ import {DatePicker} from "../../../models/datepicker.model";
 import {TimerUtils} from "../../../util/timer.utils";
 import {getCookie, setCookie} from "../../../util/cookie.utils";
 import {GetBudgetDto} from "../../../models/dto/budget.model.dto";
-import {DashboardResponse, ResponseModel} from "../../../models/response.model";
+import {ResponseModel} from "../../../models/response.model";
 import {AppConfig} from "../../../models/config/config";
 import {FormConfig} from "../../../models/config/form.model.config";
 import {ConfigService} from "../../../services/config/config.service";
@@ -19,7 +19,7 @@ import {formatString} from "../../../util/string.utils";
 import {ModalUtils} from "../../../util/modal.utils";
 import {generateErrorModel} from "../../../util/http.util";
 import {ErrorImage, ErrorType} from "../../../models/error.model";
-import {Loaders} from "../../../models/components/dashboard.component";
+import {DashboardRequestModel, DashboardResponse, Loaders} from "../../../models/components/dashboard.component";
 
 @Component({
   selector: 'app-dashboard',
@@ -40,7 +40,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   protected budgets: GetBudgetDto[] | null;
   protected budget: GetBudgetDto | null;
   protected subscriptions: Subscription[];
-  protected requestModel: RequestModel;
+  protected dashboardRequestModel: DashboardRequestModel;
   protected fromDatePicker: DatePicker;
   protected toDatePicker: DatePicker;
   protected toCurrentYear: boolean;
@@ -63,9 +63,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
       throw Error("Config not provided")
     }
 
-    this.requestModel = new RequestModel();
-    this.requestModel.page = this.requestConfig.pagination.defaultPage;
-    this.requestModel.pageSize = this.requestConfig.pagination.defaultBudgetsPageSize;
+    this.dashboardRequestModel = {
+      budgets: new RequestModel(),
+      budgetSummary: new RequestModel(),
+      budgetCategories: new RequestModel()
+    }
+    this.dashboardRequestModel.budgets.page = this.requestConfig.pagination.defaultPage;
+    this.dashboardRequestModel.budgets.pageSize = this.requestConfig.pagination.defaultBudgetsPageSize;
 
     const dateFromCookie = this.readDateCookie(this.requestConfig.cookies.names.fromDate);
     const dateToCookie = this.readDateCookie(this.requestConfig.cookies.names.toDate);
@@ -84,8 +88,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
         DatePickerUtil.lastDayOfCurrentYear();
     }
 
-    this.requestModel.fromDate = DatePickerUtil.formatDatePicker(this.fromDatePicker);
-    this.requestModel.toDate = DatePickerUtil.formatDatePicker(this.toDatePicker);
+    this.dashboardRequestModel.budgets.fromDate = DatePickerUtil.formatDatePicker(this.fromDatePicker);
+    this.dashboardRequestModel.budgets.toDate = DatePickerUtil.formatDatePicker(this.toDatePicker);
     this.toCurrentYear = !this.isCurrentYear();
 
     this.budgets = [];
@@ -93,16 +97,18 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.responseModels = {
       budgets: new ResponseModel(),
       budget: new ResponseModel(),
-      statistics: new ResponseModel()
+      budgetSummary: new ResponseModel(),
+      budgetCategories: new ResponseModel()
     }
 
     this.loaders = {
       page: false,
       budgets: false,
-      statistics: false
+      budgetSummary: false,
+      budgetCategories: false
     }
 
-    this.getBudgets(this.requestModel);
+    this.getBudgets(this.dashboardRequestModel.budgets);
     this.onResize();
   }
 
@@ -119,7 +125,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   protected reloadPage(): void {
     this.markPageAsLoaded(false);
     this.responseModels.budgets = new ResponseModel();
-    this.getBudgets(this.requestModel);
+    this.getBudgets(this.dashboardRequestModel.budgets);
   }
 
   protected updateBudget(idBudget: string): void {
@@ -147,8 +153,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
       toDate = DatePickerUtil.convertToDate(this.toDatePicker);
     }
 
-    this.requestModel.fromDate = DateUtil.format(fromDate);
-    this.requestModel.toDate = DateUtil.format(toDate);
+    this.dashboardRequestModel.budgets.fromDate = DateUtil.format(fromDate);
+    this.dashboardRequestModel.budgets.toDate = DateUtil.format(toDate);
 
     this.saveDateCookie(this.requestConfig.cookies.names.fromDate, fromDate);
     this.saveDateCookie(this.requestConfig.cookies.names.toDate, toDate);

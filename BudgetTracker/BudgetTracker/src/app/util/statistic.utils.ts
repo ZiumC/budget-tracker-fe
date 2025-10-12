@@ -1,9 +1,9 @@
 import BigNumber from "bignumber.js";
-import {GetBudgetSummaryDto} from "../models/dto/budget.model.dto";
+import {GetBudgetStatisticsSummaryDto} from "../models/dto/budget.model.dto";
 import {add, subtract} from "./number.util";
 
 export class BudgetIncome {
-  static computeWage(budgetSummaryDto: GetBudgetSummaryDto | null): BigNumber {
+  static computeWage(budgetSummaryDto: GetBudgetStatisticsSummaryDto | null): BigNumber {
     if (!budgetSummaryDto) {
       return new BigNumber(0);
     }
@@ -19,7 +19,7 @@ export class BudgetIncome {
     return add(wage, budgetSurplus);
   }
 
-  static computeSavings(budgetSummaryDto: GetBudgetSummaryDto | null): BigNumber {
+  static computeSavings(budgetSummaryDto: GetBudgetStatisticsSummaryDto | null): BigNumber {
     if (!budgetSummaryDto) {
       return new BigNumber(0);
     }
@@ -35,7 +35,7 @@ export class BudgetIncome {
     return add(savings, surplusSavings);
   }
 
-  static computeTotal(budgetSummaryDto: GetBudgetSummaryDto | null): BigNumber {
+  static computeTotal(budgetSummaryDto: GetBudgetStatisticsSummaryDto | null): BigNumber {
     const budgetWage = BudgetIncome.computeWage(budgetSummaryDto);
     if (!budgetSummaryDto) {
       return new BigNumber(0);
@@ -53,7 +53,7 @@ export class BudgetIncome {
 }
 
 export class BudgetPlannedPayment {
-  static computeEstimated(budgetSummaryDto: GetBudgetSummaryDto | null): BigNumber {
+  static computeEstimated(budgetSummaryDto: GetBudgetStatisticsSummaryDto | null): BigNumber {
     if (!budgetSummaryDto) {
       return new BigNumber(0);
     }
@@ -66,7 +66,7 @@ export class BudgetPlannedPayment {
     return new BigNumber(budgetPlanned.estimated);
   }
 
-  static computeRealPrice(budgetSummaryDto: GetBudgetSummaryDto | null): BigNumber {
+  static computeRealPrice(budgetSummaryDto: GetBudgetStatisticsSummaryDto | null): BigNumber {
     if (!budgetSummaryDto) {
       return new BigNumber(0);
     }
@@ -79,13 +79,13 @@ export class BudgetPlannedPayment {
     return new BigNumber(budgetPlanned.realPrice);
   }
 
-  static computeTotal(budgetSummaryDto: GetBudgetSummaryDto | null): BigNumber {
+  static computeTotal(budgetSummaryDto: GetBudgetStatisticsSummaryDto | null): BigNumber {
     return BudgetPlannedPayment.computeEstimated(budgetSummaryDto);
   }
 }
 
 export class BudgetRegularPayment {
-  static computePrice(budgetSummaryDto: GetBudgetSummaryDto | null) {
+  static computePrice(budgetSummaryDto: GetBudgetStatisticsSummaryDto | null) {
     if (!budgetSummaryDto) {
       return new BigNumber(0);
     }
@@ -98,7 +98,7 @@ export class BudgetRegularPayment {
     return new BigNumber(budgetRegular.price);
   }
 
-  static computeRefund(budgetSummaryDto: GetBudgetSummaryDto | null) {
+  static computeRefund(budgetSummaryDto: GetBudgetStatisticsSummaryDto | null) {
     if (!budgetSummaryDto) {
       return new BigNumber(0);
     }
@@ -111,7 +111,7 @@ export class BudgetRegularPayment {
     return new BigNumber(budgetRegular.refund);
   }
 
-  static computeTotal(budgetSummaryDto: GetBudgetSummaryDto | null) {
+  static computeTotal(budgetSummaryDto: GetBudgetStatisticsSummaryDto | null) {
     const regularPrice = BudgetRegularPayment.computePrice(budgetSummaryDto);
     const regularRefund = BudgetRegularPayment.computeRefund(budgetSummaryDto);
 

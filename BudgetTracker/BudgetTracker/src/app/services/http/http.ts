@@ -177,6 +177,23 @@ export class StatisticUrls {
     return result + StatisticUrls.ACTIONS.BUDGET + "/" + idBudget;
   }
 
+  static budgetStatsInRange(requestParams: RequestModel): string {
+    let queryResult = HostUrl.getHostUrl() + StatisticUrls.CONTROLLER +
+      StatisticUrls.ACTIONS.BUDGET + "?";
+    const fromDate = requestParams.fromDate;
+    const toDate = requestParams.toDate;
+
+    if (fromDate) {
+      queryResult = queryResult + "fromDate=" + fromDate;
+    }
+
+    if (toDate) {
+      queryResult = queryResult + "&toDate=" + toDate;
+    }
+
+    return queryResult;
+  }
+
   static budgetIncomeStats(idBudget: string): string {
     let result = HostUrl.getHostUrl() + StatisticUrls.CONTROLLER + StatisticUrls.ACTIONS.BUDGET;
     return result + "/" + idBudget + StatisticUrls.ACTIONS.INCOMES;
@@ -195,6 +212,22 @@ export class StatisticUrls {
   static budgetGeneralCategories(idBudget: string): string {
     let result = HostUrl.getHostUrl() + StatisticUrls.CONTROLLER + StatisticUrls.ACTIONS.BUDGET;
     return result + "/" + idBudget + StatisticUrls.ACTIONS.GENERAL_CATEGORIES;
+  }
+
+  static budgetGeneralCategoriesInRange(requestParams: RequestModel): string {
+    let queryResult = HostUrl.getHostUrl() + StatisticUrls.CONTROLLER +
+      StatisticUrls.ACTIONS.BUDGET + StatisticUrls.ACTIONS.GENERAL_CATEGORIES + "?";
+    const fromDate = requestParams.fromDate;
+    const toDate = requestParams.toDate;
+
+    if (fromDate) {
+      queryResult = queryResult + "fromDate=" + fromDate;
+    }
+
+    if (toDate) {
+      queryResult = queryResult + "&toDate=" + toDate;
+    }
+    return queryResult;
   }
 }
 

@@ -8,7 +8,7 @@ import {HttpService} from "../../../services/http/http.service";
 import {ActivatedRoute, Params, Router} from "@angular/router";
 import {HttpResponse} from "@angular/common/http";
 import {SubscriptionUtils} from "../../../util/subscription.utils";
-import {GetBudgetDto, GetBudgetGeneralCategoryDto, GetBudgetSummaryDto} from "../../../models/dto/budget.model.dto";
+import {GetBudgetDto, GetBudgetGeneralCategoryDto, GetBudgetStatisticsSummaryDto} from "../../../models/dto/budget.model.dto";
 import {AppConfig} from "../../../models/config/config";
 import {ConfigService} from "../../../services/config/config.service";
 import {formatString} from "../../../util/string.utils";
@@ -63,7 +63,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
   protected responseModels: BudgetResponse;
   protected idBudget: string;
   protected loaders: Loaders;
-  protected budgetSummary: GetBudgetSummaryDto | null;
+  protected budgetSummary: GetBudgetStatisticsSummaryDto | null;
   protected chartData: DataResult = new DataResult();
   protected currentTab: StatisticsTab;
   public innerWidth: any;
@@ -208,7 +208,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
     this.markBudgetSummaryAsLoaded(false);
     this.subscriptions.push(
       this.httpService.getBudgetSummary(this.idBudget).subscribe({
-        next: (response: HttpResponse<GetBudgetSummaryDto>): void => {
+        next: (response: HttpResponse<GetBudgetStatisticsSummaryDto>): void => {
           const responseData = response.body;
           this.budgetSummary = responseData;
           this.responseModels.budgetSummary.statusCode = response.status;
