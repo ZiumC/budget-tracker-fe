@@ -257,8 +257,7 @@
               <div class="text-start">
                 <label for="general-categories">Budget categories</label>
               </div>
-              <div id="general-categories" class="mx-2 my-2"
-                   [className]="getPieChartClassFor(chartData.budgetCategories, isMobileView())">
+              <div id="general-categories" class="mx-2 my-2 mobile-doughnut-height">
                 <ng-template [ngIf]="responseModels.budgetCategories.statusCode != 200"
                              [ngIfElse]="displayCategoriesChart">
                   <app-error [errorType]="ErrorType.Application"
@@ -267,38 +266,15 @@
                   </app-error>
                 </ng-template>
                 <ng-template #displayCategoriesChart>
-                  <ng-container [ngSwitch]="isMobileView()">
-                    <ng-container *ngSwitchCase="true">
-                      <ngx-charts-advanced-pie-chart
-                        [results]="chartData.budgetCategories"
-                        [scheme]="'forest'"
-                        [animations]="true">
-                        <ng-template #tooltipTemplate let-model="model">
-                          <div class="my-2">
-                            {{ model.name }} <br> {{ model.value }} PLN
-                          </div>
-                        </ng-template>
-                      </ngx-charts-advanced-pie-chart>
-                    </ng-container>
-                    <ng-container *ngSwitchCase="false">
-                      <ngx-charts-pie-chart
-                        [results]="chartData.budgetCategories"
-                        [arcWidth]="0.4"
-                        [scheme]="'forest'"
-                        [labels]="true"
-                        [legend]="true"
-                        [legendPosition]="LegendPosition.Right"
-                        [legendTitle]="'Categories'"
-                        [animations]="true"
-                        [doughnut]="true">
-                        <ng-template #tooltipTemplate let-model="model">
-                          <div class="my-2">
-                            {{ model.name }} <br> {{ model.value }} PLN
-                          </div>
-                        </ng-template>
-                      </ngx-charts-pie-chart>
-                    </ng-container>
-                  </ng-container>
+                  <ngx-charts-pie-grid
+                    [results]="chartData.budgetCategories"
+                    [animations]="true"
+                    [customColors]="[
+                         {name: 'Needs',value: '#ff3d00'},
+                         {name: 'Wants',value: '#1f7bc6'},
+                         {name: 'Savings',value: '#00b862'},
+                       ]">
+                  </ngx-charts-pie-grid>
                 </ng-template>
               </div>
             </ng-template>
@@ -322,29 +298,46 @@
                   </app-error>
                 </ng-template>
                 <ng-template #displaySummaryCharts>
-                  <div class="my-3">
+                  <div class="mt-3">
                     <ul ngbNav class="nav-tabs">
                       <li ngbNavItem>
                         <button ngbNavLink (click)="incomeStatisticTab = IncomeStatisticsTab.BudgetTab">Wage</button>
                       </li>
                       <li ngbNavItem>
-                        <button ngbNavLink (click)="incomeStatisticTab = IncomeStatisticsTab.SurplusTab">Surplus</button>
+                        <button ngbNavLink (click)="incomeStatisticTab = IncomeStatisticsTab.SurplusTab">Surplus
+                        </button>
                       </li>
                     </ul>
                     <ng-container [ngSwitch]="incomeStatisticTab">
                       <ng-container *ngSwitchCase="IncomeStatisticsTab.BudgetTab">
+                        <div class="my-2 mx-auto">
+                          <ngx-charts-line-chart
+                            [results]="chartData.budgetWage"
+                            [scheme]="'picnic'"
+                            [animations]="true"
+                            [xAxis]="true"
+                            [yAxis]="true"
+                            [showYAxisLabel]="true"
+                            [showXAxisLabel]="true"
+                            [yAxisLabel]="'Budget wage (PLN)'">
+                          </ngx-charts-line-chart>
+                        </div>
                       </ng-container>
                       <ng-container *ngSwitchCase="IncomeStatisticsTab.SurplusTab">
                       </ng-container>
                     </ng-container>
                   </div>
-                  <div class="my-3">
+                  <div class="mt-3">
                     <ul ngbNav class="nav-tabs">
                       <li ngbNavItem>
-                        <button ngbNavLink (click)="paymentStatisticTab = PaymentStatisticsTab.RegularTab">Regular payments</button>
+                        <button ngbNavLink (click)="paymentStatisticTab = PaymentStatisticsTab.RegularTab">Regular
+                          payments
+                        </button>
                       </li>
                       <li ngbNavItem>
-                        <button ngbNavLink (click)="paymentStatisticTab = PaymentStatisticsTab.PlannedTab">Planned payments</button>
+                        <button ngbNavLink (click)="paymentStatisticTab = PaymentStatisticsTab.PlannedTab">Planned
+                          payments
+                        </button>
                       </li>
                     </ul>
                     <ng-container [ngSwitch]="paymentStatisticTab">

@@ -248,6 +248,10 @@ li button.nav-link:hover {
   height: 30ex;
 }
 
+.mobile-doughnut-height-l {
+  height: 40ex;
+}
+
 .doughnut-height-s {
   height: 60ex;
 }

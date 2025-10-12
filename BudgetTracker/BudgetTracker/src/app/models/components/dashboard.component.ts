@@ -1,6 +1,5 @@
 import {ResponseModel} from "../response.model";
-import {RequestModel} from "../request.model";
-import {ChartDataResult} from "../charts.model";
+import {ChartDataResult, LineChartResult} from "../charts.model";
 
 export enum IncomeStatisticsTab {
   BudgetTab = 'BudgetTab',
@@ -28,4 +27,5 @@ export class DashboardResponse {
 
 export class DataResult {
   budgetCategories: ChartDataResult[];
+  budgetWage: LineChartResult[];
 }

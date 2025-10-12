@@ -39,7 +39,7 @@ import {CategoryModalComponent} from './ui/components/modals/category-modal/cate
 import {CopyPaymentModalComponent} from './ui/components/modals/copy-payment-modal/copy-payment-modal.component';
 import {InfoModalComponent} from './ui/components/modals/info-modal/info-modal.component';
 import {TypeheadComponent} from './ui/components/shared/typehead/typehead.component';
-import {BarChartModule, PieChartModule} from "@swimlane/ngx-charts";
+import {BarChartModule, NgxChartsModule, PieChartModule} from "@swimlane/ngx-charts";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 
 export function loadConfig(configService: ConfigService): () => Promise<Config> {
@@ -76,17 +76,18 @@ export function loadConfig(configService: ConfigService): () => Promise<Config> 
     InfoModalComponent,
     TypeheadComponent,
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    NgbModule,
-    HttpClientModule,
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    BarChartModule,
-    PieChartModule,
-  ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        NgbModule,
+        HttpClientModule,
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        BarChartModule,
+        PieChartModule,
+        NgxChartsModule,
+    ],
   providers: [
     {provide: NgbDateParserFormatter, useClass: DatepickerFormatter},
     {provide: APP_INITIALIZER, useFactory: loadConfig, deps: [ConfigService], multi: true},
