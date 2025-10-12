@@ -21,8 +21,9 @@ import {generateErrorModel} from "../../../util/http.util";
 import {ErrorImage, ErrorType} from "../../../models/error.model";
 import {DashboardResponse, Loaders} from "../../../models/components/dashboard.component";
 import {DataResult} from "../../../models/components/dashboard.component";
-import {generalCategoriesToPieChartGrid, transformToPlannedDto} from "../../../util/chart.utils";
+import {generalCategoriesToPieChartGrid, getPieChartClassFor, transformToPlannedDto} from "../../../util/chart.utils";
 import {ChartDataResult} from "../../../models/charts.model";
+import {LegendPosition} from "@swimlane/ngx-charts";
 
 @Component({
   selector: 'app-dashboard',
@@ -49,7 +50,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   protected toCurrentYear: boolean;
   protected responseModels: DashboardResponse;
   protected idRefreshBudget: string;
-  protected dataResult: DataResult;
+  protected chartData: DataResult;
   protected loaders: Loaders;
   public innerWidth: any;
 
@@ -101,7 +102,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       budgetCategories: new ResponseModel()
     }
 
-    this.dataResult = {
+    this.chartData = {
       budgetCategories: []
     }
 
@@ -126,6 +127,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.innerWidth = window.innerWidth;
   }
 
+
+  protected isMobileView(): boolean {
+    return innerWidth <= this.appConfig.pageMobileWidth;
+  }
 
   protected reloadPage(): void {
     this.markPageAsLoaded(false);
@@ -215,8 +220,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.httpService.getBudgetGeneralCategoriesInRange(requestModel).subscribe({
         next: (response: HttpResponse<GetBudgetGeneralCategoryDto>): void => {
           this.responseModels.budgetCategories.statusCode = response.status;
-          this.dataResult.budgetCategories = generalCategoriesToPieChartGrid(response.body);
-          console.log(this.dataResult.budgetCategories);
+          this.chartData.budgetCategories = generalCategoriesToPieChartGrid(response.body);
+          console.log(this.chartData.budgetCategories);
           this.markBudgetCategoriesAsLoaded(true);
         },
         error: (err): void => {
@@ -321,4 +326,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     const cookieDate = getCookie(dateName);
     return cookieDate ? new Date(cookieDate) : null;
   }
+
+  protected readonly LegendPosition = LegendPosition;
+  protected readonly getPieChartClassFor = getPieChartClassFor;
 }

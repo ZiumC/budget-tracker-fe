@@ -226,22 +226,42 @@ hr.horizontal-light {
   border-radius: 0.5ex;
 }
 
-#nav-tabs{
+#nav-tabs {
   margin-left: 3ex;
 }
 
 li button.nav-link {
-    color: var(--bs-secondary);
+  color: var(--bs-secondary);
 }
 
 li button.nav-link:hover {
   color: var(--bs-secondary);
 }
 
-.info-tooltip{
+.info-tooltip {
   color: #495057;
   margin-left: 1ex;
   cursor: pointer;
+}
+
+.mobile-doughnut-height {
+  height: 30ex;
+}
+
+.doughnut-height-s {
+  height: 60ex;
+}
+
+.doughnut-height-m {
+  height: 85ex;
+}
+
+.doughnut-height-l {
+  height: 110ex;
+}
+
+.horizontal-bar-chart {
+  height: 10ex;
 }
 
 @media only screen and (max-width: 770px) {
