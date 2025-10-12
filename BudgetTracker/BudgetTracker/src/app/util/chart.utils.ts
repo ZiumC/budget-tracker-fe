@@ -4,8 +4,12 @@ import {
 } from "../models/statistics.model";
 import {add, subtract} from "./number.util";
 import BigNumber from "bignumber.js";
-import {HorizontalBarDataResult, ChartDataResult} from "../models/charts.model";
-import {GetBudgetGeneralCategoryDto, GetBudgetStatisticsSummaryDto} from "../models/dto/budget.model.dto";
+import {HorizontalBarDataResult, ChartDataResult, LineChartResult} from "../models/charts.model";
+import {
+  GetBudgetGeneralCategoryDto,
+  GetBudgetStatisticsSummaryDto,
+  GetBudgetSummaryDto
+} from "../models/dto/budget.model.dto";
 
 export function formatPercent(input: string): string {
   return `${input}%`
@@ -177,6 +181,26 @@ export function generalCategoriesToPieChartGrid(data: GetBudgetGeneralCategoryDt
         name: "Savings",
         value: new BigNumber(data.savings).toNumber()
       } as ChartDataResult)
+  }
+
+  return result;
+}
+
+export function budgetSummaryToLineChart(data: GetBudgetSummaryDto[] | null): LineChartResult[] {
+  let result: LineChartResult[] = [];
+
+  if (data) {
+    let series: ChartDataResult[] = [];
+    for (let budgetIncome of data) {
+      series.push({
+        name: budgetIncome.budgetName,
+        value: new BigNumber(budgetIncome.statistics.income.wage).toNumber()
+      } as ChartDataResult)
+    }
+    result.push({
+      name: "Wage",
+      series: series
+    } as LineChartResult)
   }
 
   return result;

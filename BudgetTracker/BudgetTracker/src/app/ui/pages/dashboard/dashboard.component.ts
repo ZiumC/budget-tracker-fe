@@ -26,9 +26,12 @@ import {
   Loaders,
   PaymentStatisticsTab
 } from "../../../models/components/dashboard.component";
-import {generalCategoriesToPieChartGrid, getPieChartClassFor} from "../../../util/chart.utils";
+import {
+  budgetSummaryToLineChart,
+  generalCategoriesToPieChartGrid,
+  getPieChartClassFor
+} from "../../../util/chart.utils";
 import {LegendPosition} from "@swimlane/ngx-charts";
-import {StatisticsTab} from "../../../models/components/budget.component";
 
 @Component({
   selector: 'app-dashboard',
@@ -117,109 +120,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
       budgetCategories: [],
       budgetWage: []
     }
-
-    this.chartData.budgetWage = [{
-      name: "Budget incomes",
-      series: [{
-        name: "01.01.2025",
-        value: 10
-      },
-        {
-          name: "01.02.2025",
-          value: 20
-        },
-        {
-          name: "01.03.2025",
-          value: 0
-        },
-        {
-          name: "01.04.2025",
-          value: 50
-        },
-        {
-          name: "01.05.2025",
-          value: 30
-        },
-        {
-          name: "01.06.2025",
-          value: 30
-        },
-        {
-          name: "01.07.2025",
-          value: 30
-        },
-        {
-          name: "01.08.2025",
-          value: 30
-        },
-        {
-          name: "01.09.2025",
-          value: 50
-        },
-        {
-          name: "01.10.2025",
-          value: 10
-        },
-        {
-          name: "01.11.2025",
-          value: 20
-        },
-        {
-          name: "01.12.2025",
-          value: 0
-        }]
-    },
-      {
-        name: "Budget savings",
-        series: [{
-          name: "01.01.2025",
-          value: 6
-        },
-          {
-            name: "01.02.2025",
-            value: 10
-          },
-          {
-            name: "01.03.2025",
-            value: 2
-          },
-          {
-            name: "01.04.2025",
-            value: 25
-          },
-          {
-            name: "01.05.2025",
-            value: 20
-          },
-          {
-            name: "01.06.2025",
-            value: 20
-          },
-          {
-            name: "01.07.2025",
-            value: 10
-          },
-          {
-            name: "01.08.2025",
-            value: 22
-          },
-          {
-            name: "01.09.2025",
-            value: 88
-          },
-          {
-            name: "01.10.2025",
-            value: 33
-          },
-          {
-            name: "01.11.2025",
-            value: 1
-          },
-          {
-            name: "01.12.2025",
-            value: 11
-          }]
-      }]
 
     this.loaders = {
       page: false,
@@ -359,6 +259,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.httpService.getBudgetSummaryInRange(requestModel).subscribe({
         next: (response: HttpResponse<GetBudgetSummaryDto[]>): void => {
           this.responseModels.budgetSummary.statusCode = response.status;
+          this.chartData.budgetWage = budgetSummaryToLineChart(response.body);
+          console.log(this.chartData.budgetWage)
           this.markBudgetSummaryAsLoaded(true);
         },
         error: (err): void => {
