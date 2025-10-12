@@ -139,6 +139,34 @@ export class DashboardComponent implements OnInit, OnDestroy {
         {
           name: "01.05.2025",
           value: 30
+        },
+        {
+          name: "01.06.2025",
+          value: 30
+        },
+        {
+          name: "01.07.2025",
+          value: 30
+        },
+        {
+          name: "01.08.2025",
+          value: 30
+        },
+        {
+          name: "01.09.2025",
+          value: 50
+        },
+        {
+          name: "01.10.2025",
+          value: 10
+        },
+        {
+          name: "01.11.2025",
+          value: 20
+        },
+        {
+          name: "01.12.2025",
+          value: 0
         }]
     },
       {
@@ -162,6 +190,34 @@ export class DashboardComponent implements OnInit, OnDestroy {
           {
             name: "01.05.2025",
             value: 20
+          },
+          {
+            name: "01.06.2025",
+            value: 20
+          },
+          {
+            name: "01.07.2025",
+            value: 10
+          },
+          {
+            name: "01.08.2025",
+            value: 22
+          },
+          {
+            name: "01.09.2025",
+            value: 88
+          },
+          {
+            name: "01.10.2025",
+            value: 33
+          },
+          {
+            name: "01.11.2025",
+            value: 1
+          },
+          {
+            name: "01.12.2025",
+            value: 11
           }]
       }]
 
@@ -192,6 +248,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   protected isMobileView(): boolean {
     return innerWidth <= this.appConfig.pageMobileWidth;
+  }
+
+  protected formatAxisY(val: string): string {
+    return val + " PLN";
   }
 
   protected reloadPage(): void {

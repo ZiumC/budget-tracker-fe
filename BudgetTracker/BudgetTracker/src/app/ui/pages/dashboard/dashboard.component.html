@@ -257,25 +257,29 @@
               <div class="text-start">
                 <label for="general-categories">Budget categories</label>
               </div>
-              <div id="general-categories" class="mx-2 my-2 mobile-doughnut-height">
-                <ng-template [ngIf]="responseModels.budgetCategories.statusCode != 200"
-                             [ngIfElse]="displayCategoriesChart">
-                  <app-error [errorType]="ErrorType.Application"
-                             [errorImage]="ErrorImage.ChartIcon"
-                             [notFoundErrorText]="'Unable to fetch budget categories data'">
-                  </app-error>
-                </ng-template>
-                <ng-template #displayCategoriesChart>
-                  <ngx-charts-pie-grid
-                    [results]="chartData.budgetCategories"
-                    [animations]="true"
-                    [customColors]="[
+              <div class="mb-2 mx-3">
+                <div id="general-categories" class="mx-auto">
+                  <ng-template [ngIf]="responseModels.budgetCategories.statusCode != 200"
+                               [ngIfElse]="displayCategoriesChart">
+                    <app-error [errorType]="ErrorType.Application"
+                               [errorImage]="ErrorImage.ChartIcon"
+                               [notFoundErrorText]="'Unable to fetch budget categories data'">
+                    </app-error>
+                  </ng-template>
+                  <ng-template #displayCategoriesChart>
+                    <div [className]="isMobileView() ? 'doughnut-height-m' : 'mobile-doughnut-height'">
+                      <ngx-charts-pie-grid
+                        [results]="chartData.budgetCategories"
+                        [animations]="true"
+                        [customColors]="[
                          {name: 'Needs',value: '#ff3d00'},
                          {name: 'Wants',value: '#1f7bc6'},
                          {name: 'Savings',value: '#00b862'},
                        ]">
-                  </ngx-charts-pie-grid>
-                </ng-template>
+                      </ngx-charts-pie-grid>
+                    </div>
+                  </ng-template>
+                </div>
               </div>
             </ng-template>
             <ng-template [ngIf]="!loaders.budgetSummary"
@@ -310,20 +314,28 @@
                     </ul>
                     <ng-container [ngSwitch]="incomeStatisticTab">
                       <ng-container *ngSwitchCase="IncomeStatisticsTab.BudgetTab">
-                        <div class="my-2 mx-auto">
+                        <div class="mt-4 mb-2 mx-auto mobile-doughnut-height-l">
                           <ngx-charts-line-chart
                             [results]="chartData.budgetWage"
                             [scheme]="'picnic'"
                             [animations]="true"
                             [xAxis]="true"
                             [yAxis]="true"
-                            [showYAxisLabel]="true"
-                            [showXAxisLabel]="true"
-                            [yAxisLabel]="'Budget wage (PLN)'">
+                            [yAxisTickFormatting]="formatAxisY">
                           </ngx-charts-line-chart>
                         </div>
                       </ng-container>
                       <ng-container *ngSwitchCase="IncomeStatisticsTab.SurplusTab">
+                        <div class="mt-4 mb-2 mx-auto mobile-doughnut-height-l">
+                          <ngx-charts-line-chart
+                            [results]="chartData.budgetWage"
+                            [scheme]="'vivid'"
+                            [animations]="true"
+                            [xAxis]="true"
+                            [yAxis]="true"
+                            [yAxisTickFormatting]="formatAxisY">
+                          </ngx-charts-line-chart>
+                        </div>
                       </ng-container>
                     </ng-container>
                   </div>
