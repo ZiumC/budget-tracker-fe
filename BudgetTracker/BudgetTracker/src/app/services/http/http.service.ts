@@ -347,8 +347,8 @@ export class HttpService {
   }
 
   public getBudgetGeneralCategoriesInRange(requestParams: RequestModel):
-    Observable<HttpResponse<GetBudgetGeneralCategoryDto[]>>{
-    return this.httpClient.get<GetBudgetGeneralCategoryDto[]>(
+    Observable<HttpResponse<GetBudgetGeneralCategoryDto>>{
+    return this.httpClient.get<GetBudgetGeneralCategoryDto>(
       StatisticUrls.budgetGeneralCategoriesInRange(requestParams),
       {observe: 'response'}
     );

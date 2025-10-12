@@ -9,7 +9,7 @@ import {SpinnerSize} from "../../components/shared/spinner/spinner.component";
 import {DatePicker} from "../../../models/datepicker.model";
 import {TimerUtils} from "../../../util/timer.utils";
 import {getCookie, setCookie} from "../../../util/cookie.utils";
-import {GetBudgetDto} from "../../../models/dto/budget.model.dto";
+import {GetBudgetDto, GetBudgetGeneralCategoryDto} from "../../../models/dto/budget.model.dto";
 import {ResponseModel} from "../../../models/response.model";
 import {AppConfig} from "../../../models/config/config";
 import {FormConfig} from "../../../models/config/form.model.config";
@@ -19,7 +19,10 @@ import {formatString} from "../../../util/string.utils";
 import {ModalUtils} from "../../../util/modal.utils";
 import {generateErrorModel} from "../../../util/http.util";
 import {ErrorImage, ErrorType} from "../../../models/error.model";
-import {DashboardRequestModel, DashboardResponse, Loaders} from "../../../models/components/dashboard.component";
+import {DashboardResponse, Loaders} from "../../../models/components/dashboard.component";
+import {DataResult} from "../../../models/components/dashboard.component";
+import {generalCategoriesToPieChartGrid, transformToPlannedDto} from "../../../util/chart.utils";
+import {ChartDataResult} from "../../../models/charts.model";
 
 @Component({
   selector: 'app-dashboard',
@@ -40,12 +43,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
   protected budgets: GetBudgetDto[] | null;
   protected budget: GetBudgetDto | null;
   protected subscriptions: Subscription[];
-  protected dashboardRequestModel: DashboardRequestModel;
+  protected requestModel: RequestModel;
   protected fromDatePicker: DatePicker;
   protected toDatePicker: DatePicker;
   protected toCurrentYear: boolean;
   protected responseModels: DashboardResponse;
   protected idRefreshBudget: string;
+  protected dataResult: DataResult;
   protected loaders: Loaders;
   public innerWidth: any;
 
@@ -63,13 +67,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
       throw Error("Config not provided")
     }
 
-    this.dashboardRequestModel = {
-      budgets: new RequestModel(),
-      budgetSummary: new RequestModel(),
-      budgetCategories: new RequestModel()
-    }
-    this.dashboardRequestModel.budgets.page = this.requestConfig.pagination.defaultPage;
-    this.dashboardRequestModel.budgets.pageSize = this.requestConfig.pagination.defaultBudgetsPageSize;
+    this.requestModel = new RequestModel();
+    this.requestModel.page = this.requestConfig.pagination.defaultPage;
+    this.requestModel.pageSize = this.requestConfig.pagination.defaultBudgetsPageSize;
 
     const dateFromCookie = this.readDateCookie(this.requestConfig.cookies.names.fromDate);
     const dateToCookie = this.readDateCookie(this.requestConfig.cookies.names.toDate);
@@ -88,8 +88,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
         DatePickerUtil.lastDayOfCurrentYear();
     }
 
-    this.dashboardRequestModel.budgets.fromDate = DatePickerUtil.formatDatePicker(this.fromDatePicker);
-    this.dashboardRequestModel.budgets.toDate = DatePickerUtil.formatDatePicker(this.toDatePicker);
+    this.requestModel.fromDate = DatePickerUtil.formatDatePicker(this.fromDatePicker);
+    this.requestModel.toDate = DatePickerUtil.formatDatePicker(this.toDatePicker);
     this.toCurrentYear = !this.isCurrentYear();
 
     this.budgets = [];
@@ -101,6 +101,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
       budgetCategories: new ResponseModel()
     }
 
+    this.dataResult = {
+      budgetCategories: []
+    }
+
     this.loaders = {
       page: false,
       budgets: false,
@@ -108,7 +112,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
       budgetCategories: false
     }
 
-    this.getBudgets(this.dashboardRequestModel.budgets);
+    this.getBudgets(this.requestModel);
+    this.getBudgetCategories(this.requestModel);
     this.onResize();
   }
 
@@ -125,7 +130,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
   protected reloadPage(): void {
     this.markPageAsLoaded(false);
     this.responseModels.budgets = new ResponseModel();
-    this.getBudgets(this.dashboardRequestModel.budgets);
+    this.responseModels.budgetCategories = new ResponseModel();
+    this.getBudgets(this.requestModel);
+    this.getBudgetCategories(this.requestModel);
   }
 
   protected updateBudget(idBudget: string): void {
@@ -153,8 +160,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
       toDate = DatePickerUtil.convertToDate(this.toDatePicker);
     }
 
-    this.dashboardRequestModel.budgets.fromDate = DateUtil.format(fromDate);
-    this.dashboardRequestModel.budgets.toDate = DateUtil.format(toDate);
+    this.requestModel.fromDate = DateUtil.format(fromDate);
+    this.requestModel.toDate = DateUtil.format(toDate);
 
     this.saveDateCookie(this.requestConfig.cookies.names.fromDate, fromDate);
     this.saveDateCookie(this.requestConfig.cookies.names.toDate, toDate);
@@ -199,6 +206,25 @@ export class DashboardComponent implements OnInit, OnDestroy {
         return "budget-card-container-3-cols";
       }
     }
+  }
+
+  protected getBudgetCategories(requestModel: RequestModel): void {
+    this.markBudgetCategoriesAsLoaded(false);
+
+    this.subscriptions.push(
+      this.httpService.getBudgetGeneralCategoriesInRange(requestModel).subscribe({
+        next: (response: HttpResponse<GetBudgetGeneralCategoryDto>): void => {
+          this.responseModels.budgetCategories.statusCode = response.status;
+          this.dataResult.budgetCategories = generalCategoriesToPieChartGrid(response.body);
+          console.log(this.dataResult.budgetCategories);
+          this.markBudgetCategoriesAsLoaded(true);
+        },
+        error: (err): void => {
+          this.responseModels.budgetCategories = generateErrorModel(err);
+          this.markBudgetCategoriesAsLoaded(true);
+        }
+      })
+    )
   }
 
   private isCurrentYear(): boolean {
@@ -271,6 +297,19 @@ export class DashboardComponent implements OnInit, OnDestroy {
         });
     } else {
       this.loaders.budgets = value;
+    }
+  }
+
+  private markBudgetCategoriesAsLoaded(value: boolean): void {
+    if (value) {
+      new TimerUtils(this.appConfig.timer.duration.default).start()
+        .subscribe(finished => {
+          if (finished) {
+            this.loaders.budgetCategories = value;
+          }
+        });
+    } else {
+      this.loaders.budgetCategories = value;
     }
   }
 

@@ -1,4 +1,7 @@
-import {HorizontalChartData, PieChartData, PieChartGridData} from "../charts.model";
+import {
+  ChartDataResult,
+  HorizontalBarDataResult,
+} from "../charts.model";
 
 export enum StatisticsTab {
   IncomeTab = "incomeTab",
@@ -20,4 +23,18 @@ export class Loaders {
   plannedPaymentCategories: boolean;
   budgetGeneralCategories: boolean;
   budgetSummary: boolean;
+}
+
+export class PieChartData {
+  income: ChartDataResult[];
+  planned: ChartDataResult[];
+  regular: ChartDataResult[];
+}
+
+export class HorizontalChartData {
+  moneyLeftData: HorizontalBarDataResult[];
+}
+
+export class PieChartGridData{
+  generalCategories: ChartDataResult[];
 }

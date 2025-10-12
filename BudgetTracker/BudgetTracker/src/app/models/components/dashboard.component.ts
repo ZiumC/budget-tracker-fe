@@ -1,5 +1,6 @@
 import {ResponseModel} from "../response.model";
 import {RequestModel} from "../request.model";
+import {ChartDataResult} from "../charts.model";
 
 export enum IncomeStatisticsTab {
   BudgetTab = 'BudgetTab',
@@ -25,8 +26,6 @@ export class DashboardResponse {
   budgetCategories: ResponseModel;
 }
 
-export class DashboardRequestModel {
-  budgets: RequestModel;
-  budgetSummary: RequestModel;
-  budgetCategories: RequestModel;
+export class DataResult {
+  budgetCategories: ChartDataResult[];
 }
