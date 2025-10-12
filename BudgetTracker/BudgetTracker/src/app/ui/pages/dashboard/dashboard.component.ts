@@ -114,8 +114,56 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
 
     this.chartData = {
-      budgetCategories: []
+      budgetCategories: [],
+      budgetWage: []
     }
+
+    this.chartData.budgetWage = [{
+      name: "Budget incomes",
+      series: [{
+        name: "01.01.2025",
+        value: 10
+      },
+        {
+          name: "01.02.2025",
+          value: 20
+        },
+        {
+          name: "01.03.2025",
+          value: 0
+        },
+        {
+          name: "01.04.2025",
+          value: 50
+        },
+        {
+          name: "01.05.2025",
+          value: 30
+        }]
+    },
+      {
+        name: "Budget savings",
+        series: [{
+          name: "01.01.2025",
+          value: 6
+        },
+          {
+            name: "01.02.2025",
+            value: 10
+          },
+          {
+            name: "01.03.2025",
+            value: 2
+          },
+          {
+            name: "01.04.2025",
+            value: 25
+          },
+          {
+            name: "01.05.2025",
+            value: 20
+          }]
+      }]
 
     this.loaders = {
       page: false,
