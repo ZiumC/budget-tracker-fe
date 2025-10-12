@@ -240,7 +240,7 @@
         </app-error>
       </ng-template>
     </ng-template>
-    <div class="row">
+    <div class="row mt-3">
       <div class="col">
         <div class="card text-center mb-3">
           <div class="card-header">
@@ -263,8 +263,7 @@
                              [ngIfElse]="displayCategoriesChart">
                   <app-error [errorType]="ErrorType.Application"
                              [errorImage]="ErrorImage.ChartIcon"
-                             [notFoundErrorText]="'Unable to fetch budget categories chart'"
-                             [secondaryErrorText]="'or chart data not found'">
+                             [notFoundErrorText]="'Unable to fetch budget categories data'">
                   </app-error>
                 </ng-template>
                 <ng-template #displayCategoriesChart>
@@ -300,6 +299,61 @@
                       </ngx-charts-pie-chart>
                     </ng-container>
                   </ng-container>
+                </ng-template>
+              </div>
+            </ng-template>
+            <ng-template [ngIf]="!loaders.budgetSummary"
+                         [ngIfElse]="loadedSummary">
+              <div class="my-5">
+                <app-spinner-grow></app-spinner-grow>
+              </div>
+            </ng-template>
+            <ng-template #loadedSummary>
+              <div class="text-start">
+                <label for="budget-summary">Budget summary</label>
+              </div>
+              <div id="budget-summary" class="mx-2 my-2"
+                   [className]="getPieChartClassFor(chartData.budgetCategories, isMobileView())">
+                <ng-template [ngIf]="responseModels.budgetSummary.statusCode != 200"
+                             [ngIfElse]="displaySummaryCharts">
+                  <app-error [errorType]="ErrorType.Application"
+                             [errorImage]="ErrorImage.ChartIcon"
+                             [notFoundErrorText]="'Unable to fetch budget summary data'">
+                  </app-error>
+                </ng-template>
+                <ng-template #displaySummaryCharts>
+                  <div class="my-3">
+                    <ul ngbNav class="nav-tabs">
+                      <li ngbNavItem>
+                        <button ngbNavLink (click)="incomeStatisticTab = IncomeStatisticsTab.BudgetTab">Wage</button>
+                      </li>
+                      <li ngbNavItem>
+                        <button ngbNavLink (click)="incomeStatisticTab = IncomeStatisticsTab.SurplusTab">Surplus</button>
+                      </li>
+                    </ul>
+                    <ng-container [ngSwitch]="incomeStatisticTab">
+                      <ng-container *ngSwitchCase="IncomeStatisticsTab.BudgetTab">
+                      </ng-container>
+                      <ng-container *ngSwitchCase="IncomeStatisticsTab.SurplusTab">
+                      </ng-container>
+                    </ng-container>
+                  </div>
+                  <div class="my-3">
+                    <ul ngbNav class="nav-tabs">
+                      <li ngbNavItem>
+                        <button ngbNavLink (click)="paymentStatisticTab = PaymentStatisticsTab.RegularTab">Regular payments</button>
+                      </li>
+                      <li ngbNavItem>
+                        <button ngbNavLink (click)="paymentStatisticTab = PaymentStatisticsTab.PlannedTab">Planned payments</button>
+                      </li>
+                    </ul>
+                    <ng-container [ngSwitch]="paymentStatisticTab">
+                      <ng-container *ngSwitchCase="PaymentStatisticsTab.RegularTab">
+                      </ng-container>
+                      <ng-container *ngSwitchCase="PaymentStatisticsTab.PlannedTab">
+                      </ng-container>
+                    </ng-container>
+                  </div>
                 </ng-template>
               </div>
             </ng-template>

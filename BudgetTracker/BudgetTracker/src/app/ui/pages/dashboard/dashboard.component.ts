@@ -9,7 +9,7 @@ import {SpinnerSize} from "../../components/shared/spinner/spinner.component";
 import {DatePicker} from "../../../models/datepicker.model";
 import {TimerUtils} from "../../../util/timer.utils";
 import {getCookie, setCookie} from "../../../util/cookie.utils";
-import {GetBudgetDto, GetBudgetGeneralCategoryDto} from "../../../models/dto/budget.model.dto";
+import {GetBudgetDto, GetBudgetGeneralCategoryDto, GetBudgetSummaryDto} from "../../../models/dto/budget.model.dto";
 import {ResponseModel} from "../../../models/response.model";
 import {AppConfig} from "../../../models/config/config";
 import {FormConfig} from "../../../models/config/form.model.config";
@@ -19,11 +19,16 @@ import {formatString} from "../../../util/string.utils";
 import {ModalUtils} from "../../../util/modal.utils";
 import {generateErrorModel} from "../../../util/http.util";
 import {ErrorImage, ErrorType} from "../../../models/error.model";
-import {DashboardResponse, Loaders} from "../../../models/components/dashboard.component";
-import {DataResult} from "../../../models/components/dashboard.component";
-import {generalCategoriesToPieChartGrid, getPieChartClassFor, transformToPlannedDto} from "../../../util/chart.utils";
-import {ChartDataResult} from "../../../models/charts.model";
+import {
+  DashboardResponse,
+  DataResult,
+  IncomeStatisticsTab,
+  Loaders,
+  PaymentStatisticsTab
+} from "../../../models/components/dashboard.component";
+import {generalCategoriesToPieChartGrid, getPieChartClassFor} from "../../../util/chart.utils";
 import {LegendPosition} from "@swimlane/ngx-charts";
+import {StatisticsTab} from "../../../models/components/budget.component";
 
 @Component({
   selector: 'app-dashboard',
@@ -38,6 +43,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
   protected readonly SpinnerSize = SpinnerSize;
   protected readonly ErrorType = ErrorType;
   protected readonly ErrorImage = ErrorImage;
+  protected readonly LegendPosition = LegendPosition;
+  protected readonly getPieChartClassFor = getPieChartClassFor;
+  protected readonly IncomeStatisticsTab = IncomeStatisticsTab;
+  protected readonly PaymentStatisticsTab = PaymentStatisticsTab;
   protected appConfig: AppConfig;
   protected formConfig: FormConfig;
   protected requestConfig: RequestConfig;
@@ -52,6 +61,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   protected idRefreshBudget: string;
   protected chartData: DataResult;
   protected loaders: Loaders;
+  protected incomeStatisticTab: IncomeStatisticsTab;
+  protected paymentStatisticTab: PaymentStatisticsTab;
   public innerWidth: any;
 
   constructor(private httpService: HttpService,
@@ -113,8 +124,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
       budgetCategories: false
     }
 
+    this.incomeStatisticTab = IncomeStatisticsTab.BudgetTab;
+    this.paymentStatisticTab = PaymentStatisticsTab.RegularTab;
+
     this.getBudgets(this.requestModel);
     this.getBudgetCategories(this.requestModel);
+    this.getBudgetSummary(this.requestModel);
     this.onResize();
   }
 
@@ -127,7 +142,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.innerWidth = window.innerWidth;
   }
 
-
   protected isMobileView(): boolean {
     return innerWidth <= this.appConfig.pageMobileWidth;
   }
@@ -138,6 +152,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.responseModels.budgetCategories = new ResponseModel();
     this.getBudgets(this.requestModel);
     this.getBudgetCategories(this.requestModel);
+    this.getBudgetSummary(this.requestModel);
   }
 
   protected updateBudget(idBudget: string): void {
@@ -215,18 +230,32 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   protected getBudgetCategories(requestModel: RequestModel): void {
     this.markBudgetCategoriesAsLoaded(false);
-
     this.subscriptions.push(
       this.httpService.getBudgetGeneralCategoriesInRange(requestModel).subscribe({
         next: (response: HttpResponse<GetBudgetGeneralCategoryDto>): void => {
           this.responseModels.budgetCategories.statusCode = response.status;
           this.chartData.budgetCategories = generalCategoriesToPieChartGrid(response.body);
-          console.log(this.chartData.budgetCategories);
           this.markBudgetCategoriesAsLoaded(true);
         },
         error: (err): void => {
           this.responseModels.budgetCategories = generateErrorModel(err);
           this.markBudgetCategoriesAsLoaded(true);
+        }
+      })
+    )
+  }
+
+  protected getBudgetSummary(requestModel: RequestModel): void {
+    this.markBudgetSummaryAsLoaded(false);
+    this.subscriptions.push(
+      this.httpService.getBudgetSummaryInRange(requestModel).subscribe({
+        next: (response: HttpResponse<GetBudgetSummaryDto[]>): void => {
+          this.responseModels.budgetSummary.statusCode = response.status;
+          this.markBudgetSummaryAsLoaded(true);
+        },
+        error: (err): void => {
+          this.responseModels.budgetSummary = generateErrorModel(err);
+          this.markBudgetSummaryAsLoaded(true);
         }
       })
     )
@@ -318,6 +347,19 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
   }
 
+  private markBudgetSummaryAsLoaded(value: boolean): void {
+    if (value) {
+      new TimerUtils(this.appConfig.timer.duration.default).start()
+        .subscribe(finished => {
+          if (finished) {
+            this.loaders.budgetSummary = value;
+          }
+        });
+    } else {
+      this.loaders.budgetSummary = value;
+    }
+  }
+
   private saveDateCookie(dateName: string, date: Date): void {
     setCookie(dateName, date.toString());
   }
@@ -326,7 +368,4 @@ export class DashboardComponent implements OnInit, OnDestroy {
     const cookieDate = getCookie(dateName);
     return cookieDate ? new Date(cookieDate) : null;
   }
-
-  protected readonly LegendPosition = LegendPosition;
-  protected readonly getPieChartClassFor = getPieChartClassFor;
 }
