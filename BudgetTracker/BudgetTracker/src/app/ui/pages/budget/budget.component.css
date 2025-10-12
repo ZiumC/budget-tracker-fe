@@ -24,25 +24,6 @@ label {
   justify-content: normal;
 }
 
-.mobile-doughnut-height {
-  height: 30ex;
-}
-
-.doughnut-height-s {
-  height: 60ex;
-}
-
-.doughnut-height-m {
-  height: 85ex;
-}
-
-.doughnut-height-l {
-  height: 110ex;
-}
-
-.horizontal-bar-chart {
-  height: 10ex;
-}
 
 .budget-overview-total {
   border-radius: 0 0 0.7ex 0.7ex;

@@ -240,24 +240,25 @@
         </app-error>
       </ng-template>
     </ng-template>
-    <div class="row mt-5">
+    <div class="row">
       <div class="col">
         <div class="card text-center mb-3">
           <div class="card-header">
             Statistics
           </div>
-          <div id="statistics-card" class="card-body">
-            <div class="text-start">
-              <label for="general-categories">Budget categories</label>
-            </div>
-            <div id="general-categories" class="mx-2 my-2">
-              <ng-template [ngIf]="!loaders.budgetCategories"
-                           [ngIfElse]="loadedCategories">
-                <div class="my-5">
-                  <app-spinner-grow></app-spinner-grow>
-                </div>
-              </ng-template>
-              <ng-template #loadedCategories>
+          <div class="card-body">
+            <ng-template [ngIf]="!loaders.budgetCategories"
+                         [ngIfElse]="loadedCategories">
+              <div class="my-5">
+                <app-spinner-grow></app-spinner-grow>
+              </div>
+            </ng-template>
+            <ng-template #loadedCategories>
+              <div class="text-start">
+                <label for="general-categories">Budget categories</label>
+              </div>
+              <div id="general-categories" class="mx-2 my-2"
+                   [className]="getPieChartClassFor(chartData.budgetCategories, isMobileView())">
                 <ng-template [ngIf]="responseModels.budgetCategories.statusCode != 200"
                              [ngIfElse]="displayCategoriesChart">
                   <app-error [errorType]="ErrorType.Application"
@@ -267,28 +268,59 @@
                   </app-error>
                 </ng-template>
                 <ng-template #displayCategoriesChart>
-                  <p>dupa</p>
+                  <ng-container [ngSwitch]="isMobileView()">
+                    <ng-container *ngSwitchCase="true">
+                      <ngx-charts-advanced-pie-chart
+                        [results]="chartData.budgetCategories"
+                        [scheme]="'forest'"
+                        [animations]="true">
+                        <ng-template #tooltipTemplate let-model="model">
+                          <div class="my-2">
+                            {{ model.name }} <br> {{ model.value }} PLN
+                          </div>
+                        </ng-template>
+                      </ngx-charts-advanced-pie-chart>
+                    </ng-container>
+                    <ng-container *ngSwitchCase="false">
+                      <ngx-charts-pie-chart
+                        [results]="chartData.budgetCategories"
+                        [arcWidth]="0.4"
+                        [scheme]="'forest'"
+                        [labels]="true"
+                        [legend]="true"
+                        [legendPosition]="LegendPosition.Right"
+                        [legendTitle]="'Categories'"
+                        [animations]="true"
+                        [doughnut]="true">
+                        <ng-template #tooltipTemplate let-model="model">
+                          <div class="my-2">
+                            {{ model.name }} <br> {{ model.value }} PLN
+                          </div>
+                        </ng-template>
+                      </ngx-charts-pie-chart>
+                    </ng-container>
+                  </ng-container>
                 </ng-template>
-              </ng-template>
-            </div>
+              </div>
+            </ng-template>
           </div>
         </div>
       </div>
     </div>
-    <app-budget-modal #budgetModal
-                      (refreshPageEvent)="reloadPage()"
-                      (updateBudgetEvent)="updateBudget($event)">
-
-    </app-budget-modal>
-    <app-budgets-modal #budgetsModal
-                       (refreshPageEvent)="reloadPage()">
-
-    </app-budgets-modal>
-    <app-delete-modal #deleteModal
-                      (indexPageEvent)="reloadPage()">
-
-    </app-delete-modal>
   </div>
+  <app-budget-modal #budgetModal
+                    (refreshPageEvent)="reloadPage()"
+                    (updateBudgetEvent)="updateBudget($event)">
+
+  </app-budget-modal>
+  <app-budgets-modal #budgetsModal
+                     (refreshPageEvent)="reloadPage()">
+
+  </app-budgets-modal>
+  <app-delete-modal #deleteModal
+                    (indexPageEvent)="reloadPage()">
+
+  </app-delete-modal>
 </div>
 <app-error-modal #errorModal>
 
