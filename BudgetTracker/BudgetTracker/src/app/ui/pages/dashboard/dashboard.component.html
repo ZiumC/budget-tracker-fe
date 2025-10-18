@@ -421,8 +421,90 @@
                     </ul>
                     <ng-container [ngSwitch]="paymentStatisticTab">
                       <ng-container *ngSwitchCase="PaymentStatisticsTab.RegularTab">
+                        <div [className]="chartData.regularPayments.length > 0 ? 'mobile-doughnut-height-l' : ''"
+                             class="mt-4 mb-2 mx-auto">
+                          <ng-template [ngIf]="chartData.regularPayments.length <= 0"
+                                       [ngIfElse]="regularChart">
+                            <div class="my-auto">
+                              <app-error [errorType]="ErrorType.Application"
+                                         [errorImage]="ErrorImage.ChartIcon"
+                                         [notFoundErrorText]="'Chart data is empty'"
+                                         [secondaryErrorText]="'you don\'t have any regular payment in your budgets'">
+                              </app-error>
+                            </div>
+                          </ng-template>
+                          <ng-template #regularChart>
+                            <ngx-charts-line-chart
+                              [results]="chartData.regularPayments"
+                              [scheme]="'vivid'"
+                              [animations]="true"
+                              [xAxis]="true"
+                              [yAxis]="true"
+                              [yAxisTickFormatting]="formatAxisY">
+                              <ng-template #seriesTooltipTemplate let-model="model">
+                                <div class="my-2 mx-2" *ngFor="let item of model">
+                                  <div class="d-flex">
+                                    <div class="tooltip-square my-auto"
+                                         style="background-color:{{item.color}}">
+                                    </div>
+                                    <div class="my-auto">
+                                      {{ item.series }}: {{ format(BigNumber(item.value)) }} PLN
+                                    </div>
+                                  </div>
+                                </div>
+                              </ng-template>
+                              <ng-template #tooltipTemplate let-model="model">
+                                <div class="my-2 mx-2">
+                                  <div class="mb-1">{{ model.series }} - {{ model.name }}</div>
+                                  <h6>{{ format(BigNumber(model.value)) }} PLN</h6>
+                                </div>
+                              </ng-template>
+                            </ngx-charts-line-chart>
+                          </ng-template>
+                        </div>
                       </ng-container>
                       <ng-container *ngSwitchCase="PaymentStatisticsTab.PlannedTab">
+                        <div [className]="chartData.plannedPayments.length > 0 ? 'mobile-doughnut-height-l' : ''"
+                             class="mt-4 mb-2 mx-auto">
+                          <ng-template [ngIf]="chartData.plannedPayments.length <= 0"
+                                       [ngIfElse]="plannedChart">
+                            <div class="my-auto">
+                              <app-error [errorType]="ErrorType.Application"
+                                         [errorImage]="ErrorImage.ChartIcon"
+                                         [notFoundErrorText]="'Chart data is empty'"
+                                         [secondaryErrorText]="'you don\'t have any planned payment in your budgets'">
+                              </app-error>
+                            </div>
+                          </ng-template>
+                          <ng-template #plannedChart>
+                            <ngx-charts-line-chart
+                              [results]="chartData.plannedPayments"
+                              [scheme]="'vivid'"
+                              [animations]="true"
+                              [xAxis]="true"
+                              [yAxis]="true"
+                              [yAxisTickFormatting]="formatAxisY">
+                              <ng-template #seriesTooltipTemplate let-model="model">
+                                <div class="my-2 mx-2" *ngFor="let item of model">
+                                  <div class="d-flex">
+                                    <div class="tooltip-square my-auto"
+                                         style="background-color:{{item.color}}">
+                                    </div>
+                                    <div class="my-auto">
+                                      {{ item.series }}: {{ format(BigNumber(item.value)) }} PLN
+                                    </div>
+                                  </div>
+                                </div>
+                              </ng-template>
+                              <ng-template #tooltipTemplate let-model="model">
+                                <div class="my-2 mx-2">
+                                  <div class="mb-1">{{ model.series }} - {{ model.name }}</div>
+                                  <h6>{{ format(BigNumber(model.value)) }} PLN</h6>
+                                </div>
+                              </ng-template>
+                            </ngx-charts-line-chart>
+                          </ng-template>
+                        </div>
                       </ng-container>
                     </ng-container>
                   </div>

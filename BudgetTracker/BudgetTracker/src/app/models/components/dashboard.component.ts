@@ -28,5 +28,7 @@ export class DashboardResponse {
 export class DataResult {
   budgetWage: LineChartResult[];
   budgetSurplus: LineChartResult[];
+  plannedPayments: LineChartResult[];
+  regularPayments: LineChartResult[];
   budgetCategories: ChartDataResult[];
 }
