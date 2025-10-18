@@ -32,6 +32,9 @@ import {
   getPieChartClassFor
 } from "../../../util/chart.utils";
 import {LegendPosition} from "@swimlane/ngx-charts";
+import {ChartDataResult, LineChartResult} from "../../../models/charts.model";
+import BigNumber from "bignumber.js";
+import {format} from "../../../util/number.util";
 
 @Component({
   selector: 'app-dashboard',
@@ -117,8 +120,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
 
     this.chartData = {
-      budgetCategories: [],
-      budgetWage: []
+      budgetWage: [],
+      budgetSurplus: [],
+      budgetCategories: []
     }
 
     this.loaders = {
@@ -260,7 +264,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
         next: (response: HttpResponse<GetBudgetSummaryDto[]>): void => {
           this.responseModels.budgetSummary.statusCode = response.status;
           this.chartData.budgetWage = budgetSummaryToLineChart(response.body);
-          console.log(this.chartData.budgetWage)
           this.markBudgetSummaryAsLoaded(true);
         },
         error: (err): void => {
@@ -378,4 +381,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     const cookieDate = getCookie(dateName);
     return cookieDate ? new Date(cookieDate) : null;
   }
+
+  protected readonly BigNumber = BigNumber;
+  protected readonly format = format;
 }

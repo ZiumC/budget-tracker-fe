@@ -186,21 +186,33 @@ export function generalCategoriesToPieChartGrid(data: GetBudgetGeneralCategoryDt
   return result;
 }
 
-export function budgetSummaryToLineChart(data: GetBudgetSummaryDto[] | null): LineChartResult[] {
+//need to tune up this shitty code
+export function budgetSummaryToLineChart(budgetsSummary: GetBudgetSummaryDto[] | null): LineChartResult[] {
   let result: LineChartResult[] = [];
 
-  if (data) {
-    let series: ChartDataResult[] = [];
-    for (let budgetIncome of data) {
-      series.push({
-        name: budgetIncome.budgetName,
-        value: new BigNumber(budgetIncome.statistics.income.wage).toNumber()
-      } as ChartDataResult)
+  if (budgetsSummary) {
+    let wageSeries: ChartDataResult[] = [];
+    let savingsSeries: ChartDataResult[] = [];
+
+    for (let budget of budgetsSummary) {
+      wageSeries.push({
+        name: budget.budgetName,
+        value: new BigNumber(budget.statistics.income.wage).toNumber()
+      } as ChartDataResult);
+      savingsSeries.push({
+        name: budget.budgetName,
+        value: new BigNumber(budget.statistics.income.savings).toNumber()
+      } as ChartDataResult);
     }
     result.push({
       name: "Wage",
-      series: series
-    } as LineChartResult)
+      series: wageSeries
+    } as LineChartResult);
+
+    result.push({
+      name: "Savings",
+      series: savingsSeries
+    } as LineChartResult);
   }
 
   return result;
