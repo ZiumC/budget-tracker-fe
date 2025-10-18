@@ -27,12 +27,11 @@ import {
   PaymentStatisticsTab
 } from "../../../models/components/dashboard.component";
 import {
-  budgetSummaryToLineChart,
+  BudgetSummary, BudgetSummaryChartType,
   generalCategoriesToPieChartGrid,
   getPieChartClassFor
 } from "../../../util/chart.utils";
 import {LegendPosition} from "@swimlane/ngx-charts";
-import {ChartDataResult, LineChartResult} from "../../../models/charts.model";
 import BigNumber from "bignumber.js";
 import {format} from "../../../util/number.util";
 
@@ -263,7 +262,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.httpService.getBudgetSummaryInRange(requestModel).subscribe({
         next: (response: HttpResponse<GetBudgetSummaryDto[]>): void => {
           this.responseModels.budgetSummary.statusCode = response.status;
-          this.chartData.budgetWage = budgetSummaryToLineChart(response.body);
+          this.chartData.budgetWage = BudgetSummary.toLineChart(response.body, BudgetSummaryChartType.WAGE_AND_SURPLUS);
+          this.chartData.budgetSurplus = BudgetSummary.toLineChart(response.body, BudgetSummaryChartType.SAVINGS_AND_SURPLUS);
           this.markBudgetSummaryAsLoaded(true);
         },
         error: (err): void => {
