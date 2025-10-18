@@ -26,14 +26,12 @@ import {
   Loaders,
   PaymentStatisticsTab
 } from "../../../models/components/dashboard.component";
-import {
-  generalCategoriesToPieChartGrid,
-  getPieChartClassFor
-} from "../../../util/chart.utils";
+import {generalCategoriesToPieChartGrid, getPieChartClassFor} from "../../../util/chart.utils";
 import {LegendPosition} from "@swimlane/ngx-charts";
 import BigNumber from "bignumber.js";
 import {format} from "../../../util/number.util";
 import {BudgetIncomeSummary, IncomeChartType} from "../../../util/chart/budget/budget-income.chart.util";
+import {BudgetPaymentSummary, PaymentChartType} from "../../../util/chart/budget/budget-payment.chart.util";
 
 @Component({
   selector: 'app-dashboard',
@@ -48,10 +46,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
   protected readonly SpinnerSize = SpinnerSize;
   protected readonly ErrorType = ErrorType;
   protected readonly ErrorImage = ErrorImage;
-  protected readonly LegendPosition = LegendPosition;
   protected readonly getPieChartClassFor = getPieChartClassFor;
   protected readonly IncomeStatisticsTab = IncomeStatisticsTab;
   protected readonly PaymentStatisticsTab = PaymentStatisticsTab;
+  protected readonly BigNumber = BigNumber;
+  protected readonly format = format;
   protected appConfig: AppConfig;
   protected formConfig: FormConfig;
   protected requestConfig: RequestConfig;
@@ -121,6 +120,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.chartData = {
       budgetWage: [],
       budgetSurplus: [],
+      plannedPayments: [],
+      regularPayments: [],
       budgetCategories: []
     }
 
@@ -264,6 +265,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
           this.responseModels.budgetSummary.statusCode = response.status;
           this.chartData.budgetWage = BudgetIncomeSummary.toLineChart(response.body, IncomeChartType.WAGE_AND_SURPLUS);
           this.chartData.budgetSurplus = BudgetIncomeSummary.toLineChart(response.body, IncomeChartType.SAVINGS_AND_SURPLUS);
+          this.chartData.regularPayments = BudgetPaymentSummary.toLineChart(response.body, PaymentChartType.REGULAR_PAYMENTS);
+          this.chartData.plannedPayments = BudgetPaymentSummary.toLineChart(response.body, PaymentChartType.PLANNED_PAYMENTS);
+
           this.markBudgetSummaryAsLoaded(true);
         },
         error: (err): void => {
@@ -381,7 +385,4 @@ export class DashboardComponent implements OnInit, OnDestroy {
     const cookieDate = getCookie(dateName);
     return cookieDate ? new Date(cookieDate) : null;
   }
-
-  protected readonly BigNumber = BigNumber;
-  protected readonly format = format;
 }
