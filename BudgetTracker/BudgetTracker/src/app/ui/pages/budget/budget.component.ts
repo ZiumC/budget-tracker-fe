@@ -28,7 +28,7 @@ import {ErrorImage, ErrorType} from "../../../models/error.model";
 import {DataResult, Loaders, StatisticsTab} from "../../../models/components/budget.component";
 import {
   computePercent,
-  formatPercent, generalCategoriesToPieChartGrid,
+  formatPercent,
   getPieChartClassFor,
   getPieChartGridClassFor,
 } from "../../../util/chart.utils";
@@ -36,6 +36,7 @@ import {format} from "../../../util/number.util";
 import {BudgetIncome, BudgetPlannedPayment, BudgetRegularPayment} from "../../../util/statistic.utils";
 import {BudgetPaymentSummary} from "../../../util/chart/budget/budget-payment.chart.util";
 import {BudgetIncomeSummary} from "../../../util/chart/budget/budget-income.chart.util";
+import {BudgetSummary} from "../../../util/chart/budget/budget.chart.util";
 
 @Component({
   selector: 'app-budget',
@@ -50,12 +51,15 @@ export class BudgetComponent implements OnInit, OnDestroy {
   protected readonly ErrorType = ErrorType;
   protected readonly ErrorImage = ErrorImage;
   protected readonly BudgetTabs = StatisticsTab;
+  protected readonly BudgetPlannedPayment = BudgetPlannedPayment;
+  protected readonly BudgetRegularPayment = BudgetRegularPayment;
   protected readonly format = format;
   protected readonly formatString = formatString;
   protected readonly formatPercent = formatPercent;
   protected readonly BigNumber = BigNumber;
   protected readonly getPieChartClassFor = getPieChartClassFor;
   protected readonly getPieChartGridClassFor = getPieChartGridClassFor;
+  protected readonly computePercent = computePercent;
   protected readonly BudgetIncome = BudgetIncome;
   protected appConfig: AppConfig;
   protected budgetDto: GetBudgetDto | null;
@@ -192,7 +196,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
         next: (response: HttpResponse<GetBudgetGeneralCategoryDto>): void => {
           const responseData = response.body;
           this.responseModels.budgetStats.statusCode = response.status;
-          this.chartData.pieChartGrid.generalCategories = generalCategoriesToPieChartGrid(responseData);
+          this.chartData.pieChartGrid.generalCategories = BudgetSummary.toPieChartGrid(responseData);
           this.markBudgetGeneralCategoryStatsAsLoaded(true);
         },
         error: (err): void => {
@@ -230,7 +234,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
       this.httpService.getIncomeCategoriesStats(this.idBudget).subscribe({
         next: (response: HttpResponse<GetIncomeStatsDto>): void => {
           this.responseModels.incomeStats.statusCode = response.status;
-          this.chartData.pieChart.income = BudgetIncomeSummary.toPieChartData(response.body);
+          this.chartData.pieChart.income = BudgetIncomeSummary.toPieChart(response.body);
           this.markIncomeCategoryStatsAsLoaded(true);
         },
         error: (err): void => {
@@ -248,7 +252,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
       this.httpService.getRegularPaymentCategoriesStats(this.idBudget).subscribe({
         next: (response: HttpResponse<GetRegularPaymentStatsDto>): void => {
           this.responseModels.regularStats.statusCode = response.status;
-          this.chartData.pieChart.regular = BudgetPaymentSummary.toPieChartData(response.body);
+          this.chartData.pieChart.regular = BudgetPaymentSummary.toPieChart(response.body);
           this.markRegularCategoryStatsAsLoaded(true);
         },
         error: (err): void => {
@@ -266,7 +270,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
       this.httpService.getPlannedPaymentCategoriesStats(this.idBudget).subscribe({
         next: (response: HttpResponse<GetPlannedPaymentStatsDto>): void => {
           this.responseModels.plannedStats.statusCode = response.status;
-          this.chartData.pieChart.planned = BudgetPaymentSummary.toPieChartData(response.body);
+          this.chartData.pieChart.planned = BudgetPaymentSummary.toPieChart(response.body);
           this.markPlannedCategoryStatsAsLoaded(true);
         },
         error: (err): void => {
@@ -355,8 +359,4 @@ export class BudgetComponent implements OnInit, OnDestroy {
       this.loaders.budgetSummary = isLoaded;
     }
   }
-
-  protected readonly BudgetPlannedPayment = BudgetPlannedPayment;
-  protected readonly BudgetRegularPayment = BudgetRegularPayment;
-  protected readonly computePercent = computePercent;
 }

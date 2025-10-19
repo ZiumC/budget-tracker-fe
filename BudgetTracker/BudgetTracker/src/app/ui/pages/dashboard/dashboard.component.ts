@@ -26,12 +26,12 @@ import {
   Loaders,
   PaymentStatisticsTab
 } from "../../../models/components/dashboard.component";
-import {generalCategoriesToPieChartGrid, getPieChartClassFor} from "../../../util/chart.utils";
-import {LegendPosition} from "@swimlane/ngx-charts";
+import {getPieChartClassFor} from "../../../util/chart.utils";
 import BigNumber from "bignumber.js";
 import {format} from "../../../util/number.util";
 import {BudgetIncomeSummary, IncomeChartType} from "../../../util/chart/budget/budget-income.chart.util";
 import {BudgetPaymentSummary, PaymentChartType} from "../../../util/chart/budget/budget-payment.chart.util";
+import {BudgetSummary} from "../../../util/chart/budget/budget.chart.util";
 
 @Component({
   selector: 'app-dashboard',
@@ -246,7 +246,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.httpService.getBudgetGeneralCategoriesInRange(requestModel).subscribe({
         next: (response: HttpResponse<GetBudgetGeneralCategoryDto>): void => {
           this.responseModels.budgetCategories.statusCode = response.status;
-          this.chartData.budgetCategories = generalCategoriesToPieChartGrid(response.body);
+          this.chartData.budgetCategories = BudgetSummary.toPieChartGrid(response.body);
           this.markBudgetCategoriesAsLoaded(true);
         },
         error: (err): void => {

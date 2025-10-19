@@ -57,7 +57,7 @@ class ChartLineUtil {
 }
 
 export class BudgetPaymentSummary {
-  static toPieChartData(payments: GetPlannedPaymentStatsDto | GetRegularPaymentStatsDto | null): ChartDataResult[] {
+  static toPieChart(payments: GetPlannedPaymentStatsDto | GetRegularPaymentStatsDto | null): ChartDataResult[] {
     let result: ChartDataResult[] = [];
     let totalRefund = new BigNumber(0);
 
