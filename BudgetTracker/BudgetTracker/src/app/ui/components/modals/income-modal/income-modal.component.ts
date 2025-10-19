@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {Subscription} from "rxjs";
 import {HttpService} from "../../../../services/http/http.service";
@@ -42,6 +42,7 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
   protected incomeCategoriesDto: GetIncomeCategoryDto[] | null;
   protected assignedCategoryDto: GetIncomeCategoryDto;
   private idIncome: string;
+  public innerWidth: any;
 
   constructor(
     private modalService: NgbModal,

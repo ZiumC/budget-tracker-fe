@@ -149,17 +149,16 @@
           <div [className]="ModalUtils.displayMarginFor(incomeSurplusSelect)">
             <label for="income-surplus">Status</label>
             <span class="text-danger">*</span>
-            <select
-              id="income-surplus"
-              name="income-surplus"
-              class="form-control"
-              [(ngModel)]="incomeDto.isSurplus"
-              required
-              #incomeSurplusSelect="ngModel"
-              [ngClass]="{
-              'is-invalid': incomeSurplusSelect.invalid &&
-                (incomeSurplusSelect.dirty || incomeSurplusSelect.touched),
-              'is-valid': incomeSurplusSelect.valid }">
+            <select id="income-surplus"
+                    name="income-surplus"
+                    class="form-control"
+                    [(ngModel)]="incomeDto.isSurplus"
+                    required
+                    #incomeSurplusSelect="ngModel"
+                    [ngClass]="{
+                    'is-invalid': incomeSurplusSelect.invalid &&
+                      (incomeSurplusSelect.dirty || incomeSurplusSelect.touched),
+                    'is-valid': incomeSurplusSelect.valid }">
               <option [ngValue]="false">Income isn't surplus</option>
               <option [ngValue]="true">Income is surplus</option>
             </select>
