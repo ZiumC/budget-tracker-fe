@@ -8,7 +8,11 @@ import {HttpService} from "../../../services/http/http.service";
 import {ActivatedRoute, Params, Router} from "@angular/router";
 import {HttpResponse} from "@angular/common/http";
 import {SubscriptionUtils} from "../../../util/subscription.utils";
-import {GetBudgetDto, GetBudgetGeneralCategoryDto, GetBudgetStatisticsSummaryDto} from "../../../models/dto/budget.model.dto";
+import {
+  GetBudgetDto,
+  GetBudgetGeneralCategoryDto,
+  GetBudgetStatisticsSummaryDto
+} from "../../../models/dto/budget.model.dto";
 import {AppConfig} from "../../../models/config/config";
 import {ConfigService} from "../../../services/config/config.service";
 import {formatString} from "../../../util/string.utils";
@@ -23,19 +27,16 @@ import {
 import {ErrorImage, ErrorType} from "../../../models/error.model";
 import {DataResult, Loaders, StatisticsTab} from "../../../models/components/budget.component";
 import {
-  budgetUsageToHorizontalChartData, computePercent,
+  computePercent,
   formatPercent, generalCategoriesToPieChartGrid,
   getPieChartClassFor,
   getPieChartGridClassFor,
   incomeToPieChartData,
-  plannedPaymentToPieChartData,
-  regularPaymentToPieChartData,
   transformToIncomeDto,
-  transformToPlannedDto,
-  transformToRegularDto,
 } from "../../../util/chart.utils";
 import {add, format} from "../../../util/number.util";
 import {BudgetIncome, BudgetPlannedPayment, BudgetRegularPayment} from "../../../util/statistic.utils";
+import {BudgetPaymentSummary} from "../../../util/chart/budget/budget-payment.chart.util";
 
 @Component({
   selector: 'app-budget',
@@ -212,7 +213,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
           const responseData = response.body;
           this.budgetSummary = responseData;
           this.responseModels.budgetSummary.statusCode = response.status;
-          this.chartData.horizontalChart.moneyLeftData = budgetUsageToHorizontalChartData(responseData);
+          this.chartData.horizontalChart.moneyLeftData = BudgetPaymentSummary.toHorizontalChart(responseData);
           this.markBudgetSummaryAsLoaded(true);
         },
         error: (err): void => {
@@ -249,8 +250,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
       this.httpService.getRegularPaymentCategoriesStats(this.idBudget).subscribe({
         next: (response: HttpResponse<GetRegularPaymentStatsDto>): void => {
           this.responseModels.regularStats.statusCode = response.status;
-          const responseData = transformToRegularDto(response.body);
-          this.chartData.pieChart.regular = regularPaymentToPieChartData(responseData);
+          this.chartData.pieChart.regular = BudgetPaymentSummary.toPieChartData(response.body);
           this.markRegularCategoryStatsAsLoaded(true);
         },
         error: (err): void => {
@@ -268,8 +268,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
       this.httpService.getPlannedPaymentCategoriesStats(this.idBudget).subscribe({
         next: (response: HttpResponse<GetPlannedPaymentStatsDto>): void => {
           this.responseModels.plannedStats.statusCode = response.status;
-          const responseData = transformToPlannedDto(response.body);
-          this.chartData.pieChart.planned = plannedPaymentToPieChartData(responseData);
+          this.chartData.pieChart.planned = BudgetPaymentSummary.toPieChartData(response.body);
           this.markPlannedCategoryStatsAsLoaded(true);
         },
         error: (err): void => {
