@@ -31,12 +31,11 @@ import {
   formatPercent, generalCategoriesToPieChartGrid,
   getPieChartClassFor,
   getPieChartGridClassFor,
-  incomeToPieChartData,
-  transformToIncomeDto,
 } from "../../../util/chart.utils";
-import {add, format} from "../../../util/number.util";
+import {format} from "../../../util/number.util";
 import {BudgetIncome, BudgetPlannedPayment, BudgetRegularPayment} from "../../../util/statistic.utils";
 import {BudgetPaymentSummary} from "../../../util/chart/budget/budget-payment.chart.util";
+import {BudgetIncomeSummary} from "../../../util/chart/budget/budget-income.chart.util";
 
 @Component({
   selector: 'app-budget',
@@ -231,8 +230,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
       this.httpService.getIncomeCategoriesStats(this.idBudget).subscribe({
         next: (response: HttpResponse<GetIncomeStatsDto>): void => {
           this.responseModels.incomeStats.statusCode = response.status;
-          const responseData = transformToIncomeDto(response.body);
-          this.chartData.pieChart.income = incomeToPieChartData(responseData);
+          this.chartData.pieChart.income = BudgetIncomeSummary.toPieChartData(response.body);
           this.markIncomeCategoryStatsAsLoaded(true);
         },
         error: (err): void => {
