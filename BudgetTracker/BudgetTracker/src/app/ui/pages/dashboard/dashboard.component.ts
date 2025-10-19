@@ -26,7 +26,7 @@ import {
   Loaders,
   PaymentStatisticsTab
 } from "../../../models/components/dashboard.component";
-import {getPieChartClassFor} from "../../../util/chart.utils";
+import {formatAxisY, getPieChartClassFor} from "../../../util/chart/chart.utils";
 import BigNumber from "bignumber.js";
 import {format} from "../../../util/number.util";
 import {BudgetIncomeSummary, IncomeChartType} from "../../../util/chart/budget/budget-income.chart.util";
@@ -47,6 +47,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   protected readonly ErrorType = ErrorType;
   protected readonly ErrorImage = ErrorImage;
   protected readonly getPieChartClassFor = getPieChartClassFor;
+  protected readonly formatAxisY = formatAxisY;
   protected readonly IncomeStatisticsTab = IncomeStatisticsTab;
   protected readonly PaymentStatisticsTab = PaymentStatisticsTab;
   protected readonly BigNumber = BigNumber;
@@ -152,10 +153,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   protected isMobileView(): boolean {
     return innerWidth <= this.appConfig.pageMobileWidth;
-  }
-
-  protected formatAxisY(val: string): string {
-    return val + " PLN";
   }
 
   protected reloadPage(): void {

@@ -31,7 +31,7 @@ import {
   formatPercent,
   getPieChartClassFor,
   getPieChartGridClassFor,
-} from "../../../util/chart.utils";
+} from "../../../util/chart/chart.utils";
 import {format} from "../../../util/number.util";
 import {BudgetIncome, BudgetPlannedPayment, BudgetRegularPayment} from "../../../util/statistic.utils";
 import {BudgetPaymentSummary} from "../../../util/chart/budget/budget-payment.chart.util";

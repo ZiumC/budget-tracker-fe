@@ -1,6 +1,6 @@
-import {add} from "./number.util";
+import {add} from "../number.util";
 import BigNumber from "bignumber.js";
-import { ChartDataResult} from "../models/charts.model";
+import { ChartDataResult} from "../../models/charts.model";
 
 export function formatPercent(input: string): string {
   return `${input}%`
@@ -16,6 +16,10 @@ export function getPieChartClassFor(data: ChartDataResult[], isMobileView: boole
   } else {
     return '';
   }
+}
+
+export function formatAxisY(val: string): string {
+  return val + " PLN";
 }
 
 export function getPieChartGridClassFor(isMobileView: boolean): string {
