@@ -1,9 +1,6 @@
 import {add} from "./number.util";
 import BigNumber from "bignumber.js";
 import { ChartDataResult} from "../models/charts.model";
-import {
-  GetBudgetGeneralCategoryDto,
-} from "../models/dto/budget.model.dto";
 
 export function formatPercent(input: string): string {
   return `${input}%`
@@ -11,39 +8,18 @@ export function formatPercent(input: string): string {
 
 export function getPieChartClassFor(data: ChartDataResult[], isMobileView: boolean): string {
   if (data.length > 0 && data.length <= 8) {
-    return isMobileView ? 'mobile-doughnut-height' : 'doughnut-height-s';
+    return isMobileView ? 'mobile-height-m' : 'doughnut-height-s';
   } else if (data.length > 8 && data.length <= 15) {
-    return isMobileView ? 'mobile-doughnut-height' : 'doughnut-height-m';
+    return isMobileView ? 'mobile-height-m' : 'doughnut-height-m';
   } else if (data.length > 15) {
-    return isMobileView ? 'mobile-doughnut-height' : 'doughnut-height-l';
+    return isMobileView ? 'mobile-height-m' : 'doughnut-height-l';
   } else {
     return '';
   }
 }
 
 export function getPieChartGridClassFor(isMobileView: boolean): string {
-  return isMobileView ? 'doughnut-height-m' : 'mobile-doughnut-height';
-}
-
-export function generalCategoriesToPieChartGrid(data: GetBudgetGeneralCategoryDto | null): ChartDataResult[] {
-  let result: ChartDataResult[] = [];
-
-  if (data) {
-    result.push({
-        name: "Needs",
-        value: new BigNumber(data.needs).toNumber()
-      } as ChartDataResult,
-      {
-        name: "Wants",
-        value: new BigNumber(data.wants).toNumber()
-      } as ChartDataResult,
-      {
-        name: "Savings",
-        value: new BigNumber(data.savings).toNumber()
-      } as ChartDataResult)
-  }
-
-  return result;
+  return isMobileView ? 'doughnut-height-m' : 'mobile-height-m';
 }
 
 export function computePercent(moneyCategory: number, chartData: ChartDataResult[]): BigNumber {

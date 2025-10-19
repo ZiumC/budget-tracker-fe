@@ -49,7 +49,7 @@ class ChartLineUtil {
 }
 
 export class BudgetIncomeSummary {
-  static toPieChartData(incomes: GetIncomeStatsDto | null): ChartDataResult[] {
+  static toPieChart(incomes: GetIncomeStatsDto | null): ChartDataResult[] {
     let result: ChartDataResult[] = [];
     let totalSavings = new BigNumber(0);
 
