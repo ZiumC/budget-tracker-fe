@@ -1,8 +1,4 @@
-import {
-  GetIncomeStatsDto,
-  IncomeCategoryDto,
-} from "../models/statistics.model";
-import {add, subtract} from "./number.util";
+import {add} from "./number.util";
 import BigNumber from "bignumber.js";
 import { ChartDataResult} from "../models/charts.model";
 import {
@@ -28,45 +24,6 @@ export function getPieChartClassFor(data: ChartDataResult[], isMobileView: boole
 export function getPieChartGridClassFor(isMobileView: boolean): string {
   return isMobileView ? 'doughnut-height-m' : 'mobile-doughnut-height';
 }
-
-export function transformToIncomeDto(data: GetIncomeStatsDto | null): IncomeCategoryDto[] {
-  let result: IncomeCategoryDto[] = [];
-  if (data) {
-    Object.entries(data).forEach(([key, value]): void => {
-      if ('IncomeSum' in value && 'SavingsSum' in value) {
-        result.push({
-          name: key,
-          SavingsSum: value.SavingsSum,
-          IncomeSum: value.IncomeSum
-        } as IncomeCategoryDto);
-      }
-    });
-  }
-  return result;
-}
-
-export function incomeToPieChartData(incomeDetails: IncomeCategoryDto[]): ChartDataResult[] {
-  let result: ChartDataResult[] = [];
-  let totalSavings = new BigNumber(0);
-
-  for (let incomeDetail of incomeDetails) {
-    totalSavings = add(new BigNumber(totalSavings), new BigNumber(incomeDetail.SavingsSum));
-    result.push({
-      name: incomeDetail.name,
-      value: subtract(new BigNumber(incomeDetail.IncomeSum), new BigNumber(incomeDetail.SavingsSum)).toNumber()
-    });
-  }
-
-  if (totalSavings.toNumber() > 0) {
-    result.push({
-      name: 'Savings',
-      value: totalSavings.toNumber()
-    });
-  }
-
-  return result;
-}
-
 
 export function generalCategoriesToPieChartGrid(data: GetBudgetGeneralCategoryDto | null): ChartDataResult[] {
   let result: ChartDataResult[] = [];

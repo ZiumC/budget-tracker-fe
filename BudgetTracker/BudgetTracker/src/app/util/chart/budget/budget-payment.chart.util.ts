@@ -1,13 +1,8 @@
 import {GetBudgetStatisticsSummaryDto, GetBudgetSummaryDto} from "../../../models/dto/budget.model.dto";
 import {ChartDataResult, HorizontalBarDataResult, LineChartResult} from "../../../models/charts.model";
+import {GetPlannedPaymentStatsDto, GetRegularPaymentStatsDto,} from "../../../models/statistics.model";
 import BigNumber from "bignumber.js";
 import {add, subtract} from "../../number.util";
-import {
-  GetPlannedPaymentStatsDto, GetRegularPaymentStatsDto,
-  IncomeCategoryDto,
-  PlannedPaymentCategoryDto,
-  RegularPaymentCategoryDto
-} from "../../../models/statistics.model";
 
 enum SeriesType {
   PRICE = 'Price',
@@ -80,7 +75,7 @@ export class BudgetPaymentSummary {
         } else if ('PriceSum' in value && 'EstimatedSum' in value) {
           result.push({
             name: key,
-            value: new BigNumber(value.EstimatedSum).toNumber()
+            value: new BigNumber(value.PriceSum).toNumber()
           } as ChartDataResult);
         } else {
           throw Error("Unsupported type of payment " + payments);
