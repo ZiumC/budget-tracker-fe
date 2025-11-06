@@ -407,6 +407,7 @@ export class AuthUrls {
   private static ACTIONS = {
     LOGOUT: "/jwt/revoke",
     LOGIN: "/login",
+    ME: "/me"
   }
 
   static login(): string {
@@ -416,15 +417,8 @@ export class AuthUrls {
   static logout(): string {
     return HostUrl.getHostUrl() + AuthUrls.CONTROLLER + AuthUrls.ACTIONS.LOGOUT;
   }
-}
 
-export class UserUrls {
-  private static CONTROLLER = "/Users";
-  private static ACTIONS = {
-    ME: "/me",
-  }
-
-  static details(): string {
-    return HostUrl.getHostUrl() + UserUrls.CONTROLLER + UserUrls.ACTIONS.ME;
+  static loginStatus(): string {
+    return HostUrl.getHostUrl() + AuthUrls.CONTROLLER + AuthUrls.ACTIONS.ME;
   }
 }

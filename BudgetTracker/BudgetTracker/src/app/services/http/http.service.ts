@@ -25,7 +25,6 @@ import {
   PaginationUrls,
   PaymentUrls,
   StatisticUrls,
-  UserUrls
 } from "./http";
 import {PlannedPaymentDto} from "../../models/dto/planned-payment.model.dto";
 import {GetIncomeAssignmentDto, GetPaymentAssignmentDto} from "../../models/dto/assignment.model.dto";
@@ -49,7 +48,7 @@ export class HttpService {
     Observable<HttpResponse<GetBudgetDto[]>> {
     return this.httpClient.get<GetBudgetDto[]>(
       BudgetUrls.budgets(requestModel),
-      {observe: 'response'}
+      {observe: 'response', withCredentials: true}
     );
   }
 
@@ -57,7 +56,7 @@ export class HttpService {
     Observable<HttpResponse<GetBudgetDto>> {
     return this.httpClient.get<GetBudgetDto>(
       BudgetUrls.budgetId(idBudget),
-      {observe: 'response'}
+      {observe: 'response', withCredentials: true}
     );
   }
 
@@ -66,7 +65,7 @@ export class HttpService {
     return this.httpClient.put(
       BudgetUrls.budgetId(idBudget),
       budgetDto,
-      {observe: 'response'}
+      {observe: 'response', withCredentials: true}
     )
   }
 
@@ -75,7 +74,7 @@ export class HttpService {
     return this.httpClient.post(
       BudgetUrls.budgetDate(budgetDate),
       null,
-      {observe: 'response'}
+      {observe: 'response', withCredentials: true}
     )
   }
 
@@ -83,7 +82,7 @@ export class HttpService {
     Observable<HttpResponse<{}>> {
     return this.httpClient.delete(
       BudgetUrls.budgetId(idBudget),
-      {observe: 'response'}
+      {observe: 'response', withCredentials: true}
     )
   }
 
@@ -91,7 +90,7 @@ export class HttpService {
     Observable<HttpResponse<GetIncomeDto[]>> {
     return this.httpClient.get<GetIncomeDto[]>(
       BudgetUrls.budgetIncomes(requestParams, idBudget),
-      {observe: 'response'}
+      {observe: 'response', withCredentials: true}
     );
   }
 
@@ -101,7 +100,7 @@ export class HttpService {
     isPlanned: boolean): Observable<HttpResponse<T>> {
     return this.httpClient.get<T>(
       BudgetUrls.budgetPayments(idBudget, requestParams, isPlanned),
-      {observe: 'response'}
+      {observe: 'response', withCredentials: true}
     )
   }
 
@@ -110,7 +109,7 @@ export class HttpService {
     return this.httpClient.post(
       BudgetUrls.budgetIncome(idBudget),
       incomeDto,
-      {observe: 'response'}
+      {observe: 'response', withCredentials: true}
     )
   }
 
@@ -120,7 +119,7 @@ export class HttpService {
     return this.httpClient.post(
       BudgetUrls.budgetPayment(idBudget),
       paymentDto,
-      {observe: 'response'}
+      {observe: 'response', withCredentials: true}
     )
   }
 
@@ -130,7 +129,7 @@ export class HttpService {
     return this.httpClient.post(
       BudgetUrls.budgetPayments(idBudget, null, true),
       paymentDto,
-      {observe: 'response'}
+      {observe: 'response', withCredentials: true}
     )
   }
 
@@ -139,7 +138,7 @@ export class HttpService {
     return this.httpClient.put(
       IncomeUrls.incomeId(idIncome),
       incomeDto,
-      {observe: 'response'}
+      {observe: 'response', withCredentials: true}
     )
   }
 
@@ -147,7 +146,7 @@ export class HttpService {
     Observable<HttpResponse<{}>> {
     return this.httpClient.delete(
       IncomeUrls.incomeId(idIncome),
-      {observe: 'response'}
+      {observe: 'response', withCredentials: true}
     )
   }
 
@@ -155,7 +154,7 @@ export class HttpService {
     Observable<HttpResponse<PageDto>> {
     return this.httpClient.get<PageDto>(
       PaginationUrls.incomesPagination(idBudget, requestParams),
-      {observe: 'response'}
+      {observe: 'response', withCredentials: true}
     )
   }
 
@@ -163,7 +162,7 @@ export class HttpService {
     requestParams: RequestModel): Observable<HttpResponse<GetPaymentCategoryDto[]>> {
     return this.httpClient.get<GetPaymentCategoryDto[]>(
       CategoryUrls.incomeCategory(requestParams),
-      {observe: 'response'}
+      {observe: 'response', withCredentials: true}
     )
   }
 
@@ -171,7 +170,7 @@ export class HttpService {
     Observable<HttpResponse<GetIncomeAssignmentDto>> {
     return this.httpClient.get<GetIncomeAssignmentDto>(
       IncomeUrls.incomeAssignment(idIncome),
-      {observe: 'response'}
+      {observe: 'response', withCredentials: true}
     )
   }
 
@@ -182,7 +181,7 @@ export class HttpService {
     return this.httpClient.put(
       PaymentUrls.paymentId(idPayment, isPlanned),
       paymentDto,
-      {observe: 'response'}
+      {observe: 'response', withCredentials: true}
     )
   }
 
@@ -193,7 +192,7 @@ export class HttpService {
     return this.httpClient.patch(
       PaymentUrls.paymentStatus(idPayment, isPlanned),
       paymentStatusForm,
-      {observe: 'response'}
+      {observe: 'response', withCredentials: true}
     )
   }
 
@@ -201,7 +200,7 @@ export class HttpService {
     Observable<HttpResponse<{}>> {
     return this.httpClient.delete(
       PaymentUrls.paymentId(idPayment, isPlanned),
-      {observe: 'response'}
+      {observe: 'response', withCredentials: true}
     )
   }
 
@@ -210,7 +209,7 @@ export class HttpService {
     requestParams: RequestModel): Observable<HttpResponse<PageDto>> {
     return this.httpClient.get<PageDto>(
       PaginationUrls.regularPaymentsPagination(idBudget, requestParams),
-      {observe: 'response'}
+      {observe: 'response', withCredentials: true}
     )
   }
 
@@ -219,7 +218,7 @@ export class HttpService {
     requestParams: RequestModel): Observable<HttpResponse<PageDto>> {
     return this.httpClient.get<PageDto>(
       PaginationUrls.plannedPaymentsPagination(idBudget, requestParams),
-      {observe: 'response'}
+      {observe: 'response', withCredentials: true}
     )
   }
 
@@ -228,7 +227,7 @@ export class HttpService {
     requestParams: RequestModel): Observable<HttpResponse<GetPaymentCategoryDto[]>> {
     return this.httpClient.get<GetPaymentCategoryDto[]>(
       CategoryUrls.paymentCategory(type, requestParams),
-      {observe: 'response'}
+      {observe: 'response', withCredentials: true}
     )
   }
 
@@ -237,7 +236,7 @@ export class HttpService {
     requestParams: RequestModel): Observable<HttpResponse<PageDto>> {
     return this.httpClient.get<PageDto>(
       PaginationUrls.paymentCategories(type, requestParams),
-      {observe: 'response'}
+      {observe: 'response', withCredentials: true}
     )
   }
 
@@ -245,7 +244,7 @@ export class HttpService {
     requestParams: RequestModel): Observable<HttpResponse<PageDto>> {
     return this.httpClient.get<PageDto>(
       PaginationUrls.incomeCategories(requestParams),
-      {observe: 'response'}
+      {observe: 'response', withCredentials: true}
     )
   }
 
@@ -254,7 +253,7 @@ export class HttpService {
     return this.httpClient.post(
       CategoryUrls.paymentCategory(null, null),
       categoryDto,
-      {observe: 'response'}
+      {observe: 'response', withCredentials: true}
     )
   }
 
@@ -263,7 +262,7 @@ export class HttpService {
     return this.httpClient.put(
       CategoryUrls.paymentCategoryId(idCategory),
       categoryDto,
-      {observe: 'response'}
+      {observe: 'response', withCredentials: true}
     )
   }
 
@@ -272,7 +271,7 @@ export class HttpService {
     return this.httpClient.put(
       CategoryUrls.incomeCategoryId(idCategory),
       categoryDto,
-      {observe: 'response'}
+      {observe: 'response', withCredentials: true}
     )
   }
 
@@ -281,7 +280,7 @@ export class HttpService {
     return this.httpClient.post(
       CategoryUrls.incomeCategory(null),
       categoryDto,
-      {observe: 'response'}
+      {observe: 'response', withCredentials: true}
     )
   }
 
@@ -289,7 +288,7 @@ export class HttpService {
     Observable<HttpResponse<{}>> {
     return this.httpClient.delete(
       CategoryUrls.incomeCategoryId(idCategory),
-      {observe: 'response'}
+      {observe: 'response', withCredentials: true}
     )
   }
 
@@ -297,7 +296,7 @@ export class HttpService {
     Observable<HttpResponse<{}>> {
     return this.httpClient.delete(
       CategoryUrls.paymentCategoryId(idCategory),
-      {observe: 'response'}
+      {observe: 'response', withCredentials: true}
     )
   }
 
@@ -305,7 +304,7 @@ export class HttpService {
     Observable<HttpResponse<GetPaymentAssignmentDto>> {
     return this.httpClient.get<GetPaymentAssignmentDto>(
       PaymentUrls.paymentAssignment(idPayment, isPlanned),
-      {observe: 'response'}
+      {observe: 'response', withCredentials: true}
     )
   }
 
@@ -313,7 +312,7 @@ export class HttpService {
     Observable<HttpResponse<GetBudgetStatisticsSummaryDto>> {
     return this.httpClient.get<GetBudgetStatisticsSummaryDto>(
       StatisticUrls.budgetStats(idBudget),
-      {observe: 'response'}
+      {observe: 'response', withCredentials: true}
     )
   }
 
@@ -321,7 +320,7 @@ export class HttpService {
     Observable<HttpResponse<GetBudgetSummaryDto[]>> {
     return this.httpClient.get<GetBudgetSummaryDto[]>(
       StatisticUrls.budgetStatsInRange(requestParams),
-      {observe: 'response'}
+      {observe: 'response', withCredentials: true}
     )
   }
 
@@ -329,7 +328,7 @@ export class HttpService {
     Observable<HttpResponse<GetIncomeStatsDto>> {
     return this.httpClient.get<GetIncomeStatsDto>(
       StatisticUrls.budgetIncomeStats(idBudget),
-      {observe: 'response'}
+      {observe: 'response', withCredentials: true}
     );
   }
 
@@ -337,7 +336,7 @@ export class HttpService {
     Observable<HttpResponse<GetRegularPaymentStatsDto>> {
     return this.httpClient.get<GetRegularPaymentStatsDto>(
       StatisticUrls.budgetRegularPaymentStats(idBudget),
-      {observe: 'response'}
+      {observe: 'response', withCredentials: true}
     );
   }
 
@@ -345,7 +344,7 @@ export class HttpService {
     Observable<HttpResponse<GetPlannedPaymentStatsDto>> {
     return this.httpClient.get<GetPlannedPaymentStatsDto>(
       StatisticUrls.budgetPlannedPaymentStats(idBudget),
-      {observe: 'response'}
+      {observe: 'response', withCredentials: true}
     );
   }
 
@@ -353,7 +352,7 @@ export class HttpService {
     Observable<HttpResponse<GetBudgetGeneralCategoryDto>> {
     return this.httpClient.get<GetBudgetGeneralCategoryDto>(
       StatisticUrls.budgetGeneralCategories(idBudget),
-      {observe: 'response'}
+      {observe: 'response', withCredentials: true}
     );
   }
 
@@ -361,7 +360,7 @@ export class HttpService {
     Observable<HttpResponse<GetBudgetGeneralCategoryDto>> {
     return this.httpClient.get<GetBudgetGeneralCategoryDto>(
       StatisticUrls.budgetGeneralCategoriesInRange(requestParams),
-      {observe: 'response'}
+      {observe: 'response', withCredentials: true}
     );
   }
 
@@ -383,7 +382,7 @@ export class HttpService {
 
   public user():Observable<any> {
     return this.httpClient.get(
-      UserUrls.details(),
+      AuthUrls.loginStatus(),
       {observe: 'response', withCredentials: true}
     )
   }
