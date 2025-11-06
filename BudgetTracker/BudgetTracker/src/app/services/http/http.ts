@@ -1,5 +1,6 @@
 import {RequestModel} from "../../models/request.model";
 import {CategoryType} from "../../models/dto/category.model.dto";
+import {LoginRequestDto} from "../../models/dto/user.model.dto";
 
 
 class HostUrl {
@@ -398,5 +399,32 @@ export class PaymentUrls {
 
   static paymentAssignment(idPayment: string, isPlanned: boolean): string {
     return PaymentUrls.paymentId(idPayment, isPlanned) + PaymentUrls.ACTIONS.ASSIGNMENT;
+  }
+}
+
+export class AuthUrls {
+  private static CONTROLLER = "/Auth";
+  private static ACTIONS = {
+    LOGOUT: "/jwt/revoke",
+    LOGIN: "/login",
+  }
+
+  static login(): string {
+    return HostUrl.getHostUrl() + AuthUrls.CONTROLLER + AuthUrls.ACTIONS.LOGIN;
+  }
+
+  static logout(): string {
+    return HostUrl.getHostUrl() + AuthUrls.CONTROLLER + AuthUrls.ACTIONS.LOGOUT;
+  }
+}
+
+export class UserUrls {
+  private static CONTROLLER = "/Users";
+  private static ACTIONS = {
+    ME: "/me",
+  }
+
+  static details(): string {
+    return HostUrl.getHostUrl() + UserUrls.CONTROLLER + UserUrls.ACTIONS.ME;
   }
 }

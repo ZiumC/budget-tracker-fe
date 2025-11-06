@@ -41,9 +41,22 @@ export class DateUtil {
     return new Date(currentYear, 11, 31);
   }
 
+  static toDate(date: string | null): Date | null {
+    if (date) {
+      return new Date(Date.parse(date));
+    }
+    return null;
+  }
+
   static setMonthsToDate(date: Date, months: number): Date {
     let result = new Date(date);
     result.setMonth(result.getMonth() + months);
+    return result;
+  }
+
+  static setMinutesToDate(date: Date, minutes: number): Date {
+    let result = new Date(date);
+    result.setMinutes(result.getMonth() + minutes);
     return result;
   }
 
@@ -71,10 +84,10 @@ export class DateUtil {
   }
 
   static validateFeatureOnDateChanged(
-      toDateInput: NgModel,
-      fromDatePicker: DatePicker,
-      toDatePicker: DatePicker,
-      maxMonths: number): void {
+    toDateInput: NgModel,
+    fromDatePicker: DatePicker,
+    toDatePicker: DatePicker,
+    maxMonths: number): void {
     const fromDate = DatePickerUtil.convertToDate(fromDatePicker);
     const toDate = DatePickerUtil.convertToDate(toDatePicker);
     const maxDate = this.setMonthsToDate(fromDate, maxMonths);

@@ -5,7 +5,7 @@ import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 import {HeaderComponent} from './ui/components/shared/header/header.component';
 import {NgbDateParserFormatter, NgbModule} from '@ng-bootstrap/ng-bootstrap';
-import {HttpClientModule} from '@angular/common/http';
+import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {CommonModule} from '@angular/common';
 import {DashboardComponent} from './ui/pages/dashboard/dashboard.component';
 import {SpinnerComponent} from './ui/components/shared/spinner/spinner.component';
@@ -41,6 +41,9 @@ import {InfoModalComponent} from './ui/components/modals/info-modal/info-modal.c
 import {TypeheadComponent} from './ui/components/shared/typehead/typehead.component';
 import {BarChartModule, NgxChartsModule, PieChartModule} from "@swimlane/ngx-charts";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+import { LoginComponent } from './ui/pages/login/login.component';
+import {JwtInterceptor} from "./services/http/http.interceptor.service";
+import {AuthService} from "./services/auth/auth.service";
 
 export function loadConfig(configService: ConfigService): () => Promise<Config> {
   return (): Promise<Config> => firstValueFrom(configService.loadConfig());
@@ -75,6 +78,7 @@ export function loadConfig(configService: ConfigService): () => Promise<Config> 
     CopyPaymentModalComponent,
     InfoModalComponent,
     TypeheadComponent,
+    LoginComponent,
   ],
     imports: [
         BrowserModule,
@@ -91,6 +95,7 @@ export function loadConfig(configService: ConfigService): () => Promise<Config> 
   providers: [
     {provide: NgbDateParserFormatter, useClass: DatepickerFormatter},
     {provide: APP_INITIALIZER, useFactory: loadConfig, deps: [ConfigService], multi: true},
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
     importProvidersFrom([BrowserModule, BrowserAnimationsModule]),
   ],
   bootstrap: [AppComponent],
