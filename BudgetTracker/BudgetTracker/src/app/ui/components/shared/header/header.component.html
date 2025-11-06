@@ -1,39 +1,34 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-secondary">
-  <div class="container-fluid">
-    <button (click)="navigateToHome()"
-            class="btn btn-secondary"
-            type="button">
-      BudgetTracker
-    </button>
+<ng-template [ngIf]="authService.isLoggedIn()">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-secondary">
+    <div class="container-fluid">
+      <button (click)="navigateToHome()"
+              class="btn btn-secondary"
+              type="button">
+        BudgetTracker
+      </button>
 
-    <label class="divider-m"></label>
-    <button (click)="isMenuCollapsed = !isMenuCollapsed"
-            class="navbar-toggler"
-            type="button">
-      &#9776;
-    </button>
+      <label class="divider-m"></label>
+      <button (click)="isMenuCollapsed = !isMenuCollapsed"
+              class="navbar-toggler"
+              type="button">
+        &#9776;
+      </button>
 
-    <div [ngbCollapse]="isMenuCollapsed" class="collapse navbar-collapse">
-      <label class="divider-block-xs"></label>
-      <ul class="navbar-nav">
-        <ng-template [ngIf]="loggedIn" [ngIfElse]="elseBlock">
+      <div [ngbCollapse]="isMenuCollapsed" class="collapse navbar-collapse">
+        <label class="divider-block-xs"></label>
+        <ul class="navbar-nav">
           <li (click)="navigateToCategories()"
               class="btn btn-light text-center mx-2 my-2">
             Categories <i class="bi bi-tags"></i>
           </li>
-          <hr class="vertical mx-1" />
-          <li class="btn btn-secondary mx-2 my-2">
+          <hr class="vertical mx-1"/>
+          <li (click)="authService.logout()"
+              class="btn btn-secondary mx-2 my-2">
             Log out <i class="bi bi-box-arrow-left"></i>
           </li>
-        </ng-template>
-        <ng-template #elseBlock>
-          <li (click)="navigateToLogin()"
-              class="btn btn-light text-center">
-            Login <i class="bi bi-box-arrow-in-right"></i>
-          </li>
-        </ng-template>
-      </ul>
-      <label class="divider-block-xs"></label>
+        </ul>
+        <label class="divider-block-xs"></label>
+      </div>
     </div>
-  </div>
-</nav>
+  </nav>
+</ng-template>

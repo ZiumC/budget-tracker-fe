@@ -1,4 +1,143 @@
+<div class="component-wrapper component-bg">
+  <div class="row d-flex justify-content-center align-items-center h-100">
+    <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+      <div class="card">
+        <div class="card-body p-5 text-center">
+          <ng-container [ngSwitch]="formType">
+            <ng-container *ngSwitchCase="FormType.LOGIN">
+              <form ngbAutofocus #loginForm="ngForm">
+                <div class="mb-md-5 mt-md-4 pb-5">
+                  <h2 class="fw-bold mb-2 text-uppercase">Login</h2>
+                  <p class="mb-5">Please enter your credentials</p>
+                  <div [className]="ModalUtils.displayMarginFor(loginEmailInput)">
+                    <div class="text-start">
+                      <label for="login-email">Email or username</label>
+                      <span class="text-danger">*</span>
+                    </div>
+                    <input
+                      type="text"
+                      id="login-email"
+                      name="login-email"
+                      class="form-control"
+                      [(ngModel)]="loginRequest.emailOrLogin"
+                      required
+                      minlength="{{ formConfig.loginRequest.emailOrLogin.minLength }}"
+                      maxlength="{{ formConfig.loginRequest.emailOrLogin.maxLength }}"
+                      pattern="{{formConfig.regex.loginOrEmail}}"
+                      #loginEmailInput="ngModel"
+                      [ngClass]="{
+                        'is-invalid': loginEmailInput.invalid &&
+                        (loginEmailInput.dirty || loginEmailInput.touched),
+                        'is-valid': loginEmailInput.valid }"/>
+                    @if (loginEmailInput.invalid &&
+                    (loginEmailInput.dirty || loginEmailInput.touched)) {
+                      <div class="invalid-feedback text-start">
+                        <label *ngIf="loginEmailInput.errors?.['required']">
+                          {{ formConfig.messages.required }}
+                        </label>
+                        <label *ngIf="loginEmailInput.errors?.['pattern']">
+                          {{ formatString(formConfig.messages.invalid, "Email or username") }}
+                        </label>
+                        <label *ngIf="loginEmailInput.errors?.['minlength']">
+                          {{ formatString(formConfig.messages.minLength, formConfig.loginRequest.emailOrLogin.minLength) }}
+                        </label>
+                        <label *ngIf="loginEmailInput.errors?.['maxlength']">
+                          {{ formatString(formConfig.messages.maxLength, formConfig.loginRequest.emailOrLogin.maxLength) }}
+                        </label>
+                      </div>
+                    } @else {
+                      <div class="valid-feedback"></div>
+                    }
+                  </div>
+                  <div [className]="ModalUtils.displayMarginFor(loginPasswordInput)">
+                    <div class="text-start">
+                      <label for="login-password">Password</label>
+                      <span class="text-danger">*</span>
+                    </div>
+                    <input
+                      type="password"
+                      id="login-password"
+                      name="login-password"
+                      class="form-control"
+                      [(ngModel)]="loginRequest.password"
+                      required
+                      minlength="{{ formConfig.loginRequest.password.minLength }}"
+                      maxlength="{{ formConfig.loginRequest.password.maxLength }}"
+                      #loginPasswordInput="ngModel"
+                      [ngClass]="{
+                        'is-invalid': loginPasswordInput.invalid &&
+                        (loginPasswordInput.dirty || loginPasswordInput.touched),
+                        'is-valid': loginPasswordInput.valid }"/>
+                    @if (loginPasswordInput.invalid &&
+                    (loginPasswordInput.dirty || loginPasswordInput.touched)) {
+                      <div class="invalid-feedback text-start">
+                        <label *ngIf="loginPasswordInput.errors?.['required']">
+                          {{ formConfig.messages.required }}
+                        </label>
+                        <label *ngIf="loginPasswordInput.errors?.['minlength']">
+                          {{ formatString(formConfig.messages.minLength, formConfig.loginRequest.password.minLength) }}
+                        </label>
+                        <label *ngIf="loginPasswordInput.errors?.['maxlength']">
+                          {{ formatString(formConfig.messages.maxLength, formConfig.loginRequest.password.maxLength) }}
+                        </label>
+                      </div>
+                    } @else {
+                      <div class="valid-feedback"></div>
+                    }
+                  </div>
+                  <p class="small mb-5 pb-lg-2"><a href="#">Forgot password?</a></p>
+                  <button (click)="login()"
+                          class="btn btn-outline-secondary btn-lg px-5"
+                          type="submit">
+                    Login
+                  </button>
+                </div>
+                <p class="mb-0">
+                  Don't have an account?
+                  <a type="button" (click)="formType = FormType.REGISTER" class="btn btn-outline-secondary">
+                    Sign Up
+                  </a>
+                </p>
+              </form>
+            </ng-container>
+            <ng-container *ngSwitchCase="FormType.REGISTER">
+              <form #registerForm="ngForm">
+                <div class="mb-md-5 mt-md-4 pb-5">
+                  <h2 class="fw-bold mb-2 text-uppercase">Sign up</h2>
+                  <p class="mb-5">Please enter your data</p>
+                  <div class="form-outline form-white mb-4">
+                    <input type="email" id="registerEmail" class="form-control form-control-lg"/>
+                    <label class="form-label" for="registerEmail">Email</label>
+                  </div>
+                  <div class="form-outline form-white mb-4">
+                    <input type="email" id="registerUsername" class="form-control form-control-lg"/>
+                    <label class="form-label" for="registerUsername">Username</label>
+                  </div>
+                  <div class="form-outline form-white mb-4">
+                    <input type="password" id="registerPassword" class="form-control form-control-lg"/>
+                    <label class="form-label" for="registerPassword">Password</label>
+                  </div>
+                  <div class="form-outline form-white mb-4">
+                    <input type="password" id="registerRetypePassword" class="form-control form-control-lg"/>
+                    <label class="form-label" for="registerRetypePassword">Repeat password</label>
+                  </div>
+                  <button class="btn btn-outline-secondary btn-lg px-5"
+                          type="submit">
+                    Sign in
+                  </button>
+                </div>
+                <p class="mb-0">
+                  You have already account?
+                  <a type="button" (click)="formType = FormType.LOGIN" class="btn btn-outline-secondary">
+                    Login Page
+                  </a>
+                </p>
+              </form>
+            </ng-container>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
-<p>login works!</p>
-
-<button (click)="login()"> login </button>

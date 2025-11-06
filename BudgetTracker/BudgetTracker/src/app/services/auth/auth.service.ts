@@ -2,12 +2,23 @@ import {Injectable} from '@angular/core';
 import {BehaviorSubject, Observable, of} from 'rxjs';
 import {HttpService} from "../http/http.service";
 import {tap} from "rxjs/operators";
+import {Router} from "@angular/router";
 
 @Injectable({providedIn: 'root'})
 export class AuthService {
     private isLoggedIn$ = new BehaviorSubject<boolean>(false);
 
-    constructor(private httpService: HttpService) {
+    constructor(
+        private httpService: HttpService,
+        private router: Router) {
+    }
+
+    logout(): void {
+        this.httpService.logout().subscribe({
+            next: (): void => this.isLoggedIn$.next(false),
+            error: (): void => this.isLoggedIn$.next(true)
+        });
+        this.router.navigateByUrl("/login");
     }
 
     initAuthCheck(): Observable<boolean> {

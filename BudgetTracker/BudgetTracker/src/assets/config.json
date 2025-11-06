@@ -85,8 +85,23 @@
           "maxLength": "150"
         }
       },
+      "loginRequest": {
+        "emailOrLogin": {
+          "minLength": "3",
+          "maxLength": "150"
+        },
+        "password": {
+          "minLength": "3",
+          "maxLength": "150"
+        },
+        "code": {
+          "minLength": "6",
+          "maxLength": "6"
+        }
+      },
       "regex": {
-        "money": "^[0-9]*\\.[0-9]{1,2}$|^[0-9]{1,}"
+        "money": "^[0-9]*\\.[0-9]{1,2}$|^[0-9]{1,}",
+        "loginOrEmail": "^[\\w\\-\\.]+@([\\w-]+\\.)+[\\w-]{2,}$|[\\w\\-\\.]+"
       }
     },
     "request": {
