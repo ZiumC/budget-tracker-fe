@@ -17,7 +17,16 @@ import {
   CategoryType,
   GetPaymentCategoryDto, IncomeCategoryDto,
 } from "../../models/dto/category.model.dto";
-import {BudgetUrls, CategoryUrls, IncomeUrls, PaginationUrls, PaymentUrls, StatisticUrls} from "./http";
+import {
+  AuthUrls,
+  BudgetUrls,
+  CategoryUrls,
+  IncomeUrls,
+  PaginationUrls,
+  PaymentUrls,
+  StatisticUrls,
+  UserUrls
+} from "./http";
 import {PlannedPaymentDto} from "../../models/dto/planned-payment.model.dto";
 import {GetIncomeAssignmentDto, GetPaymentAssignmentDto} from "../../models/dto/assignment.model.dto";
 import {
@@ -25,6 +34,8 @@ import {
   GetPlannedPaymentStatsDto,
   GetRegularPaymentStatsDto
 } from "../../models/statistics.model";
+import {JwtDto} from "../../models/dto/jwt.model.dto";
+import {LoginRequestDto} from "../../models/dto/user.model.dto";
 
 @Injectable({
   providedIn: 'root',
@@ -339,7 +350,7 @@ export class HttpService {
   }
 
   public getBudgetGeneralCategories(idBudget: string):
-    Observable<HttpResponse<GetBudgetGeneralCategoryDto>>{
+    Observable<HttpResponse<GetBudgetGeneralCategoryDto>> {
     return this.httpClient.get<GetBudgetGeneralCategoryDto>(
       StatisticUrls.budgetGeneralCategories(idBudget),
       {observe: 'response'}
@@ -347,10 +358,33 @@ export class HttpService {
   }
 
   public getBudgetGeneralCategoriesInRange(requestParams: RequestModel):
-    Observable<HttpResponse<GetBudgetGeneralCategoryDto>>{
+    Observable<HttpResponse<GetBudgetGeneralCategoryDto>> {
     return this.httpClient.get<GetBudgetGeneralCategoryDto>(
       StatisticUrls.budgetGeneralCategoriesInRange(requestParams),
       {observe: 'response'}
     );
+  }
+
+  public login(loginRequest: LoginRequestDto):
+    Observable<HttpResponse<JwtDto>> {
+    return this.httpClient.post<JwtDto>(
+      AuthUrls.login(),
+      loginRequest,
+      {observe: 'response', withCredentials: true}
+    )
+  }
+
+  public logout():Observable<any> {
+    return this.httpClient.post(
+      AuthUrls.logout(),
+      {observe: 'response', withCredentials: true}
+    )
+  }
+
+  public user():Observable<any> {
+    return this.httpClient.get(
+      UserUrls.details(),
+      {observe: 'response', withCredentials: true}
+    )
   }
 }
