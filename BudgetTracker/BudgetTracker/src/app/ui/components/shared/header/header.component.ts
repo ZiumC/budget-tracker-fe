@@ -1,5 +1,6 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Router} from '@angular/router';
+import {AuthService} from "../../../../services/auth/auth.service";
 
 @Component({
   selector: 'app-header',
@@ -10,7 +11,10 @@ export class HeaderComponent {
   protected isMenuCollapsed: boolean = true;
   protected loggedIn: boolean = true;
 
-  constructor(private router: Router) { }
+  constructor(
+    private router: Router,
+    protected authService: AuthService) {
+  }
 
   navigateToHome(): void {
     this.router.navigate(['']);
@@ -20,7 +24,7 @@ export class HeaderComponent {
     this.router.navigate(['/login']);
   }
 
-  navigateToCategories(): void{
+  navigateToCategories(): void {
     this.router.navigate(['/categories'])
   }
 }

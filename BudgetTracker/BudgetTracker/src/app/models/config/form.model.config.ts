@@ -4,6 +4,7 @@ export interface FormConfig {
   incomeModal: IncomeModal;
   budgetModal: BudgetModal;
   categoryModal: CategoryModal;
+  loginRequest: LoginRequest
   regex: Regex;
 }
 
@@ -67,4 +68,11 @@ export interface MinValueMaxLength {
 
 export interface Regex {
   money: string;
+  loginOrEmail: string;
+}
+
+export interface LoginRequest{
+  emailOrLogin: MinMaxLength;
+  password: MinMaxLength;
+  code: MinMaxLength;
 }
