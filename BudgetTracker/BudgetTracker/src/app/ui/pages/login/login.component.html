@@ -20,6 +20,7 @@
                       name="login-email"
                       class="form-control"
                       [(ngModel)]="loginRequest.emailOrLogin"
+                      [disabled]="!loaders.login"
                       required
                       minlength="{{ formConfig.loginRequest.emailOrLogin.minLength }}"
                       maxlength="{{ formConfig.loginRequest.emailOrLogin.maxLength }}"
@@ -60,6 +61,7 @@
                       name="login-password"
                       class="form-control"
                       [(ngModel)]="loginRequest.password"
+                      [disabled]="!loaders.login"
                       required
                       minlength="{{ formConfig.loginRequest.password.minLength }}"
                       maxlength="{{ formConfig.loginRequest.password.maxLength }}"
@@ -85,18 +87,37 @@
                       <div class="valid-feedback"></div>
                     }
                   </div>
-                  <p class="small mb-5 pb-lg-2"><a href="#">Forgot password?</a></p>
-                  <button (click)="login()"
-                          class="btn btn-outline-secondary btn-lg px-5"
-                          type="submit">
-                    Login
-                  </button>
+                  <p class="small mb-5 pb-lg-2">
+                    <ng-template [ngIf]="loaders.login">
+                      <a (click)="formType = FormType.FORGOT_PASSWORD">
+                        Forgot password?
+                      </a>
+                    </ng-template>
+                  </p>
+                  <ng-template [ngIf]="loaders.login"
+                               [ngIfElse]="displayLoginLoader">
+                    <button class="btn btn-outline-secondary btn-lg px-5"
+                            type="button"
+                            [disabled]="!loginForm.valid"
+                            (click)="login()">
+                      Login
+                    </button>
+                  </ng-template>
+                  <ng-template #displayLoginLoader>
+                    <button class="btn btn-outline-secondary btn-lg px-5"
+                            type="button">
+                      <app-spinner [size]="SpinnerSize.SMALL"></app-spinner>
+                    </button>
+                  </ng-template>
                 </div>
                 <p class="mb-0">
                   Don't have an account?
-                  <a type="button" (click)="formType = FormType.REGISTER" class="btn btn-outline-secondary">
+                  <button type="button"
+                          class="btn btn-outline-secondary"
+                          (click)="formType = FormType.REGISTER"
+                          [disabled]="!loaders.login">
                     Sign Up
-                  </a>
+                  </button>
                 </p>
               </form>
             </ng-container>
