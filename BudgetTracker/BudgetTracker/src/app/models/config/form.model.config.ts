@@ -4,7 +4,8 @@ export interface FormConfig {
   incomeModal: IncomeModal;
   budgetModal: BudgetModal;
   categoryModal: CategoryModal;
-  loginRequest: LoginRequest
+  loginForm: LoginForm;
+  registerForm: RegisterForm;
   regex: Regex;
 }
 
@@ -22,6 +23,7 @@ export interface Messages {
   alreadyDefined: string;
   wageTooLow: string;
   savingsTooBig: string;
+  passNotMatch: string;
   typeahead: Typehead;
 }
 
@@ -69,10 +71,18 @@ export interface MinValueMaxLength {
 export interface Regex {
   money: string;
   loginOrEmail: string;
+  email: string;
+  password: string;
 }
 
-export interface LoginRequest{
+export interface LoginForm {
   emailOrLogin: MinMaxLength;
   password: MinMaxLength;
   code: MinMaxLength;
+}
+
+export interface RegisterForm {
+  email: MinMaxLength;
+  login: MinMaxLength;
+  password: MinMaxLength;
 }

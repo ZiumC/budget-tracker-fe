@@ -7,4 +7,5 @@ export enum FormType {
 
 export class Loaders {
   login: boolean;
+  register: boolean;
 }

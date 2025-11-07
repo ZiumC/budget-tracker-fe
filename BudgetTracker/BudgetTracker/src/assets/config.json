@@ -28,6 +28,7 @@
         "alreadyDefined": "Month already defined",
         "savingsTooBig": "Savings can't be grater than Wage",
         "wageTooLow": "Wage can't be less than Savings",
+        "passNotMatch": "Passwords not equal",
         "typeahead": {
           "notfound": "Categories not found"
         }
@@ -85,23 +86,39 @@
           "maxLength": "150"
         }
       },
-      "loginRequest": {
+      "loginForm": {
         "emailOrLogin": {
           "minLength": "3",
           "maxLength": "150"
         },
         "password": {
-          "minLength": "3",
-          "maxLength": "150"
+          "minLength": "6",
+          "maxLength": "20"
         },
         "code": {
           "minLength": "6",
           "maxLength": "6"
         }
       },
+      "registerForm": {
+        "email": {
+          "minLength": "3",
+          "maxLength": "150"
+        },
+        "login": {
+          "minLength": "3",
+          "maxLength": "150"
+        },
+        "password": {
+          "minLength": "6",
+          "maxLength": "20"
+        }
+      },
       "regex": {
         "money": "^[0-9]*\\.[0-9]{1,2}$|^[0-9]{1,}",
-        "loginOrEmail": "^[\\w\\-\\.]+@([\\w-]+\\.)+[\\w-]{2,}$|[\\w\\-\\.]+"
+        "loginOrEmail": "(^[\\w\\-\\.]+@([\\w-]+\\.)+[\\w-]{2,}$)|(^[a-zA-Z0-9]+$)",
+        "email": "^[\\w\\-\\.]+@([\\w-]+\\.)+[\\w-]{2,}$",
+        "password": "((?=.*\\\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\\\\W]).{6,20})"
       }
     },
     "request": {

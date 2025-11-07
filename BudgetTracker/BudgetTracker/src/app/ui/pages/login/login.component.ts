@@ -2,7 +2,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {AuthService} from "../../../services/auth/auth.service";
 import {HttpService} from "../../../services/http/http.service";
-import {LoginRequestDto} from "../../../models/dto/user.model.dto";
+import {LoginDto, RegisterDto} from "../../../models/dto/user.model.dto";
 import {Subscription} from "rxjs";
 import {SubscriptionUtils} from "../../../util/subscription.utils";
 import {FormType, Loaders} from "../../../models/components/login.component";
@@ -14,6 +14,7 @@ import {ModalUtils} from "../../../util/modal.utils";
 import {TimerUtils} from "../../../util/timer.utils";
 import {AppConfig} from "../../../models/config/config";
 import {SpinnerSize} from "../../components/shared/spinner/spinner.component";
+import {NgModel} from "@angular/forms";
 
 @Component({
   selector: 'app-login',
@@ -27,7 +28,9 @@ export class LoginComponent implements OnInit, OnDestroy {
   protected readonly ModalUtils = ModalUtils;
   protected formType: FormType;
   protected subscriptions: Subscription[];
-  protected loginRequest: LoginRequestDto;
+  protected loginForm: LoginDto;
+  protected registerForm: RegisterDto;
+  protected repeatPassword: string;
   protected appConfig: AppConfig;
   protected formConfig: FormConfig;
   protected loaders: Loaders;
@@ -55,33 +58,74 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
 
     this.loaders = {
-      login: true
+      login: true,
+      register: true
     }
 
     this.subscriptions = [];
     this.formType = FormType.LOGIN;
-    this.loginRequest = new LoginRequestDto();
+    this.loginForm = new LoginDto();
+    this.registerForm = new RegisterDto();
   }
 
   ngOnDestroy(): void {
     SubscriptionUtils.unsubscribeAll(this.subscriptions);
   }
 
+  protected testPasswords(pass1: NgModel, pass2: NgModel): void {
+    const passInput1: string = this.registerForm.password;
+    const passInput2: string = this.repeatPassword;
+
+    const minLength: number = Number(this.formConfig.registerForm.password.minLength);
+    const maxLength: number = Number(this.formConfig.registerForm.password.maxLength);
+
+    const regexPass = new RegExp(this.formConfig.regex.password);
+
+    if (passInput1 != passInput2) {
+      pass1.control.setErrors({passNotMatch: true});
+      pass2.control.setErrors({passNotMatch: true});
+      return;
+    }
+
+    if (passInput1.length < minLength || passInput2.length < minLength) {
+      pass1.control.setErrors({minlength: true});
+      pass2.control.setErrors({minlength: true});
+      return;
+    }
+
+    if (passInput1.length > maxLength || passInput2.length > maxLength) {
+      pass1.control.setErrors({maxlength: true});
+      pass2.control.setErrors({maxlength: true});
+      return;
+    }
+
+    if (!regexPass.test(this.registerForm.password) || !regexPass.test(this.repeatPassword)) {
+      pass1.control.setErrors({pattern: true});
+      pass2.control.setErrors({pattern: true});
+      return;
+    }
+
+    pass1.control.setErrors(null);
+    pass2.control.setErrors(null);
+  }
+
   protected login(): void {
     this.markLoginAsLoaded(false);
-    this.subscriptions.push(
-      this.httpService.login(this.loginRequest).subscribe({
-        next: (): void => {
-          this.authService.setLoggedIn();
-          this.markLoginAsLoaded(true);
-          this.router.navigateByUrl(this.returnUrl);
-        },
-        error: (): void => {
-          this.authService.setLoggedOut();
-          this.markLoginAsLoaded(true);
-        }
-      })
-    )
+    if (this.loginForm) {
+      this.subscriptions.push(
+        this.httpService.login(this.loginForm).subscribe({
+          next: (): void => {
+            this.authService.setLoggedIn();
+            this.markLoginAsLoaded(true);
+            this.router.navigateByUrl(this.returnUrl);
+          },
+          error: (): void => {
+            this.authService.setLoggedOut();
+            this.markLoginAsLoaded(true);
+          }
+        })
+      )
+    }
   }
 
   private markLoginAsLoaded(value: boolean): void {

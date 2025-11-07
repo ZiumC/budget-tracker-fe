@@ -5,13 +5,13 @@
         <div class="card-body p-5 text-center">
           <ng-container [ngSwitch]="formType">
             <ng-container *ngSwitchCase="FormType.LOGIN">
-              <form ngbAutofocus #loginForm="ngForm">
+              <form ngbAutofocus #userLoginForm="ngForm">
                 <div class="mb-md-5 mt-md-4 pb-5">
                   <h2 class="fw-bold mb-2 text-uppercase">Login</h2>
                   <p class="mb-5">Please enter your credentials</p>
                   <div [className]="ModalUtils.displayMarginFor(loginEmailInput)">
                     <div class="text-start">
-                      <label for="login-email">Email or username</label>
+                      <label for="login-email">Email or login</label>
                       <span class="text-danger">*</span>
                     </div>
                     <input
@@ -19,11 +19,11 @@
                       id="login-email"
                       name="login-email"
                       class="form-control"
-                      [(ngModel)]="loginRequest.emailOrLogin"
+                      [(ngModel)]="loginForm.emailOrLogin"
                       [disabled]="!loaders.login"
                       required
-                      minlength="{{ formConfig.loginRequest.emailOrLogin.minLength }}"
-                      maxlength="{{ formConfig.loginRequest.emailOrLogin.maxLength }}"
+                      minlength="{{ formConfig.loginForm.emailOrLogin.minLength }}"
+                      maxlength="{{ formConfig.loginForm.emailOrLogin.maxLength }}"
                       pattern="{{formConfig.regex.loginOrEmail}}"
                       #loginEmailInput="ngModel"
                       [ngClass]="{
@@ -37,13 +37,13 @@
                           {{ formConfig.messages.required }}
                         </label>
                         <label *ngIf="loginEmailInput.errors?.['pattern']">
-                          {{ formatString(formConfig.messages.invalid, "Email or username") }}
+                          {{ formatString(formConfig.messages.invalid, "Email or login") }}
                         </label>
                         <label *ngIf="loginEmailInput.errors?.['minlength']">
-                          {{ formatString(formConfig.messages.minLength, formConfig.loginRequest.emailOrLogin.minLength) }}
+                          {{ formatString(formConfig.messages.minLength, formConfig.loginForm.emailOrLogin.minLength) }}
                         </label>
                         <label *ngIf="loginEmailInput.errors?.['maxlength']">
-                          {{ formatString(formConfig.messages.maxLength, formConfig.loginRequest.emailOrLogin.maxLength) }}
+                          {{ formatString(formConfig.messages.maxLength, formConfig.loginForm.emailOrLogin.maxLength) }}
                         </label>
                       </div>
                     } @else {
@@ -60,11 +60,11 @@
                       id="login-password"
                       name="login-password"
                       class="form-control"
-                      [(ngModel)]="loginRequest.password"
+                      [(ngModel)]="loginForm.password"
                       [disabled]="!loaders.login"
                       required
-                      minlength="{{ formConfig.loginRequest.password.minLength }}"
-                      maxlength="{{ formConfig.loginRequest.password.maxLength }}"
+                      minlength="{{ formConfig.loginForm.password.minLength }}"
+                      maxlength="{{ formConfig.loginForm.password.maxLength }}"
                       #loginPasswordInput="ngModel"
                       [ngClass]="{
                         'is-invalid': loginPasswordInput.invalid &&
@@ -77,10 +77,10 @@
                           {{ formConfig.messages.required }}
                         </label>
                         <label *ngIf="loginPasswordInput.errors?.['minlength']">
-                          {{ formatString(formConfig.messages.minLength, formConfig.loginRequest.password.minLength) }}
+                          {{ formatString(formConfig.messages.minLength, formConfig.loginForm.password.minLength) }}
                         </label>
                         <label *ngIf="loginPasswordInput.errors?.['maxlength']">
-                          {{ formatString(formConfig.messages.maxLength, formConfig.loginRequest.password.maxLength) }}
+                          {{ formatString(formConfig.messages.maxLength, formConfig.loginForm.password.maxLength) }}
                         </label>
                       </div>
                     } @else {
@@ -89,7 +89,8 @@
                   </div>
                   <p class="small mb-5 pb-lg-2">
                     <ng-template [ngIf]="loaders.login">
-                      <a (click)="formType = FormType.FORGOT_PASSWORD">
+                      <a class="forgot-pass"
+                         (click)="formType = FormType.FORGOT_PASSWORD">
                         Forgot password?
                       </a>
                     </ng-template>
@@ -98,61 +99,221 @@
                                [ngIfElse]="displayLoginLoader">
                     <button class="btn btn-outline-secondary btn-lg px-5"
                             type="button"
-                            [disabled]="!loginForm.valid"
+                            [disabled]="!userLoginForm.valid"
                             (click)="login()">
                       Login
                     </button>
                   </ng-template>
                   <ng-template #displayLoginLoader>
-                    <button class="btn btn-outline-secondary btn-lg px-5"
-                            type="button">
+                    <button type="button"
+                            class="btn btn-outline-secondary btn-lg px-5"
+                            [disabled]="!loaders.login">
                       <app-spinner [size]="SpinnerSize.SMALL"></app-spinner>
                     </button>
                   </ng-template>
                 </div>
                 <p class="mb-0">
                   Don't have an account?
-                  <button type="button"
-                          class="btn btn-outline-secondary"
-                          (click)="formType = FormType.REGISTER"
-                          [disabled]="!loaders.login">
-                    Sign Up
-                  </button>
                 </p>
+                <button type="button"
+                        class="btn btn-outline-secondary"
+                        (click)="formType = FormType.REGISTER"
+                        [disabled]="!loaders.login">
+                  Sign Up
+                </button>
               </form>
             </ng-container>
             <ng-container *ngSwitchCase="FormType.REGISTER">
-              <form #registerForm="ngForm">
+              <form #userRegisterForm="ngForm">
                 <div class="mb-md-5 mt-md-4 pb-5">
                   <h2 class="fw-bold mb-2 text-uppercase">Sign up</h2>
                   <p class="mb-5">Please enter your data</p>
-                  <div class="form-outline form-white mb-4">
-                    <input type="email" id="registerEmail" class="form-control form-control-lg"/>
-                    <label class="form-label" for="registerEmail">Email</label>
+                  <div [className]="ModalUtils.displayMarginFor(registerEmailInput)">
+                    <div class="text-start">
+                      <label for="register-email">Email</label>
+                      <span class="text-danger">*</span>
+                    </div>
+                    <input
+                      type="email"
+                      id="register-email"
+                      name="register-email"
+                      class="form-control"
+                      [(ngModel)]="registerForm.email"
+                      [disabled]="!loaders.register"
+                      required
+                      minlength="{{ formConfig.registerForm.email.minLength }}"
+                      maxlength="{{ formConfig.registerForm.email.maxLength }}"
+                      pattern="{{formConfig.regex.email}}"
+                      #registerEmailInput="ngModel"
+                      [ngClass]="{
+                        'is-invalid': registerEmailInput.invalid &&
+                        (registerEmailInput.dirty || registerEmailInput.touched),
+                        'is-valid': registerEmailInput.valid }"/>
+                    @if (registerEmailInput.invalid &&
+                    (registerEmailInput.dirty || registerEmailInput.touched)) {
+                      <div class="invalid-feedback text-start">
+                        <label *ngIf="registerEmailInput.errors?.['required']">
+                          {{ formConfig.messages.required }}
+                        </label>
+                        <label *ngIf="registerEmailInput.errors?.['pattern']">
+                          {{ formatString(formConfig.messages.invalid, "Email") }}
+                        </label>
+                        <label *ngIf="registerEmailInput.errors?.['minlength']">
+                          {{ formatString(formConfig.messages.minLength, formConfig.registerForm.email.minLength) }}
+                        </label>
+                        <label *ngIf="registerEmailInput.errors?.['maxlength']">
+                          {{ formatString(formConfig.messages.maxLength, formConfig.registerForm.email.maxLength) }}
+                        </label>
+                      </div>
+                    } @else {
+                      <div class="valid-feedback"></div>
+                    }
                   </div>
-                  <div class="form-outline form-white mb-4">
-                    <input type="email" id="registerUsername" class="form-control form-control-lg"/>
-                    <label class="form-label" for="registerUsername">Username</label>
+                  <div [className]="ModalUtils.displayMarginFor(registerLoginInput)">
+                    <div class="text-start">
+                      <label for="register-login">Login</label>
+                      <span class="text-danger">*</span>
+                    </div>
+                    <input
+                      type="text"
+                      id="register-login"
+                      name="register-login"
+                      class="form-control"
+                      [(ngModel)]="registerForm.login"
+                      [disabled]="!loaders.register"
+                      required
+                      minlength="{{ formConfig.registerForm.login.minLength }}"
+                      maxlength="{{ formConfig.registerForm.login.maxLength }}"
+                      pattern="{{formConfig.regex.loginOrEmail}}"
+                      #registerLoginInput="ngModel"
+                      [ngClass]="{
+                        'is-invalid': registerLoginInput.invalid &&
+                        (registerLoginInput.dirty || registerLoginInput.touched),
+                        'is-valid': registerLoginInput.valid }"/>
+                    @if (registerLoginInput.invalid &&
+                    (registerLoginInput.dirty || registerLoginInput.touched)) {
+                      <div class="invalid-feedback text-start">
+                        <label *ngIf="registerLoginInput.errors?.['required']">
+                          {{ formConfig.messages.required }}
+                        </label>
+                        <label *ngIf="registerLoginInput.errors?.['pattern']">
+                          {{ formatString(formConfig.messages.invalid, "Login") }}
+                        </label>
+                        <label *ngIf="registerLoginInput.errors?.['minlength']">
+                          {{ formatString(formConfig.messages.minLength, formConfig.registerForm.login.minLength) }}
+                        </label>
+                        <label *ngIf="registerLoginInput.errors?.['maxlength']">
+                          {{ formatString(formConfig.messages.maxLength, formConfig.registerForm.login.maxLength) }}
+                        </label>
+                      </div>
+                    } @else {
+                      <div class="valid-feedback"></div>
+                    }
                   </div>
-                  <div class="form-outline form-white mb-4">
-                    <input type="password" id="registerPassword" class="form-control form-control-lg"/>
-                    <label class="form-label" for="registerPassword">Password</label>
+                  <div [className]="ModalUtils.displayMarginFor(registerPasswordInput)">
+                    <div class="text-start">
+                      <label for="register-password">Password</label>
+                      <span class="text-danger">*</span>
+                    </div>
+                    <input
+                      type="password"
+                      id="register-password"
+                      name="register-password"
+                      class="form-control"
+                      [(ngModel)]="registerForm.password"
+                      [disabled]="!loaders.register"
+                      minlength="{{ formConfig.registerForm.password.minLength }}"
+                      maxlength="{{ formConfig.registerForm.password.maxLength }}"
+                      (ngModelChange)="testPasswords(registerPasswordInput, registerRepeatPasswordInput)"
+                      pattern="{{formConfig.regex.password}}"
+                      required
+                      #registerPasswordInput="ngModel"
+                      [ngClass]="{
+                        'is-invalid': registerPasswordInput.invalid &&
+                        (registerPasswordInput.dirty || registerPasswordInput.touched),
+                        'is-valid': registerPasswordInput.valid }"/>
+                    @if (registerPasswordInput.invalid &&
+                    (registerPasswordInput.dirty || registerPasswordInput.touched)) {
+                      <div class="invalid-feedback text-start col">
+                        <label *ngIf="registerPasswordInput.errors?.['required']">
+                          {{ formConfig.messages.required }}
+                        </label>
+                        <label *ngIf="registerPasswordInput.errors?.['pattern']">
+                          {{ formatString(formConfig.messages.invalid, "Password") }}
+                        </label>
+                        <label *ngIf="registerPasswordInput.errors?.['passNotMatch']">
+                          {{ formConfig.messages.passNotMatch }}
+                        </label>
+                        <label *ngIf="registerPasswordInput.errors?.['minlength']">
+                          {{ formatString(formConfig.messages.minLength, formConfig.registerForm.password.minLength) }}
+                        </label>
+                        <label *ngIf="registerPasswordInput.errors?.['maxlength']">
+                          {{ formatString(formConfig.messages.maxLength, formConfig.registerForm.password.maxLength) }}
+                        </label>
+                      </div>
+                    } @else {
+                      <div class="valid-feedback"></div>
+                    }
                   </div>
-                  <div class="form-outline form-white mb-4">
-                    <input type="password" id="registerRetypePassword" class="form-control form-control-lg"/>
-                    <label class="form-label" for="registerRetypePassword">Repeat password</label>
+                  <div [className]="ModalUtils.displayMarginFor(registerRepeatPasswordInput)">
+                    <div class="text-start">
+                      <label for="register-password-repeat">Repeat password</label>
+                      <span class="text-danger">*</span>
+                    </div>
+                    <input
+                      type="password"
+                      id="register-password-repeat"
+                      name="register-password-repeat"
+                      class="form-control"
+                      [(ngModel)]="repeatPassword"
+                      [disabled]="!loaders.register"
+                      (ngModelChange)="testPasswords(registerPasswordInput, registerRepeatPasswordInput)"
+                      pattern="'{{formConfig.regex.password}}'"
+                      required
+                      minlength="{{ formConfig.registerForm.password.minLength }}"
+                      maxlength="{{ formConfig.registerForm.password.maxLength }}"
+                      #registerRepeatPasswordInput="ngModel"
+                      [ngClass]="{
+                        'is-invalid': registerRepeatPasswordInput.invalid &&
+                        (registerRepeatPasswordInput.dirty || registerRepeatPasswordInput.touched),
+                        'is-valid': registerRepeatPasswordInput.valid }"/>
+                    @if (registerRepeatPasswordInput.invalid &&
+                    (registerRepeatPasswordInput.dirty || registerRepeatPasswordInput.touched)) {
+                      <div class="invalid-feedback text-start">
+                        <label *ngIf="registerRepeatPasswordInput.errors?.['required']">
+                          {{ formConfig.messages.required }}
+                        </label>
+                        <label *ngIf="registerRepeatPasswordInput.errors?.['pattern']">
+                          {{ formatString(formConfig.messages.invalid, "Password") }}
+                        </label>
+                        <label *ngIf="registerRepeatPasswordInput.errors?.['passNotMatch']">
+                          {{ formConfig.messages.passNotMatch }}
+                        </label>
+                        <label *ngIf="registerRepeatPasswordInput.errors?.['minlength']">
+                          {{ formatString(formConfig.messages.minLength, formConfig.registerForm.password.minLength) }}
+                        </label>
+                        <label *ngIf="registerRepeatPasswordInput.errors?.['maxlength']">
+                          {{ formatString(formConfig.messages.maxLength, formConfig.registerForm.password.maxLength) }}
+                        </label>
+                      </div>
+                    } @else {
+                      <div class="valid-feedback"></div>
+                    }
                   </div>
-                  <button class="btn btn-outline-secondary btn-lg px-5"
-                          type="submit">
+                  <button type="button"
+                          class="btn btn-outline-secondary btn-lg px-5"
+                          [disabled]="!userRegisterForm.valid">
                     Sign in
                   </button>
                 </div>
                 <p class="mb-0">
                   You have already account?
-                  <a type="button" (click)="formType = FormType.LOGIN" class="btn btn-outline-secondary">
-                    Login Page
-                  </a>
                 </p>
+                <button type="button"
+                        class="btn btn-outline-secondary"
+                        (click)="formType = FormType.LOGIN">
+                  Login Page
+                </button>
               </form>
             </ng-container>
           </ng-container>
