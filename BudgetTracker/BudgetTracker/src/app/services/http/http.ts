@@ -1,6 +1,6 @@
 import {RequestModel} from "../../models/request.model";
 import {CategoryType} from "../../models/dto/category.model.dto";
-import {LoginRequestDto} from "../../models/dto/user.model.dto";
+import {LoginDto} from "../../models/dto/user.model.dto";
 
 
 class HostUrl {

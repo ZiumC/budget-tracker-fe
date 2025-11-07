@@ -34,7 +34,7 @@ import {
   GetRegularPaymentStatsDto
 } from "../../models/statistics.model";
 import {JwtDto} from "../../models/dto/jwt.model.dto";
-import {LoginRequestDto} from "../../models/dto/user.model.dto";
+import {LoginDto} from "../../models/dto/user.model.dto";
 
 @Injectable({
   providedIn: 'root',
@@ -364,7 +364,7 @@ export class HttpService {
     );
   }
 
-  public login(loginRequest: LoginRequestDto):
+  public login(loginRequest: LoginDto):
     Observable<HttpResponse<JwtDto>> {
     return this.httpClient.post<JwtDto>(
       AuthUrls.login(),
