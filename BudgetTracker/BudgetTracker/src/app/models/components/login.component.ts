@@ -9,3 +9,7 @@ export class Loaders {
   login: boolean;
   register: boolean;
 }
+
+export class OtpLoaders {
+  otp: boolean;
+}

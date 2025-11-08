@@ -121,6 +121,10 @@
                         [disabled]="!loaders.login">
                   Sign Up
                 </button>
+                <app-otp-modal #otpModal
+                               (closedModalEvent)="this.loaders.login = $event">
+
+                </app-otp-modal>
               </form>
             </ng-container>
             <ng-container *ngSwitchCase="FormType.REGISTER">

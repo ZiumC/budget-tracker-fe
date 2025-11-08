@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {AuthService} from "../../../services/auth/auth.service";
 import {HttpService} from "../../../services/http/http.service";
@@ -24,6 +24,7 @@ import {ToastUtil} from "../../../util/tostr.util";
   styleUrl: './login.component.css'
 })
 export class LoginComponent implements OnInit, OnDestroy {
+  @ViewChild('otpModal') otpModal: any;
   protected readonly FormType = FormType;
   protected readonly formatString = formatString;
   protected readonly DateUtils = DateUtil;
@@ -118,10 +119,14 @@ export class LoginComponent implements OnInit, OnDestroy {
     if (this.loginForm) {
       this.subscriptions.push(
         this.httpService.login(this.loginForm).subscribe({
-          next: (): void => {
-            this.authService.setLoggedIn();
-            this.markLoginAsLoaded(true);
-            this.router.navigateByUrl(this.returnUrl);
+          next: (response): void => {
+            if (response.status == 204) {
+              this.otpModal.open();
+            } else {
+              this.authService.setLoggedIn();
+              this.markLoginAsLoaded(true);
+              this.router.navigateByUrl(this.returnUrl);
+            }
           },
           error: (err): void => {
             this.loginForm.password = "";
