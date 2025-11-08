@@ -1,15 +1,10 @@
-export enum FormType {
+export enum LoginFormTypes {
   LOGIN = 0,
-  REGISTER = 1,
-  FORGOT_PASSWORD = 2,
-  SET_PASSWORD = 3
+  RESET_PASSWORD = 1,
+  SET_PASSWORD = 2
 }
 
 export class Loaders {
   login: boolean;
-  register: boolean;
 }
 
-export class OtpLoaders {
-  otp: boolean;
-}

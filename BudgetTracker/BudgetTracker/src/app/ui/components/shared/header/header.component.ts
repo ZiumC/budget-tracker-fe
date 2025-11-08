@@ -9,7 +9,6 @@ import {AuthService} from "../../../../services/auth/auth.service";
 })
 export class HeaderComponent {
   protected isMenuCollapsed: boolean = true;
-  protected loggedIn: boolean = true;
 
   constructor(
     private router: Router,
@@ -17,11 +16,7 @@ export class HeaderComponent {
   }
 
   navigateToHome(): void {
-    this.router.navigate(['']);
-  }
-
-  navigateToLogin(): void {
-    this.router.navigate(['/login']);
+    this.router.navigate(['/dashboard']);
   }
 
   navigateToCategories(): void {
