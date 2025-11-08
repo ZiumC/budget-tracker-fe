@@ -73,6 +73,7 @@ export interface Regex {
   loginOrEmail: string;
   email: string;
   password: string;
+  otp: string;
 }
 
 export interface LoginForm {

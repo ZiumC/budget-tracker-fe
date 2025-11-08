@@ -1,0 +1,64 @@
+<ng-template #otpModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">
+      Two step authentication
+    </h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="close()">
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="text-center">
+      <p>
+        To confirm your login please use <strong>One Time Password</strong> from authenticator app.
+      </p>
+    </div>
+    <form ngbAutofocus #form="ngForm">
+      <div [className]="ModalUtils.displayMarginFor(otpInput)">
+        <div class="text-start">
+          <label for="otp">One Time Password</label>
+          <span class="text-danger">*</span>
+        </div>
+        <input
+          type="text"
+          id="otp"
+          name="otp"
+          class="form-control"
+          [(ngModel)]="otpCode"
+          [disabled]="loaders.otp"
+          required
+          pattern="{{formConfig.regex.otp}}"
+          #otpInput="ngModel"
+          [ngClass]="{
+                        'is-invalid': otpInput.invalid &&
+                        (otpInput.dirty || otpInput.touched),
+                        'is-valid': otpInput.valid }"/>
+        @if (otpInput.invalid &&
+        (otpInput.dirty || otpInput.touched)) {
+          <div class="invalid-feedback text-start">
+            <label *ngIf="otpInput.errors?.['required']">
+              {{ formConfig.messages.required }}
+            </label>
+            <label *ngIf="otpInput.errors?.['pattern']">
+              {{ formatString(formConfig.messages.invalid, "Code") }}
+            </label>
+          </div>
+        } @else {
+          <div class="valid-feedback"></div>
+        }
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button
+      [disabled]="!form.valid || loaders.otp"
+      type="button"
+      class="btn btn-outline-secondary"
+      (click)="verify()">
+      Verify
+    </button>
+  </div>
+</ng-template>

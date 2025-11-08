@@ -45,6 +45,7 @@ import {LoginComponent} from './ui/pages/login/login.component';
 import {JwtInterceptor} from "./services/http/http.interceptor.service";
 import {AuthService} from "./services/auth/auth.service";
 import {ToastrModule} from "ngx-toastr";
+import { OtpModalComponent } from './ui/components/modals/otp-modal/otp-modal.component';
 
 export function loadConfig(configService: ConfigService): () => Promise<Config> {
   return (): Promise<Config> => firstValueFrom(configService.loadConfig());
@@ -80,6 +81,7 @@ export function loadConfig(configService: ConfigService): () => Promise<Config> 
     InfoModalComponent,
     TypeheadComponent,
     LoginComponent,
+    OtpModalComponent,
   ],
   imports: [
     BrowserModule,
