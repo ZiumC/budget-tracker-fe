@@ -17,7 +17,7 @@ import {ConfigService} from "../../../services/config/config.service";
 import {RequestConfig} from "../../../models/config/request.model.config";
 import {formatString} from "../../../util/string.utils";
 import {ModalUtils} from "../../../util/modal.utils";
-import {generateErrorModel} from "../../../util/http.util";
+import {getErrorResponse} from "../../../util/http.util";
 import {ErrorImage, ErrorType} from "../../../models/error.model";
 import {
   DashboardResponse,
@@ -247,7 +247,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
           this.markBudgetCategoriesAsLoaded(true);
         },
         error: (err): void => {
-          this.responseModels.budgetCategories = generateErrorModel(err);
+          this.responseModels.budgetCategories = getErrorResponse(err);
           this.markBudgetCategoriesAsLoaded(true);
         }
       })
@@ -268,7 +268,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
           this.markBudgetSummaryAsLoaded(true);
         },
         error: (err): void => {
-          this.responseModels.budgetSummary = generateErrorModel(err);
+          this.responseModels.budgetSummary = getErrorResponse(err);
           this.markBudgetSummaryAsLoaded(true);
         }
       })
@@ -289,7 +289,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
           this.responseModels.budget.statusCode = response.status
         },
         error: (err): void => {
-          this.responseModels.budget = generateErrorModel(err);
+          this.responseModels.budget = getErrorResponse(err);
           this.markBudgetAsLoaded(true);
         },
         complete: (): void => {
@@ -312,7 +312,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
           this.responseModels.budgets.statusCode = response.status
         },
         error: (err): void => {
-          this.responseModels.budgets = generateErrorModel(err);
+          this.responseModels.budgets = getErrorResponse(err);
           this.markPageAsLoaded(true);
         },
         complete: (): void => {

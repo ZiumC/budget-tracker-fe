@@ -14,7 +14,7 @@ import {FormConfig} from "../../../../models/config/form.model.config";
 import {formatString} from "../../../../util/string.utils";
 import {subtract} from "../../../../util/number.util";
 import {GetPaymentDto, PaymentDto} from "../../../../models/dto/payment.model.dto";
-import {generateErrorModel} from "../../../../util/http.util";
+import {getErrorResponse} from "../../../../util/http.util";
 import {CategoryType, GetPaymentCategoryDto} from "../../../../models/dto/category.model.dto";
 import {getPaymentType} from "../../../../util/category.utils";
 import {RequestModel} from "../../../../models/request.model";
@@ -197,7 +197,7 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
   }
 
   private onRequestFailed(err: any): void {
-    this.responseModel = generateErrorModel(err);
+    this.responseModel = getErrorResponse(err);
     this.displayLoader = false;
     this.errorModal.open(this.responseModel);
   }

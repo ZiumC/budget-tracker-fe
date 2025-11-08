@@ -20,7 +20,7 @@ import {AppConfig} from "../../../../../models/config/config";
 import {ResponseModel} from "../../../../../models/response.model";
 import {RequestModel} from "../../../../../models/request.model";
 import {GetPaymentDto, PaymentStatusDto} from "../../../../../models/dto/payment.model.dto";
-import {generateErrorModel} from "../../../../../util/http.util";
+import {getErrorResponse} from "../../../../../util/http.util";
 import {TimerUtils} from "../../../../../util/timer.utils";
 import {HttpResponse} from "@angular/common/http";
 import {PageDto} from "../../../../../models/dto/page.model.dto";
@@ -169,7 +169,7 @@ export class PaymentComponent implements OnInit, OnDestroy, AfterViewInit {
           }
         },
         error: (err): void => {
-          const response = generateErrorModel(err);
+          const response = getErrorResponse(err);
           this.errorModal.open(response);
           this.paymentStatusLoader = false;
         },
@@ -225,7 +225,7 @@ export class PaymentComponent implements OnInit, OnDestroy, AfterViewInit {
           this.paymentResponseModel.statusCode = response.status;
         },
         error: (err): void => {
-          const response = generateErrorModel(err);
+          const response = getErrorResponse(err);
           this.paymentResponseModel = response;
           if (response.statusCode != 404) {
             this.errorModal.open(response);

@@ -16,7 +16,7 @@ import BigNumber from "bignumber.js";
 import {NgModel} from "@angular/forms";
 import {catchError, forkJoin, Observable, of, Subscription} from "rxjs";
 import {HttpResponse} from "@angular/common/http";
-import {generateErrorModel} from "../../../../util/http.util";
+import {getErrorResponse} from "../../../../util/http.util";
 import {RequestModel} from "../../../../models/request.model";
 import {TimerUtils} from "../../../../util/timer.utils";
 import {SpinnerSize} from "../../shared/spinner/spinner.component";
@@ -139,7 +139,7 @@ export class CopyPaymentModalComponent implements OnInit, OnDestroy {
           if (err.status != 404){
             this.errorModal.open(this.budgetsResponseModel);
           }
-          this.budgetsResponseModel = generateErrorModel(err);
+          this.budgetsResponseModel = getErrorResponse(err);
           this.markBudgetsAsLoaded(true);
         },
         complete: (): void => {

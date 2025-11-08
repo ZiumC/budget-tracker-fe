@@ -13,7 +13,7 @@ import {GetPaymentDto} from "../../../../models/dto/payment.model.dto";
 import {ConfigService} from "../../../../services/config/config.service";
 import {AppConfig} from "../../../../models/config/config";
 import {TimerUtils} from "../../../../util/timer.utils";
-import {generateErrorModel} from "../../../../util/http.util";
+import {getErrorResponse} from "../../../../util/http.util";
 import {GetPlannedPaymentDto} from "../../../../models/dto/planned-payment.model.dto";
 import {CategoryType, GetCategoryDto} from "../../../../models/dto/category.model.dto";
 
@@ -241,7 +241,7 @@ export class DeleteModalComponent implements OnInit, OnDestroy {
 
   private onRequestFailed(err: any): void {
     this.displayLoader = false;
-    this.responseModel = generateErrorModel(err);
+    this.responseModel = getErrorResponse(err);
     this.errorModal.open(this.responseModel);
   }
 }

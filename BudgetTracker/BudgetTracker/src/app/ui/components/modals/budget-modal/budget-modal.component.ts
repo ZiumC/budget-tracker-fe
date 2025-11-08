@@ -17,7 +17,7 @@ import {AppConfig} from "../../../../models/config/config";
 import {FormConfig} from "../../../../models/config/form.model.config";
 import {ConfigService} from "../../../../services/config/config.service";
 import {formatString} from "../../../../util/string.utils";
-import {generateErrorModel} from "../../../../util/http.util";
+import {getErrorResponse} from "../../../../util/http.util";
 
 @Component({
   selector: 'app-budget-modal',
@@ -226,7 +226,7 @@ export class BudgetModalComponent implements OnInit, OnDestroy {
     if (control instanceof AbstractControl) {
       control.setErrors({'responseMessage': err.error["message"]})
     } else {
-      this.responseModel = generateErrorModel(err);
+      this.responseModel = getErrorResponse(err);
       this.errorModal.open(this.responseModel);
     }
 

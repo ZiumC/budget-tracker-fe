@@ -11,7 +11,7 @@ import {TimerUtils} from "../../../../../util/timer.utils";
 import {DateUtil} from "../../../../../util/date.util";
 import {OrderOptions} from "../../../shared/order/order.component";
 import {HttpResponse} from "@angular/common/http";
-import {generateErrorModel} from "../../../../../util/http.util";
+import {getErrorResponse} from "../../../../../util/http.util";
 import {RequestModel} from "../../../../../models/request.model";
 import {PageDto} from "../../../../../models/dto/page.model.dto";
 import {ErrorImage, ErrorType} from "../../../../../models/error.model";
@@ -146,7 +146,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
           this.categoryResponseModel.statusCode = response.status;
         },
         error: (err): void => {
-          const response = generateErrorModel(err);
+          const response = getErrorResponse(err);
           this.categoryResponseModel = response;
           if (response.statusCode != 404) {
             this.errorModal.open(response);
