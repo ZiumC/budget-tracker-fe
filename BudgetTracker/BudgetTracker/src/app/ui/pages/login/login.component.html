@@ -20,7 +20,7 @@
                       name="login-email"
                       class="form-control"
                       [(ngModel)]="loginForm.emailOrLogin"
-                      [disabled]="!loaders.login"
+                      [disabled]="loaders.login"
                       required
                       minlength="{{ formConfig.loginForm.emailOrLogin.minLength }}"
                       maxlength="{{ formConfig.loginForm.emailOrLogin.maxLength }}"
@@ -62,7 +62,7 @@
                         name="login-password"
                         class="form-control"
                         [(ngModel)]="loginForm.password"
-                        [disabled]="!loaders.login"
+                        [disabled]="loaders.login"
                         required
                         minlength="{{ formConfig.loginForm.password.minLength }}"
                         maxlength="{{ formConfig.loginForm.password.maxLength }}"
@@ -102,14 +102,14 @@
                     }
                   </div>
                   <p class="small mb-5 pb-lg-2">
-                    <ng-template [ngIf]="loaders.login">
+                    <ng-template [ngIf]="!loaders.login">
                       <a class="forgot-pass"
                          (click)="formType = FormType.RESET_PASSWORD">
                         Forgot password?
                       </a>
                     </ng-template>
                   </p>
-                  <ng-template [ngIf]="loaders.login"
+                  <ng-template [ngIf]="!loaders.login"
                                [ngIfElse]="displayLoginLoader">
                     <button class="btn btn-outline-secondary btn-lg px-5"
                             type="button"
@@ -121,7 +121,7 @@
                   <ng-template #displayLoginLoader>
                     <button type="button"
                             class="btn btn-outline-secondary btn-lg px-5"
-                            [disabled]="!loaders.login">
+                            [disabled]="loaders.login">
                       <app-spinner [size]="SpinnerSize.SMALL"></app-spinner>
                     </button>
                   </ng-template>
@@ -132,11 +132,11 @@
                 <button type="button"
                         class="btn btn-outline-secondary"
                         routerLink="/register"
-                        [disabled]="!loaders.login">
+                        [disabled]="loaders.login">
                   Sign Up
                 </button>
                 <app-otp-modal #otpModal
-                               (closedModalEvent)="this.loaders.login = $event">
+                               (closedModalEvent)="this.loaders.login = !$event">
 
                 </app-otp-modal>
               </form>
