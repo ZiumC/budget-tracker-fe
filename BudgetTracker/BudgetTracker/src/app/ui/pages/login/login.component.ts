@@ -35,6 +35,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   protected loginForm: LoginDto;
   protected registerForm: RegisterDto;
   protected repeatPassword: string;
+  protected showPassword: boolean;
   protected appConfig: AppConfig;
   protected formConfig: FormConfig;
   protected loaders: Loaders;
@@ -71,6 +72,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.formType = FormType.LOGIN;
     this.loginForm = new LoginDto();
     this.registerForm = new RegisterDto();
+    this.showPassword = false;
   }
 
   ngOnDestroy(): void {
