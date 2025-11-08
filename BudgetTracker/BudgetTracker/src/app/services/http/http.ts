@@ -407,6 +407,7 @@ export class AuthUrls {
   private static ACTIONS = {
     LOGOUT: "/jwt/revoke",
     LOGIN: "/login",
+    VERIFY_OTP: "/2fa/verify-otp",
     ME: "/me"
   }
 
@@ -420,5 +421,9 @@ export class AuthUrls {
 
   static loginStatus(): string {
     return HostUrl.getHostUrl() + AuthUrls.CONTROLLER + AuthUrls.ACTIONS.ME;
+  }
+
+  static verifyLogin(): string{
+    return HostUrl.getHostUrl() + AuthUrls.CONTROLLER + AuthUrls.ACTIONS.VERIFY_OTP;
   }
 }

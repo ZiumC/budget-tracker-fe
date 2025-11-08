@@ -121,7 +121,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         this.httpService.login(this.loginForm).subscribe({
           next: (response): void => {
             if (response.status == 204) {
-              this.otpModal.open();
+              this.otpModal.open(this.loginForm.emailOrLogin);
             } else {
               this.authService.setLoggedIn();
               this.markLoginAsLoaded(true);
