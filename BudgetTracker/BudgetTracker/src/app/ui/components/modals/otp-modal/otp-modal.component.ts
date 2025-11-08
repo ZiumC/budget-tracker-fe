@@ -7,7 +7,6 @@ import {ConfigService} from "../../../../services/config/config.service";
 import {ModalOptions, ModalSize, ModalUtils} from "../../../../util/modal.utils";
 import {formatString} from "../../../../util/string.utils";
 import {FormConfig} from "../../../../models/config/form.model.config";
-import {OtpLoaders} from "../../../../models/components/login.component";
 import {OtpDto} from "../../../../models/dto/user.model.dto";
 import {ToastrService} from "ngx-toastr";
 import {ToastUtil} from "../../../../util/tostr.util";
@@ -15,6 +14,7 @@ import {AuthService} from "../../../../services/auth/auth.service";
 import {Router} from "@angular/router";
 import {TimerUtils} from "../../../../util/timer.utils";
 import {AppConfig} from "../../../../models/config/config";
+import {OtpLoaders} from "../../../../models/components/otp-modal.component";
 
 @Component({
   selector: 'app-otp-modal',

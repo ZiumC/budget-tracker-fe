@@ -43,9 +43,9 @@ import {BarChartModule, NgxChartsModule, PieChartModule} from "@swimlane/ngx-cha
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {LoginComponent} from './ui/pages/login/login.component';
 import {JwtInterceptor} from "./services/http/http.interceptor.service";
-import {AuthService} from "./services/auth/auth.service";
 import {ToastrModule} from "ngx-toastr";
 import { OtpModalComponent } from './ui/components/modals/otp-modal/otp-modal.component';
+import { RegisterComponent } from './ui/pages/register/register.component';
 
 export function loadConfig(configService: ConfigService): () => Promise<Config> {
   return (): Promise<Config> => firstValueFrom(configService.loadConfig());
@@ -82,6 +82,7 @@ export function loadConfig(configService: ConfigService): () => Promise<Config> 
     TypeheadComponent,
     LoginComponent,
     OtpModalComponent,
+    RegisterComponent,
   ],
   imports: [
     BrowserModule,

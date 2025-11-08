@@ -5,11 +5,19 @@ import {BudgetComponent} from "./ui/pages/budget/budget.component";
 import {CategoryPageComponent} from "./ui/pages/category-page/category-page.component";
 import {LoginComponent} from "./ui/pages/login/login.component";
 import {AuthGuard} from "./services/auth/auth.guard.service";
+import {RegisterComponent} from "./ui/pages/register/register.component";
 
 const routes: Routes = [
-  {path: 'login', component: LoginComponent},
   {
-    path: '',
+    path: 'login',
+    component: LoginComponent
+  },
+  {
+    path: 'register',
+    component: RegisterComponent
+  },
+  {
+    path: 'dashboard',
     component: DashboardComponent,
     canActivate: [AuthGuard]
   },

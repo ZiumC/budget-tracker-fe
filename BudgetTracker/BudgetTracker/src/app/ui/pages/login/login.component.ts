@@ -2,10 +2,10 @@ import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {AuthService} from "../../../services/auth/auth.service";
 import {HttpService} from "../../../services/http/http.service";
-import {LoginDto, RegisterDto} from "../../../models/dto/user.model.dto";
+import {LoginDto} from "../../../models/dto/user.model.dto";
 import {Subscription} from "rxjs";
 import {SubscriptionUtils} from "../../../util/subscription.utils";
-import {FormType, Loaders} from "../../../models/components/login.component";
+import {LoginFormTypes, Loaders} from "../../../models/components/login.component";
 import {formatString} from "../../../util/string.utils";
 import {DateUtil} from "../../../util/date.util";
 import {ConfigService} from "../../../services/config/config.service";
@@ -14,7 +14,6 @@ import {ModalUtils} from "../../../util/modal.utils";
 import {TimerUtils} from "../../../util/timer.utils";
 import {AppConfig} from "../../../models/config/config";
 import {SpinnerSize} from "../../components/shared/spinner/spinner.component";
-import {NgModel} from "@angular/forms";
 import {ToastrService} from "ngx-toastr";
 import {ToastUtil} from "../../../util/tostr.util";
 
@@ -25,21 +24,19 @@ import {ToastUtil} from "../../../util/tostr.util";
 })
 export class LoginComponent implements OnInit, OnDestroy {
   @ViewChild('otpModal') otpModal: any;
-  protected readonly FormType = FormType;
+  protected readonly FormType = LoginFormTypes;
   protected readonly formatString = formatString;
   protected readonly DateUtils = DateUtil;
   protected readonly ModalUtils = ModalUtils;
   protected readonly SpinnerSize = SpinnerSize;
-  protected formType: FormType;
+  protected formType: LoginFormTypes;
   protected subscriptions: Subscription[];
   protected loginForm: LoginDto;
-  protected registerForm: RegisterDto;
-  protected repeatPassword: string;
   protected showPassword: boolean;
   protected appConfig: AppConfig;
   protected formConfig: FormConfig;
   protected loaders: Loaders;
-  returnUrl = "/";
+  returnUrl = "/dashboard";
 
   constructor(
     private route: ActivatedRoute,
@@ -65,55 +62,16 @@ export class LoginComponent implements OnInit, OnDestroy {
 
     this.loaders = {
       login: true,
-      register: true
     }
 
     this.subscriptions = [];
-    this.formType = FormType.LOGIN;
+    this.formType = LoginFormTypes.LOGIN;
     this.loginForm = new LoginDto();
-    this.registerForm = new RegisterDto();
     this.showPassword = false;
   }
 
   ngOnDestroy(): void {
     SubscriptionUtils.unsubscribeAll(this.subscriptions);
-  }
-
-  protected testPasswords(pass1: NgModel, pass2: NgModel): void {
-    const passInput1: string = this.registerForm.password;
-    const passInput2: string = this.repeatPassword;
-
-    const minLength: number = Number(this.formConfig.registerForm.password.minLength);
-    const maxLength: number = Number(this.formConfig.registerForm.password.maxLength);
-
-    const regexPass = new RegExp(this.formConfig.regex.password);
-
-    if (passInput1 != passInput2) {
-      pass1.control.setErrors({passNotMatch: true});
-      pass2.control.setErrors({passNotMatch: true});
-      return;
-    }
-
-    if (passInput1.length < minLength || passInput2.length < minLength) {
-      pass1.control.setErrors({minlength: true});
-      pass2.control.setErrors({minlength: true});
-      return;
-    }
-
-    if (passInput1.length > maxLength || passInput2.length > maxLength) {
-      pass1.control.setErrors({maxlength: true});
-      pass2.control.setErrors({maxlength: true});
-      return;
-    }
-
-    if (!regexPass.test(this.registerForm.password) || !regexPass.test(this.repeatPassword)) {
-      pass1.control.setErrors({pattern: true});
-      pass2.control.setErrors({pattern: true});
-      return;
-    }
-
-    pass1.control.setErrors(null);
-    pass2.control.setErrors(null);
   }
 
   protected login(): void {
