@@ -89,6 +89,7 @@ export class OtpModalComponent implements OnInit, OnDestroy {
         error: (err): void => {
           this.otpCode = "";
           ToastUtil.handleErrorResponse(this.toastrService, err);
+          this.authService.setLoggedOut();
           this.markLoginAsLoaded(false);
           if (err.status != 400) {
             this.closedModalEvent.emit(true);
