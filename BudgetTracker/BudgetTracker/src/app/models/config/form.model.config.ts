@@ -24,6 +24,7 @@ export interface Messages {
   wageTooLow: string;
   savingsTooBig: string;
   passNotMatch: string;
+  passTooWeak: string;
   typeahead: Typehead;
 }
 
@@ -72,8 +73,16 @@ export interface Regex {
   money: string;
   loginOrEmail: string;
   email: string;
-  password: string;
+  password: PasswordRegex
   otp: string;
+}
+
+export interface PasswordRegex {
+  upperCase: string;
+  lowerCase: string;
+  digits: string;
+  specialCharacter: string;
+  length: string;
 }
 
 export interface LoginForm {
