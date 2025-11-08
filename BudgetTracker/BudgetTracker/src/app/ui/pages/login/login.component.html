@@ -32,7 +32,7 @@
                         'is-valid': loginEmailInput.valid }"/>
                     @if (loginEmailInput.invalid &&
                     (loginEmailInput.dirty || loginEmailInput.touched)) {
-                      <div class="invalid-feedback text-start">
+                      <div class="invalid-feedback text-start d-grid">
                         <label *ngIf="loginEmailInput.errors?.['required']">
                           {{ formConfig.messages.required }}
                         </label>
@@ -55,24 +55,38 @@
                       <label for="login-password">Password</label>
                       <span class="text-danger">*</span>
                     </div>
-                    <input
-                      type="password"
-                      id="login-password"
-                      name="login-password"
-                      class="form-control"
-                      [(ngModel)]="loginForm.password"
-                      [disabled]="!loaders.login"
-                      required
-                      minlength="{{ formConfig.loginForm.password.minLength }}"
-                      maxlength="{{ formConfig.loginForm.password.maxLength }}"
-                      #loginPasswordInput="ngModel"
-                      [ngClass]="{
+                    <div class="input-group">
+                      <input
+                        [type]="showPassword ? 'text' : 'password'"
+                        id="login-password"
+                        name="login-password"
+                        class="form-control"
+                        [(ngModel)]="loginForm.password"
+                        [disabled]="!loaders.login"
+                        required
+                        minlength="{{ formConfig.loginForm.password.minLength }}"
+                        maxlength="{{ formConfig.loginForm.password.maxLength }}"
+                        #loginPasswordInput="ngModel"
+                        [ngClass]="{
                         'is-invalid': loginPasswordInput.invalid &&
                         (loginPasswordInput.dirty || loginPasswordInput.touched),
                         'is-valid': loginPasswordInput.valid }"/>
+                      <div class="input-group-append">
+                        <span class="input-group-text"
+                              (click)="showPassword = !showPassword">
+                          <ng-template [ngIf]="showPassword"
+                                       [ngIfElse]="hide">
+                            <i class="bi bi-eye-slash"></i>
+                          </ng-template>
+                          <ng-template #hide>
+                            <i class="bi bi-eye"></i>
+                          </ng-template>
+                        </span>
+                      </div>
+                    </div>
                     @if (loginPasswordInput.invalid &&
                     (loginPasswordInput.dirty || loginPasswordInput.touched)) {
-                      <div class="invalid-feedback text-start">
+                      <div class="invalid-feedback text-start d-grid">
                         <label *ngIf="loginPasswordInput.errors?.['required']">
                           {{ formConfig.messages.required }}
                         </label>
