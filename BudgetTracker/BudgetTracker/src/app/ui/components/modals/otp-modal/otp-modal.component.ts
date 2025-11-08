@@ -8,6 +8,13 @@ import {ModalOptions, ModalSize, ModalUtils} from "../../../../util/modal.utils"
 import {formatString} from "../../../../util/string.utils";
 import {FormConfig} from "../../../../models/config/form.model.config";
 import {OtpLoaders} from "../../../../models/components/login.component";
+import {OtpDto} from "../../../../models/dto/user.model.dto";
+import {ToastrService} from "ngx-toastr";
+import {ToastUtil} from "../../../../util/tostr.util";
+import {AuthService} from "../../../../services/auth/auth.service";
+import {Router} from "@angular/router";
+import {TimerUtils} from "../../../../util/timer.utils";
+import {AppConfig} from "../../../../models/config/config";
 
 @Component({
   selector: 'app-otp-modal',
@@ -20,14 +27,20 @@ export class OtpModalComponent implements OnInit, OnDestroy {
   protected readonly formatString = formatString;
   protected readonly ModalUtils = ModalUtils;
   protected subscriptions: Subscription[] = [];
+  protected appConfig: AppConfig;
   protected formConfig: FormConfig;
   protected loaders: OtpLoaders;
   protected otpCode: string;
+  protected email: string;
+  returnUrl = "/";
 
   constructor(
     private modalService: NgbModal,
     private httpService: HttpService,
-    private configService: ConfigService) {
+    private configService: ConfigService,
+    private authService: AuthService,
+    private router: Router,
+    private toastrService: ToastrService) {
   }
 
   ngOnDestroy(): void {
@@ -37,6 +50,7 @@ export class OtpModalComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     const appCfg = this.configService.getAppConfig();
     if (appCfg) {
+      this.appConfig = appCfg;
       this.formConfig = appCfg.form;
     } else {
       throw Error("Config not provided")
@@ -47,7 +61,8 @@ export class OtpModalComponent implements OnInit, OnDestroy {
     }
   }
 
-  open(userName: string): void {
+  open(email: string): void {
+    this.email = email;
     this.modalService.open(this.otpModal, ModalOptions.default(ModalSize.MEDIUM))
   }
 
@@ -57,5 +72,43 @@ export class OtpModalComponent implements OnInit, OnDestroy {
   }
 
   protected verify(): void {
+    this.markLoginAsLoaded(false);
+    const otpDto: OtpDto = {
+      emailOrLogin: this.email,
+      code: this.otpCode
+    };
+
+    this.subscriptions.push(
+      this.httpService.verifyLogin(otpDto).subscribe({
+        next: (): void => {
+          this.modalService.dismissAll();
+          this.authService.setLoggedIn();
+          this.markLoginAsLoaded(true);
+          this.router.navigateByUrl(this.returnUrl);
+        },
+        error: (err): void => {
+          this.otpCode = "";
+          ToastUtil.handleErrorResponse(this.toastrService, err);
+          this.markLoginAsLoaded(false);
+          if (err.status != 400) {
+            this.closedModalEvent.emit(true);
+            this.modalService.dismissAll();
+          }
+        }
+      })
+    )
+  }
+
+  private markLoginAsLoaded(value: boolean): void {
+    if (value) {
+      new TimerUtils(this.appConfig.timer.duration.default).start()
+        .subscribe(finished => {
+          if (finished) {
+            this.loaders.otp = value;
+          }
+        });
+    } else {
+      this.loaders.otp = value;
+    }
   }
 }

@@ -34,7 +34,7 @@ import {
   GetRegularPaymentStatsDto
 } from "../../models/statistics.model";
 import {JwtDto} from "../../models/dto/jwt.model.dto";
-import {LoginDto} from "../../models/dto/user.model.dto";
+import {LoginDto, OtpDto} from "../../models/dto/user.model.dto";
 
 @Injectable({
   providedIn: 'root',
@@ -362,6 +362,15 @@ export class HttpService {
       StatisticUrls.budgetGeneralCategoriesInRange(requestParams),
       {observe: 'response', withCredentials: true}
     );
+  }
+
+  public verifyLogin(verifyRequest: OtpDto):
+    Observable<HttpResponse<JwtDto>> {
+    return this.httpClient.post<JwtDto>(
+      AuthUrls.verifyLogin(),
+      verifyRequest,
+      {observe: 'response', withCredentials: true}
+    )
   }
 
   public login(loginRequest: LoginDto):

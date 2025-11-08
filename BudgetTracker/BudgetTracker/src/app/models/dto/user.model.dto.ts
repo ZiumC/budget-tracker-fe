@@ -4,6 +4,11 @@ export class LoginDto {
   code: string | null;
 }
 
+export class OtpDto{
+  emailOrLogin: string;
+  code: string;
+}
+
 export class RegisterDto {
   email: string;
   login: string;
