@@ -20,7 +20,7 @@
                       name="register-email"
                       class="form-control"
                       [(ngModel)]="registerForm.email"
-                      [disabled]="!loaders.register"
+                      [disabled]="loaders.register"
                       required
                       minlength="{{ formConfig.registerForm.email.minLength }}"
                       maxlength="{{ formConfig.registerForm.email.maxLength }}"
@@ -32,7 +32,7 @@
                         'is-valid': registerEmailInput.valid }"/>
                     @if (registerEmailInput.invalid &&
                     (registerEmailInput.dirty || registerEmailInput.touched)) {
-                      <div class="invalid-feedback text-start">
+                      <div class="invalid-feedback text-start d-grid">
                         <label *ngIf="registerEmailInput.errors?.['required']">
                           {{ formConfig.messages.required }}
                         </label>
@@ -61,7 +61,7 @@
                       name="register-login"
                       class="form-control"
                       [(ngModel)]="registerForm.login"
-                      [disabled]="!loaders.register"
+                      [disabled]="loaders.register"
                       required
                       minlength="{{ formConfig.registerForm.login.minLength }}"
                       maxlength="{{ formConfig.registerForm.login.maxLength }}"
@@ -73,7 +73,7 @@
                         'is-valid': registerLoginInput.valid }"/>
                     @if (registerLoginInput.invalid &&
                     (registerLoginInput.dirty || registerLoginInput.touched)) {
-                      <div class="invalid-feedback text-start">
+                      <div class="invalid-feedback text-start d-grid">
                         <label *ngIf="registerLoginInput.errors?.['required']">
                           {{ formConfig.messages.required }}
                         </label>
@@ -96,31 +96,42 @@
                       <label for="register-password">Password</label>
                       <span class="text-danger">*</span>
                     </div>
-                    <input
-                      type="password"
-                      id="register-password"
-                      name="register-password"
-                      class="form-control"
-                      [(ngModel)]="registerForm.password"
-                      [disabled]="!loaders.register"
-                      minlength="{{ formConfig.registerForm.password.minLength }}"
-                      maxlength="{{ formConfig.registerForm.password.maxLength }}"
-                      (ngModelChange)="testPasswords(registerPasswordInput, registerRepeatPasswordInput)"
-                      pattern="{{formConfig.regex.password}}"
-                      required
-                      #registerPasswordInput="ngModel"
-                      [ngClass]="{
+                    <div class="input-group">
+                      <input
+                        [type]="showPassword ? 'text' : 'password'"
+                        id="register-password"
+                        name="register-password"
+                        class="form-control"
+                        [(ngModel)]="registerForm.password"
+                        [disabled]="loaders.register"
+                        (ngModelChange)="testPasswords(registerPasswordInput, registerRepeatPasswordInput)"
+                        required
+                        #registerPasswordInput="ngModel"
+                        [ngClass]="{
                         'is-invalid': registerPasswordInput.invalid &&
                         (registerPasswordInput.dirty || registerPasswordInput.touched),
                         'is-valid': registerPasswordInput.valid }"/>
+                      <div class="input-group-append">
+                        <span class="input-group-text"
+                              (click)="showPassword = !showPassword">
+                          <ng-template [ngIf]="showPassword"
+                                       [ngIfElse]="hide">
+                            <i class="bi bi-eye-slash"></i>
+                          </ng-template>
+                          <ng-template #hide>
+                            <i class="bi bi-eye"></i>
+                          </ng-template>
+                        </span>
+                      </div>
+                    </div>
                     @if (registerPasswordInput.invalid &&
                     (registerPasswordInput.dirty || registerPasswordInput.touched)) {
-                      <div class="invalid-feedback text-start col">
+                      <div class="invalid-feedback text-start d-grid">
                         <label *ngIf="registerPasswordInput.errors?.['required']">
                           {{ formConfig.messages.required }}
                         </label>
                         <label *ngIf="registerPasswordInput.errors?.['pattern']">
-                          {{ formatString(formConfig.messages.invalid, "Password") }}
+                          {{ formConfig.messages.passTooWeak }}
                         </label>
                         <label *ngIf="registerPasswordInput.errors?.['passNotMatch']">
                           {{ formConfig.messages.passNotMatch }}
@@ -141,31 +152,42 @@
                       <label for="register-password-repeat">Repeat password</label>
                       <span class="text-danger">*</span>
                     </div>
-                    <input
-                      type="password"
-                      id="register-password-repeat"
-                      name="register-password-repeat"
-                      class="form-control"
-                      [(ngModel)]="repeatPassword"
-                      [disabled]="!loaders.register"
-                      (ngModelChange)="testPasswords(registerPasswordInput, registerRepeatPasswordInput)"
-                      pattern="'{{formConfig.regex.password}}'"
-                      required
-                      minlength="{{ formConfig.registerForm.password.minLength }}"
-                      maxlength="{{ formConfig.registerForm.password.maxLength }}"
-                      #registerRepeatPasswordInput="ngModel"
-                      [ngClass]="{
+                    <div class="input-group">
+                      <input
+                        [type]="showPassword ? 'text' : 'password'"
+                        id="register-password-repeat"
+                        name="register-password-repeat"
+                        class="form-control"
+                        [(ngModel)]="repeatPassword"
+                        [disabled]="loaders.register"
+                        (ngModelChange)="testPasswords(registerPasswordInput, registerRepeatPasswordInput)"
+                        required
+                        #registerRepeatPasswordInput="ngModel"
+                        [ngClass]="{
                         'is-invalid': registerRepeatPasswordInput.invalid &&
                         (registerRepeatPasswordInput.dirty || registerRepeatPasswordInput.touched),
                         'is-valid': registerRepeatPasswordInput.valid }"/>
+                      <div class="input-group-append">
+                        <span class="input-group-text"
+                              (click)="showPassword = !showPassword">
+                          <ng-template [ngIf]="showPassword"
+                                       [ngIfElse]="hide">
+                            <i class="bi bi-eye-slash"></i>
+                          </ng-template>
+                          <ng-template #hide>
+                            <i class="bi bi-eye"></i>
+                          </ng-template>
+                        </span>
+                      </div>
+                    </div>
                     @if (registerRepeatPasswordInput.invalid &&
                     (registerRepeatPasswordInput.dirty || registerRepeatPasswordInput.touched)) {
-                      <div class="invalid-feedback text-start">
+                      <div class="invalid-feedback text-start d-grid">
                         <label *ngIf="registerRepeatPasswordInput.errors?.['required']">
                           {{ formConfig.messages.required }}
                         </label>
                         <label *ngIf="registerRepeatPasswordInput.errors?.['pattern']">
-                          {{ formatString(formConfig.messages.invalid, "Password") }}
+                          {{ formConfig.messages.passTooWeak }}
                         </label>
                         <label *ngIf="registerRepeatPasswordInput.errors?.['passNotMatch']">
                           {{ formConfig.messages.passNotMatch }}
@@ -181,6 +203,12 @@
                       <div class="valid-feedback"></div>
                     }
                   </div>
+                  <ul class="text-start text-danger mb-4">
+                    <li [style]="hasSpecialCharacter() ? 'display: none' : ''">Password should have special character</li>
+                    <li [style]="hasSmallCharacters() ? 'display: none' : ''">Password should have 3 small characters</li>
+                    <li [style]="hasBigCharacters() ? 'display: none' : ''">Password should have 2 upper characters</li>
+                    <li [style]="hasNumbers() ? 'display: none' : ''">Password should have 2 numbers</li>
+                  </ul>
                   <button type="button"
                           class="btn btn-outline-secondary btn-lg px-5"
                           [disabled]="!userRegisterForm.valid">

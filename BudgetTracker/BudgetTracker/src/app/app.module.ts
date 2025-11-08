@@ -89,7 +89,7 @@ export function loadConfig(configService: ConfigService): () => Promise<Config> 
     BrowserAnimationsModule,
     ToastrModule.forRoot({
       timeOut: 10000,
-      positionClass: 'toast-top-right',
+      positionClass: 'toast-top-left',
       progressAnimation: 'decreasing',
       progressBar: true,
       closeButton: false
