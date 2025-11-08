@@ -12,7 +12,7 @@ import {FormConfig} from "../../../../models/config/form.model.config";
 import {ConfigService} from "../../../../services/config/config.service";
 import {formatString} from "../../../../util/string.utils";
 import {TimerUtils} from "../../../../util/timer.utils";
-import {generateErrorModel} from "../../../../util/http.util";
+import {getErrorResponse} from "../../../../util/http.util";
 import {RequestModel} from "../../../../models/request.model";
 import {GetIncomeCategoryDto} from "../../../../models/dto/category.model.dto";
 import {NgModel} from "@angular/forms";
@@ -188,7 +188,7 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
 
   private onRequestFailed(err: any): void {
     this.displayLoader = false;
-    this.errorModal.open(generateErrorModel(err));
+    this.errorModal.open(getErrorResponse(err));
   }
 
   private setDefaultIncomeForm(): void {

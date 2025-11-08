@@ -22,7 +22,7 @@ import {RequestModel} from "../../../../../models/request.model";
 import {ResponseModel} from "../../../../../models/response.model";
 import {SpinnerSize} from '../../../shared/spinner/spinner.component';
 import {HttpResponse} from "@angular/common/http";
-import {generateErrorModel} from "../../../../../util/http.util";
+import {getErrorResponse} from "../../../../../util/http.util";
 import {TimerUtils} from "../../../../../util/timer.utils";
 import {OrderOptions} from "../../../shared/order/order.component";
 import {PageDto} from "../../../../../models/dto/page.model.dto";
@@ -154,7 +154,7 @@ export class IncomeComponent implements OnInit, OnDestroy, AfterViewInit {
           this.incomeResponseModel.statusCode = response.status;
         },
         error: (err): void => {
-          const response = generateErrorModel(err);
+          const response = getErrorResponse(err);
           this.incomeResponseModel = response;
           if (response.statusCode != 404) {
             this.errorModal.open(response);

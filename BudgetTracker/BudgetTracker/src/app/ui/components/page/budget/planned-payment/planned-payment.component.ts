@@ -18,7 +18,7 @@ import {RequestModel} from "../../../../../models/request.model";
 import {HttpResponse} from "@angular/common/http";
 import {GetPlannedPaymentDto} from "../../../../../models/dto/planned-payment.model.dto";
 import {ResponseModel} from "../../../../../models/response.model";
-import {generateErrorModel} from "../../../../../util/http.util";
+import {getErrorResponse} from "../../../../../util/http.util";
 import {formatString} from "../../../../../util/string.utils";
 import {TimerUtils} from "../../../../../util/timer.utils";
 import {format, subtract} from "../../../../../util/number.util";
@@ -174,7 +174,7 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy, AfterViewInit
           }
         },
         error: (err): void => {
-          const response = generateErrorModel(err);
+          const response = getErrorResponse(err);
           this.errorModal.open(response);
           this.plannedPaymentStatusLoader = false;
         },
@@ -203,7 +203,7 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy, AfterViewInit
           this.plannedPaymentsDto = response.body;
           this.paymentResponseModel.statusCode = response.status;
         }, error: (err): void => {
-          const response = generateErrorModel(err);
+          const response = getErrorResponse(err);
           this.paymentResponseModel = response;
           if (response.statusCode != 404) {
             this.errorModal.open(response);

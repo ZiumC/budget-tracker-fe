@@ -1,17 +1,16 @@
 import {ErrorModel, ResponseModel} from "../models/response.model";
 import {HttpResponse} from "@angular/common/http";
-import {TimerUtils} from "./timer.utils";
 
-export function generateErrorModel(err: any): ResponseModel {
+export function getErrorResponse(err: any): ResponseModel {
   return {
     traceId: err.headers.get('X-Trace-Id'),
     statusCode: err.status,
     error: {
-      type: err.error["Type"],
-      message: err.error["Message"],
-      title: err.error["Title"],
-      path: err.error["Path"],
-      statusCode: err.error["StatusCode"],
+      type: err.error["type"],
+      message: err.error["message"],
+      title: err.error["title"],
+      path: err.error["path"],
+      statusCode: err.error["statusCode"],
     } as ErrorModel
   } as ResponseModel;
 }

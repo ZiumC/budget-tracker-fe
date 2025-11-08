@@ -16,7 +16,7 @@ import {AppConfig} from "../../../../models/config/config";
 import {FormConfig} from "../../../../models/config/form.model.config";
 import {ResponseModel} from "../../../../models/response.model";
 import {formatString} from "../../../../util/string.utils";
-import {generateErrorModel} from "../../../../util/http.util";
+import {getErrorResponse} from "../../../../util/http.util";
 import {TimerUtils} from "../../../../util/timer.utils";
 import {HttpResponse} from "@angular/common/http";
 
@@ -197,7 +197,7 @@ export class CategoryModalComponent implements OnInit, OnDestroy {
   }
 
   private onRequestFailed(err: any): void {
-    this.responseModel = generateErrorModel(err);
+    this.responseModel = getErrorResponse(err);
     this.displayLoader = false;
     this.errorModal.open(this.responseModel);
   }

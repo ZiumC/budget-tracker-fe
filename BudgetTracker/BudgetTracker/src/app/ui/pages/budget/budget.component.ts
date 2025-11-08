@@ -16,7 +16,7 @@ import {
 import {AppConfig} from "../../../models/config/config";
 import {ConfigService} from "../../../services/config/config.service";
 import {formatString} from "../../../util/string.utils";
-import {generateErrorModel} from "../../../util/http.util";
+import {getErrorResponse} from "../../../util/http.util";
 import {TimerUtils} from "../../../util/timer.utils";
 import {LegendPosition} from "@swimlane/ngx-charts";
 import {
@@ -147,7 +147,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
           this.responseModels.budget.statusCode = response.status;
         },
         error: (err): void => {
-          const response = generateErrorModel(err);
+          const response = getErrorResponse(err);
           this.responseModels.budget = response;
           if (response.statusCode != 404) {
             this.errorModal.open(response);

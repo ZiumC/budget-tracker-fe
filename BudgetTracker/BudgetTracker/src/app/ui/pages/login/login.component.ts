@@ -15,6 +15,8 @@ import {TimerUtils} from "../../../util/timer.utils";
 import {AppConfig} from "../../../models/config/config";
 import {SpinnerSize} from "../../components/shared/spinner/spinner.component";
 import {NgModel} from "@angular/forms";
+import {ToastrService} from "ngx-toastr";
+import {ToastUtil} from "../../../util/tostr.util";
 
 @Component({
   selector: 'app-login',
@@ -26,6 +28,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   protected readonly formatString = formatString;
   protected readonly DateUtils = DateUtil;
   protected readonly ModalUtils = ModalUtils;
+  protected readonly SpinnerSize = SpinnerSize;
   protected formType: FormType;
   protected subscriptions: Subscription[];
   protected loginForm: LoginDto;
@@ -41,7 +44,8 @@ export class LoginComponent implements OnInit, OnDestroy {
     private httpService: HttpService,
     private authService: AuthService,
     private router: Router,
-    private configService: ConfigService) {
+    private configService: ConfigService,
+    private toastr: ToastrService) {
     const urlSnapshot = this.route.snapshot.queryParamMap.get('returnUrl');
     if (urlSnapshot) {
       this.returnUrl = urlSnapshot;
@@ -119,8 +123,10 @@ export class LoginComponent implements OnInit, OnDestroy {
             this.markLoginAsLoaded(true);
             this.router.navigateByUrl(this.returnUrl);
           },
-          error: (): void => {
+          error: (err): void => {
+            this.loginForm.password = "";
             this.authService.setLoggedOut();
+            ToastUtil.handleErrorResponse(this.toastr, err);
             this.markLoginAsLoaded(true);
           }
         })
@@ -140,6 +146,4 @@ export class LoginComponent implements OnInit, OnDestroy {
       this.loaders.login = value;
     }
   }
-
-  protected readonly SpinnerSize = SpinnerSize;
 }

@@ -41,9 +41,10 @@ import {InfoModalComponent} from './ui/components/modals/info-modal/info-modal.c
 import {TypeheadComponent} from './ui/components/shared/typehead/typehead.component';
 import {BarChartModule, NgxChartsModule, PieChartModule} from "@swimlane/ngx-charts";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
-import { LoginComponent } from './ui/pages/login/login.component';
+import {LoginComponent} from './ui/pages/login/login.component';
 import {JwtInterceptor} from "./services/http/http.interceptor.service";
 import {AuthService} from "./services/auth/auth.service";
+import {ToastrModule} from "ngx-toastr";
 
 export function loadConfig(configService: ConfigService): () => Promise<Config> {
   return (): Promise<Config> => firstValueFrom(configService.loadConfig());
@@ -80,22 +81,30 @@ export function loadConfig(configService: ConfigService): () => Promise<Config> 
     TypeheadComponent,
     LoginComponent,
   ],
-    imports: [
-        BrowserModule,
-        AppRoutingModule,
-        NgbModule,
-        HttpClientModule,
-        CommonModule,
-        FormsModule,
-        ReactiveFormsModule,
-        BarChartModule,
-        PieChartModule,
-        NgxChartsModule,
-    ],
+  imports: [
+    BrowserModule,
+    BrowserAnimationsModule,
+    ToastrModule.forRoot({
+      timeOut: 10000,
+      positionClass: 'toast-top-right',
+      progressAnimation: 'decreasing',
+      progressBar: true,
+      closeButton: false
+    }),
+    AppRoutingModule,
+    NgbModule,
+    HttpClientModule,
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    BarChartModule,
+    PieChartModule,
+    NgxChartsModule,
+  ],
   providers: [
     {provide: NgbDateParserFormatter, useClass: DatepickerFormatter},
     {provide: APP_INITIALIZER, useFactory: loadConfig, deps: [ConfigService], multi: true},
-    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
+    {provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true},
     importProvidersFrom([BrowserModule, BrowserAnimationsModule]),
   ],
   bootstrap: [AppComponent],

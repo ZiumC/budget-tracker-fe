@@ -12,7 +12,7 @@ import {SpinnerSize} from "../../shared/spinner/spinner.component";
 import {formatString} from "../../../../util/string.utils";
 import {FormConfig} from "../../../../models/config/form.model.config";
 import {HttpResponse} from "@angular/common/http";
-import {generateErrorModel} from "../../../../util/http.util";
+import {getErrorResponse} from "../../../../util/http.util";
 import {TimerUtils} from "../../../../util/timer.utils";
 import {CategoryType, GetPaymentCategoryDto} from "../../../../models/dto/category.model.dto";
 import {getPaymentType} from "../../../../util/category.utils";
@@ -199,7 +199,7 @@ export class PlannedPaymentModalComponent implements OnInit, OnDestroy {
   }
 
   private onRequestFailed(err: any): void {
-    this.responseModel = generateErrorModel(err);
+    this.responseModel = getErrorResponse(err);
     this.displayLoader = false;
     this.errorModal.open(this.responseModel);
   }
