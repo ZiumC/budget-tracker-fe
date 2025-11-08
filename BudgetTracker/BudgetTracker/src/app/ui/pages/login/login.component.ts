@@ -61,7 +61,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
 
     this.loaders = {
-      login: true,
+      login: false,
     }
 
     this.subscriptions = [];
@@ -80,19 +80,19 @@ export class LoginComponent implements OnInit, OnDestroy {
       this.subscriptions.push(
         this.httpService.login(this.loginForm).subscribe({
           next: (response): void => {
+            this.markLoginAsLoaded(true);
             if (response.status == 204) {
               this.otpModal.open(this.loginForm.emailOrLogin);
             } else {
               this.authService.setLoggedIn();
-              this.markLoginAsLoaded(true);
               this.router.navigateByUrl(this.returnUrl);
             }
           },
           error: (err): void => {
             this.loginForm.password = "";
             this.authService.setLoggedOut();
+            this.markLoginAsLoaded(false);
             ToastUtil.handleErrorResponse(this.toastr, err);
-            this.markLoginAsLoaded(true);
           }
         })
       )
