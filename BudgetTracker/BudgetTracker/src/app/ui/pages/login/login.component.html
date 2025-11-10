@@ -73,7 +73,7 @@
                         'is-valid': loginPasswordInput.valid }"/>
                       <div class="input-group-append">
                         <span class="input-group-text"
-                              (click)="showPassword = !showPassword">
+                              (click)="onPasswordDisplay()">
                           <ng-template [ngIf]="showPassword"
                                        [ngIfElse]="hide">
                             <i class="bi bi-eye-slash"></i>

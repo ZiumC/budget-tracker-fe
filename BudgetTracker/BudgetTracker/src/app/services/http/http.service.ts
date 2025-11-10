@@ -24,7 +24,7 @@ import {
   IncomeUrls,
   PaginationUrls,
   PaymentUrls,
-  StatisticUrls,
+  StatisticUrls, UserUrls,
 } from "./http";
 import {PlannedPaymentDto} from "../../models/dto/planned-payment.model.dto";
 import {GetIncomeAssignmentDto, GetPaymentAssignmentDto} from "../../models/dto/assignment.model.dto";
@@ -34,7 +34,7 @@ import {
   GetRegularPaymentStatsDto
 } from "../../models/statistics.model";
 import {JwtDto} from "../../models/dto/jwt.model.dto";
-import {LoginDto, OtpDto} from "../../models/dto/user.model.dto";
+import {ConfirmEmailDto, LoginDto, OtpDto, RegisterDto} from "../../models/dto/user.model.dto";
 
 @Injectable({
   providedIn: 'root',
@@ -382,17 +382,33 @@ export class HttpService {
     )
   }
 
-  public logout():Observable<any> {
+  public logout(): Observable<any> {
     return this.httpClient.post(
       AuthUrls.logout(),
       {observe: 'response', withCredentials: true}
     )
   }
 
-  public user():Observable<any> {
+  public user(): Observable<any> {
     return this.httpClient.get(
       AuthUrls.loginStatus(),
       {observe: 'response', withCredentials: true}
+    )
+  }
+
+  public register(register: RegisterDto): Observable<any> {
+    return this.httpClient.post(
+      UserUrls.register(),
+      register,
+      {observe: 'response'}
+    )
+  }
+
+  public confirm(confirm: ConfirmEmailDto): Observable<any> {
+    return this.httpClient.post(
+      UserUrls.confirm(),
+      confirm,
+      {observe: 'response'}
     )
   }
 }

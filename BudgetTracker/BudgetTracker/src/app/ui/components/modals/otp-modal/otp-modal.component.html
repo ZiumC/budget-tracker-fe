@@ -30,7 +30,7 @@
           [(ngModel)]="otpCode"
           [disabled]="loaders.otp"
           required
-          pattern="{{formConfig.regex.otp}}"
+          pattern="{{formConfig.regex.codes.otp}}"
           #otpInput="ngModel"
           [ngClass]="{
                         'is-invalid': otpInput.invalid &&

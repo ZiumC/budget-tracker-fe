@@ -423,7 +423,28 @@ export class AuthUrls {
     return HostUrl.getHostUrl() + AuthUrls.CONTROLLER + AuthUrls.ACTIONS.ME;
   }
 
-  static verifyLogin(): string{
+  static verifyLogin(): string {
     return HostUrl.getHostUrl() + AuthUrls.CONTROLLER + AuthUrls.ACTIONS.VERIFY_OTP;
+  }
+}
+
+export class UserUrls {
+  private static CONTROLLER = "/Users";
+  private static ACTIONS = {
+    REGISTER: "/register",
+    CONFIRM: "/confirm",
+    RESEND: "/resend"
+  }
+
+  static register(): string {
+    return HostUrl.getHostUrl() + UserUrls.CONTROLLER + UserUrls.ACTIONS.REGISTER;
+  }
+
+  static confirm(): string {
+    return HostUrl.getHostUrl() + UserUrls.CONTROLLER + UserUrls.ACTIONS.CONFIRM;
+  }
+
+  static resend(): string {
+    return HostUrl.getHostUrl() + UserUrls.CONTROLLER + UserUrls.ACTIONS.CONFIRM;
   }
 }
