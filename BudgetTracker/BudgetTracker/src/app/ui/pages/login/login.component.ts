@@ -75,12 +75,12 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   protected login(): void {
-    this.markLoginAsLoaded(false);
+    this.markLoginAsLoading(true);
     if (this.loginForm) {
       this.subscriptions.push(
         this.httpService.login(this.loginForm).subscribe({
           next: (response): void => {
-            this.markLoginAsLoaded(true);
+            this.markLoginAsLoading(false);
             if (response.status == 204) {
               this.otpModal.open(this.loginForm.emailOrLogin);
             } else {
@@ -91,7 +91,7 @@ export class LoginComponent implements OnInit, OnDestroy {
           error: (err): void => {
             this.loginForm.password = "";
             this.authService.setLoggedOut();
-            this.markLoginAsLoaded(false);
+            this.markLoginAsLoading(false);
             ToastUtil.handleErrorResponse(this.toastr, err);
           }
         })
@@ -99,7 +99,14 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
   }
 
-  private markLoginAsLoaded(value: boolean): void {
+  protected onPasswordDisplay(): void {
+    if (this.loaders.login) {
+      return;
+    }
+    this.showPassword = !this.showPassword;
+  }
+
+  private markLoginAsLoading(value: boolean): void {
     if (value) {
       new TimerUtils(this.appConfig.timer.duration.default).start()
         .subscribe(finished => {

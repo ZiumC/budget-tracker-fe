@@ -22,7 +22,10 @@ export class AuthGuard implements CanActivate {
         this.auth.setLoggedIn();
         return true;
       }),
-      catchError(() => of(this.router.createUrlTree(['/login'])))
+      catchError((): Observable<UrlTree> => {
+        this.auth.setLoggedOut();
+        return of(this.router.createUrlTree(['/login']))
+      })
     );
   }
 }

@@ -73,8 +73,8 @@ export interface Regex {
   money: string;
   loginOrEmail: string;
   email: string;
-  password: PasswordRegex
-  otp: string;
+  password: PasswordRegex;
+  codes:CodesRegex;
 }
 
 export interface PasswordRegex {
@@ -83,6 +83,11 @@ export interface PasswordRegex {
   digits: string;
   specialCharacter: string;
   length: string;
+}
+
+export interface CodesRegex {
+  otp: string;
+  emailConfirm: string;
 }
 
 export interface LoginForm {
@@ -95,4 +100,5 @@ export interface RegisterForm {
   email: MinMaxLength;
   login: MinMaxLength;
   password: MinMaxLength;
+  code: MinMaxLength;
 }

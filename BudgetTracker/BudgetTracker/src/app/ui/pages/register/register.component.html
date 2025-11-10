@@ -113,7 +113,7 @@
                         'is-valid': registerPasswordInput.valid }"/>
                       <div class="input-group-append">
                         <span class="input-group-text"
-                              (click)="showPassword = !showPassword">
+                              (click)="onPasswordDisplay()">
                           <ng-template [ngIf]="showPassword"
                                        [ngIfElse]="hide">
                             <i class="bi bi-eye-slash"></i>
@@ -169,7 +169,7 @@
                         'is-valid': registerRepeatPasswordInput.valid }"/>
                       <div class="input-group-append">
                         <span class="input-group-text"
-                              (click)="showPassword = !showPassword">
+                              (click)="onPasswordDisplay()">
                           <ng-template [ngIf]="showPassword"
                                        [ngIfElse]="hide">
                             <i class="bi bi-eye-slash"></i>
@@ -204,28 +204,156 @@
                     }
                   </div>
                   <ul class="text-start text-danger mb-4">
-                    <li [style]="hasSpecialCharacter() ? 'display: none' : ''">Password should have special character</li>
-                    <li [style]="hasSmallCharacters() ? 'display: none' : ''">Password should have 3 small characters</li>
+                    <li [style]="hasSpecialCharacter() ? 'display: none' : ''">Password should have special character
+                    </li>
+                    <li [style]="hasSmallCharacters() ? 'display: none' : ''">Password should have 3 small characters
+                    </li>
                     <li [style]="hasBigCharacters() ? 'display: none' : ''">Password should have 2 upper characters</li>
                     <li [style]="hasNumbers() ? 'display: none' : ''">Password should have 2 numbers</li>
                   </ul>
-                  <button type="button"
-                          class="btn btn-outline-secondary btn-lg px-5"
-                          [disabled]="!userRegisterForm.valid">
-                    Sign in
-                  </button>
+                  <ng-template [ngIf]="!loaders.register"
+                               [ngIfElse]="displayRegisterLoader">
+                    <button type="button"
+                            class="btn btn-outline-secondary btn-lg px-5"
+                            (click)="register();"
+                            [disabled]="!userRegisterForm.valid">
+                      Sign in
+                    </button>
+                  </ng-template>
+                  <ng-template #displayRegisterLoader>
+                    <button type="button"
+                            class="btn btn-outline-secondary btn-lg px-5"
+                            [disabled]="loaders.register">
+                      <app-spinner [size]="SpinnerSize.SMALL"></app-spinner>
+                    </button>
+                  </ng-template>
                 </div>
                 <p class="mb-0">
                   You have already account?
                 </p>
                 <button type="button"
                         class="btn btn-outline-secondary"
-                        routerLink="/login">
+                        routerLink="/login"
+                        [disabled]="loaders.register">
                   Login Page
                 </button>
               </form>
             </ng-container>
             <ng-container *ngSwitchCase="FormType.CONFIRM_EMAIL">
+              <form #userConfirmForm="ngForm">
+                <div class="mb-md-5 mt-md-4 pb-5">
+                  <h2 class="fw-bold mb-2 text-uppercase">Confirm email</h2>
+                  <p class="mb-5">Please type your code from email to complete registration</p>
+                  <div [style]="displayEmailInput() ? '' : 'display:none'"
+                       [className]="ModalUtils.displayMarginFor(verifyEmailInput)">
+                    <div class="text-start">
+                      <label for="verify-email">Email</label>
+                      <span class="text-danger">*</span>
+                    </div>
+                    <input
+                      type="email"
+                      id="verify-email"
+                      name="verify-email"
+                      class="form-control"
+                      [(ngModel)]="registerForm.email"
+                      [disabled]="loaders.confirm"
+                      required
+                      minlength="{{ formConfig.registerForm.email.minLength }}"
+                      maxlength="{{ formConfig.registerForm.email.maxLength }}"
+                      pattern="{{formConfig.regex.email}}"
+                      #verifyEmailInput="ngModel"
+                      [ngClass]="{
+                        'is-invalid': verifyEmailInput.invalid &&
+                        (verifyEmailInput.dirty || verifyEmailInput.touched),
+                        'is-valid': verifyEmailInput.valid }"/>
+                    @if (verifyEmailInput.invalid &&
+                    (verifyEmailInput.dirty || verifyEmailInput.touched)) {
+                      <div class="invalid-feedback text-start d-grid">
+                        <label *ngIf="verifyEmailInput.errors?.['required']">
+                          {{ formConfig.messages.required }}
+                        </label>
+                        <label *ngIf="verifyEmailInput.errors?.['pattern']">
+                          {{ formatString(formConfig.messages.invalid, "Email") }}
+                        </label>
+                        <label *ngIf="verifyEmailInput.errors?.['minlength']">
+                          {{ formatString(formConfig.messages.minLength, formConfig.registerForm.email.minLength) }}
+                        </label>
+                        <label *ngIf="verifyEmailInput.errors?.['maxlength']">
+                          {{ formatString(formConfig.messages.maxLength, formConfig.registerForm.email.maxLength) }}
+                        </label>
+                      </div>
+                    } @else {
+                      <div class="valid-feedback"></div>
+                    }
+                  </div>
+                  <div [className]="ModalUtils.displayMarginFor(verificationCodeInput)">
+                    <div class="text-start">
+                      <label for="verify-code">Code</label>
+                      <span class="text-danger">*</span>
+                    </div>
+                    <input
+                      type="email"
+                      id="verify-code"
+                      name="verify-code"
+                      class="form-control"
+                      [(ngModel)]="confirmationCode"
+                      [disabled]="loaders.confirm"
+                      required
+                      minlength="{{ formConfig.registerForm.code.minLength }}"
+                      maxlength="{{ formConfig.registerForm.code.maxLength }}"
+                      pattern="{{formConfig.regex.codes.emailConfirm}}"
+                      #verificationCodeInput="ngModel"
+                      [ngClass]="{
+                        'is-invalid': verificationCodeInput.invalid &&
+                        (verificationCodeInput.dirty || verificationCodeInput.touched),
+                        'is-valid': verificationCodeInput.valid }"/>
+                    @if (verificationCodeInput.invalid &&
+                    (verificationCodeInput.dirty || verificationCodeInput.touched)) {
+                      <div class="invalid-feedback text-start d-grid">
+                        <label *ngIf="verificationCodeInput.errors?.['required']">
+                          {{ formConfig.messages.required }}
+                        </label>
+                        <label *ngIf="verificationCodeInput.errors?.['pattern']">
+                          {{ formatString(formConfig.messages.invalid, "Code") }}
+                        </label>
+                        <label *ngIf="verificationCodeInput.errors?.['minlength']">
+                          {{ formatString(formConfig.messages.minLength, formConfig.registerForm.code.minLength) }}
+                        </label>
+                        <label *ngIf="verificationCodeInput.errors?.['maxlength']">
+                          {{ formatString(formConfig.messages.maxLength, formConfig.registerForm.code.maxLength) }}
+                        </label>
+                      </div>
+                    } @else {
+                      <div class="valid-feedback"></div>
+                    }
+                  </div>
+                  <ng-template [ngIf]="!loaders.confirm"
+                               [ngIfElse]="displayConfirmLoader">
+                    <button type="button"
+                            class="btn btn-outline-secondary btn-lg px-5"
+                            (click)="confirm();"
+                            [disabled]="!userConfirmForm.valid">
+                      Confirm
+                    </button>
+                  </ng-template>
+                  <ng-template #displayConfirmLoader>
+                    <button type="button"
+                            class="btn btn-outline-secondary btn-lg px-5"
+                            [disabled]="loaders.confirm">
+                      <app-spinner [size]="SpinnerSize.SMALL"></app-spinner>
+                    </button>
+                  </ng-template>
+                </div>
+                <p class="mb-0">
+                  You have already account?
+                </p>
+                <button type="button"
+                        class="btn btn-outline-secondary"
+                        routerLink="/login"
+                        [disabled]="loaders.confirm">
+                  Login Page
+                </button>
+              </form>
             </ng-container>
           </ng-container>
         </div>
