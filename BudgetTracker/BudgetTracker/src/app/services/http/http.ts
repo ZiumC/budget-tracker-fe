@@ -408,6 +408,7 @@ export class AuthUrls {
     LOGOUT: "/jwt/revoke",
     LOGIN: "/login",
     VERIFY_OTP: "/2fa/verify-otp",
+    PASSWORD_RESET:"/password/reset",
     ME: "/me"
   }
 
@@ -425,6 +426,10 @@ export class AuthUrls {
 
   static verifyLogin(): string {
     return HostUrl.getHostUrl() + AuthUrls.CONTROLLER + AuthUrls.ACTIONS.VERIFY_OTP;
+  }
+
+  static resetPassword(): string{
+    return HostUrl.getHostUrl() + AuthUrls.CONTROLLER + AuthUrls.ACTIONS.PASSWORD_RESET;
   }
 }
 

@@ -4,7 +4,7 @@ export class LoginDto {
   code: string | null;
 }
 
-export class OtpDto{
+export class OtpDto {
   emailOrLogin: string;
   code: string;
 }
@@ -18,4 +18,9 @@ export class RegisterDto {
 export class ConfirmEmailDto {
   email: string;
   code: string;
+}
+
+export class ResetPasswordDto {
+  email: string;
+  login: string;
 }

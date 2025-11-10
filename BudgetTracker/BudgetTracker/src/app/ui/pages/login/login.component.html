@@ -145,19 +145,113 @@
               <form #resetPasswordForm="ngForm">
                 <div class="mb-md-5 mt-md-4 pb-5">
                   <h2 class="fw-bold mb-2 text-uppercase">Reset password</h2>
-                  <p class="mb-5">Please enter your data</p>
-                  <button type="button"
-                          class="btn btn-outline-secondary btn-lg px-5"
-                          [disabled]="!resetPasswordForm.valid">
-                    Reset
-                  </button>
+                  <p class="mb-5">Please enter email and login</p>
+                  <div [className]="ModalUtils.displayMarginFor(resetEmailInput)">
+                    <div class="text-start">
+                      <label for="reset-email">Email</label>
+                      <span class="text-danger">*</span>
+                    </div>
+                    <input
+                      type="email"
+                      id="reset-email"
+                      name="reset-email"
+                      class="form-control"
+                      [(ngModel)]="resetPassForm.email"
+                      [disabled]="loaders.reset"
+                      required
+                      minlength="{{ formConfig.loginForm.emailOrLogin.minLength }}"
+                      maxlength="{{ formConfig.loginForm.emailOrLogin.maxLength }}"
+                      pattern="{{formConfig.regex.email}}"
+                      #resetEmailInput="ngModel"
+                      [ngClass]="{
+                        'is-invalid': resetEmailInput.invalid &&
+                        (resetEmailInput.dirty || resetEmailInput.touched),
+                        'is-valid': resetEmailInput.valid }"/>
+                    @if (resetEmailInput.invalid &&
+                    (resetEmailInput.dirty || resetEmailInput.touched)) {
+                      <div class="invalid-feedback text-start d-grid">
+                        <label *ngIf="resetEmailInput.errors?.['required']">
+                          {{ formConfig.messages.required }}
+                        </label>
+                        <label *ngIf="resetEmailInput.errors?.['pattern']">
+                          {{ formatString(formConfig.messages.invalid, "Email") }}
+                        </label>
+                        <label *ngIf="resetEmailInput.errors?.['minlength']">
+                          {{ formatString(formConfig.messages.minLength, formConfig.loginForm.emailOrLogin.minLength) }}
+                        </label>
+                        <label *ngIf="resetEmailInput.errors?.['maxlength']">
+                          {{ formatString(formConfig.messages.maxLength, formConfig.loginForm.emailOrLogin.maxLength) }}
+                        </label>
+                      </div>
+                    } @else {
+                      <div class="valid-feedback"></div>
+                    }
+                  </div>
+                  <div [className]="ModalUtils.displayMarginFor(resetLoginInput)">
+                    <div class="text-start">
+                      <label for="reset-login">Login</label>
+                      <span class="text-danger">*</span>
+                    </div>
+                    <input
+                      type="text"
+                      id="reset-login"
+                      name="reset-login"
+                      class="form-control"
+                      [(ngModel)]="resetPassForm.login"
+                      [disabled]="loaders.reset"
+                      required
+                      minlength="{{ formConfig.loginForm.emailOrLogin.minLength }}"
+                      maxlength="{{ formConfig.loginForm.emailOrLogin.maxLength }}"
+                      pattern="{{formConfig.regex.loginOrEmail}}"
+                      #resetLoginInput="ngModel"
+                      [ngClass]="{
+                        'is-invalid': resetLoginInput.invalid &&
+                        (resetLoginInput.dirty || resetLoginInput.touched),
+                        'is-valid': resetLoginInput.valid }"/>
+                    @if (resetLoginInput.invalid &&
+                    (resetLoginInput.dirty || resetLoginInput.touched)) {
+                      <div class="invalid-feedback text-start d-grid">
+                        <label *ngIf="resetLoginInput.errors?.['required']">
+                          {{ formConfig.messages.required }}
+                        </label>
+                        <label *ngIf="resetLoginInput.errors?.['pattern']">
+                          {{ formatString(formConfig.messages.invalid, "Login") }}
+                        </label>
+                        <label *ngIf="resetLoginInput.errors?.['minlength']">
+                          {{ formatString(formConfig.messages.minLength, formConfig.loginForm.emailOrLogin.minLength) }}
+                        </label>
+                        <label *ngIf="resetLoginInput.errors?.['maxlength']">
+                          {{ formatString(formConfig.messages.maxLength, formConfig.loginForm.emailOrLogin.maxLength) }}
+                        </label>
+                      </div>
+                    } @else {
+                      <div class="valid-feedback"></div>
+                    }
+                  </div>
+                  <ng-template [ngIf]="!loaders.reset"
+                               [ngIfElse]="displayResetLoader">
+                    <button type="button"
+                            class="btn btn-outline-secondary btn-lg px-5"
+                            (click)="resetPassword();"
+                            [disabled]="!resetPasswordForm.valid || loaders.reset">
+                      Reset
+                    </button>
+                  </ng-template>
+                  <ng-template #displayResetLoader>
+                    <button type="button"
+                            class="btn btn-outline-secondary btn-lg px-5"
+                            [disabled]="loaders.reset">
+                      <app-spinner [size]="SpinnerSize.SMALL"></app-spinner>
+                    </button>
+                  </ng-template>
                 </div>
                 <p class="mb-0">
                   You have already account?
                 </p>
                 <button type="button"
                         class="btn btn-outline-secondary"
-                        (click)="formType = FormType.LOGIN">
+                        (click)="formType = FormType.LOGIN"
+                        [disabled]="loaders.reset">
                   Login Page
                 </button>
               </form>

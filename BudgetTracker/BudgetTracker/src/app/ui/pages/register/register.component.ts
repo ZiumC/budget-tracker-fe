@@ -183,6 +183,9 @@ export class RegisterComponent implements OnInit, OnDestroy {
         error: (err): void => {
           ToastUtil.handleErrorResponse(this.toastr, err);
           this.markRegisterAsLoading(false);
+        },
+        complete: (): void => {
+          this.markRegisterAsLoading(false);
         }
       })
     );
@@ -205,6 +208,9 @@ export class RegisterComponent implements OnInit, OnDestroy {
         error: (err): void => {
           this.confirmationCode = "";
           ToastUtil.handleErrorResponse(this.toastr, err);
+          this.markConfirmAsLoading(false);
+        },
+        complete: (): void => {
           this.markConfirmAsLoading(false);
         }
       })

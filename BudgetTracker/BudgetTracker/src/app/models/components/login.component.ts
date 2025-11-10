@@ -6,5 +6,6 @@ export enum LoginFormTypes {
 
 export class Loaders {
   login: boolean;
+  reset: boolean;
 }
 

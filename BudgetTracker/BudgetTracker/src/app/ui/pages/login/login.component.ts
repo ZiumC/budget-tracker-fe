@@ -2,7 +2,7 @@ import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {AuthService} from "../../../services/auth/auth.service";
 import {HttpService} from "../../../services/http/http.service";
-import {LoginDto} from "../../../models/dto/user.model.dto";
+import {LoginDto, ResetPasswordDto} from "../../../models/dto/user.model.dto";
 import {Subscription} from "rxjs";
 import {SubscriptionUtils} from "../../../util/subscription.utils";
 import {LoginFormTypes, Loaders} from "../../../models/components/login.component";
@@ -32,6 +32,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   protected formType: LoginFormTypes;
   protected subscriptions: Subscription[];
   protected loginForm: LoginDto;
+  protected resetPassForm: ResetPasswordDto;
   protected showPassword: boolean;
   protected appConfig: AppConfig;
   protected formConfig: FormConfig;
@@ -62,11 +63,13 @@ export class LoginComponent implements OnInit, OnDestroy {
 
     this.loaders = {
       login: false,
+      reset: false
     }
 
     this.subscriptions = [];
     this.formType = LoginFormTypes.LOGIN;
     this.loginForm = new LoginDto();
+    this.resetPassForm = new ResetPasswordDto();
     this.showPassword = false;
   }
 
@@ -76,27 +79,47 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   protected login(): void {
     this.markLoginAsLoading(true);
-    if (this.loginForm) {
-      this.subscriptions.push(
-        this.httpService.login(this.loginForm).subscribe({
-          next: (response): void => {
-            this.markLoginAsLoading(false);
-            if (response.status == 204) {
-              this.otpModal.open(this.loginForm.emailOrLogin);
-            } else {
-              this.authService.setLoggedIn();
-              this.router.navigateByUrl(this.returnUrl);
-            }
-          },
-          error: (err): void => {
-            this.loginForm.password = "";
-            this.authService.setLoggedOut();
-            this.markLoginAsLoading(false);
-            ToastUtil.handleErrorResponse(this.toastr, err);
+    this.subscriptions.push(
+      this.httpService.login(this.loginForm).subscribe({
+        next: (response): void => {
+          this.markLoginAsLoading(false);
+          if (response.status == 204) {
+            this.otpModal.open(this.loginForm.emailOrLogin);
+          } else {
+            this.authService.setLoggedIn();
+            this.router.navigateByUrl(this.returnUrl);
           }
-        })
-      )
-    }
+        },
+        error: (err): void => {
+          this.loginForm.password = "";
+          this.authService.setLoggedOut();
+          this.markLoginAsLoading(false);
+          ToastUtil.handleErrorResponse(this.toastr, err);
+        },
+        complete: (): void => {
+          this.markLoginAsLoading(false);
+        }
+      })
+    )
+  }
+
+  protected resetPassword(): void {
+    this.markResetAsLoading(true);
+    this.subscriptions.push(
+      this.httpService.resetPassword(this.resetPassForm).subscribe({
+        next: (): void => {
+          this.markResetAsLoading(false);
+        },
+        error: (err): void => {
+          this.resetPassForm = new ResetPasswordDto();
+          ToastUtil.handleErrorResponse(this.toastr, err);
+          this.markResetAsLoading(false);
+        },
+        complete: (): void => {
+          this.markResetAsLoading(false);
+        }
+      })
+    )
   }
 
   protected onPasswordDisplay(): void {
@@ -116,6 +139,19 @@ export class LoginComponent implements OnInit, OnDestroy {
         });
     } else {
       this.loaders.login = value;
+    }
+  }
+
+  private markResetAsLoading(value: boolean): void {
+    if (value) {
+      new TimerUtils(this.appConfig.timer.duration.default).start()
+        .subscribe(finished => {
+          if (finished) {
+            this.loaders.reset = value;
+          }
+        });
+    } else {
+      this.loaders.reset = value;
     }
   }
 }
