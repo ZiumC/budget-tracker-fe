@@ -434,10 +434,28 @@ export class HttpService {
     )
   }
 
-  public enroll2Fa():
+  public enrollOtp():
     Observable<HttpResponse<EnrollOtpDto>> {
     return this.httpClient.post<EnrollOtpDto>(
       AuthUrls.enroll2Fa(),
+      null,
+      {observe: 'response', withCredentials: true}
+    )
+  }
+
+  public enableOtp(code: string):
+    Observable<any> {
+    return this.httpClient.post<EnrollOtpDto>(
+      AuthUrls.enable2Fa(code),
+      null,
+      {observe: 'response', withCredentials: true}
+    )
+  }
+
+  public disableOtp(code: string):
+    Observable<any> {
+    return this.httpClient.post<EnrollOtpDto>(
+      AuthUrls.enable2Fa(code),
       null,
       {observe: 'response', withCredentials: true}
     )

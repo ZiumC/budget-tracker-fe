@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, HostListener, OnDestroy, OnInit} from '@angular/core';
 import {Loaders, UserDto} from "../../../models/components/user-panel.component";
 import {Subscription} from "rxjs";
 import {SubscriptionUtils} from "../../../util/subscription.utils";
@@ -10,6 +10,9 @@ import {SpinnerSize} from "../../components/shared/spinner/spinner.component";
 import {ToastUtil} from "../../../util/tostr.util";
 import {ToastrService} from "ngx-toastr";
 import {EnrollOtpDto} from "../../../models/dto/user.model.dto";
+import {format} from "../../../util/number.util";
+import {formatString} from "../../../util/string.utils";
+import {FormConfig} from "../../../models/config/form.model.config";
 
 @Component({
   selector: 'app-user-panel',
@@ -17,26 +20,28 @@ import {EnrollOtpDto} from "../../../models/dto/user.model.dto";
   styleUrl: './user-panel.component.css'
 })
 export class UserPanelComponent implements OnInit, OnDestroy {
+  protected readonly format = format;
+  protected readonly formatString = formatString;
   protected readonly SpinnerSize = SpinnerSize;
   protected subscriptions: Subscription[];
   protected appConfig: AppConfig;
+  protected formConfig: FormConfig;
   protected enrollOtpDto: EnrollOtpDto | null;
   protected userDto: UserDto;
   protected loaders: Loaders;
+  protected otpCode: string;
+  public innerWidth: any;
 
   constructor(private httpService: HttpService,
               private configService: ConfigService,
               private toastr: ToastrService) {
   }
 
-  ngOnDestroy(): void {
-    SubscriptionUtils.unsubscribeAll(this.subscriptions);
-  }
-
   ngOnInit(): void {
     const appCfg = this.configService.getAppConfig();
     if (appCfg) {
       this.appConfig = appCfg;
+      this.formConfig = appCfg.form;
     } else {
       throw Error("Config not provided")
     }
@@ -44,38 +49,75 @@ export class UserPanelComponent implements OnInit, OnDestroy {
     this.userDto = {
       email: "example@mail.com",
       login: "example",
-      is2FaEnabled: false,
+      is2FaEnabled: true,
       isEmailConfirmed: true
     }
 
     this.subscriptions = [];
     this.loaders = {
       page: false,
-      enroll2Fa: false
+      enroll2Fa: false,
+      enable2Fa: false,
+      disable2Fa: false
     };
-    this.enrollOtpDto = new EnrollOtpDto();
+    this.otpCode = "";
   }
 
-  protected enroll2Fa(): void {
-    this.markEnrollmentAsLoading(true);
+  ngOnDestroy(): void {
+    SubscriptionUtils.unsubscribeAll(this.subscriptions);
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(): void {
+    this.innerWidth = window.innerWidth;
+  }
+
+  protected isMobileView(): boolean {
+    return innerWidth <= this.appConfig.pageMobileWidth;
+  }
+
+  protected enrollOtp(): void {
+    this.enrollOtpDto = new EnrollOtpDto();
+    this.markEnrollOtpAsLoading(true);
     this.subscriptions.push(
-      this.httpService.enroll2Fa().subscribe({
+      this.httpService.enrollOtp().subscribe({
         next: (response): void => {
           this.enrollOtpDto = response.body;
-          this.markEnrollmentAsLoading(false);
+          this.markEnrollOtpAsLoading(false);
         },
         error: (err): void => {
           ToastUtil.handleErrorResponse(this.toastr, err);
-          this.markEnrollmentAsLoading(false);
+          this.markEnrollOtpAsLoading(false);
         },
         complete: (): void => {
-          this.markEnrollmentAsLoading(false);
+          this.markEnrollOtpAsLoading(false);
         }
       })
     )
   }
 
-  private markEnrollmentAsLoading(value: boolean): void {
+  protected enableOtp(): void {
+    this.markEnableOtpAsLoading(true);
+    this.subscriptions.push(
+      this.httpService.enableOtp(this.otpCode).subscribe({
+        next: (): void => {
+          ToastUtil.enabled2FaSuccessfully(this.toastr, this.userDto.email);
+          this.userDto.is2FaEnabled = true;
+          this.markEnableOtpAsLoading(false);
+        },
+        error: (err): void => {
+          this.otpCode = "";
+          ToastUtil.handleErrorResponse(this.toastr, err);
+          this.markEnableOtpAsLoading(false);
+        },
+        complete: (): void => {
+          this.markEnableOtpAsLoading(false);
+        }
+      })
+    )
+  }
+
+  private markEnrollOtpAsLoading(value: boolean): void {
     if (value) {
       new TimerUtils(this.appConfig.timer.duration.default).start()
         .subscribe(finished => {
@@ -85,6 +127,19 @@ export class UserPanelComponent implements OnInit, OnDestroy {
         });
     } else {
       this.loaders.enroll2Fa = value;
+    }
+  }
+
+  private markEnableOtpAsLoading(value: boolean): void {
+    if (value) {
+      new TimerUtils(this.appConfig.timer.duration.default).start()
+        .subscribe(finished => {
+          if (finished) {
+            this.loaders.enable2Fa = value;
+          }
+        });
+    } else {
+      this.loaders.enable2Fa = value;
     }
   }
 }

@@ -66,37 +66,140 @@
             <label for="change-password">Change email</label>
 
           </div>
-          <div id="two-factor-auth" class="row my-2">
-            <label for="two-factor-auth">Two factor authentication</label>
+          <label for="two-factor-auth" class="mt-3">Two factor authentication</label>
+          <div id="two-factor-auth" class="row my-2 mx-auto">
             <ng-template [ngIf]="!userDto.is2FaEnabled"
                          [ngIfElse]="disable2Fa">
-              <div class="text-center">
-                <p class="mb-0">2FA is not configured. To configure that, click button below.</p>
-                <ng-template [ngIf]="!loaders.enroll2Fa"
-                             [ngIfElse]="enrollLoading">
-                  <button type="button"
-                          (click)="enroll2Fa()"
-                          [disabled]="loaders.enroll2Fa"
-                          class="btn btn-outline-lightgreen px-5">Enroll
-                  </button>
-                </ng-template>
-                <ng-template #enrollLoading>
-                  <button type="button"
-                          [disabled]="loaders.enroll2Fa"
-                          class="btn btn-outline-lightgreen px-5">
-                    <app-spinner [size]="SpinnerSize.SMALL"></app-spinner>
-                  </button>
-                </ng-template>
-                <ng-template [ngIf]="enrollOtpDto">
-                  
-                </ng-template>
-              </div>
+              <ng-template [ngIf]="enrollOtpDto"
+                           [ngIfElse]="generateOtp">
+                <div class="col text-center mx-auto">
+                  <table [classList]="isMobileView() ? 'mt-1' : 'mt-3'">
+                    <tr>
+                      <td class="pe-3">Issuer</td>
+                      <td>{{ enrollOtpDto.issuer }}</td>
+                    </tr>
+                    <tr>
+                      <td>Secret key
+                        <a #tooltipIncomeSavings="ngbTooltip"
+                           class="info-tooltip"
+                           [ngbTooltip]="tipIncomeSavingsContent"
+                           (click)="tooltipIncomeSavings.open()">
+                          <i class="bi bi-info-circle"></i>
+                        </a>
+                        <ng-template #tipIncomeSavingsContent>
+                          <p class="mx-1 my-1">If you can't scan qr code, type secret key into authenticator app.</p>
+                        </ng-template>
+                      </td>
+                      <td>{{ enrollOtpDto.secret }}</td>
+                    </tr>
+                  </table>
+                  <div class="mt-3">
+                    <p class="mb-1 text-start">To enable 2FA, type code from authenticator app</p>
+                    <div class="input-group mb-3">
+                      <input
+                        type="text"
+                        id="otp-enable"
+                        name="otp-enable"
+                        class="form-control"
+                        [(ngModel)]="otpCode"
+                        [disabled]="loaders.enable2Fa"
+                        required
+                        pattern="{{formConfig.regex.codes.otp}}"
+                        #otpEnableInput="ngModel"
+                        [ngClass]="{
+                        'is-invalid': otpEnableInput.invalid &&
+                        (otpEnableInput.dirty || otpEnableInput.touched),
+                        'is-valid': otpEnableInput.valid }"/>
+                      <div class="input-group-append">
+                        <button type="button"
+                                class="btn btn-outline-lightgreen"
+                                (click)="enableOtp()"
+                                [disabled]="!otpEnableInput.valid">
+                          Confirm
+                        </button>
+                      </div>
+                      @if (otpEnableInput.invalid &&
+                      (otpEnableInput.dirty || otpEnableInput.touched)) {
+                        <div class="invalid-feedback text-start">
+                          <label *ngIf="otpEnableInput.errors?.['required']">
+                            {{ formConfig.messages.required }}
+                          </label>
+                          <label *ngIf="otpEnableInput.errors?.['pattern']">
+                            {{ formatString(formConfig.messages.invalid, "Code") }}
+                          </label>
+                        </div>
+                      } @else {
+                        <div class="valid-feedback"></div>
+                      }
+                    </div>
+                  </div>
+                </div>
+                <div class="col text-center">
+                  <qrcode [qrdata]="enrollOtpDto.otpUri" [width]="180" [errorCorrectionLevel]="'M'"></qrcode>
+                </div>
+              </ng-template>
+              <ng-template #generateOtp>
+                <div class="text-center mx-auto">
+                  <p class="mb-0">2FA is not configured. To configure that, click button below.</p>
+                  <ng-template [ngIf]="!loaders.enroll2Fa"
+                               [ngIfElse]="enrollLoading">
+                    <button type="button"
+                            (click)="enrollOtp()"
+                            [disabled]="loaders.enroll2Fa"
+                            class="btn btn-outline-lightgreen px-5">Enroll
+                    </button>
+                  </ng-template>
+                  <ng-template #enrollLoading>
+                    <button type="button"
+                            [disabled]="loaders.enroll2Fa"
+                            class="btn btn-outline-lightgreen px-5">
+                      <app-spinner [size]="SpinnerSize.SMALL"></app-spinner>
+                    </button>
+                  </ng-template>
+                </div>
+              </ng-template>
             </ng-template>
             <ng-template #disable2Fa>
-              <p class="mb-0">2FA is configured. If you want to disable that, click button below.</p>
-              <button type="button"
-                      class="btn btn-outline-danger px-5">Disable
-              </button>
+              <div class="text-center">
+                <p class="mb-0">2FA is configured. If you want to disable that, enter code and click button.</p>
+                <div class="input-group mb-3 w-50 mx-auto">
+                  <input
+                    type="text"
+                    id="otp-disable"
+                    name="otp-disable"
+                    class="form-control"
+                    [(ngModel)]="otpCode"
+                    [disabled]="loaders.disable2Fa"
+                    required
+                    pattern="{{formConfig.regex.codes.otp}}"
+                    #otpDisableInput="ngModel"
+                    [ngClass]="{
+                        'is-invalid': otpDisableInput.invalid &&
+                        (otpDisableInput.dirty || otpDisableInput.touched),
+                        'is-valid': otpDisableInput.valid }"/>
+                  <div class="input-group-append">
+                    <button type="button"
+                            class="btn btn-outline-danger"
+                            (click)="enableOtp()"
+                            [disabled]="!otpDisableInput.valid">
+                      Disable
+                    </button>
+                  </div>
+                  @if (otpDisableInput.invalid &&
+                  (otpDisableInput.dirty || otpDisableInput.touched)) {
+                    <div class="invalid-feedback text-start">
+                      <label *ngIf="otpDisableInput.errors?.['required']">
+                        {{ formConfig.messages.required }}
+                      </label>
+                      <label *ngIf="otpDisableInput.errors?.['pattern']">
+                        {{ formatString(formConfig.messages.invalid, "Code") }}
+                      </label>
+                    </div>
+                  } @else {
+                    <div class="valid-feedback"></div>
+                  }
+                </div>
+              </div>
             </ng-template>
           </div>
         </div>

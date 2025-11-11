@@ -411,6 +411,8 @@ export class AuthUrls {
     PASSWORD_RESET: "/password/reset",
     PASSWORD_SET: "/password/set",
     ENROLL: "/2fa/enroll",
+    ENABLE: "/2fa/enable",
+    DISABLE: "/2fa/disable",
     ME: "/me"
   }
 
@@ -438,8 +440,16 @@ export class AuthUrls {
     return HostUrl.getHostUrl() + AuthUrls.CONTROLLER + AuthUrls.ACTIONS.PASSWORD_SET;
   }
 
-  static enroll2Fa(): string{
+  static enroll2Fa(): string {
     return HostUrl.getHostUrl() + AuthUrls.CONTROLLER + AuthUrls.ACTIONS.ENROLL;
+  }
+
+  static enable2Fa(code: string): string {
+    return HostUrl.getHostUrl() + AuthUrls.CONTROLLER + AuthUrls.ACTIONS.ENABLE + `?code=${code}`;
+  }
+
+  static disable2Fa(code: string): string {
+    return HostUrl.getHostUrl() + AuthUrls.CONTROLLER + AuthUrls.ACTIONS.DISABLE + `?code=${code}`;
   }
 }
 
