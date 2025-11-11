@@ -34,7 +34,14 @@ import {
   GetRegularPaymentStatsDto
 } from "../../models/statistics.model";
 import {JwtDto} from "../../models/dto/jwt.model.dto";
-import {ConfirmEmailDto, LoginDto, OtpDto, RegisterDto, ResetPasswordDto} from "../../models/dto/user.model.dto";
+import {
+  ConfirmEmailDto,
+  LoginDto,
+  OtpDto,
+  RegisterDto,
+  ResetPasswordDto,
+  SetPasswordDto
+} from "../../models/dto/user.model.dto";
 
 @Injectable({
   providedIn: 'root',
@@ -400,6 +407,14 @@ export class HttpService {
     return this.httpClient.post(
       AuthUrls.resetPassword(),
       resetPasswordDto,
+      {observe: 'response', withCredentials: true}
+    )
+  }
+
+  public setPassword(setPasswordDto: SetPasswordDto): Observable<any>{
+    return this.httpClient.post(
+      AuthUrls.setPassword(),
+      setPasswordDto,
       {observe: 'response', withCredentials: true}
     )
   }

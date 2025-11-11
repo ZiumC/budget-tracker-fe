@@ -101,6 +101,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
       this.httpService.register(this.registerForm).subscribe({
         next: (): void => {
           this.formType = RegisterFormTypes.CONFIRM_EMAIL;
+          ToastUtil.accountRegistered(this.toastr, this.registerForm.email);
           this.markRegisterAsLoading(false);
         },
         error: (err): void => {
@@ -125,6 +126,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
     this.subscriptions.push(
       this.httpService.confirm(confirmEmail).subscribe({
         next: (): void => {
+          ToastUtil.emailConfirmed(this.toastr);
           this.markConfirmAsLoading(false);
           this.router.navigateByUrl(this.returnUrl);
         },
@@ -139,11 +141,6 @@ export class RegisterComponent implements OnInit, OnDestroy {
       })
     )
   }
-
-  // private combinePasswordRegex(): string {
-  //   const passwordRegex: PasswordRegex = this.formConfig.regex.password;
-  //   return passwordRegex.upperCase + passwordRegex.lowerCase + passwordRegex.digits + passwordRegex.specialCharacter + passwordRegex.length
-  // }
 
   private markRegisterAsLoading(value: boolean): void {
     if (value) {
@@ -170,5 +167,4 @@ export class RegisterComponent implements OnInit, OnDestroy {
       this.loaders.confirm = value;
     }
   }
-
 }

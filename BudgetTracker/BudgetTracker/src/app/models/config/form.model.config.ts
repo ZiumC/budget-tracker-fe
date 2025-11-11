@@ -6,6 +6,7 @@ export interface FormConfig {
   categoryModal: CategoryModal;
   loginForm: LoginForm;
   registerForm: RegisterForm;
+  temporaryPassword: MinMaxLength;
   regex: Regex;
 }
 

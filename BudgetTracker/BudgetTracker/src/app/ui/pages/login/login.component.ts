@@ -127,8 +127,9 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.subscriptions.push(
       this.httpService.resetPassword(this.resetPassForm).subscribe({
         next: (): void => {
-          this.markResetAsLoading(false);
+          ToastUtil.passwordResetRequested(this.toastr, this.resetPassForm.email);
           this.formType = LoginFormTypes.SET_PASSWORD;
+          this.markResetAsLoading(false);
         },
         error: (err): void => {
           this.resetPassForm = new ResetPasswordDto();
@@ -146,7 +147,25 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.markSetPassAsLoading(true);
     this.setPassForm.login = this.resetPassForm.login;
     this.setPassForm.email = this.resetPassForm.email;
-
+    this.subscriptions.push(
+      this.httpService.setPassword(this.setPassForm).subscribe({
+        next: (): void => {
+          ToastUtil.passwordSuccessfullySet(this.toastr);
+          this.markSetPassAsLoading(false);
+          this.formType = LoginFormTypes.LOGIN;
+        },
+        error: (err): void => {
+          this.setPassForm.newPassword = "";
+          this.repeatPassword = "";
+          this.setPassForm.challangePassword = "";
+          ToastUtil.handleErrorResponse(this.toastr, err);
+          this.markSetPassAsLoading(false);
+        },
+        complete: (): void => {
+          this.markSetPassAsLoading(false);
+        }
+      })
+    )
   }
 
   protected displayInput(): boolean {
