@@ -46,6 +46,7 @@ import {JwtInterceptor} from "./services/http/http.interceptor.service";
 import {ToastrModule} from "ngx-toastr";
 import { OtpModalComponent } from './ui/components/modals/otp-modal/otp-modal.component';
 import { RegisterComponent } from './ui/pages/register/register.component';
+import { UserPanelComponent } from './ui/pages/user-panel/user-panel.component';
 
 export function loadConfig(configService: ConfigService): () => Promise<Config> {
   return (): Promise<Config> => firstValueFrom(configService.loadConfig());
@@ -83,6 +84,7 @@ export function loadConfig(configService: ConfigService): () => Promise<Config> 
     LoginComponent,
     OtpModalComponent,
     RegisterComponent,
+    UserPanelComponent,
   ],
   imports: [
     BrowserModule,

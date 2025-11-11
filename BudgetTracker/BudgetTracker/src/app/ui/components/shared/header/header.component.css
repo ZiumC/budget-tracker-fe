@@ -1,4 +1,16 @@
 div.navbar-collapse ul.navbar-nav {
   margin-left: auto;
-  margin-right: 0ex;
+  margin-right: 0;
 }
+
+.overlay-menu {
+  background-color: white;
+  border-radius: 0.4ex;
+  position: absolute;
+  top: 85%;
+  right: 5ex;
+  width: 20ex;
+  text-align: center;
+}
+
+
