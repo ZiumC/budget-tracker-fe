@@ -29,4 +29,8 @@ export class ToastUtil {
   static passwordSuccessfullySet(toastService: ToastrService): void {
     toastService.success("Password has been changed!");
   }
+
+  static enabled2FaSuccessfully(toastService: ToastrService, email: string): void {
+    toastService.success(`Successfully enabled 2FA for user ${email}!`);
+  }
 }

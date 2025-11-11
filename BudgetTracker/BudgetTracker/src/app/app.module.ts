@@ -47,6 +47,7 @@ import {ToastrModule} from "ngx-toastr";
 import { OtpModalComponent } from './ui/components/modals/otp-modal/otp-modal.component';
 import { RegisterComponent } from './ui/pages/register/register.component';
 import { UserPanelComponent } from './ui/pages/user-panel/user-panel.component';
+import {QRCodeModule} from "angularx-qrcode";
 
 export function loadConfig(configService: ConfigService): () => Promise<Config> {
   return (): Promise<Config> => firstValueFrom(configService.loadConfig());
@@ -105,6 +106,7 @@ export function loadConfig(configService: ConfigService): () => Promise<Config> 
     BarChartModule,
     PieChartModule,
     NgxChartsModule,
+    QRCodeModule,
   ],
   providers: [
     {provide: NgbDateParserFormatter, useClass: DatepickerFormatter},

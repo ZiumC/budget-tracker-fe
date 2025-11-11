@@ -1,5 +1,3 @@
-import {ResponseModel} from "../response.model";
-
 export interface UserDto {
   email: string;
   login: string;
@@ -10,5 +8,7 @@ export interface UserDto {
 
 export interface Loaders {
   page: boolean;
+  enable2Fa: boolean;
   enroll2Fa: boolean;
+  disable2Fa: boolean;
 }
