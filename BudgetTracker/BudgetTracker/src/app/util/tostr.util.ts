@@ -14,23 +14,27 @@ export class ToastUtil {
     toastService.error(message, title);
   }
 
-  static accountRegistered(toastService: ToastrService, email: string): void {
+  static successfullyRegisteredAccount(toastService: ToastrService, email: string): void {
     toastService.success(`Verification code has been send to email ${email}`, "Account has been registered!");
   }
 
-  static passwordResetRequested(toastService: ToastrService, email: string): void {
+  static successfullySentTemPass(toastService: ToastrService, email: string): void {
     toastService.success(`Temporary password has been sent to email ${email}`, "Requested for password change!");
   }
 
-  static emailConfirmed(toastService: ToastrService): void {
+  static successfullyEmailConfirmed(toastService: ToastrService): void {
     toastService.success("Email has been confirmed!");
   }
 
-  static passwordSuccessfullySet(toastService: ToastrService): void {
+  static successfullySetNewPass(toastService: ToastrService): void {
     toastService.success("Password has been changed!");
   }
 
-  static enabled2FaSuccessfully(toastService: ToastrService, email: string): void {
+  static successfullyEnabled2FA(toastService: ToastrService, email: string): void {
     toastService.success(`Successfully enabled 2FA for user ${email}!`);
+  }
+
+  static successfullyDisabled2FA(toastService: ToastrService, email: string): void {
+    toastService.success(`Successfully disabled 2FA for user ${email}!`);
   }
 }

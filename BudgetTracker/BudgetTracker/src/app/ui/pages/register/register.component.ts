@@ -101,7 +101,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
       this.httpService.register(this.registerForm).subscribe({
         next: (): void => {
           this.formType = RegisterFormTypes.CONFIRM_EMAIL;
-          ToastUtil.accountRegistered(this.toastr, this.registerForm.email);
+          ToastUtil.successfullyRegisteredAccount(this.toastr, this.registerForm.email);
           this.markRegisterAsLoading(false);
         },
         error: (err): void => {
@@ -126,7 +126,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
     this.subscriptions.push(
       this.httpService.confirm(confirmEmail).subscribe({
         next: (): void => {
-          ToastUtil.emailConfirmed(this.toastr);
+          ToastUtil.successfullyEmailConfirmed(this.toastr);
           this.markConfirmAsLoading(false);
           this.router.navigateByUrl(this.returnUrl);
         },
