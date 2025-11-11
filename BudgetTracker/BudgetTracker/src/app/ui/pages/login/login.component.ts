@@ -155,9 +155,11 @@ export class LoginComponent implements OnInit, OnDestroy {
           this.formType = LoginFormTypes.LOGIN;
         },
         error: (err): void => {
-          this.setPassForm.newPassword = "";
-          this.repeatPassword = "";
-          this.setPassForm.challangePassword = "";
+          if (err.status != 410){
+            this.setPassForm.newPassword = "";
+            this.repeatPassword = "";
+            this.setPassForm.challangePassword = "";
+          }
           ToastUtil.handleErrorResponse(this.toastr, err);
           this.markSetPassAsLoading(false);
         },
