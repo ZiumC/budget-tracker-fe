@@ -410,6 +410,7 @@ export class AuthUrls {
     VERIFY_OTP: "/2fa/verify-otp",
     PASSWORD_RESET: "/password/reset",
     PASSWORD_SET: "/password/set",
+    ENROLL: "/2fa/enroll",
     ME: "/me"
   }
 
@@ -435,6 +436,10 @@ export class AuthUrls {
 
   static setPassword(): string {
     return HostUrl.getHostUrl() + AuthUrls.CONTROLLER + AuthUrls.ACTIONS.PASSWORD_SET;
+  }
+
+  static enroll2Fa(): string{
+    return HostUrl.getHostUrl() + AuthUrls.CONTROLLER + AuthUrls.ACTIONS.ENROLL;
   }
 }
 

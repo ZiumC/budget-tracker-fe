@@ -31,3 +31,10 @@ export class SetPasswordDto {
   newPassword: string;
   challangePassword: string;
 }
+
+export class EnrollOtpDto {
+  issuer: string;
+  secret: string;
+  otpUri: string;
+  qrCode: string;
+}

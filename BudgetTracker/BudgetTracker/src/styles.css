@@ -275,6 +275,9 @@ li button.nav-link:hover {
   margin-right: 0.8ex;
 }
 
+.position-unset{
+  position: unset;
+}
 
 @media only screen and (max-width: 770px) {
   .width-wrapper {

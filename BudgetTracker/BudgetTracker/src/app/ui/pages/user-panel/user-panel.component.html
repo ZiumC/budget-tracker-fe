@@ -1,1 +1,106 @@
-<p>user-panel works!</p>
+<div class="height-wrapper width-wrapper">
+  <div class="component-wrapper component-bg">
+    <div class="card mb-3 position-unset">
+      <div class="card-body">
+        <div class="text-center">
+          <h4 class="card-title">My profile</h4>
+        </div>
+        <label for="user-data"><h5>User data</h5></label>
+        <div id="user-data" class="row mt-2 mb-4">
+          <div class="col">
+            <div class="form-group">
+              <label for="user-email">Email</label>
+              <input type="email"
+                     id="user-email"
+                     class="form-control"
+                     disabled
+                     value="example-mail@wp.pl">
+            </div>
+          </div>
+          <div class="col">
+            <div class="form-group">
+              <label for="user-login">Login</label>
+              <input type="email"
+                     id="user-login"
+                     class="form-control"
+                     disabled
+                     value="example-mail">
+            </div>
+          </div>
+          <div class="my-4">
+            <table class="table">
+              <tr class="text-start">
+                <td class="text-center">Email status</td>
+                <td class="text-center">
+                  <ng-template [ngIf]="userDto.isEmailConfirmed"
+                               [ngIfElse]="verifiedEmail">
+                    <span class="badge text-bg-success">Verified</span>
+                  </ng-template>
+                  <ng-template #verifiedEmail>
+                    <span class="badge text-bg-danger">Not verified</span>
+                  </ng-template>
+                </td>
+              </tr>
+              <tr class="text-start">
+                <td class="text-center">2FA status</td>
+                <td class="text-center">
+                  <ng-template [ngIf]="userDto.is2FaEnabled"
+                               [ngIfElse]="disabled2Fa">
+                    <span class="badge text-bg-success">Enabled</span>
+                  </ng-template>
+                  <ng-template #disabled2Fa>
+                    <span class="badge text-bg-danger">Disabled</span>
+                  </ng-template>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+        <label for="security"><h5>Security</h5></label>
+        <div id="security" class="row mt-2 mb-4">
+          <div id="change-email" class="col my-2">
+            <label for="change-email">Change password</label>
+
+          </div>
+          <div id="change-password" class="col my-2">
+            <label for="change-password">Change email</label>
+
+          </div>
+          <div id="two-factor-auth" class="row my-2">
+            <label for="two-factor-auth">Two factor authentication</label>
+            <ng-template [ngIf]="!userDto.is2FaEnabled"
+                         [ngIfElse]="disable2Fa">
+              <div class="text-center">
+                <p class="mb-0">2FA is not configured. To configure that, click button below.</p>
+                <ng-template [ngIf]="!loaders.enroll2Fa"
+                             [ngIfElse]="enrollLoading">
+                  <button type="button"
+                          (click)="enroll2Fa()"
+                          [disabled]="loaders.enroll2Fa"
+                          class="btn btn-outline-lightgreen px-5">Enroll
+                  </button>
+                </ng-template>
+                <ng-template #enrollLoading>
+                  <button type="button"
+                          [disabled]="loaders.enroll2Fa"
+                          class="btn btn-outline-lightgreen px-5">
+                    <app-spinner [size]="SpinnerSize.SMALL"></app-spinner>
+                  </button>
+                </ng-template>
+                <ng-template [ngIf]="enrollOtpDto">
+                  
+                </ng-template>
+              </div>
+            </ng-template>
+            <ng-template #disable2Fa>
+              <p class="mb-0">2FA is configured. If you want to disable that, click button below.</p>
+              <button type="button"
+                      class="btn btn-outline-danger px-5">Disable
+              </button>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
