@@ -104,7 +104,7 @@
                         class="form-control"
                         [(ngModel)]="registerForm.password"
                         [disabled]="loaders.register"
-                        (ngModelChange)="testPasswords(registerPasswordInput, registerRepeatPasswordInput)"
+                        (ngModelChange)="passwordUtil.testPasswords(registerPasswordInput, registerRepeatPasswordInput)"
                         required
                         #registerPasswordInput="ngModel"
                         [ngClass]="{
@@ -160,7 +160,7 @@
                         class="form-control"
                         [(ngModel)]="repeatPassword"
                         [disabled]="loaders.register"
-                        (ngModelChange)="testPasswords(registerPasswordInput, registerRepeatPasswordInput)"
+                        (ngModelChange)="passwordUtil.testPasswords(registerPasswordInput, registerRepeatPasswordInput)"
                         required
                         #registerRepeatPasswordInput="ngModel"
                         [ngClass]="{
@@ -204,12 +204,18 @@
                     }
                   </div>
                   <ul class="text-start text-danger mb-4">
-                    <li [style]="hasSpecialCharacter() ? 'display: none' : ''">Password should have special character
+                    <li [style]="passwordUtil.hasSpecialCharacter(registerForm.password) ? 'display: none' : ''">
+                      Password should have special character
                     </li>
-                    <li [style]="hasSmallCharacters() ? 'display: none' : ''">Password should have 3 small characters
+                    <li [style]="passwordUtil.hasSmallCharacters(registerForm.password) ? 'display: none' : ''">Password
+                      should have 3 small characters
                     </li>
-                    <li [style]="hasBigCharacters() ? 'display: none' : ''">Password should have 2 upper characters</li>
-                    <li [style]="hasNumbers() ? 'display: none' : ''">Password should have 2 numbers</li>
+                    <li [style]="passwordUtil.hasBigCharacters(registerForm.password) ? 'display: none' : ''">Password
+                      should have 2 upper characters
+                    </li>
+                    <li [style]="passwordUtil.hasNumbers(registerForm.password) ? 'display: none' : ''">Password should
+                      have 2 numbers
+                    </li>
                   </ul>
                   <ng-template [ngIf]="!loaders.register"
                                [ngIfElse]="displayRegisterLoader">

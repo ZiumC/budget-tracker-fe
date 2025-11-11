@@ -1,11 +1,11 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {ActivatedRoute, Router} from "@angular/router";
+import {ActivatedRoute, Params, Router} from "@angular/router";
 import {AuthService} from "../../../services/auth/auth.service";
 import {HttpService} from "../../../services/http/http.service";
-import {LoginDto, ResetPasswordDto} from "../../../models/dto/user.model.dto";
+import {LoginDto, ResetPasswordDto, SetPasswordDto} from "../../../models/dto/user.model.dto";
 import {Subscription} from "rxjs";
 import {SubscriptionUtils} from "../../../util/subscription.utils";
-import {LoginFormTypes, Loaders} from "../../../models/components/login.component";
+import {Loaders, LoginFormTypes} from "../../../models/components/login.component";
 import {formatString} from "../../../util/string.utils";
 import {DateUtil} from "../../../util/date.util";
 import {ConfigService} from "../../../services/config/config.service";
@@ -16,6 +16,7 @@ import {AppConfig} from "../../../models/config/config";
 import {SpinnerSize} from "../../components/shared/spinner/spinner.component";
 import {ToastrService} from "ngx-toastr";
 import {ToastUtil} from "../../../util/tostr.util";
+import {PasswordUtil} from "../../../util/password.util";
 
 @Component({
   selector: 'app-login',
@@ -33,10 +34,14 @@ export class LoginComponent implements OnInit, OnDestroy {
   protected subscriptions: Subscription[];
   protected loginForm: LoginDto;
   protected resetPassForm: ResetPasswordDto;
+  protected setPassForm: SetPasswordDto;
   protected showPassword: boolean;
   protected appConfig: AppConfig;
   protected formConfig: FormConfig;
+  protected passwordUtil: PasswordUtil;
   protected loaders: Loaders;
+  protected setPassParam: boolean;
+  protected repeatPassword: string;
   returnUrl = "/dashboard";
 
   constructor(
@@ -45,6 +50,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private router: Router,
     private configService: ConfigService,
+    private activatedRoute: ActivatedRoute,
     private toastr: ToastrService) {
     const urlSnapshot = this.route.snapshot.queryParamMap.get('returnUrl');
     if (urlSnapshot) {
@@ -61,16 +67,29 @@ export class LoginComponent implements OnInit, OnDestroy {
       throw Error("Config not provided")
     }
 
+    this.activatedRoute.queryParams.subscribe((params: Params): void => {
+      if (params['set']) {
+        this.setPassParam = true;
+        this.formType = LoginFormTypes.SET_PASSWORD;
+      } else {
+        this.setPassParam = false;
+        this.formType = LoginFormTypes.LOGIN;
+      }
+    });
+
     this.loaders = {
       login: false,
-      reset: false
+      reset: false,
+      setPass: false
     }
 
     this.subscriptions = [];
-    this.formType = LoginFormTypes.LOGIN;
     this.loginForm = new LoginDto();
     this.resetPassForm = new ResetPasswordDto();
+    this.setPassForm = new SetPasswordDto();
+    this.passwordUtil = new PasswordUtil(this.formConfig);
     this.showPassword = false;
+    this.repeatPassword = "";
   }
 
   ngOnDestroy(): void {
@@ -109,6 +128,7 @@ export class LoginComponent implements OnInit, OnDestroy {
       this.httpService.resetPassword(this.resetPassForm).subscribe({
         next: (): void => {
           this.markResetAsLoading(false);
+          this.formType = LoginFormTypes.SET_PASSWORD;
         },
         error: (err): void => {
           this.resetPassForm = new ResetPasswordDto();
@@ -120,6 +140,17 @@ export class LoginComponent implements OnInit, OnDestroy {
         }
       })
     )
+  }
+
+  protected setNewPassword(): void {
+    this.markSetPassAsLoading(true);
+    this.setPassForm.login = this.resetPassForm.login;
+    this.setPassForm.email = this.resetPassForm.email;
+
+  }
+
+  protected displayInput(): boolean {
+    return this.formType == LoginFormTypes.SET_PASSWORD && this.setPassParam;
   }
 
   protected onPasswordDisplay(): void {
@@ -152,6 +183,19 @@ export class LoginComponent implements OnInit, OnDestroy {
         });
     } else {
       this.loaders.reset = value;
+    }
+  }
+
+  private markSetPassAsLoading(value: boolean): void {
+    if (value) {
+      new TimerUtils(this.appConfig.timer.duration.default).start()
+        .subscribe(finished => {
+          if (finished) {
+            this.loaders.setPass = value;
+          }
+        });
+    } else {
+      this.loaders.setPass = value;
     }
   }
 }

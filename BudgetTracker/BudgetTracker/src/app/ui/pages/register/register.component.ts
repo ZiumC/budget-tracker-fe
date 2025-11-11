@@ -4,9 +4,8 @@ import {SubscriptionUtils} from "../../../util/subscription.utils";
 import {Loaders, RegisterFormTypes} from "../../../models/components/register.component";
 import {ModalUtils} from "../../../util/modal.utils";
 import {ConfirmEmailDto, RegisterDto} from "../../../models/dto/user.model.dto";
-import {NgModel} from "@angular/forms";
 import {AppConfig} from "../../../models/config/config";
-import {FormConfig, PasswordRegex} from "../../../models/config/form.model.config";
+import {FormConfig} from "../../../models/config/form.model.config";
 import {ConfigService} from "../../../services/config/config.service";
 import {formatString} from "../../../util/string.utils";
 import {ActivatedRoute, Params, Router} from "@angular/router";
@@ -15,6 +14,7 @@ import {HttpService} from "../../../services/http/http.service";
 import {ToastUtil} from "../../../util/tostr.util";
 import {ToastrService} from "ngx-toastr";
 import {SpinnerSize} from "../../components/shared/spinner/spinner.component";
+import {PasswordUtil} from "../../../util/password.util";
 
 @Component({
   selector: 'app-register',
@@ -23,9 +23,11 @@ import {SpinnerSize} from "../../components/shared/spinner/spinner.component";
 })
 export class RegisterComponent implements OnInit, OnDestroy {
   protected readonly formatString = formatString;
+  protected readonly SpinnerSize = SpinnerSize;
   protected readonly FormType = RegisterFormTypes;
   protected readonly ModalUtils = ModalUtils;
   protected subscriptions: Subscription[];
+  protected passwordUtil: PasswordUtil;
   protected formType: RegisterFormTypes;
   protected registerForm: RegisterDto;
   protected repeatPassword: string;
@@ -33,8 +35,8 @@ export class RegisterComponent implements OnInit, OnDestroy {
   protected showPassword: boolean;
   protected appConfig: AppConfig;
   protected formConfig: FormConfig;
-  protected confirmParam: boolean;
   protected loaders: Loaders;
+  private confirmParam: boolean;
   private returnUrl = "/login"
 
   constructor(
@@ -72,6 +74,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
 
     this.subscriptions = [];
     this.registerForm = new RegisterDto();
+    this.passwordUtil = new PasswordUtil(this.formConfig);
     this.showPassword = false;
     this.repeatPassword = "";
     this.confirmationCode = "";
@@ -81,88 +84,8 @@ export class RegisterComponent implements OnInit, OnDestroy {
     SubscriptionUtils.unsubscribeAll(this.subscriptions);
   }
 
-  protected hasSmallCharacters(): boolean {
-    let password = this.registerForm.password;
-    if (password) {
-      const regexPass = new RegExp(this.formConfig.regex.password.lowerCase);
-      return regexPass.test(password);
-    } else {
-      return true;
-    }
-  }
-
-  protected hasBigCharacters(): boolean {
-    let password = this.registerForm.password;
-    if (password) {
-      const regexPass = new RegExp(this.formConfig.regex.password.upperCase);
-      return regexPass.test(password);
-    } else {
-      return true;
-    }
-  }
-
-  protected hasNumbers(): boolean {
-    let password = this.registerForm.password;
-    if (password) {
-      const regexPass = new RegExp(this.formConfig.regex.password.digits);
-      return regexPass.test(password);
-    } else {
-      return true;
-    }
-  }
-
-  protected hasSpecialCharacter(): boolean {
-    let password = this.registerForm.password;
-    if (password) {
-      const regexPass = new RegExp(this.formConfig.regex.password.specialCharacter);
-      return regexPass.test(password);
-    } else {
-      return true;
-    }
-  }
-
   protected displayEmailInput(): boolean {
     return this.formType == RegisterFormTypes.CONFIRM_EMAIL && this.confirmParam;
-  }
-
-  protected testPasswords(pass1: NgModel, pass2: NgModel): void {
-    const passInput1: string = this.registerForm.password;
-    const passInput2: string = this.repeatPassword;
-
-    const minLength: number = Number(this.formConfig.registerForm.password.minLength);
-    const maxLength: number = Number(this.formConfig.registerForm.password.maxLength);
-
-    const regexPass = new RegExp(this.combinePasswordRegex());
-
-    pass1.control.markAsTouched();
-    pass2.control.markAsTouched();
-
-    if (passInput1.length < minLength || passInput2.length < minLength) {
-      pass1.control.setErrors({minlength: true});
-      pass2.control.setErrors({minlength: true});
-      return;
-    }
-
-    if (passInput1.length > maxLength || passInput2.length > maxLength) {
-      pass1.control.setErrors({maxlength: true});
-      pass2.control.setErrors({maxlength: true});
-      return;
-    }
-
-    if (passInput1 != passInput2) {
-      pass1.control.setErrors({passNotMatch: true});
-      pass2.control.setErrors({passNotMatch: true});
-      return;
-    }
-
-    if (!regexPass.test(this.registerForm.password) || !regexPass.test(this.repeatPassword)) {
-      pass1.control.setErrors({pattern: true});
-      pass2.control.setErrors({pattern: true});
-      return;
-    }
-
-    pass1.control.setErrors(null);
-    pass2.control.setErrors(null);
   }
 
   protected onPasswordDisplay(): void {
@@ -217,10 +140,10 @@ export class RegisterComponent implements OnInit, OnDestroy {
     )
   }
 
-  private combinePasswordRegex(): string {
-    const passwordRegex: PasswordRegex = this.formConfig.regex.password;
-    return passwordRegex.upperCase + passwordRegex.lowerCase + passwordRegex.digits + passwordRegex.specialCharacter + passwordRegex.length
-  }
+  // private combinePasswordRegex(): string {
+  //   const passwordRegex: PasswordRegex = this.formConfig.regex.password;
+  //   return passwordRegex.upperCase + passwordRegex.lowerCase + passwordRegex.digits + passwordRegex.specialCharacter + passwordRegex.length
+  // }
 
   private markRegisterAsLoading(value: boolean): void {
     if (value) {
@@ -248,5 +171,4 @@ export class RegisterComponent implements OnInit, OnDestroy {
     }
   }
 
-  protected readonly SpinnerSize = SpinnerSize;
 }
