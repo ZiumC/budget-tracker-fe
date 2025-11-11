@@ -24,3 +24,10 @@ export class ResetPasswordDto {
   email: string;
   login: string;
 }
+
+export class SetPasswordDto {
+  email: string;
+  login: string;
+  newPassword: string;
+  challangePassword: string;
+}
