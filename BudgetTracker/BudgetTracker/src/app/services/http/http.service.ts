@@ -33,9 +33,8 @@ import {
   GetPlannedPaymentStatsDto,
   GetRegularPaymentStatsDto
 } from "../../models/statistics.model";
-import {JwtDto} from "../../models/dto/jwt.model.dto";
 import {
-  ConfirmEmailDto,
+  ConfirmEmailDto, EnrollOtpDto,
   LoginDto,
   OtpDto,
   RegisterDto,
@@ -372,8 +371,8 @@ export class HttpService {
   }
 
   public verifyLogin(verifyRequest: OtpDto):
-    Observable<HttpResponse<JwtDto>> {
-    return this.httpClient.post<JwtDto>(
+    Observable<HttpResponse<any>> {
+    return this.httpClient.post(
       AuthUrls.verifyLogin(),
       verifyRequest,
       {observe: 'response', withCredentials: true}
@@ -381,8 +380,8 @@ export class HttpService {
   }
 
   public login(loginRequest: LoginDto):
-    Observable<HttpResponse<JwtDto>> {
-    return this.httpClient.post<JwtDto>(
+    Observable<HttpResponse<any>> {
+    return this.httpClient.post(
       AuthUrls.login(),
       loginRequest,
       {observe: 'response', withCredentials: true}
@@ -403,7 +402,7 @@ export class HttpService {
     )
   }
 
-  public resetPassword(resetPasswordDto: ResetPasswordDto): Observable<any>{
+  public resetPassword(resetPasswordDto: ResetPasswordDto): Observable<any> {
     return this.httpClient.post(
       AuthUrls.resetPassword(),
       resetPasswordDto,
@@ -411,7 +410,7 @@ export class HttpService {
     )
   }
 
-  public setPassword(setPasswordDto: SetPasswordDto): Observable<any>{
+  public setPassword(setPasswordDto: SetPasswordDto): Observable<any> {
     return this.httpClient.post(
       AuthUrls.setPassword(),
       setPasswordDto,
@@ -432,6 +431,15 @@ export class HttpService {
       UserUrls.confirm(),
       confirm,
       {observe: 'response'}
+    )
+  }
+
+  public enroll2Fa():
+    Observable<HttpResponse<EnrollOtpDto>> {
+    return this.httpClient.post<EnrollOtpDto>(
+      AuthUrls.enroll2Fa(),
+      null,
+      {observe: 'response', withCredentials: true}
     )
   }
 }
