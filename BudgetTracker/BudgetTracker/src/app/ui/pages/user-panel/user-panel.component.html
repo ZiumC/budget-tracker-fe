@@ -111,12 +111,22 @@
                         (otpEnableInput.dirty || otpEnableInput.touched),
                         'is-valid': otpEnableInput.valid }"/>
                       <div class="input-group-append">
-                        <button type="button"
-                                class="btn btn-outline-lightgreen"
-                                (click)="enableOtp()"
-                                [disabled]="!otpEnableInput.valid">
-                          Confirm
-                        </button>
+                        <ng-template [ngIf]="!loaders.enable2Fa"
+                                     [ngIfElse]="displayEnableOtpLoader">
+                          <button type="button"
+                                  class="btn btn-outline-lightgreen"
+                                  (click)="enableOtp()"
+                                  [disabled]="!otpEnableInput.valid || loaders.enable2Fa">
+                            Confirm
+                          </button>
+                        </ng-template>
+                        <ng-template #displayEnableOtpLoader>
+                          <button type="button"
+                                  class="btn btn-outline-lightgreen"
+                                  [disabled]="loaders.enable2Fa">
+                            <app-spinner [size]="SpinnerSize.SMALL"></app-spinner>
+                          </button>
+                        </ng-template>
                       </div>
                       @if (otpEnableInput.invalid &&
                       (otpEnableInput.dirty || otpEnableInput.touched)) {
@@ -178,12 +188,22 @@
                         (otpDisableInput.dirty || otpDisableInput.touched),
                         'is-valid': otpDisableInput.valid }"/>
                   <div class="input-group-append">
-                    <button type="button"
-                            class="btn btn-outline-danger"
-                            (click)="enableOtp()"
-                            [disabled]="!otpDisableInput.valid">
-                      Disable
-                    </button>
+                    <ng-template [ngIf]="!loaders.disable2Fa"
+                                 [ngIfElse]="displayDisableOtpLoader">
+                      <button type="button"
+                              class="btn btn-outline-danger"
+                              (click)="disableOtp()"
+                              [disabled]="!otpDisableInput.valid || loaders.disable2Fa">
+                        Disable
+                      </button>
+                    </ng-template>
+                    <ng-template #displayDisableOtpLoader>
+                      <button type="button"
+                              class="btn btn-outline-danger"
+                              [disabled]="loaders.disable2Fa">
+                        <app-spinner [size]="SpinnerSize.SMALL"></app-spinner>
+                      </button>
+                    </ng-template>
                   </div>
                   @if (otpDisableInput.invalid &&
                   (otpDisableInput.dirty || otpDisableInput.touched)) {

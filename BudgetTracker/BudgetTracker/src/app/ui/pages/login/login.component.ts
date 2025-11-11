@@ -127,7 +127,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.subscriptions.push(
       this.httpService.resetPassword(this.resetPassForm).subscribe({
         next: (): void => {
-          ToastUtil.passwordResetRequested(this.toastr, this.resetPassForm.email);
+          ToastUtil.successfullySentTemPass(this.toastr, this.resetPassForm.email);
           this.formType = LoginFormTypes.SET_PASSWORD;
           this.markResetAsLoading(false);
         },
@@ -150,7 +150,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.subscriptions.push(
       this.httpService.setPassword(this.setPassForm).subscribe({
         next: (): void => {
-          ToastUtil.passwordSuccessfullySet(this.toastr);
+          ToastUtil.successfullySetNewPass(this.toastr);
           this.markSetPassAsLoading(false);
           this.formType = LoginFormTypes.LOGIN;
         },

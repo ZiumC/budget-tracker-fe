@@ -455,7 +455,7 @@ export class HttpService {
   public disableOtp(code: string):
     Observable<any> {
     return this.httpClient.post<EnrollOtpDto>(
-      AuthUrls.enable2Fa(code),
+      AuthUrls.disable2Fa(code),
       null,
       {observe: 'response', withCredentials: true}
     )

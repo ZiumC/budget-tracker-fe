@@ -101,8 +101,9 @@ export class UserPanelComponent implements OnInit, OnDestroy {
     this.subscriptions.push(
       this.httpService.enableOtp(this.otpCode).subscribe({
         next: (): void => {
-          ToastUtil.enabled2FaSuccessfully(this.toastr, this.userDto.email);
+          ToastUtil.successfullyEnabled2FA(this.toastr, this.userDto.email);
           this.userDto.is2FaEnabled = true;
+          this.otpCode = "";
           this.markEnableOtpAsLoading(false);
         },
         error: (err): void => {
@@ -111,7 +112,31 @@ export class UserPanelComponent implements OnInit, OnDestroy {
           this.markEnableOtpAsLoading(false);
         },
         complete: (): void => {
+          this.otpCode = "";
           this.markEnableOtpAsLoading(false);
+        }
+      })
+    )
+  }
+
+  protected disableOtp(): void {
+    this.markDisableOtpAsLoading(true);
+    this.subscriptions.push(
+      this.httpService.disableOtp(this.otpCode).subscribe({
+        next: (): void => {
+          ToastUtil.successfullyDisabled2FA(this.toastr, this.userDto.email);
+          this.userDto.is2FaEnabled = false;
+          this.otpCode = "";
+          this.markDisableOtpAsLoading(false);
+        },
+        error: (err): void => {
+          this.otpCode = "";
+          ToastUtil.handleErrorResponse(this.toastr, err);
+          this.markDisableOtpAsLoading(false);
+        },
+        complete: (): void => {
+          this.otpCode = "";
+          this.markDisableOtpAsLoading(false);
         }
       })
     )
@@ -140,6 +165,19 @@ export class UserPanelComponent implements OnInit, OnDestroy {
         });
     } else {
       this.loaders.enable2Fa = value;
+    }
+  }
+
+  private markDisableOtpAsLoading(value: boolean): void {
+    if (value) {
+      new TimerUtils(this.appConfig.timer.duration.default).start()
+        .subscribe(finished => {
+          if (finished) {
+            this.loaders.disable2Fa = value;
+          }
+        });
+    } else {
+      this.loaders.disable2Fa = value;
     }
   }
 }
