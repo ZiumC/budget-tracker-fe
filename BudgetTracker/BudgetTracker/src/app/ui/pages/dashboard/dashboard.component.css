@@ -49,6 +49,14 @@ div.card-header h5 {
   margin: 0;
 }
 
+.position-unset{
+  position: unset;
+}
+
+.input-group > .form-control:not(:focus).is-valid{
+  z-index: unset;
+}
+
 @media only screen and (max-width: 1015px) {
   .budget-card-container {
     grid-template-columns: auto auto;

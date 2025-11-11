@@ -6,6 +6,7 @@ import {CategoryPageComponent} from "./ui/pages/category-page/category-page.comp
 import {LoginComponent} from "./ui/pages/login/login.component";
 import {AuthGuard} from "./services/auth/auth.guard.service";
 import {RegisterComponent} from "./ui/pages/register/register.component";
+import {UserPanelComponent} from "./ui/pages/user-panel/user-panel.component";
 
 const routes: Routes = [
   {
@@ -19,6 +20,11 @@ const routes: Routes = [
   {
     path: '',
     component: DashboardComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'profile',
+    component: UserPanelComponent,
     canActivate: [AuthGuard]
   },
   {

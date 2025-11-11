@@ -1,7 +1,9 @@
 <ng-template [ngIf]="authService.isLoggedIn()">
-  <nav class="navbar navbar-expand-lg navbar-dark bg-secondary">
+  <nav [classList]="isMobileView() ?
+  'navbar navbar-collapse navbar-dark bg-secondary' :
+  'navbar navbar-expand navbar-dark bg-secondary'">
     <div class="container-fluid">
-      <button (click)="navigateToHome()"
+      <button routerLink="/dashboard"
               class="btn btn-secondary"
               type="button">
         BudgetTracker
@@ -15,17 +17,52 @@
       </button>
 
       <div [ngbCollapse]="isMenuCollapsed" class="collapse navbar-collapse">
-        <label class="divider-block-xs"></label>
-        <ul class="navbar-nav">
-          <li (click)="navigateToCategories()"
+        <ul [classList]="isMobileView() ? 'navbar-nav' : 'navbar-nav  me-4'">
+          <li routerLink="/categories"
               class="btn btn-light text-center mx-2 my-2">
             Categories <i class="bi bi-tags"></i>
           </li>
-          <hr class="vertical mx-1"/>
-          <li (click)="authService.logout()"
-              class="btn btn-secondary mx-2 my-2">
-            Log out <i class="bi bi-box-arrow-left"></i>
-          </li>
+          <hr class="vertical mx-4"/>
+          <ng-template [ngIf]="isMobileView()"
+                       [ngIfElse]="desktopView">
+            <li routerLink="/profile"
+                (click)="isMenuCollapsed=true"
+                class="btn btn-primary text-center mx-2 my-2">
+              Profile <i class="bi bi-person"></i>
+            </li>
+            <li (click)="authService.logout(); isMenuCollapsed=true"
+                class="btn btn-primary text-center mx-2 my-2">
+              Log out <i class="bi bi-box-arrow-right"></i>
+            </li>
+          </ng-template>
+          <ng-template #desktopView>
+            <li class="btn btn-outline-light mx-2 my-2"
+                (click)="displayUserSubMenu = !displayUserSubMenu">
+              <i class="bi bi-person-circle"></i>
+              <ng-template [ngIf]="displayUserSubMenu"
+                           [ngIfElse]="downArrow">
+                <i class="bi bi-caret-up-fill ms-2"></i>
+              </ng-template>
+              <ng-template #downArrow>
+                <i class="bi bi-caret-down-fill ms-2"></i>
+              </ng-template>
+            </li>
+            <ng-template [ngIf]="displayUserSubMenu">
+              <div class="overlay-menu">
+                <div class="d-grid mx-2 my-2">
+                  <li routerLink="/profile"
+                      (click)="displayUserSubMenu=false"
+                      class="btn btn-outline-primary w-100 my-1">
+                    Profile <i class="bi bi-person"></i>
+                  </li>
+                  <li class="btn btn-outline-primary w-100 my-1"
+                      (click)="authService.logout(); displayUserSubMenu=false">
+                    Log out <i class="bi bi-box-arrow-right"></i>
+                  </li>
+                </div>
+              </div>
+            </ng-template>
+          </ng-template>
         </ul>
         <label class="divider-block-xs"></label>
       </div>
