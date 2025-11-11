@@ -245,14 +245,25 @@
                     </button>
                   </ng-template>
                 </div>
+                <div class="mb-3">
+                  <p class="mb-0">
+                    You have already account?
+                  </p>
+                  <button type="button"
+                          class="btn btn-outline-secondary"
+                          (click)="formType = FormType.LOGIN"
+                          [disabled]="loaders.reset">
+                    Login Page
+                  </button>
+                </div>
                 <p class="mb-0">
-                  You have already account?
+                  You have already requested password change?
                 </p>
                 <button type="button"
                         class="btn btn-outline-secondary"
-                        (click)="formType = FormType.LOGIN"
+                        (click)="formType = FormType.SET_PASSWORD; setPassParam=true;"
                         [disabled]="loaders.reset">
-                  Login Page
+                  Set Password
                 </button>
               </form>
             </ng-container>
