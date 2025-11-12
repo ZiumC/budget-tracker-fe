@@ -9,10 +9,12 @@ import {AppConfig} from "../../../models/config/config";
 import {SpinnerSize} from "../../components/shared/spinner/spinner.component";
 import {ToastUtil} from "../../../util/tostr.util";
 import {ToastrService} from "ngx-toastr";
-import {EnrollOtpDto} from "../../../models/dto/user.model.dto";
+import {ChangePasswordDto, EnrollOtpDto} from "../../../models/dto/user.model.dto";
 import {format} from "../../../util/number.util";
 import {formatString} from "../../../util/string.utils";
 import {FormConfig} from "../../../models/config/form.model.config";
+import {ModalUtils} from "../../../util/modal.utils";
+import {PasswordUtil} from "../../../util/password.util";
 
 @Component({
   selector: 'app-user-panel',
@@ -23,13 +25,20 @@ export class UserPanelComponent implements OnInit, OnDestroy {
   protected readonly format = format;
   protected readonly formatString = formatString;
   protected readonly SpinnerSize = SpinnerSize;
+  protected readonly ModalUtils = ModalUtils;
   protected subscriptions: Subscription[];
   protected appConfig: AppConfig;
   protected formConfig: FormConfig;
   protected enrollOtpDto: EnrollOtpDto | null;
+  protected changePassword: ChangePasswordDto;
   protected userDto: UserDto;
   protected loaders: Loaders;
   protected otpCode: string;
+  protected repeatPassword: string;
+  protected showPassword: boolean;
+  protected showCurrentPass: boolean;
+  protected passwordUtil: PasswordUtil;
+  protected disableChangePassForm: boolean = true;
   public innerWidth: any;
 
   constructor(private httpService: HttpService,
@@ -53,14 +62,19 @@ export class UserPanelComponent implements OnInit, OnDestroy {
       isEmailConfirmed: true
     }
 
+    this.passwordUtil = new PasswordUtil(this.formConfig);
     this.subscriptions = [];
     this.loaders = {
       page: false,
+      changePass: false,
       enroll2Fa: false,
       enable2Fa: false,
       disable2Fa: false
     };
     this.otpCode = "";
+    this.repeatPassword = "";
+    this.changePassword = new ChangePasswordDto();
+    this.showPassword = false;
   }
 
   ngOnDestroy(): void {
@@ -74,6 +88,25 @@ export class UserPanelComponent implements OnInit, OnDestroy {
 
   protected isMobileView(): boolean {
     return innerWidth <= this.appConfig.pageMobileWidth;
+  }
+
+  protected onPasswordDisplay(isCurrentPass: boolean): void {
+    if (this.loaders.changePass || this.disableChangePassForm) {
+      return;
+    }
+    if (isCurrentPass) {
+      this.showCurrentPass = !this.showCurrentPass;
+    } else {
+      this.showPassword = !this.showPassword;
+    }
+  }
+
+  protected onPasswordChangeForm(): void {
+    this.disableChangePassForm = !this.disableChangePassForm;
+    if (this.disableChangePassForm) {
+      this.repeatPassword = "";
+      this.changePassword = new ChangePasswordDto();
+    }
   }
 
   protected enrollOtp(): void {
@@ -180,4 +213,6 @@ export class UserPanelComponent implements OnInit, OnDestroy {
       this.loaders.disable2Fa = value;
     }
   }
+
+  protected readonly ChangePasswordDto = ChangePasswordDto;
 }

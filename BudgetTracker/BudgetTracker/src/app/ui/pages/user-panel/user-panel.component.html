@@ -5,9 +5,16 @@
         <div class="text-center">
           <h4 class="card-title">My profile</h4>
         </div>
+        <ng-template [ngIf]="!loaders.page"
+                     [ngIfElse]="loadedPage">
+
+        </ng-template>
+        <ng-template #loadedPage>
+
+        </ng-template>
         <label for="user-data"><h5>User data</h5></label>
         <div id="user-data" class="row mt-2 mb-4">
-          <div class="col">
+          <div class="col-md-6">
             <div class="form-group">
               <label for="user-email">Email</label>
               <input type="email"
@@ -17,7 +24,7 @@
                      value="example-mail@wp.pl">
             </div>
           </div>
-          <div class="col">
+          <div class="col-md-6">
             <div class="form-group">
               <label for="user-login">Login</label>
               <input type="email"
@@ -58,12 +65,219 @@
         </div>
         <label for="security"><h5>Security</h5></label>
         <div id="security" class="row mt-2 mb-4">
-          <div id="change-email" class="col my-2">
-            <label for="change-email">Change password</label>
-
+          <div id="change-password" class="col-md-6 my-2">
+            <label for="change-password">Change password</label>
+            <form #changeUserPassword="ngForm">
+              <div [className]="ModalUtils.displayMarginFor(changePassInput)">
+                <div class="text-start">
+                  <label for="change-password-form">New password</label>
+                  <span class="text-danger"
+                        [style]="disableChangePassForm ? 'display: none' : ''">*</span>
+                </div>
+                <div class="input-group">
+                  <input
+                    [type]="showPassword ? 'text' : 'password'"
+                    id="change-password-form"
+                    name="change-password-form"
+                    class="form-control"
+                    [(ngModel)]="changePassword.newPassword"
+                    [disabled]="loaders.changePass || disableChangePassForm"
+                    (ngModelChange)="passwordUtil.testPasswords(changePassInput, repeatPassInput)"
+                    required
+                    #changePassInput="ngModel"
+                    [ngClass]="{
+                        'is-invalid': changePassInput.invalid &&
+                        (changePassInput.dirty || changePassInput.touched),
+                        'is-valid': changePassInput.valid }"/>
+                  <div class="input-group-append">
+                  <span class="input-group-text"
+                        (click)="onPasswordDisplay(false)">
+                    <ng-template [ngIf]="showPassword"
+                                 [ngIfElse]="hide">
+                      <i class="bi bi-eye-slash"></i>
+                    </ng-template>
+                    <ng-template #hide>
+                      <i class="bi bi-eye"></i>
+                    </ng-template>
+                  </span>
+                  </div>
+                </div>
+                @if (changePassInput.invalid &&
+                (changePassInput.dirty || changePassInput.touched)) {
+                  <div class="invalid-feedback text-start d-grid">
+                    <label *ngIf="changePassInput.errors?.['required']">
+                      {{ formConfig.messages.required }}
+                    </label>
+                    <label *ngIf="changePassInput.errors?.['pattern']">
+                      {{ formConfig.messages.passTooWeak }}
+                    </label>
+                    <label *ngIf="changePassInput.errors?.['passNotMatch']">
+                      {{ formConfig.messages.passNotMatch }}
+                    </label>
+                    <label *ngIf="changePassInput.errors?.['minlength']">
+                      {{ formatString(formConfig.messages.minLength, formConfig.registerForm.password.minLength) }}
+                    </label>
+                    <label *ngIf="changePassInput.errors?.['maxlength']">
+                      {{ formatString(formConfig.messages.maxLength, formConfig.registerForm.password.maxLength) }}
+                    </label>
+                  </div>
+                } @else {
+                  <div class="valid-feedback"></div>
+                }
+              </div>
+              <ul class="text-start text-danger">
+                <li [style]="passwordUtil.hasSpecialCharacter(changePassword.newPassword) ? 'display: none' : ''">
+                  Password should have special character
+                </li>
+                <li [style]="passwordUtil.hasSmallCharacters(changePassword.newPassword) ? 'display: none' : ''">
+                  Password should have 3 small characters
+                </li>
+                <li [style]="passwordUtil.hasBigCharacters(changePassword.newPassword) ? 'display: none' : ''">
+                  Password should have 2 upper characters
+                </li>
+                <li [style]="passwordUtil.hasNumbers(changePassword.newPassword) ? 'display: none' : ''">
+                  Password should have 2 numbers
+                </li>
+              </ul>
+              <div [className]="ModalUtils.displayMarginFor(repeatPassInput)">
+                <div class="text-start">
+                  <label for="register-password-repeat">Repeat password</label>
+                  <span class="text-danger"
+                        [style]="disableChangePassForm ? 'display: none' : ''">*</span>
+                </div>
+                <div class="input-group">
+                  <input
+                    [type]="showPassword ? 'text' : 'password'"
+                    id="register-password-repeat"
+                    name="register-password-repeat"
+                    class="form-control"
+                    [(ngModel)]="repeatPassword"
+                    [disabled]="loaders.changePass || disableChangePassForm"
+                    (ngModelChange)="passwordUtil.testPasswords(changePassInput, repeatPassInput)"
+                    required
+                    #repeatPassInput="ngModel"
+                    [ngClass]="{
+                        'is-invalid': repeatPassInput.invalid &&
+                        (repeatPassInput.dirty || repeatPassInput.touched),
+                        'is-valid': repeatPassInput.valid }"/>
+                  <div class="input-group-append">
+                <span class="input-group-text"
+                      (click)="onPasswordDisplay(false)">
+                  <ng-template [ngIf]="showPassword"
+                               [ngIfElse]="hide">
+                    <i class="bi bi-eye-slash"></i>
+                  </ng-template>
+                  <ng-template #hide>
+                    <i class="bi bi-eye"></i>
+                  </ng-template>
+                </span>
+                  </div>
+                </div>
+                @if (repeatPassInput.invalid &&
+                (repeatPassInput.dirty || repeatPassInput.touched)) {
+                  <div class="invalid-feedback text-start d-grid">
+                    <label *ngIf="repeatPassInput.errors?.['required']">
+                      {{ formConfig.messages.required }}
+                    </label>
+                    <label *ngIf="repeatPassInput.errors?.['pattern']">
+                      {{ formConfig.messages.passTooWeak }}
+                    </label>
+                    <label *ngIf="repeatPassInput.errors?.['passNotMatch']">
+                      {{ formConfig.messages.passNotMatch }}
+                    </label>
+                    <label *ngIf="repeatPassInput.errors?.['minlength']">
+                      {{ formatString(formConfig.messages.minLength, formConfig.registerForm.password.minLength) }}
+                    </label>
+                    <label *ngIf="repeatPassInput.errors?.['maxlength']">
+                      {{ formatString(formConfig.messages.maxLength, formConfig.registerForm.password.maxLength) }}
+                    </label>
+                  </div>
+                } @else {
+                  <div class="valid-feedback"></div>
+                }
+              </div>
+              <div [className]="ModalUtils.displayMarginFor(currentPasswordInput)">
+                <div class="text-start">
+                  <label for="current-password-form">Current password</label>
+                  <span class="text-danger"
+                        [style]="disableChangePassForm ? 'display: none' : ''">*</span>
+                </div>
+                <div class="input-group">
+                  <input
+                    [type]="showCurrentPass ? 'text' : 'password'"
+                    id="current-password-form"
+                    name="current-password-form"
+                    class="form-control"
+                    [(ngModel)]="changePassword.currentPassword"
+                    [disabled]="loaders.changePass || disableChangePassForm"
+                    required
+                    #currentPasswordInput="ngModel"
+                    [ngClass]="{
+                        'is-invalid': currentPasswordInput.invalid &&
+                        (currentPasswordInput.dirty || currentPasswordInput.touched),
+                        'is-valid': currentPasswordInput.valid }"/>
+                  <div class="input-group-append">
+                  <span class="input-group-text"
+                        (click)="onPasswordDisplay(true)">
+                    <ng-template [ngIf]="showCurrentPass"
+                                 [ngIfElse]="hide">
+                      <i class="bi bi-eye-slash"></i>
+                    </ng-template>
+                    <ng-template #hide>
+                      <i class="bi bi-eye"></i>
+                    </ng-template>
+                  </span>
+                  </div>
+                </div>
+                @if (currentPasswordInput.invalid &&
+                (currentPasswordInput.dirty || currentPasswordInput.touched)) {
+                  <div class="invalid-feedback text-start d-grid">
+                    <label *ngIf="currentPasswordInput.errors?.['required']">
+                      {{ formConfig.messages.required }}
+                    </label>
+                    <label *ngIf="currentPasswordInput.errors?.['pattern']">
+                      {{ formConfig.messages.passTooWeak }}
+                    </label>
+                    <label *ngIf="currentPasswordInput.errors?.['passNotMatch']">
+                      {{ formConfig.messages.passNotMatch }}
+                    </label>
+                    <label *ngIf="currentPasswordInput.errors?.['minlength']">
+                      {{ formatString(formConfig.messages.minLength, formConfig.registerForm.password.minLength) }}
+                    </label>
+                    <label *ngIf="currentPasswordInput.errors?.['maxlength']">
+                      {{ formatString(formConfig.messages.maxLength, formConfig.registerForm.password.maxLength) }}
+                    </label>
+                  </div>
+                } @else {
+                  <div class="valid-feedback"></div>
+                }
+              </div>
+              <div class="mx-auto text-center mb-2">
+                <ng-template [ngIf]="disableChangePassForm"
+                             [ngIfElse]="enableChangePassForm">
+                  <button type="button"
+                          class="btn btn-outline-secondary px-5"
+                          (click)="onPasswordChangeForm()">
+                    Change
+                  </button>
+                </ng-template>
+                <ng-template #enableChangePassForm>
+                  <button type="button"
+                          class="btn btn-outline-danger px-5 mx-2"
+                          (click)="onPasswordChangeForm()">
+                    Cancel
+                  </button>
+                  <button type="button"
+                          class="btn btn-outline-secondary px-5 mx-2"
+                          [disabled]="!changeUserPassword.valid || loaders.changePass">
+                    Save
+                  </button>
+                </ng-template>
+              </div>
+            </form>
           </div>
-          <div id="change-password" class="col my-2">
-            <label for="change-password">Change email</label>
+          <div id="change-email" class="col-md-6 my-2">
+            <label for="change-email">Change email</label>
 
           </div>
           <label for="two-factor-auth" class="mt-3">Two factor authentication</label>
@@ -73,7 +287,7 @@
               <ng-template [ngIf]="enrollOtpDto"
                            [ngIfElse]="generateOtp">
                 <div class="col text-center mx-auto">
-                  <table [classList]="isMobileView() ? 'mt-1' : 'mt-3'">
+                  <table [ngClass]="isMobileView() ? 'mt-1' : 'mt-3'">
                     <tr>
                       <td class="pe-3">Issuer</td>
                       <td>{{ enrollOtpDto.issuer }}</td>
@@ -172,7 +386,8 @@
             <ng-template #disable2Fa>
               <div class="text-center">
                 <p class="mb-0">2FA is configured. If you want to disable that, enter code and click button.</p>
-                <div class="input-group mb-3 w-50 mx-auto">
+                <div [ngClass]="isMobileView() ? 'w-75' : 'w-25'"
+                     class="input-group mb-3 mx-auto">
                   <input
                     type="text"
                     id="otp-disable"

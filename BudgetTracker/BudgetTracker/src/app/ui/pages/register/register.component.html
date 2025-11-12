@@ -147,6 +147,20 @@
                       <div class="valid-feedback"></div>
                     }
                   </div>
+                  <ul class="text-start text-danger mb-4">
+                    <li [style]="passwordUtil.hasSpecialCharacter(registerForm.password) ? 'display: none' : ''">
+                      Password should have special character
+                    </li>
+                    <li [style]="passwordUtil.hasSmallCharacters(registerForm.password) ? 'display: none' : ''">Password
+                      should have 3 small characters
+                    </li>
+                    <li [style]="passwordUtil.hasBigCharacters(registerForm.password) ? 'display: none' : ''">Password
+                      should have 2 upper characters
+                    </li>
+                    <li [style]="passwordUtil.hasNumbers(registerForm.password) ? 'display: none' : ''">Password should
+                      have 2 numbers
+                    </li>
+                  </ul>
                   <div [className]="ModalUtils.displayMarginFor(registerRepeatPasswordInput)">
                     <div class="text-start">
                       <label for="register-password-repeat">Repeat password</label>
@@ -203,20 +217,6 @@
                       <div class="valid-feedback"></div>
                     }
                   </div>
-                  <ul class="text-start text-danger mb-4">
-                    <li [style]="passwordUtil.hasSpecialCharacter(registerForm.password) ? 'display: none' : ''">
-                      Password should have special character
-                    </li>
-                    <li [style]="passwordUtil.hasSmallCharacters(registerForm.password) ? 'display: none' : ''">Password
-                      should have 3 small characters
-                    </li>
-                    <li [style]="passwordUtil.hasBigCharacters(registerForm.password) ? 'display: none' : ''">Password
-                      should have 2 upper characters
-                    </li>
-                    <li [style]="passwordUtil.hasNumbers(registerForm.password) ? 'display: none' : ''">Password should
-                      have 2 numbers
-                    </li>
-                  </ul>
                   <ng-template [ngIf]="!loaders.register"
                                [ngIfElse]="displayRegisterLoader">
                     <button type="button"
