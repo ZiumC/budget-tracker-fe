@@ -1,5 +1,11 @@
 import {Component, HostListener, OnDestroy, OnInit} from '@angular/core';
-import {Loaders, UserDto} from "../../../models/components/user-panel.component";
+import {
+  ChangeEmailForm,
+  ChangePasswordForm,
+  EmailFormType,
+  Loaders,
+  UserDto
+} from "../../../models/components/user-panel.component";
 import {Subscription} from "rxjs";
 import {SubscriptionUtils} from "../../../util/subscription.utils";
 import {HttpService} from "../../../services/http/http.service";
@@ -9,7 +15,7 @@ import {AppConfig} from "../../../models/config/config";
 import {SpinnerSize} from "../../components/shared/spinner/spinner.component";
 import {ToastUtil} from "../../../util/tostr.util";
 import {ToastrService} from "ngx-toastr";
-import {ChangePasswordDto, EnrollOtpDto} from "../../../models/dto/user.model.dto";
+import {ChangeEmailDto, ChangePasswordDto, EnrollOtpDto} from "../../../models/dto/user.model.dto";
 import {format} from "../../../util/number.util";
 import {formatString} from "../../../util/string.utils";
 import {FormConfig} from "../../../models/config/form.model.config";
@@ -30,15 +36,12 @@ export class UserPanelComponent implements OnInit, OnDestroy {
   protected appConfig: AppConfig;
   protected formConfig: FormConfig;
   protected enrollOtpDto: EnrollOtpDto | null;
-  protected changePassword: ChangePasswordDto;
+  protected passwordForm: ChangePasswordForm;
+  protected emailForm: ChangeEmailForm;
   protected userDto: UserDto;
   protected loaders: Loaders;
   protected otpCode: string;
-  protected repeatPassword: string;
-  protected showPassword: boolean;
-  protected showCurrentPass: boolean;
   protected passwordUtil: PasswordUtil;
-  protected disableChangePassForm: boolean = true;
   public innerWidth: any;
 
   constructor(private httpService: HttpService,
@@ -59,7 +62,8 @@ export class UserPanelComponent implements OnInit, OnDestroy {
       email: "example@mail.com",
       login: "example",
       is2FaEnabled: true,
-      isEmailConfirmed: true
+      isCurrentEmailConfirmed: true,
+      hasNewEmailToConfirmed: false
     }
 
     this.passwordUtil = new PasswordUtil(this.formConfig);
@@ -67,14 +71,32 @@ export class UserPanelComponent implements OnInit, OnDestroy {
     this.loaders = {
       page: false,
       changePass: false,
+      changeEmail: false,
       enroll2Fa: false,
       enable2Fa: false,
       disable2Fa: false
     };
     this.otpCode = "";
-    this.repeatPassword = "";
-    this.changePassword = new ChangePasswordDto();
-    this.showPassword = false;
+
+    this.emailForm = {
+      isDisabledForm: true,
+      showCurrentPassword: false,
+      code: "",
+      type: EmailFormType.CHANGE_EMAIL,
+      emailDto: new ChangeEmailDto()
+    };
+
+    if (this.userDto.hasNewEmailToConfirmed) {
+      this.emailForm.type = EmailFormType.CONFIRM_EMAIL
+    }
+
+    this.passwordForm = {
+      isDisabledForm: true,
+      showCurrentPassword: false,
+      showNewPassword: false,
+      repeatPassword: "",
+      passwordDto: new ChangePasswordDto()
+    }
   }
 
   ngOnDestroy(): void {
@@ -90,22 +112,36 @@ export class UserPanelComponent implements OnInit, OnDestroy {
     return innerWidth <= this.appConfig.pageMobileWidth;
   }
 
-  protected onPasswordDisplay(isCurrentPass: boolean): void {
-    if (this.loaders.changePass || this.disableChangePassForm) {
+  protected passChangeFormPasswordDisplay(isCurrentPass: boolean): void {
+    if (this.loaders.changePass || this.passwordForm.isDisabledForm) {
       return;
     }
     if (isCurrentPass) {
-      this.showCurrentPass = !this.showCurrentPass;
+      this.passwordForm.showCurrentPassword = !this.passwordForm.showCurrentPassword;
     } else {
-      this.showPassword = !this.showPassword;
+      this.passwordForm.showNewPassword = !this.passwordForm.showNewPassword;
     }
   }
 
+  protected emailChangeFormPasswordDisplay() {
+    if (this.loaders.changeEmail || this.emailForm.isDisabledForm) {
+      return;
+    }
+    this.emailForm.showCurrentPassword = !this.emailForm.showCurrentPassword;
+  }
+
   protected onPasswordChangeForm(): void {
-    this.disableChangePassForm = !this.disableChangePassForm;
-    if (this.disableChangePassForm) {
-      this.repeatPassword = "";
-      this.changePassword = new ChangePasswordDto();
+    this.passwordForm.isDisabledForm = !this.passwordForm.isDisabledForm;
+    if (this.passwordForm.isDisabledForm) {
+      this.passwordForm.repeatPassword = "";
+      this.passwordForm.passwordDto = new ChangePasswordDto();
+    }
+  }
+
+  protected onEmailChangeForm(): void {
+    this.emailForm.isDisabledForm = !this.emailForm.isDisabledForm;
+    if (this.emailForm.isDisabledForm) {
+      this.emailForm.emailDto = new ChangeEmailDto();
     }
   }
 
@@ -215,4 +251,5 @@ export class UserPanelComponent implements OnInit, OnDestroy {
   }
 
   protected readonly ChangePasswordDto = ChangePasswordDto;
+  protected readonly EmailFormType = EmailFormType;
 }

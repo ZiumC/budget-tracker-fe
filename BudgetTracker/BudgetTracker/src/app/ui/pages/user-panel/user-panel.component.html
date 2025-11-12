@@ -7,92 +7,93 @@
         </div>
         <ng-template [ngIf]="!loaders.page"
                      [ngIfElse]="loadedPage">
-
+          <app-spinner-grow></app-spinner-grow>
         </ng-template>
         <ng-template #loadedPage>
 
-        </ng-template>
-        <label for="user-data"><h5>User data</h5></label>
-        <div id="user-data" class="row mt-2 mb-4">
-          <div class="col-md-6">
-            <div class="form-group">
-              <label for="user-email">Email</label>
-              <input type="email"
-                     id="user-email"
-                     class="form-control"
-                     disabled
-                     value="example-mail@wp.pl">
+          <label for="user-data"><h5>User data</h5></label>
+          <div id="user-data" class="row mt-2 mb-4">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="user-email">Current email</label>
+                <input type="email"
+                       id="user-email"
+                       class="form-control"
+                       disabled
+                       value="example-mail@wp.pl">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="user-login">Login</label>
+                <input type="email"
+                       id="user-login"
+                       class="form-control"
+                       disabled
+                       value="example-mail">
+              </div>
+            </div>
+            <div class="my-4">
+              <table class="table">
+                <tr class="text-start">
+                  <td class="text-center">Current email status</td>
+                  <td class="text-center">
+                    <ng-template [ngIf]="userDto.isCurrentEmailConfirmed"
+                                 [ngIfElse]="verifiedEmail">
+                      <span class="badge text-bg-success">Verified</span>
+                    </ng-template>
+                    <ng-template #verifiedEmail>
+                      <span class="badge text-bg-danger">Not verified</span>
+                    </ng-template>
+                  </td>
+                </tr>
+                <tr class="text-start">
+                  <td class="text-center">2FA status</td>
+                  <td class="text-center">
+                    <ng-template [ngIf]="userDto.is2FaEnabled"
+                                 [ngIfElse]="disabled2Fa">
+                      <span class="badge text-bg-success">Enabled</span>
+                    </ng-template>
+                    <ng-template #disabled2Fa>
+                      <span class="badge text-bg-danger">Disabled</span>
+                    </ng-template>
+                  </td>
+                </tr>
+              </table>
             </div>
           </div>
-          <div class="col-md-6">
-            <div class="form-group">
-              <label for="user-login">Login</label>
-              <input type="email"
-                     id="user-login"
-                     class="form-control"
-                     disabled
-                     value="example-mail">
-            </div>
-          </div>
-          <div class="my-4">
-            <table class="table">
-              <tr class="text-start">
-                <td class="text-center">Email status</td>
-                <td class="text-center">
-                  <ng-template [ngIf]="userDto.isEmailConfirmed"
-                               [ngIfElse]="verifiedEmail">
-                    <span class="badge text-bg-success">Verified</span>
-                  </ng-template>
-                  <ng-template #verifiedEmail>
-                    <span class="badge text-bg-danger">Not verified</span>
-                  </ng-template>
-                </td>
-              </tr>
-              <tr class="text-start">
-                <td class="text-center">2FA status</td>
-                <td class="text-center">
-                  <ng-template [ngIf]="userDto.is2FaEnabled"
-                               [ngIfElse]="disabled2Fa">
-                    <span class="badge text-bg-success">Enabled</span>
-                  </ng-template>
-                  <ng-template #disabled2Fa>
-                    <span class="badge text-bg-danger">Disabled</span>
-                  </ng-template>
-                </td>
-              </tr>
-            </table>
-          </div>
-        </div>
-        <label for="security"><h5>Security</h5></label>
-        <div id="security" class="row mt-2 mb-4">
-          <div id="change-password" class="col-md-6 my-2">
-            <label for="change-password">Change password</label>
-            <form #changeUserPassword="ngForm">
-              <div [className]="ModalUtils.displayMarginFor(changePassInput)">
-                <div class="text-start">
-                  <label for="change-password-form">New password</label>
-                  <span class="text-danger"
-                        [style]="disableChangePassForm ? 'display: none' : ''">*</span>
-                </div>
-                <div class="input-group">
-                  <input
-                    [type]="showPassword ? 'text' : 'password'"
-                    id="change-password-form"
-                    name="change-password-form"
-                    class="form-control"
-                    [(ngModel)]="changePassword.newPassword"
-                    [disabled]="loaders.changePass || disableChangePassForm"
-                    (ngModelChange)="passwordUtil.testPasswords(changePassInput, repeatPassInput)"
-                    required
-                    #changePassInput="ngModel"
-                    [ngClass]="{
+          <label for="security"><h5>Security</h5></label>
+          <div id="security" class="row mt-2 mb-4">
+            <div id="change-password" class="col-md-6 my-2">
+              <div class="text-center">
+                <label for="change-password">Change password</label>
+              </div>
+              <form #changeUserPassword="ngForm">
+                <div [className]="ModalUtils.displayMarginFor(changePassInput)">
+                  <div class="text-start">
+                    <label for="change-password-form">New password</label>
+                    <span class="text-danger"
+                          [style]="passwordForm.isDisabledForm ? 'display: none' : ''">*</span>
+                  </div>
+                  <div class="input-group">
+                    <input
+                      [type]="passwordForm.showNewPassword ? 'text' : 'password'"
+                      id="change-password-form"
+                      name="change-password-form"
+                      class="form-control"
+                      [(ngModel)]="passwordForm.passwordDto.newPassword"
+                      [disabled]="loaders.changePass || passwordForm.isDisabledForm"
+                      (ngModelChange)="passwordUtil.testPasswords(changePassInput, repeatPassInput)"
+                      required
+                      #changePassInput="ngModel"
+                      [ngClass]="{
                         'is-invalid': changePassInput.invalid &&
                         (changePassInput.dirty || changePassInput.touched),
                         'is-valid': changePassInput.valid }"/>
-                  <div class="input-group-append">
+                    <div class="input-group-append">
                   <span class="input-group-text"
-                        (click)="onPasswordDisplay(false)">
-                    <ng-template [ngIf]="showPassword"
+                        (click)="passChangeFormPasswordDisplay(false)">
+                    <ng-template [ngIf]="passwordForm.showNewPassword"
                                  [ngIfElse]="hide">
                       <i class="bi bi-eye-slash"></i>
                     </ng-template>
@@ -100,70 +101,73 @@
                       <i class="bi bi-eye"></i>
                     </ng-template>
                   </span>
+                    </div>
                   </div>
+                  @if (changePassInput.invalid &&
+                  (changePassInput.dirty || changePassInput.touched)) {
+                    <div class="invalid-feedback text-start d-grid">
+                      <label *ngIf="changePassInput.errors?.['required']">
+                        {{ formConfig.messages.required }}
+                      </label>
+                      <label *ngIf="changePassInput.errors?.['pattern']">
+                        {{ formConfig.messages.passTooWeak }}
+                      </label>
+                      <label *ngIf="changePassInput.errors?.['passNotMatch']">
+                        {{ formConfig.messages.passNotMatch }}
+                      </label>
+                      <label *ngIf="changePassInput.errors?.['minlength']">
+                        {{ formatString(formConfig.messages.minLength, formConfig.registerForm.password.minLength) }}
+                      </label>
+                      <label *ngIf="changePassInput.errors?.['maxlength']">
+                        {{ formatString(formConfig.messages.maxLength, formConfig.registerForm.password.maxLength) }}
+                      </label>
+                    </div>
+                  } @else {
+                    <div class="valid-feedback"></div>
+                  }
                 </div>
-                @if (changePassInput.invalid &&
-                (changePassInput.dirty || changePassInput.touched)) {
-                  <div class="invalid-feedback text-start d-grid">
-                    <label *ngIf="changePassInput.errors?.['required']">
-                      {{ formConfig.messages.required }}
-                    </label>
-                    <label *ngIf="changePassInput.errors?.['pattern']">
-                      {{ formConfig.messages.passTooWeak }}
-                    </label>
-                    <label *ngIf="changePassInput.errors?.['passNotMatch']">
-                      {{ formConfig.messages.passNotMatch }}
-                    </label>
-                    <label *ngIf="changePassInput.errors?.['minlength']">
-                      {{ formatString(formConfig.messages.minLength, formConfig.registerForm.password.minLength) }}
-                    </label>
-                    <label *ngIf="changePassInput.errors?.['maxlength']">
-                      {{ formatString(formConfig.messages.maxLength, formConfig.registerForm.password.maxLength) }}
-                    </label>
+                <ul class="text-start text-danger">
+                  <li
+                    [style]="passwordUtil.hasSpecialCharacter(passwordForm.passwordDto.newPassword) ? 'display: none' : ''">
+                    Password should have special character
+                  </li>
+                  <li
+                    [style]="passwordUtil.hasSmallCharacters(passwordForm.passwordDto.newPassword) ? 'display: none' : ''">
+                    Password should have 3 small characters
+                  </li>
+                  <li
+                    [style]="passwordUtil.hasBigCharacters(passwordForm.passwordDto.newPassword) ? 'display: none' : ''">
+                    Password should have 2 upper characters
+                  </li>
+                  <li [style]="passwordUtil.hasNumbers(passwordForm.passwordDto.newPassword) ? 'display: none' : ''">
+                    Password should have 2 numbers
+                  </li>
+                </ul>
+                <div [className]="ModalUtils.displayMarginFor(repeatPassInput)">
+                  <div class="text-start">
+                    <label for="register-password-repeat">Repeat password</label>
+                    <span class="text-danger"
+                          [style]="passwordForm.isDisabledForm ? 'display: none' : ''">*</span>
                   </div>
-                } @else {
-                  <div class="valid-feedback"></div>
-                }
-              </div>
-              <ul class="text-start text-danger">
-                <li [style]="passwordUtil.hasSpecialCharacter(changePassword.newPassword) ? 'display: none' : ''">
-                  Password should have special character
-                </li>
-                <li [style]="passwordUtil.hasSmallCharacters(changePassword.newPassword) ? 'display: none' : ''">
-                  Password should have 3 small characters
-                </li>
-                <li [style]="passwordUtil.hasBigCharacters(changePassword.newPassword) ? 'display: none' : ''">
-                  Password should have 2 upper characters
-                </li>
-                <li [style]="passwordUtil.hasNumbers(changePassword.newPassword) ? 'display: none' : ''">
-                  Password should have 2 numbers
-                </li>
-              </ul>
-              <div [className]="ModalUtils.displayMarginFor(repeatPassInput)">
-                <div class="text-start">
-                  <label for="register-password-repeat">Repeat password</label>
-                  <span class="text-danger"
-                        [style]="disableChangePassForm ? 'display: none' : ''">*</span>
-                </div>
-                <div class="input-group">
-                  <input
-                    [type]="showPassword ? 'text' : 'password'"
-                    id="register-password-repeat"
-                    name="register-password-repeat"
-                    class="form-control"
-                    [(ngModel)]="repeatPassword"
-                    [disabled]="loaders.changePass || disableChangePassForm"
-                    (ngModelChange)="passwordUtil.testPasswords(changePassInput, repeatPassInput)"
-                    required
-                    #repeatPassInput="ngModel"
-                    [ngClass]="{
+                  <div class="input-group">
+                    <input
+                      [type]="passwordForm.showNewPassword  ? 'text' : 'password'"
+                      id="register-password-repeat"
+                      name="register-password-repeat"
+                      class="form-control"
+                      [(ngModel)]="passwordForm.repeatPassword"
+                      [disabled]="loaders.changePass || passwordForm.isDisabledForm"
+                      (ngModelChange)="passwordUtil.testPasswords(changePassInput, repeatPassInput)"
+                      required
+                      #repeatPassInput="ngModel"
+                      [ngClass]="{
                         'is-invalid': repeatPassInput.invalid &&
                         (repeatPassInput.dirty || repeatPassInput.touched),
                         'is-valid': repeatPassInput.valid }"/>
-                  <div class="input-group-append">
+                    <div class="input-group-append">
                 <span class="input-group-text"
-                      (click)="onPasswordDisplay(false)">
-                  <ng-template [ngIf]="showPassword"
+                      (click)="passChangeFormPasswordDisplay(false)">
+                  <ng-template [ngIf]="passwordForm.showNewPassword"
                                [ngIfElse]="hide">
                     <i class="bi bi-eye-slash"></i>
                   </ng-template>
@@ -171,55 +175,55 @@
                     <i class="bi bi-eye"></i>
                   </ng-template>
                 </span>
+                    </div>
                   </div>
+                  @if (repeatPassInput.invalid &&
+                  (repeatPassInput.dirty || repeatPassInput.touched)) {
+                    <div class="invalid-feedback text-start d-grid">
+                      <label *ngIf="repeatPassInput.errors?.['required']">
+                        {{ formConfig.messages.required }}
+                      </label>
+                      <label *ngIf="repeatPassInput.errors?.['pattern']">
+                        {{ formConfig.messages.passTooWeak }}
+                      </label>
+                      <label *ngIf="repeatPassInput.errors?.['passNotMatch']">
+                        {{ formConfig.messages.passNotMatch }}
+                      </label>
+                      <label *ngIf="repeatPassInput.errors?.['minlength']">
+                        {{ formatString(formConfig.messages.minLength, formConfig.registerForm.password.minLength) }}
+                      </label>
+                      <label *ngIf="repeatPassInput.errors?.['maxlength']">
+                        {{ formatString(formConfig.messages.maxLength, formConfig.registerForm.password.maxLength) }}
+                      </label>
+                    </div>
+                  } @else {
+                    <div class="valid-feedback"></div>
+                  }
                 </div>
-                @if (repeatPassInput.invalid &&
-                (repeatPassInput.dirty || repeatPassInput.touched)) {
-                  <div class="invalid-feedback text-start d-grid">
-                    <label *ngIf="repeatPassInput.errors?.['required']">
-                      {{ formConfig.messages.required }}
-                    </label>
-                    <label *ngIf="repeatPassInput.errors?.['pattern']">
-                      {{ formConfig.messages.passTooWeak }}
-                    </label>
-                    <label *ngIf="repeatPassInput.errors?.['passNotMatch']">
-                      {{ formConfig.messages.passNotMatch }}
-                    </label>
-                    <label *ngIf="repeatPassInput.errors?.['minlength']">
-                      {{ formatString(formConfig.messages.minLength, formConfig.registerForm.password.minLength) }}
-                    </label>
-                    <label *ngIf="repeatPassInput.errors?.['maxlength']">
-                      {{ formatString(formConfig.messages.maxLength, formConfig.registerForm.password.maxLength) }}
-                    </label>
+                <div [className]="ModalUtils.displayMarginFor(currentPasswordInput)">
+                  <div class="text-start">
+                    <label for="current-password-form">Current password</label>
+                    <span class="text-danger"
+                          [style]="passwordForm.isDisabledForm ? 'display: none' : ''">*</span>
                   </div>
-                } @else {
-                  <div class="valid-feedback"></div>
-                }
-              </div>
-              <div [className]="ModalUtils.displayMarginFor(currentPasswordInput)">
-                <div class="text-start">
-                  <label for="current-password-form">Current password</label>
-                  <span class="text-danger"
-                        [style]="disableChangePassForm ? 'display: none' : ''">*</span>
-                </div>
-                <div class="input-group">
-                  <input
-                    [type]="showCurrentPass ? 'text' : 'password'"
-                    id="current-password-form"
-                    name="current-password-form"
-                    class="form-control"
-                    [(ngModel)]="changePassword.currentPassword"
-                    [disabled]="loaders.changePass || disableChangePassForm"
-                    required
-                    #currentPasswordInput="ngModel"
-                    [ngClass]="{
+                  <div class="input-group">
+                    <input
+                      [type]="passwordForm.showCurrentPassword  ? 'text' : 'password'"
+                      id="current-password-form"
+                      name="current-password-form"
+                      class="form-control"
+                      [(ngModel)]="passwordForm.passwordDto.password"
+                      [disabled]="loaders.changePass || passwordForm.isDisabledForm"
+                      required
+                      #currentPasswordInput="ngModel"
+                      [ngClass]="{
                         'is-invalid': currentPasswordInput.invalid &&
                         (currentPasswordInput.dirty || currentPasswordInput.touched),
                         'is-valid': currentPasswordInput.valid }"/>
-                  <div class="input-group-append">
+                    <div class="input-group-append">
                   <span class="input-group-text"
-                        (click)="onPasswordDisplay(true)">
-                    <ng-template [ngIf]="showCurrentPass"
+                        (click)="passChangeFormPasswordDisplay(true)">
+                    <ng-template [ngIf]="passwordForm.showCurrentPassword"
                                  [ngIfElse]="hide">
                       <i class="bi bi-eye-slash"></i>
                     </ng-template>
@@ -227,217 +231,394 @@
                       <i class="bi bi-eye"></i>
                     </ng-template>
                   </span>
-                  </div>
-                </div>
-                @if (currentPasswordInput.invalid &&
-                (currentPasswordInput.dirty || currentPasswordInput.touched)) {
-                  <div class="invalid-feedback text-start d-grid">
-                    <label *ngIf="currentPasswordInput.errors?.['required']">
-                      {{ formConfig.messages.required }}
-                    </label>
-                    <label *ngIf="currentPasswordInput.errors?.['pattern']">
-                      {{ formConfig.messages.passTooWeak }}
-                    </label>
-                    <label *ngIf="currentPasswordInput.errors?.['passNotMatch']">
-                      {{ formConfig.messages.passNotMatch }}
-                    </label>
-                    <label *ngIf="currentPasswordInput.errors?.['minlength']">
-                      {{ formatString(formConfig.messages.minLength, formConfig.registerForm.password.minLength) }}
-                    </label>
-                    <label *ngIf="currentPasswordInput.errors?.['maxlength']">
-                      {{ formatString(formConfig.messages.maxLength, formConfig.registerForm.password.maxLength) }}
-                    </label>
-                  </div>
-                } @else {
-                  <div class="valid-feedback"></div>
-                }
-              </div>
-              <div class="mx-auto text-center mb-2">
-                <ng-template [ngIf]="disableChangePassForm"
-                             [ngIfElse]="enableChangePassForm">
-                  <button type="button"
-                          class="btn btn-outline-secondary px-5"
-                          (click)="onPasswordChangeForm()">
-                    Change
-                  </button>
-                </ng-template>
-                <ng-template #enableChangePassForm>
-                  <button type="button"
-                          class="btn btn-outline-danger px-5 mx-2"
-                          (click)="onPasswordChangeForm()">
-                    Cancel
-                  </button>
-                  <button type="button"
-                          class="btn btn-outline-secondary px-5 mx-2"
-                          [disabled]="!changeUserPassword.valid || loaders.changePass">
-                    Save
-                  </button>
-                </ng-template>
-              </div>
-            </form>
-          </div>
-          <div id="change-email" class="col-md-6 my-2">
-            <label for="change-email">Change email</label>
-
-          </div>
-          <label for="two-factor-auth" class="mt-3">Two factor authentication</label>
-          <div id="two-factor-auth" class="row my-2 mx-auto">
-            <ng-template [ngIf]="!userDto.is2FaEnabled"
-                         [ngIfElse]="disable2Fa">
-              <ng-template [ngIf]="enrollOtpDto"
-                           [ngIfElse]="generateOtp">
-                <div class="col text-center mx-auto">
-                  <table [ngClass]="isMobileView() ? 'mt-1' : 'mt-3'">
-                    <tr>
-                      <td class="pe-3">Issuer</td>
-                      <td>{{ enrollOtpDto.issuer }}</td>
-                    </tr>
-                    <tr>
-                      <td>Secret key
-                        <a #tooltipIncomeSavings="ngbTooltip"
-                           class="info-tooltip"
-                           [ngbTooltip]="tipIncomeSavingsContent"
-                           (click)="tooltipIncomeSavings.open()">
-                          <i class="bi bi-info-circle"></i>
-                        </a>
-                        <ng-template #tipIncomeSavingsContent>
-                          <p class="mx-1 my-1">If you can't scan qr code, type secret key into authenticator app.</p>
-                        </ng-template>
-                      </td>
-                      <td>{{ enrollOtpDto.secret }}</td>
-                    </tr>
-                  </table>
-                  <div class="mt-3">
-                    <p class="mb-1 text-start">To enable 2FA, type code from authenticator app</p>
-                    <div class="input-group mb-3">
-                      <input
-                        type="text"
-                        id="otp-enable"
-                        name="otp-enable"
-                        class="form-control"
-                        [(ngModel)]="otpCode"
-                        [disabled]="loaders.enable2Fa"
-                        required
-                        pattern="{{formConfig.regex.codes.otp}}"
-                        #otpEnableInput="ngModel"
-                        [ngClass]="{
-                        'is-invalid': otpEnableInput.invalid &&
-                        (otpEnableInput.dirty || otpEnableInput.touched),
-                        'is-valid': otpEnableInput.valid }"/>
-                      <div class="input-group-append">
-                        <ng-template [ngIf]="!loaders.enable2Fa"
-                                     [ngIfElse]="displayEnableOtpLoader">
-                          <button type="button"
-                                  class="btn btn-outline-lightgreen"
-                                  (click)="enableOtp()"
-                                  [disabled]="!otpEnableInput.valid || loaders.enable2Fa">
-                            Confirm
-                          </button>
-                        </ng-template>
-                        <ng-template #displayEnableOtpLoader>
-                          <button type="button"
-                                  class="btn btn-outline-lightgreen"
-                                  [disabled]="loaders.enable2Fa">
-                            <app-spinner [size]="SpinnerSize.SMALL"></app-spinner>
-                          </button>
-                        </ng-template>
-                      </div>
-                      @if (otpEnableInput.invalid &&
-                      (otpEnableInput.dirty || otpEnableInput.touched)) {
-                        <div class="invalid-feedback text-start">
-                          <label *ngIf="otpEnableInput.errors?.['required']">
-                            {{ formConfig.messages.required }}
-                          </label>
-                          <label *ngIf="otpEnableInput.errors?.['pattern']">
-                            {{ formatString(formConfig.messages.invalid, "Code") }}
-                          </label>
-                        </div>
-                      } @else {
-                        <div class="valid-feedback"></div>
-                      }
                     </div>
                   </div>
-                </div>
-                <div class="col text-center">
-                  <qrcode [qrdata]="enrollOtpDto.otpUri" [width]="180" [errorCorrectionLevel]="'M'"></qrcode>
-                </div>
-              </ng-template>
-              <ng-template #generateOtp>
-                <div class="text-center mx-auto">
-                  <p class="mb-0">2FA is not configured. To configure that, click button below.</p>
-                  <ng-template [ngIf]="!loaders.enroll2Fa"
-                               [ngIfElse]="enrollLoading">
-                    <button type="button"
-                            (click)="enrollOtp()"
-                            [disabled]="loaders.enroll2Fa"
-                            class="btn btn-outline-lightgreen px-5">Enroll
-                    </button>
-                  </ng-template>
-                  <ng-template #enrollLoading>
-                    <button type="button"
-                            [disabled]="loaders.enroll2Fa"
-                            class="btn btn-outline-lightgreen px-5">
-                      <app-spinner [size]="SpinnerSize.SMALL"></app-spinner>
-                    </button>
-                  </ng-template>
-                </div>
-              </ng-template>
-            </ng-template>
-            <ng-template #disable2Fa>
-              <div class="text-center">
-                <p class="mb-0">2FA is configured. If you want to disable that, enter code and click button.</p>
-                <div [ngClass]="isMobileView() ? 'w-75' : 'w-25'"
-                     class="input-group mb-3 mx-auto">
-                  <input
-                    type="text"
-                    id="otp-disable"
-                    name="otp-disable"
-                    class="form-control"
-                    [(ngModel)]="otpCode"
-                    [disabled]="loaders.disable2Fa"
-                    required
-                    pattern="{{formConfig.regex.codes.otp}}"
-                    #otpDisableInput="ngModel"
-                    [ngClass]="{
-                        'is-invalid': otpDisableInput.invalid &&
-                        (otpDisableInput.dirty || otpDisableInput.touched),
-                        'is-valid': otpDisableInput.valid }"/>
-                  <div class="input-group-append">
-                    <ng-template [ngIf]="!loaders.disable2Fa"
-                                 [ngIfElse]="displayDisableOtpLoader">
-                      <button type="button"
-                              class="btn btn-outline-danger"
-                              (click)="disableOtp()"
-                              [disabled]="!otpDisableInput.valid || loaders.disable2Fa">
-                        Disable
-                      </button>
-                    </ng-template>
-                    <ng-template #displayDisableOtpLoader>
-                      <button type="button"
-                              class="btn btn-outline-danger"
-                              [disabled]="loaders.disable2Fa">
-                        <app-spinner [size]="SpinnerSize.SMALL"></app-spinner>
-                      </button>
-                    </ng-template>
-                  </div>
-                  @if (otpDisableInput.invalid &&
-                  (otpDisableInput.dirty || otpDisableInput.touched)) {
-                    <div class="invalid-feedback text-start">
-                      <label *ngIf="otpDisableInput.errors?.['required']">
+                  @if (currentPasswordInput.invalid &&
+                  (currentPasswordInput.dirty || currentPasswordInput.touched)) {
+                    <div class="invalid-feedback text-start d-grid">
+                      <label *ngIf="currentPasswordInput.errors?.['required']">
                         {{ formConfig.messages.required }}
                       </label>
-                      <label *ngIf="otpDisableInput.errors?.['pattern']">
-                        {{ formatString(formConfig.messages.invalid, "Code") }}
+                      <label *ngIf="currentPasswordInput.errors?.['pattern']">
+                        {{ formConfig.messages.passTooWeak }}
+                      </label>
+                      <label *ngIf="currentPasswordInput.errors?.['passNotMatch']">
+                        {{ formConfig.messages.passNotMatch }}
+                      </label>
+                      <label *ngIf="currentPasswordInput.errors?.['minlength']">
+                        {{ formatString(formConfig.messages.minLength, formConfig.registerForm.password.minLength) }}
+                      </label>
+                      <label *ngIf="currentPasswordInput.errors?.['maxlength']">
+                        {{ formatString(formConfig.messages.maxLength, formConfig.registerForm.password.maxLength) }}
                       </label>
                     </div>
                   } @else {
                     <div class="valid-feedback"></div>
                   }
                 </div>
+                <div class="mx-auto text-center mb-2">
+                  <ng-template [ngIf]="passwordForm.isDisabledForm"
+                               [ngIfElse]="enableChangePassForm">
+                    <button type="button"
+                            class="btn btn-outline-secondary px-5"
+                            (click)="onPasswordChangeForm()">
+                      Change
+                    </button>
+                  </ng-template>
+                  <ng-template #enableChangePassForm>
+                    <button type="button"
+                            class="btn btn-outline-danger px-5 mx-2"
+                            (click)="onPasswordChangeForm()">
+                      Cancel
+                    </button>
+                    <button type="button"
+                            class="btn btn-outline-secondary px-5 mx-2"
+                            [disabled]="!changeUserPassword.valid || loaders.changePass">
+                      Save
+                    </button>
+                  </ng-template>
+                </div>
+              </form>
+            </div>
+            <div id="change-email" class="col-md-6 my-2">
+              <div class="text-center">
+                <label for="change-email">Change email</label>
               </div>
-            </ng-template>
+              <ng-container [ngSwitch]="emailForm.type">
+                <ng-container *ngSwitchCase="EmailFormType.CHANGE_EMAIL">
+                  <form #changeEmailForm="ngForm">
+                    <div [className]="ModalUtils.displayMarginFor(changeEmailInput)">
+                      <div class="text-start">
+                        <label for="change-email-form">New email</label>
+                        <span class="text-danger"
+                              [style]="emailForm.isDisabledForm ? 'display: none' : ''">*</span>
+                      </div>
+                      <input
+                        type="email"
+                        id="change-email-form"
+                        name="change-email-form"
+                        class="form-control"
+                        [(ngModel)]="emailForm.emailDto.newEmail"
+                        [disabled]="loaders.changeEmail || emailForm.isDisabledForm"
+                        required
+                        minlength="{{ formConfig.registerForm.email.minLength }}"
+                        maxlength="{{ formConfig.registerForm.email.maxLength }}"
+                        pattern="{{formConfig.regex.email}}"
+                        #changeEmailInput="ngModel"
+                        [ngClass]="{
+                        'is-invalid': changeEmailInput.invalid &&
+                        (changeEmailInput.dirty || changeEmailInput.touched),
+                        'is-valid': changeEmailInput.valid }"/>
+                      @if (changeEmailInput.invalid &&
+                      (changeEmailInput.dirty || changeEmailInput.touched)) {
+                        <div class="invalid-feedback text-start d-grid">
+                          <label *ngIf="changeEmailInput.errors?.['required']">
+                            {{ formConfig.messages.required }}
+                          </label>
+                          <label *ngIf="changeEmailInput.errors?.['pattern']">
+                            {{ formatString(formConfig.messages.invalid, "Email") }}
+                          </label>
+                          <label *ngIf="changeEmailInput.errors?.['minlength']">
+                            {{ formatString(formConfig.messages.minLength, formConfig.registerForm.email.minLength) }}
+                          </label>
+                          <label *ngIf="changeEmailInput.errors?.['maxlength']">
+                            {{ formatString(formConfig.messages.maxLength, formConfig.registerForm.email.maxLength) }}
+                          </label>
+                        </div>
+                      } @else {
+                        <div class="valid-feedback"></div>
+                      }
+                    </div>
+                    <div [className]="ModalUtils.displayMarginFor(changeEmailCurrentPassInput)">
+                      <div class="text-start">
+                        <label for="change-email-form-current-password">Current password</label>
+                        <span class="text-danger"
+                              [style]="emailForm.isDisabledForm ? 'display: none' : ''">*</span>
+                      </div>
+                      <div class="input-group">
+                        <input
+                          [type]="emailForm.showCurrentPassword  ? 'text' : 'password'"
+                          id="change-email-form-current-password"
+                          name="change-email-form-current-password"
+                          class="form-control"
+                          [(ngModel)]="emailForm.emailDto.password"
+                          [disabled]="loaders.changePass || emailForm.isDisabledForm"
+                          required
+                          #changeEmailCurrentPassInput="ngModel"
+                          [ngClass]="{
+                        'is-invalid': changeEmailCurrentPassInput.invalid &&
+                        (changeEmailCurrentPassInput.dirty || changeEmailCurrentPassInput.touched),
+                        'is-valid': changeEmailCurrentPassInput.valid }"/>
+                        <div class="input-group-append">
+                  <span class="input-group-text"
+                        (click)="emailChangeFormPasswordDisplay()">
+                    <ng-template [ngIf]="emailForm.showCurrentPassword"
+                                 [ngIfElse]="hide">
+                      <i class="bi bi-eye-slash"></i>
+                    </ng-template>
+                    <ng-template #hide>
+                      <i class="bi bi-eye"></i>
+                    </ng-template>
+                  </span>
+                        </div>
+                      </div>
+                      @if (changeEmailCurrentPassInput.invalid &&
+                      (changeEmailCurrentPassInput.dirty || changeEmailCurrentPassInput.touched)) {
+                        <div class="invalid-feedback text-start d-grid">
+                          <label *ngIf="changeEmailCurrentPassInput.errors?.['required']">
+                            {{ formConfig.messages.required }}
+                          </label>
+                          <label *ngIf="changeEmailCurrentPassInput.errors?.['pattern']">
+                            {{ formConfig.messages.passTooWeak }}
+                          </label>
+                          <label *ngIf="changeEmailCurrentPassInput.errors?.['minlength']">
+                            {{ formatString(formConfig.messages.minLength, formConfig.registerForm.password.minLength) }}
+                          </label>
+                          <label *ngIf="changeEmailCurrentPassInput.errors?.['maxlength']">
+                            {{ formatString(formConfig.messages.maxLength, formConfig.registerForm.password.maxLength) }}
+                          </label>
+                        </div>
+                      } @else {
+                        <div class="valid-feedback"></div>
+                      }
+                    </div>
+                    <div class="mx-auto text-center mb-2">
+                      <ng-template [ngIf]="emailForm.isDisabledForm"
+                                   [ngIfElse]="enableChangeEmailForm">
+                        <button type="button"
+                                class="btn btn-outline-secondary px-5"
+                                (click)="onEmailChangeForm()">
+                          Change
+                        </button>
+                      </ng-template>
+                      <ng-template #enableChangeEmailForm>
+                        <button type="button"
+                                class="btn btn-outline-danger px-5 mx-2"
+                                (click)="onEmailChangeForm()">
+                          Cancel
+                        </button>
+                        <button type="button"
+                                class="btn btn-outline-secondary px-5 mx-2"
+                                [disabled]="!changeEmailForm.valid || loaders.changeEmail">
+                          Save
+                        </button>
+                      </ng-template>
+                    </div>
+                  </form>
+                </ng-container>
+                <ng-container *ngSwitchCase="EmailFormType.CONFIRM_EMAIL">
+                  <form #confirmEmailForm="ngForm">
+                    <div [className]="ModalUtils.displayMarginFor(verificationCodeInput)">
+                      <div class="text-start">
+                        <label for="verify-code">Code</label>
+                        <span class="text-danger">*</span>
+                      </div>
+                      <input
+                        type="email"
+                        id="verify-code"
+                        name="verify-code"
+                        class="form-control"
+                        [(ngModel)]="emailForm.code"
+                        [disabled]="loaders.changeEmail"
+                        required
+                        minlength="{{ formConfig.registerForm.code.minLength }}"
+                        maxlength="{{ formConfig.registerForm.code.maxLength }}"
+                        pattern="{{formConfig.regex.codes.emailConfirm}}"
+                        #verificationCodeInput="ngModel"
+                        [ngClass]="{
+                        'is-invalid': verificationCodeInput.invalid &&
+                        (verificationCodeInput.dirty || verificationCodeInput.touched),
+                        'is-valid': verificationCodeInput.valid }"/>
+                      @if (verificationCodeInput.invalid &&
+                      (verificationCodeInput.dirty || verificationCodeInput.touched)) {
+                        <div class="invalid-feedback text-start d-grid">
+                          <label *ngIf="verificationCodeInput.errors?.['required']">
+                            {{ formConfig.messages.required }}
+                          </label>
+                          <label *ngIf="verificationCodeInput.errors?.['pattern']">
+                            {{ formatString(formConfig.messages.invalid, "Code") }}
+                          </label>
+                          <label *ngIf="verificationCodeInput.errors?.['minlength']">
+                            {{ formatString(formConfig.messages.minLength, formConfig.registerForm.code.minLength) }}
+                          </label>
+                          <label *ngIf="verificationCodeInput.errors?.['maxlength']">
+                            {{ formatString(formConfig.messages.maxLength, formConfig.registerForm.code.maxLength) }}
+                          </label>
+                        </div>
+                      } @else {
+                        <div class="valid-feedback"></div>
+                      }
+                    </div>
+                    <div class="mx-auto text-center mb-2">
+                      <button type="button"
+                              class="btn btn-outline-secondary px-5 mx-2"
+                              [disabled]="!confirmEmailForm.valid || loaders.changeEmail">
+                        Save
+                      </button>
+                    </div>
+                  </form>
+                </ng-container>
+              </ng-container>
+            </div>
+            <label for="two-factor-auth" class="mt-3">Two factor authentication</label>
+            <div id="two-factor-auth" class="row my-2 mx-auto">
+              <ng-template [ngIf]="!userDto.is2FaEnabled"
+                           [ngIfElse]="disable2Fa">
+                <ng-template [ngIf]="enrollOtpDto"
+                             [ngIfElse]="generateOtp">
+                  <div class="col text-center mx-auto">
+                    <table [ngClass]="isMobileView() ? 'mt-1' : 'mt-3'">
+                      <tr>
+                        <td class="pe-3">Issuer</td>
+                        <td>{{ enrollOtpDto.issuer }}</td>
+                      </tr>
+                      <tr>
+                        <td>Secret key
+                          <a #tooltipIncomeSavings="ngbTooltip"
+                             class="info-tooltip"
+                             [ngbTooltip]="tipIncomeSavingsContent"
+                             (click)="tooltipIncomeSavings.open()">
+                            <i class="bi bi-info-circle"></i>
+                          </a>
+                          <ng-template #tipIncomeSavingsContent>
+                            <p class="mx-1 my-1">If you can't scan qr code, type secret key into authenticator app.</p>
+                          </ng-template>
+                        </td>
+                        <td>{{ enrollOtpDto.secret }}</td>
+                      </tr>
+                    </table>
+                    <div class="mt-3">
+                      <p class="mb-1 text-start">To enable 2FA, type code from authenticator app</p>
+                      <div class="input-group mb-3">
+                        <input
+                          type="text"
+                          id="otp-enable"
+                          name="otp-enable"
+                          class="form-control"
+                          [(ngModel)]="otpCode"
+                          [disabled]="loaders.enable2Fa"
+                          required
+                          pattern="{{formConfig.regex.codes.otp}}"
+                          #otpEnableInput="ngModel"
+                          [ngClass]="{
+                        'is-invalid': otpEnableInput.invalid &&
+                        (otpEnableInput.dirty || otpEnableInput.touched),
+                        'is-valid': otpEnableInput.valid }"/>
+                        <div class="input-group-append">
+                          <ng-template [ngIf]="!loaders.enable2Fa"
+                                       [ngIfElse]="displayEnableOtpLoader">
+                            <button type="button"
+                                    class="btn btn-outline-lightgreen"
+                                    (click)="enableOtp()"
+                                    [disabled]="!otpEnableInput.valid || loaders.enable2Fa">
+                              Confirm
+                            </button>
+                          </ng-template>
+                          <ng-template #displayEnableOtpLoader>
+                            <button type="button"
+                                    class="btn btn-outline-lightgreen"
+                                    [disabled]="loaders.enable2Fa">
+                              <app-spinner [size]="SpinnerSize.SMALL"></app-spinner>
+                            </button>
+                          </ng-template>
+                        </div>
+                        @if (otpEnableInput.invalid &&
+                        (otpEnableInput.dirty || otpEnableInput.touched)) {
+                          <div class="invalid-feedback text-start">
+                            <label *ngIf="otpEnableInput.errors?.['required']">
+                              {{ formConfig.messages.required }}
+                            </label>
+                            <label *ngIf="otpEnableInput.errors?.['pattern']">
+                              {{ formatString(formConfig.messages.invalid, "Code") }}
+                            </label>
+                          </div>
+                        } @else {
+                          <div class="valid-feedback"></div>
+                        }
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col text-center">
+                    <qrcode [qrdata]="enrollOtpDto.otpUri" [width]="180" [errorCorrectionLevel]="'M'"></qrcode>
+                  </div>
+                </ng-template>
+                <ng-template #generateOtp>
+                  <div class="text-center mx-auto">
+                    <p class="mb-0">2FA is not configured. To configure that, click button below.</p>
+                    <ng-template [ngIf]="!loaders.enroll2Fa"
+                                 [ngIfElse]="enrollLoading">
+                      <button type="button"
+                              (click)="enrollOtp()"
+                              [disabled]="loaders.enroll2Fa"
+                              class="btn btn-outline-lightgreen px-5">Enroll
+                      </button>
+                    </ng-template>
+                    <ng-template #enrollLoading>
+                      <button type="button"
+                              [disabled]="loaders.enroll2Fa"
+                              class="btn btn-outline-lightgreen px-5">
+                        <app-spinner [size]="SpinnerSize.SMALL"></app-spinner>
+                      </button>
+                    </ng-template>
+                  </div>
+                </ng-template>
+              </ng-template>
+              <ng-template #disable2Fa>
+                <div class="text-center">
+                  <p class="mb-0">2FA is configured. If you want to disable that, enter code and click button.</p>
+                  <div [ngClass]="isMobileView() ? 'w-75' : 'w-25'"
+                       class="input-group mb-3 mx-auto">
+                    <input
+                      type="text"
+                      id="otp-disable"
+                      name="otp-disable"
+                      class="form-control"
+                      [(ngModel)]="otpCode"
+                      [disabled]="loaders.disable2Fa"
+                      required
+                      pattern="{{formConfig.regex.codes.otp}}"
+                      #otpDisableInput="ngModel"
+                      [ngClass]="{
+                        'is-invalid': otpDisableInput.invalid &&
+                        (otpDisableInput.dirty || otpDisableInput.touched),
+                        'is-valid': otpDisableInput.valid }"/>
+                    <div class="input-group-append">
+                      <ng-template [ngIf]="!loaders.disable2Fa"
+                                   [ngIfElse]="displayDisableOtpLoader">
+                        <button type="button"
+                                class="btn btn-outline-danger"
+                                (click)="disableOtp()"
+                                [disabled]="!otpDisableInput.valid || loaders.disable2Fa">
+                          Disable
+                        </button>
+                      </ng-template>
+                      <ng-template #displayDisableOtpLoader>
+                        <button type="button"
+                                class="btn btn-outline-danger"
+                                [disabled]="loaders.disable2Fa">
+                          <app-spinner [size]="SpinnerSize.SMALL"></app-spinner>
+                        </button>
+                      </ng-template>
+                    </div>
+                    @if (otpDisableInput.invalid &&
+                    (otpDisableInput.dirty || otpDisableInput.touched)) {
+                      <div class="invalid-feedback text-start">
+                        <label *ngIf="otpDisableInput.errors?.['required']">
+                          {{ formConfig.messages.required }}
+                        </label>
+                        <label *ngIf="otpDisableInput.errors?.['pattern']">
+                          {{ formatString(formConfig.messages.invalid, "Code") }}
+                        </label>
+                      </div>
+                    } @else {
+                      <div class="valid-feedback"></div>
+                    }
+                  </div>
+                </div>
+              </ng-template>
+            </div>
           </div>
-        </div>
+        </ng-template>
       </div>
     </div>
   </div>

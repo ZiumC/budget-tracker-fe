@@ -41,5 +41,10 @@ export class EnrollOtpDto {
 
 export class ChangePasswordDto {
   newPassword: string;
-  currentPassword: string;
+  password: string;
+}
+
+export class ChangeEmailDto{
+  newEmail: string;
+  password: string;
 }
