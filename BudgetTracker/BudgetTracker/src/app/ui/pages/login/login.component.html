@@ -418,6 +418,20 @@
                       <div class="valid-feedback"></div>
                     }
                   </div>
+                  <ul class="text-start text-danger mb-4">
+                    <li [style]="passwordUtil.hasSpecialCharacter(setPassForm.newPassword) ? 'display: none' : ''">
+                      Password should have special character
+                    </li>
+                    <li [style]="passwordUtil.hasSmallCharacters(setPassForm.newPassword) ? 'display: none' : ''">
+                      Password should have 3 small characters
+                    </li>
+                    <li [style]="passwordUtil.hasBigCharacters(setPassForm.newPassword) ? 'display: none' : ''">
+                      Password should have 2 upper characters
+                    </li>
+                    <li [style]="passwordUtil.hasNumbers(setPassForm.newPassword) ? 'display: none' : ''">
+                      Password should have 2 numbers
+                    </li>
+                  </ul>
                   <div [className]="ModalUtils.displayMarginFor(setPassRepeatInput)">
                     <div class="text-start">
                       <label for="register-password-repeat">Repeat password</label>

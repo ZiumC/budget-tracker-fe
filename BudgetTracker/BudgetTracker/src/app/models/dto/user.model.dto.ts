@@ -38,3 +38,8 @@ export class EnrollOtpDto {
   otpUri: string;
   qrCode: string;
 }
+
+export class ChangePasswordDto {
+  newPassword: string;
+  currentPassword: string;
+}
