@@ -448,7 +448,8 @@ export class UserUrls {
   private static ACTIONS = {
     REGISTER: "/register",
     EMAIL: "/email",
-    PASSWORD: "/password"
+    PASSWORD: "/password",
+    PROFILE: "/profile"
   }
   private static SUB_ACTIONS = {
     INITIALIZE: "/initialize",
@@ -481,5 +482,9 @@ export class UserUrls {
     return HostUrl.getHostUrl() + UserUrls.CONTROLLER +
       UserUrls.ACTIONS.PASSWORD + UserUrls.SUB_ACTIONS.RESET + UserUrls.SUB_ACTIONS.COMPLETE +
       `?email=${completePassResetDto.email}&challengePassword=${completePassResetDto.challengePassword}`;
+  }
+
+  static userProfile(): string {
+    return HostUrl.getHostUrl() + UserUrls.CONTROLLER + UserUrls.ACTIONS.PROFILE;
   }
 }

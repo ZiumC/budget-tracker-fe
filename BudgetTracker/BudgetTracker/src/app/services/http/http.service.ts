@@ -36,7 +36,7 @@ import {
 import {OtpDto} from "../../models/dto/user.model.dto";
 import {CompletePassResetDto, InitPassResetDto, LoginDto} from "../../models/components/login.component";
 import {CompleteRegisterDto, InitRegisterDto} from "../../models/components/register.component";
-import {EnrollOtpDto} from "../../models/components/user-panel.component";
+import {EnrollOtpDto, GetUserDto} from "../../models/components/user-panel.component";
 
 @Injectable({
   providedIn: 'root',
@@ -398,6 +398,12 @@ export class HttpService {
     )
   }
 
+  public userProfile(): Observable<HttpResponse<GetUserDto>> {
+    return this.httpClient.get<GetUserDto>(
+      UserUrls.userProfile(),
+      {observe: 'response', withCredentials: true}
+    )
+  }
 
   public initializePasswordReset(initPasswordResetDto: InitPassResetDto): Observable<any> {
     return this.httpClient.post(

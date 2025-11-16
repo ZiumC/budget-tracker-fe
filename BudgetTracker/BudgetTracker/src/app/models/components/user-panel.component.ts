@@ -3,16 +3,18 @@ export enum EmailFormType {
   CONFIRM_EMAIL = 1,
 }
 
-export interface UserDto {
+export class GetUserDto {
   email: string;
   login: string;
+  suspendedDate: Date;
+  changeSuspendedDate: Date;
+  isEmailConfirmed: boolean;
   is2FaEnabled: boolean;
-  isCurrentEmailConfirmed: boolean;
-  hasNewEmailToConfirmed: boolean;
+  hasEmailToConfirm: boolean;
 }
 
 export interface Loaders {
-  page: boolean;
+  userProfile: boolean;
   changePass: boolean;
   changeEmail: boolean;
   enable2Fa: boolean;
