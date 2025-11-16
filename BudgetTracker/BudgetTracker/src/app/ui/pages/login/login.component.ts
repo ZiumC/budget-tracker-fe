@@ -2,10 +2,15 @@ import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Params, Router} from "@angular/router";
 import {AuthService} from "../../../services/auth/auth.service";
 import {HttpService} from "../../../services/http/http.service";
-import {LoginDto, ResetPasswordDto, SetPasswordDto} from "../../../models/dto/user.model.dto";
+import {LoginDto} from "../../../models/dto/user.model.dto";
 import {Subscription} from "rxjs";
 import {SubscriptionUtils} from "../../../util/subscription.utils";
-import {Loaders, LoginFormTypes} from "../../../models/components/login.component";
+import {
+  CompletePasswordResetDto,
+  InitPasswordResetDto,
+  Loaders,
+  LoginFormTypes
+} from "../../../models/components/login.component";
 import {formatString} from "../../../util/string.utils";
 import {DateUtil} from "../../../util/date.util";
 import {ConfigService} from "../../../services/config/config.service";
@@ -33,8 +38,8 @@ export class LoginComponent implements OnInit, OnDestroy {
   protected formType: LoginFormTypes;
   protected subscriptions: Subscription[];
   protected loginForm: LoginDto;
-  protected resetPassForm: ResetPasswordDto;
-  protected setPassForm: SetPasswordDto;
+  protected initPassResetForm: InitPasswordResetDto;
+  protected completePassResetForm: CompletePasswordResetDto;
   protected showPassword: boolean;
   protected appConfig: AppConfig;
   protected formConfig: FormConfig;
@@ -70,7 +75,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.activatedRoute.queryParams.subscribe((params: Params): void => {
       if (params['set']) {
         this.setPassParam = true;
-        this.formType = LoginFormTypes.SET_PASSWORD;
+        this.formType = LoginFormTypes.CONFIRM_PASSWORD;
       } else {
         this.setPassParam = false;
         this.formType = LoginFormTypes.LOGIN;
@@ -85,8 +90,8 @@ export class LoginComponent implements OnInit, OnDestroy {
 
     this.subscriptions = [];
     this.loginForm = new LoginDto();
-    this.resetPassForm = new ResetPasswordDto();
-    this.setPassForm = new SetPasswordDto();
+    this.initPassResetForm = new InitPasswordResetDto();
+    this.completePassResetForm = new CompletePasswordResetDto();
     this.passwordUtil = new PasswordUtil(this.formConfig);
     this.showPassword = false;
     this.repeatPassword = "";
@@ -122,17 +127,18 @@ export class LoginComponent implements OnInit, OnDestroy {
     )
   }
 
-  protected resetPassword(): void {
+  protected initializePasswordReset(): void {
     this.markResetAsLoading(true);
     this.subscriptions.push(
-      this.httpService.resetPassword(this.resetPassForm).subscribe({
+      this.httpService.initializePasswordReset(this.initPassResetForm).subscribe({
         next: (): void => {
-          ToastUtil.successfullySentTemPass(this.toastr, this.resetPassForm.email);
-          this.formType = LoginFormTypes.SET_PASSWORD;
+          ToastUtil.successfullySentTemPass(this.toastr, this.initPassResetForm.email);
+          this.formType = LoginFormTypes.CONFIRM_PASSWORD;
           this.markResetAsLoading(false);
         },
         error: (err): void => {
-          this.resetPassForm = new ResetPasswordDto();
+          this.initPassResetForm = new InitPasswordResetDto();
+          this.repeatPassword = "";
           ToastUtil.handleErrorResponse(this.toastr, err);
           this.markResetAsLoading(false);
         },
@@ -143,23 +149,26 @@ export class LoginComponent implements OnInit, OnDestroy {
     )
   }
 
-  protected setNewPassword(): void {
+  protected completePasswordReset(): void {
     this.markSetPassAsLoading(true);
-    this.setPassForm.login = this.resetPassForm.login;
-    this.setPassForm.email = this.resetPassForm.email;
+    if (!this.setPassParam){
+      this.completePassResetForm.email = this.initPassResetForm.email;
+    }
     this.subscriptions.push(
-      this.httpService.setPassword(this.setPassForm).subscribe({
+      this.httpService.completePasswordReset(this.completePassResetForm).subscribe({
         next: (): void => {
           ToastUtil.successfullySetNewPass(this.toastr);
           this.markSetPassAsLoading(false);
           this.formType = LoginFormTypes.LOGIN;
         },
         error: (err): void => {
-          if (err.status != 410){
-            this.setPassForm.newPassword = "";
+          if (err.status != 410) {
+            this.completePassResetForm = new CompletePasswordResetDto();
             this.repeatPassword = "";
-            this.setPassForm.challangePassword = "";
+          } else {
+            this.formType = LoginFormTypes.RESET_PASSWORD;
           }
+
           ToastUtil.handleErrorResponse(this.toastr, err);
           this.markSetPassAsLoading(false);
         },
@@ -170,8 +179,35 @@ export class LoginComponent implements OnInit, OnDestroy {
     )
   }
 
+  // protected setNewPassword(): void {
+  //   this.markSetPassAsLoading(true);
+  //   this.setPassForm.login = this.resetPassForm.login;
+  //   this.setPassForm.email = this.resetPassForm.email;
+  //   this.subscriptions.push(
+  //     this.httpService.setPassword(this.setPassForm).subscribe({
+  //       next: (): void => {
+  //         ToastUtil.successfullySetNewPass(this.toastr);
+  //         this.markSetPassAsLoading(false);
+  //         this.formType = LoginFormTypes.LOGIN;
+  //       },
+  //       error: (err): void => {
+  //         if (err.status != 410){
+  //           this.setPassForm.newPassword = "";
+  //           this.repeatPassword = "";
+  //           this.setPassForm.challangePassword = "";
+  //         }
+  //         ToastUtil.handleErrorResponse(this.toastr, err);
+  //         this.markSetPassAsLoading(false);
+  //       },
+  //       complete: (): void => {
+  //         this.markSetPassAsLoading(false);
+  //       }
+  //     })
+  //   )
+  // }
+
   protected displayInput(): boolean {
-    return this.formType == LoginFormTypes.SET_PASSWORD && this.setPassParam;
+    return this.formType == LoginFormTypes.CONFIRM_PASSWORD && this.setPassParam;
   }
 
   protected onPasswordDisplay(): void {

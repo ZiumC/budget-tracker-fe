@@ -34,13 +34,12 @@ import {
   GetRegularPaymentStatsDto
 } from "../../models/statistics.model";
 import {
-  ConfirmEmailDto, EnrollOtpDto,
+  RegisterCompleteDto, EnrollOtpDto,
   LoginDto,
   OtpDto,
   RegisterDto,
-  ResetPasswordDto,
-  SetPasswordDto
 } from "../../models/dto/user.model.dto";
+import {CompletePasswordResetDto, InitPasswordResetDto} from "../../models/components/login.component";
 
 @Injectable({
   providedIn: 'root',
@@ -402,33 +401,32 @@ export class HttpService {
     )
   }
 
-  public resetPassword(resetPasswordDto: ResetPasswordDto): Observable<any> {
+  public initializePasswordReset(initPasswordResetDto: InitPasswordResetDto): Observable<any> {
     return this.httpClient.post(
-      AuthUrls.resetPassword(),
-      resetPasswordDto,
+      UserUrls.resetPassInitialize(),
+      initPasswordResetDto,
       {observe: 'response', withCredentials: true}
     )
   }
 
-  public setPassword(setPasswordDto: SetPasswordDto): Observable<any> {
+  public completePasswordReset(completePassResetDto: CompletePasswordResetDto): Observable<any> {
     return this.httpClient.post(
-      AuthUrls.setPassword(),
-      setPasswordDto,
+      UserUrls.resetPassComplete(completePassResetDto),
       {observe: 'response', withCredentials: true}
     )
   }
 
-  public register(register: RegisterDto): Observable<any> {
+  public initializeRegister(register: RegisterDto): Observable<any> {
     return this.httpClient.post(
-      UserUrls.register(),
+      UserUrls.registerInitialize(),
       register,
       {observe: 'response'}
     )
   }
 
-  public confirm(confirm: ConfirmEmailDto): Observable<any> {
+  public completeRegister(confirm: RegisterCompleteDto): Observable<any> {
     return this.httpClient.post(
-      UserUrls.confirm(),
+      UserUrls.registerComplete(),
       confirm,
       {observe: 'response'}
     )

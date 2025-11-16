@@ -15,21 +15,9 @@ export class RegisterDto {
   password: string;
 }
 
-export class ConfirmEmailDto {
+export class RegisterCompleteDto {
   email: string;
   code: string;
-}
-
-export class ResetPasswordDto {
-  email: string;
-  login: string;
-}
-
-export class SetPasswordDto {
-  email: string;
-  login: string;
-  newPassword: string;
-  challangePassword: string;
 }
 
 export class EnrollOtpDto {
@@ -45,6 +33,6 @@ export class ChangePasswordDto {
 }
 
 export class ChangeEmailDto{
-  newEmail: string;
+  email: string;
   password: string;
 }
