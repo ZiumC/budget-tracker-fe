@@ -14,20 +14,28 @@ export class ToastUtil {
     toastService.error(message, title);
   }
 
-  static successfullyRegisteredAccount(toastService: ToastrService, email: string): void {
+  static successfullyInitRegister(toastService: ToastrService, email: string): void {
     toastService.success(`Verification code has been send to email ${email}`, "Account has been registered!");
   }
 
-  static successfullySentTemPass(toastService: ToastrService, email: string): void {
-    toastService.success(`Temporary password has been sent to email ${email}`, "Requested for password change!");
-  }
-
-  static successfullyEmailConfirmed(toastService: ToastrService): void {
+  static successfullyCompletedRegister(toastService: ToastrService): void {
     toastService.success("Email has been confirmed!");
   }
 
-  static successfullySetNewPass(toastService: ToastrService): void {
+  static successfullyInitResetPass(toastService: ToastrService, email: string): void {
+    toastService.success(`Temporary password has been sent to email ${email}`, "Requested for password change!");
+  }
+
+  static successfullyCompleteResetPass(toastService: ToastrService): void {
     toastService.success("Password has been changed!");
+  }
+
+  static successfullyInitEmailChange(toastService: ToastrService, email: string): void{
+    toastService.success(`Code has been sent to email ${email}`, "Requested for email change!");
+  }
+
+  static successfullyCompleteEmailChange(toastService: ToastrService): void{
+    toastService.success("Email has been changed!");
   }
 
   static successfullyEnabled2FA(toastService: ToastrService, email: string): void {

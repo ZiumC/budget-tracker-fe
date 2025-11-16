@@ -458,14 +458,25 @@ export class UserUrls {
     RESET: "/reset",
   }
 
-  static registerInitialize(): string {
+  static initRegister(): string {
     return HostUrl.getHostUrl() + UserUrls.CONTROLLER +
       UserUrls.ACTIONS.REGISTER + UserUrls.SUB_ACTIONS.INITIALIZE;
   }
 
-  static registerComplete(): string {
+  static completeRegister(): string {
     return HostUrl.getHostUrl() + UserUrls.CONTROLLER +
       UserUrls.ACTIONS.REGISTER + UserUrls.SUB_ACTIONS.COMPLETE;
+  }
+
+  static initEmailChange(): string {
+    return HostUrl.getHostUrl() + UserUrls.CONTROLLER +
+      UserUrls.ACTIONS.EMAIL + UserUrls.SUB_ACTIONS.CHANGE + UserUrls.SUB_ACTIONS.INITIALIZE;
+  }
+
+  static completeEmailChange(code: string): string {
+    return HostUrl.getHostUrl() + UserUrls.CONTROLLER +
+      UserUrls.ACTIONS.EMAIL + UserUrls.SUB_ACTIONS.CHANGE + UserUrls.SUB_ACTIONS.COMPLETE +
+      `?code=${code}`;
   }
 
   static changePassword(): string {

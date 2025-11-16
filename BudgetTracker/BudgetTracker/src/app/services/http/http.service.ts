@@ -36,7 +36,7 @@ import {
 import {OtpDto} from "../../models/dto/user.model.dto";
 import {CompletePassResetDto, InitPassResetDto, LoginDto} from "../../models/components/login.component";
 import {CompleteRegisterDto, InitRegisterDto} from "../../models/components/register.component";
-import {EnrollOtpDto, GetUserDto} from "../../models/components/user-panel.component";
+import {ChangeEmailDto, EnrollOtpDto, GetUserDto} from "../../models/components/user-panel.component";
 
 @Injectable({
   providedIn: 'root',
@@ -422,7 +422,7 @@ export class HttpService {
 
   public initializeRegister(register: InitRegisterDto): Observable<any> {
     return this.httpClient.post(
-      UserUrls.registerInitialize(),
+      UserUrls.initRegister(),
       register,
       {observe: 'response'}
     )
@@ -430,9 +430,25 @@ export class HttpService {
 
   public completeRegister(confirm: CompleteRegisterDto): Observable<any> {
     return this.httpClient.post(
-      UserUrls.registerComplete(),
+      UserUrls.completeRegister(),
       confirm,
       {observe: 'response'}
+    )
+  }
+
+  public initializeEmailChange(emailDto: ChangeEmailDto): Observable<any> {
+    return this.httpClient.post(
+      UserUrls.initEmailChange(),
+      emailDto,
+      {observe: 'response', withCredentials: true}
+    )
+  }
+
+  public completeEmailChange(code: string): Observable<any> {
+    return this.httpClient.post(
+      UserUrls.completeEmailChange(code),
+      null,
+      {observe: 'response', withCredentials: true}
     )
   }
 

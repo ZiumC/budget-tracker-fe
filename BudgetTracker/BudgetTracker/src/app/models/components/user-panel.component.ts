@@ -1,8 +1,3 @@
-export enum EmailFormType {
-  CHANGE_EMAIL = 0,
-  CONFIRM_EMAIL = 1,
-}
-
 export class GetUserDto {
   email: string;
   login: string;
@@ -34,7 +29,6 @@ export interface ChangeEmailForm {
   isDisabledForm: boolean;
   showCurrentPassword: boolean;
   code: string;
-  type: EmailFormType;
   emailDto: ChangeEmailDto;
 }
 
