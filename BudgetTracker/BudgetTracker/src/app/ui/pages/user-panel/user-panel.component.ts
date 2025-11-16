@@ -139,6 +139,29 @@ export class UserPanelComponent implements OnInit, OnDestroy {
     }
   }
 
+  protected changePassword(): void {
+    this.markChangePassAsLoading(true);
+    this.subscriptions.push(
+      this.httpService.changePassword(this.passwordForm.passwordDto)
+        .subscribe({
+          next: (): void => {
+            ToastUtil.successfullyChangedPassword(this.toastr);
+            this.passwordForm.passwordDto = new ChangePasswordDto();
+            this.passwordForm.repeatPassword = "";
+            this.passwordForm.isDisabledForm = true;
+            this.markChangePassAsLoading(false);
+          },
+          error: (err): void => {
+            ToastUtil.handleErrorResponse(this.toastr, err);
+            this.markChangePassAsLoading(false);
+          },
+          complete: ():void => {
+            this.markChangePassAsLoading(false);
+          }
+        })
+    )
+  }
+
   protected initEmailChange(): void {
     this.markChangeEmailAsLoading(true);
     this.subscriptions.push(
@@ -228,7 +251,7 @@ export class UserPanelComponent implements OnInit, OnDestroy {
       this.httpService.enableOtp(this.otpCode).subscribe({
         next: (): void => {
           ToastUtil.successfullyEnabled2FA(this.toastr, this.userDto.email);
-          this.userDto.is2FaEnabled = true;
+          this.userDto.isEnabled2Fa = true;
           this.otpCode = "";
           this.markEnableOtpAsLoading(false);
         },
@@ -251,7 +274,7 @@ export class UserPanelComponent implements OnInit, OnDestroy {
       this.httpService.disableOtp(this.otpCode).subscribe({
         next: (): void => {
           ToastUtil.successfullyDisabled2FA(this.toastr, this.userDto.email);
-          this.userDto.is2FaEnabled = false;
+          this.userDto.isEnabled2Fa = false;
           this.otpCode = "";
           this.markDisableOtpAsLoading(false);
         },
@@ -317,6 +340,19 @@ export class UserPanelComponent implements OnInit, OnDestroy {
         });
     } else {
       this.loaders.disable2Fa = value;
+    }
+  }
+
+  private markChangePassAsLoading(value: boolean): void {
+    if (value) {
+      new TimerUtils(this.appConfig.timer.duration.default).start()
+        .subscribe(finished => {
+          if (finished) {
+            this.loaders.changePass = value;
+          }
+        });
+    } else {
+      this.loaders.changePass = value;
     }
   }
 

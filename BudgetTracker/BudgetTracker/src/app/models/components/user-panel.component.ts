@@ -4,7 +4,7 @@ export class GetUserDto {
   suspendedDate: Date;
   changeSuspendedDate: Date;
   isEmailConfirmed: boolean;
-  is2FaEnabled: boolean;
+  isEnabled2Fa: boolean;
   hasEmailToConfirm: boolean;
 }
 

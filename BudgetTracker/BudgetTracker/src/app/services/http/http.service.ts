@@ -36,7 +36,12 @@ import {
 import {OtpDto} from "../../models/dto/user.model.dto";
 import {CompletePassResetDto, InitPassResetDto, LoginDto} from "../../models/components/login.component";
 import {CompleteRegisterDto, InitRegisterDto} from "../../models/components/register.component";
-import {ChangeEmailDto, EnrollOtpDto, GetUserDto} from "../../models/components/user-panel.component";
+import {
+  ChangeEmailDto,
+  ChangePasswordDto,
+  EnrollOtpDto,
+  GetUserDto
+} from "../../models/components/user-panel.component";
 
 @Injectable({
   providedIn: 'root',
@@ -448,6 +453,14 @@ export class HttpService {
     return this.httpClient.post(
       UserUrls.completeEmailChange(code),
       null,
+      {observe: 'response', withCredentials: true}
+    )
+  }
+
+  public changePassword(changePassword: ChangePasswordDto): Observable<any> {
+    return this.httpClient.post(
+      UserUrls.changePassword(),
+      changePassword,
       {observe: 'response', withCredentials: true}
     )
   }
