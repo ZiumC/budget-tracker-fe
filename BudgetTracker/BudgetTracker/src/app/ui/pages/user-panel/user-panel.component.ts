@@ -6,7 +6,7 @@ import {
   ChangePasswordForm,
   EmailFormType, EnrollOtpDto,
   Loaders,
-  UserDto
+  GetUserDto
 } from "../../../models/components/user-panel.component";
 import {Subscription} from "rxjs";
 import {SubscriptionUtils} from "../../../util/subscription.utils";
@@ -33,13 +33,14 @@ export class UserPanelComponent implements OnInit, OnDestroy {
   protected readonly formatString = formatString;
   protected readonly SpinnerSize = SpinnerSize;
   protected readonly ModalUtils = ModalUtils;
+  protected readonly EmailFormType = EmailFormType;
   protected subscriptions: Subscription[];
   protected appConfig: AppConfig;
   protected formConfig: FormConfig;
   protected enrollOtpDto: EnrollOtpDto | null;
   protected passwordForm: ChangePasswordForm;
   protected emailForm: ChangeEmailForm;
-  protected userDto: UserDto;
+  protected userDto: GetUserDto;
   protected loaders: Loaders;
   protected otpCode: string;
   protected passwordUtil: PasswordUtil;
@@ -59,24 +60,17 @@ export class UserPanelComponent implements OnInit, OnDestroy {
       throw Error("Config not provided")
     }
 
-    this.userDto = {
-      email: "example@mail.com",
-      login: "example",
-      is2FaEnabled: true,
-      isCurrentEmailConfirmed: true,
-      hasNewEmailToConfirmed: false
-    }
-
     this.passwordUtil = new PasswordUtil(this.formConfig);
     this.subscriptions = [];
     this.loaders = {
-      page: false,
+      userProfile: false,
       changePass: false,
       changeEmail: false,
       enroll2Fa: false,
       enable2Fa: false,
       disable2Fa: false
     };
+
     this.otpCode = "";
 
     this.emailForm = {
@@ -87,10 +81,6 @@ export class UserPanelComponent implements OnInit, OnDestroy {
       emailDto: new ChangeEmailDto()
     };
 
-    if (this.userDto.hasNewEmailToConfirmed) {
-      this.emailForm.type = EmailFormType.CONFIRM_EMAIL
-    }
-
     this.passwordForm = {
       isDisabledForm: true,
       showCurrentPassword: false,
@@ -98,6 +88,12 @@ export class UserPanelComponent implements OnInit, OnDestroy {
       repeatPassword: "",
       passwordDto: new ChangePasswordDto()
     }
+
+    this.userDto = new GetUserDto()
+
+    this.getUserProfile();
+    this.emailForm.type = this.userDto.hasEmailToConfirm ?
+      EmailFormType.CONFIRM_EMAIL : EmailFormType.CHANGE_EMAIL;
   }
 
   ngOnDestroy(): void {
@@ -144,6 +140,25 @@ export class UserPanelComponent implements OnInit, OnDestroy {
     if (this.emailForm.isDisabledForm) {
       this.emailForm.emailDto = new ChangeEmailDto();
     }
+  }
+
+  protected getUserProfile(): void {
+    this.markUserProfileAsLoaded(false);
+    this.subscriptions.push(
+      this.httpService.userProfile().subscribe({
+        next: (response): void => {
+          this.userDto = response.body!;
+          this.markUserProfileAsLoaded(true);
+        },
+        error: (err): void => {
+          ToastUtil.handleErrorResponse(this.toastr, err);
+          this.markUserProfileAsLoaded(true);
+        },
+        complete: (): void => {
+          this.markUserProfileAsLoaded(true);
+        }
+      })
+    )
   }
 
   protected enrollOtp(): void {
@@ -212,6 +227,19 @@ export class UserPanelComponent implements OnInit, OnDestroy {
     )
   }
 
+  private markUserProfileAsLoaded(value: boolean): void {
+    if (value) {
+      new TimerUtils(this.appConfig.timer.duration.default).start()
+        .subscribe(finished => {
+          if (finished) {
+            this.loaders.userProfile = value;
+          }
+        });
+    } else {
+      this.loaders.userProfile = value;
+    }
+  }
+
   private markEnrollOtpAsLoading(value: boolean): void {
     if (value) {
       new TimerUtils(this.appConfig.timer.duration.default).start()
@@ -250,7 +278,4 @@ export class UserPanelComponent implements OnInit, OnDestroy {
       this.loaders.disable2Fa = value;
     }
   }
-
-  protected readonly ChangePasswordDto = ChangePasswordDto;
-  protected readonly EmailFormType = EmailFormType;
 }

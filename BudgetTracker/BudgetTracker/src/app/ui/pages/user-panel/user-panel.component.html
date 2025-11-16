@@ -5,7 +5,7 @@
         <div class="text-center">
           <h4 class="card-title">My profile</h4>
         </div>
-        <ng-template [ngIf]="!loaders.page"
+        <ng-template [ngIf]="!loaders.userProfile"
                      [ngIfElse]="loadedPage">
           <app-spinner-grow></app-spinner-grow>
         </ng-template>
@@ -19,7 +19,7 @@
                        id="user-email"
                        class="form-control"
                        disabled
-                       value="example-mail@wp.pl">
+                       [value]="userDto.email">
               </div>
             </div>
             <div class="col-md-6">
@@ -29,7 +29,7 @@
                        id="user-login"
                        class="form-control"
                        disabled
-                       value="example-mail">
+                       [value]="userDto.login">
               </div>
             </div>
             <div class="my-4">
@@ -37,7 +37,7 @@
                 <tr class="text-start">
                   <td class="text-center">Current email status</td>
                   <td class="text-center">
-                    <ng-template [ngIf]="userDto.isCurrentEmailConfirmed"
+                    <ng-template [ngIf]="userDto.isEmailConfirmed"
                                  [ngIfElse]="verifiedEmail">
                       <span class="badge text-bg-success">Verified</span>
                     </ng-template>
@@ -46,6 +46,14 @@
                     </ng-template>
                   </td>
                 </tr>
+                <ng-template [ngIf]="userDto.hasEmailToConfirm">
+                  <tr class="text-start">
+                    <td class="text-center">New email to confirm</td>
+                    <td class="text-center">
+                      <span class="badge text-bg-warning">Pending</span>
+                    </td>
+                  </tr>
+                </ng-template>
                 <tr class="text-start">
                   <td class="text-center">2FA status</td>
                   <td class="text-center">
