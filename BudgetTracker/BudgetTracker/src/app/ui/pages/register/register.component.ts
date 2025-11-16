@@ -1,9 +1,13 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Subscription} from "rxjs";
 import {SubscriptionUtils} from "../../../util/subscription.utils";
-import {Loaders, RegisterFormTypes} from "../../../models/components/register.component";
+import {
+  CompleteRegisterDto,
+  InitRegisterDto,
+  Loaders,
+  RegisterFormTypes
+} from "../../../models/components/register.component";
 import {ModalUtils} from "../../../util/modal.utils";
-import {RegisterCompleteDto, RegisterDto} from "../../../models/dto/user.model.dto";
 import {AppConfig} from "../../../models/config/config";
 import {FormConfig} from "../../../models/config/form.model.config";
 import {ConfigService} from "../../../services/config/config.service";
@@ -29,7 +33,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
   protected subscriptions: Subscription[];
   protected passwordUtil: PasswordUtil;
   protected formType: RegisterFormTypes;
-  protected registerForm: RegisterDto;
+  protected registerForm: InitRegisterDto;
   protected repeatPassword: string;
   protected confirmationCode: string;
   protected showPassword: boolean;
@@ -73,7 +77,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
     });
 
     this.subscriptions = [];
-    this.registerForm = new RegisterDto();
+    this.registerForm = new InitRegisterDto();
     this.passwordUtil = new PasswordUtil(this.formConfig);
     this.showPassword = false;
     this.repeatPassword = "";
@@ -118,7 +122,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
   protected confirm(): void {
     this.markConfirmAsLoading(true);
 
-    const confirmEmail: RegisterCompleteDto = {
+    const confirmEmail: CompleteRegisterDto = {
       email: this.registerForm.email,
       code: this.confirmationCode
     }

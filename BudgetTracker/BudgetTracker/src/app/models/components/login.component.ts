@@ -10,13 +10,19 @@ export class Loaders {
   setPass: boolean;
 }
 
-export class InitPasswordResetDto {
+export class LoginDto {
+  emailOrLogin: string;
+  password: string;
+  code: string | null;
+}
+
+export class InitPassResetDto {
   email: string;
   login: string;
   newPassword: string;
 }
 
-export class CompletePasswordResetDto {
+export class CompletePassResetDto {
   email: string;
   challengePassword: string;
 }
