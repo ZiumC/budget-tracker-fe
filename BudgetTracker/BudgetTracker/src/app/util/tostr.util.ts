@@ -30,11 +30,11 @@ export class ToastUtil {
     toastService.success("Password has been changed!");
   }
 
-  static successfullyInitEmailChange(toastService: ToastrService, email: string): void{
+  static successfullyInitEmailChange(toastService: ToastrService, email: string): void {
     toastService.success(`Code has been sent to email ${email}`, "Requested for email change!");
   }
 
-  static successfullyCompleteEmailChange(toastService: ToastrService): void{
+  static successfullyCompleteEmailChange(toastService: ToastrService): void {
     toastService.success("Email has been changed!");
   }
 
@@ -44,5 +44,9 @@ export class ToastUtil {
 
   static successfullyDisabled2FA(toastService: ToastrService, email: string): void {
     toastService.success(`Successfully disabled 2FA for user ${email}!`);
+  }
+
+  static successfullyChangedPassword(toastService: ToastrService): void {
+    toastService.success("Password has been changed!");
   }
 }
