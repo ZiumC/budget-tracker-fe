@@ -4,7 +4,7 @@ import {
   ChangeEmailForm,
   ChangePasswordDto,
   ChangePasswordForm,
-  EmailFormType, EnrollOtpDto,
+  EnrollOtpDto,
   Loaders,
   GetUserDto
 } from "../../../models/components/user-panel.component";
@@ -22,6 +22,7 @@ import {formatString} from "../../../util/string.utils";
 import {FormConfig} from "../../../models/config/form.model.config";
 import {ModalUtils} from "../../../util/modal.utils";
 import {PasswordUtil} from "../../../util/password.util";
+import {AuthService} from "../../../services/auth/auth.service";
 
 @Component({
   selector: 'app-user-panel',
@@ -33,7 +34,6 @@ export class UserPanelComponent implements OnInit, OnDestroy {
   protected readonly formatString = formatString;
   protected readonly SpinnerSize = SpinnerSize;
   protected readonly ModalUtils = ModalUtils;
-  protected readonly EmailFormType = EmailFormType;
   protected subscriptions: Subscription[];
   protected appConfig: AppConfig;
   protected formConfig: FormConfig;
@@ -48,6 +48,7 @@ export class UserPanelComponent implements OnInit, OnDestroy {
 
   constructor(private httpService: HttpService,
               private configService: ConfigService,
+              private authService: AuthService,
               private toastr: ToastrService) {
   }
 
@@ -73,11 +74,13 @@ export class UserPanelComponent implements OnInit, OnDestroy {
 
     this.otpCode = "";
 
+    this.userDto = new GetUserDto();
+    this.getUserProfile();
+
     this.emailForm = {
       isDisabledForm: true,
       showCurrentPassword: false,
       code: "",
-      type: EmailFormType.CHANGE_EMAIL,
       emailDto: new ChangeEmailDto()
     };
 
@@ -88,12 +91,6 @@ export class UserPanelComponent implements OnInit, OnDestroy {
       repeatPassword: "",
       passwordDto: new ChangePasswordDto()
     }
-
-    this.userDto = new GetUserDto()
-
-    this.getUserProfile();
-    this.emailForm.type = this.userDto.hasEmailToConfirm ?
-      EmailFormType.CONFIRM_EMAIL : EmailFormType.CHANGE_EMAIL;
   }
 
   ngOnDestroy(): void {
@@ -140,6 +137,50 @@ export class UserPanelComponent implements OnInit, OnDestroy {
     if (this.emailForm.isDisabledForm) {
       this.emailForm.emailDto = new ChangeEmailDto();
     }
+  }
+
+  protected initEmailChange(): void {
+    this.markChangeEmailAsLoading(true);
+    this.subscriptions.push(
+      this.httpService.initializeEmailChange(this.emailForm.emailDto)
+        .subscribe({
+          next: (): void => {
+            ToastUtil.successfullyInitEmailChange(this.toastr, this.emailForm.emailDto.email);
+            this.markChangeEmailAsLoading(false);
+            this.getUserProfile();
+          },
+          error: (err): void => {
+            ToastUtil.handleErrorResponse(this.toastr, err);
+            this.markChangeEmailAsLoading(false);
+          },
+          complete: (): void => {
+            this.markChangeEmailAsLoading(false);
+          }
+        })
+    )
+  }
+
+  protected completeEmailChange(): void {
+    this.markChangeEmailAsLoading(true);
+    this.subscriptions.push(
+      this.httpService.completeEmailChange(this.emailForm.code).subscribe({
+        next: (): void => {
+          this.userDto.hasEmailToConfirm = false;
+          this.emailForm.emailDto = new ChangeEmailDto();
+          this.emailForm.isDisabledForm = true;
+          ToastUtil.successfullyCompleteEmailChange(this.toastr);
+          this.markChangeEmailAsLoading(false);
+        },
+        error: (err): void => {
+          ToastUtil.handleErrorResponse(this.toastr, err);
+          this.markChangeEmailAsLoading(false);
+        },
+        complete: (): void => {
+          this.markChangeEmailAsLoading(false);
+          this.authService.logout();
+        }
+      })
+    )
   }
 
   protected getUserProfile(): void {
@@ -276,6 +317,19 @@ export class UserPanelComponent implements OnInit, OnDestroy {
         });
     } else {
       this.loaders.disable2Fa = value;
+    }
+  }
+
+  private markChangeEmailAsLoading(value: boolean): void {
+    if (value) {
+      new TimerUtils(this.appConfig.timer.duration.default).start()
+        .subscribe(finished => {
+          if (finished) {
+            this.loaders.changeEmail = value;
+          }
+        });
+    } else {
+      this.loaders.changeEmail = value;
     }
   }
 }

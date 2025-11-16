@@ -291,181 +291,189 @@
               <div class="text-center">
                 <label for="change-email">Change email</label>
               </div>
-              <ng-container [ngSwitch]="emailForm.type">
-                <ng-container *ngSwitchCase="EmailFormType.CHANGE_EMAIL">
-                  <form #changeEmailForm="ngForm">
-                    <div [className]="ModalUtils.displayMarginFor(changeEmailInput)">
-                      <div class="text-start">
-                        <label for="change-email-form">New email</label>
-                        <span class="text-danger"
-                              [style]="emailForm.isDisabledForm ? 'display: none' : ''">*</span>
-                      </div>
-                      <input
-                        type="email"
-                        id="change-email-form"
-                        name="change-email-form"
-                        class="form-control"
-                        [(ngModel)]="emailForm.emailDto.email"
-                        [disabled]="loaders.changeEmail || emailForm.isDisabledForm"
-                        required
-                        minlength="{{ formConfig.registerForm.email.minLength }}"
-                        maxlength="{{ formConfig.registerForm.email.maxLength }}"
-                        pattern="{{formConfig.regex.email}}"
-                        #changeEmailInput="ngModel"
-                        [ngClass]="{
+              <ng-template [ngIf]="loaders.changeEmail"
+                           [ngIfElse]="loadedChangeEmailForm">
+                <app-spinner-grow></app-spinner-grow>
+              </ng-template>
+              <ng-template #loadedChangeEmailForm>
+                <ng-container [ngSwitch]="userDto.hasEmailToConfirm">
+                  <ng-container *ngSwitchCase="false">
+                    <form #changeEmailForm="ngForm">
+                      <div [className]="ModalUtils.displayMarginFor(changeEmailInput)">
+                        <div class="text-start">
+                          <label for="change-email-form">New email</label>
+                          <span class="text-danger"
+                                [style]="emailForm.isDisabledForm ? 'display: none' : ''">*</span>
+                        </div>
+                        <input
+                          type="email"
+                          id="change-email-form"
+                          name="change-email-form"
+                          class="form-control"
+                          [(ngModel)]="emailForm.emailDto.email"
+                          [disabled]="loaders.changeEmail || emailForm.isDisabledForm"
+                          required
+                          minlength="{{ formConfig.registerForm.email.minLength }}"
+                          maxlength="{{ formConfig.registerForm.email.maxLength }}"
+                          pattern="{{formConfig.regex.email}}"
+                          #changeEmailInput="ngModel"
+                          [ngClass]="{
                         'is-invalid': changeEmailInput.invalid &&
                         (changeEmailInput.dirty || changeEmailInput.touched),
                         'is-valid': changeEmailInput.valid }"/>
-                      @if (changeEmailInput.invalid &&
-                      (changeEmailInput.dirty || changeEmailInput.touched)) {
-                        <div class="invalid-feedback text-start d-grid">
-                          <label *ngIf="changeEmailInput.errors?.['required']">
-                            {{ formConfig.messages.required }}
-                          </label>
-                          <label *ngIf="changeEmailInput.errors?.['pattern']">
-                            {{ formatString(formConfig.messages.invalid, "Email") }}
-                          </label>
-                          <label *ngIf="changeEmailInput.errors?.['minlength']">
-                            {{ formatString(formConfig.messages.minLength, formConfig.registerForm.email.minLength) }}
-                          </label>
-                          <label *ngIf="changeEmailInput.errors?.['maxlength']">
-                            {{ formatString(formConfig.messages.maxLength, formConfig.registerForm.email.maxLength) }}
-                          </label>
-                        </div>
-                      } @else {
-                        <div class="valid-feedback"></div>
-                      }
-                    </div>
-                    <div [className]="ModalUtils.displayMarginFor(changeEmailCurrentPassInput)">
-                      <div class="text-start">
-                        <label for="change-email-form-current-password">Current password</label>
-                        <span class="text-danger"
-                              [style]="emailForm.isDisabledForm ? 'display: none' : ''">*</span>
+                        @if (changeEmailInput.invalid &&
+                        (changeEmailInput.dirty || changeEmailInput.touched)) {
+                          <div class="invalid-feedback text-start d-grid">
+                            <label *ngIf="changeEmailInput.errors?.['required']">
+                              {{ formConfig.messages.required }}
+                            </label>
+                            <label *ngIf="changeEmailInput.errors?.['pattern']">
+                              {{ formatString(formConfig.messages.invalid, "Email") }}
+                            </label>
+                            <label *ngIf="changeEmailInput.errors?.['minlength']">
+                              {{ formatString(formConfig.messages.minLength, formConfig.registerForm.email.minLength) }}
+                            </label>
+                            <label *ngIf="changeEmailInput.errors?.['maxlength']">
+                              {{ formatString(formConfig.messages.maxLength, formConfig.registerForm.email.maxLength) }}
+                            </label>
+                          </div>
+                        } @else {
+                          <div class="valid-feedback"></div>
+                        }
                       </div>
-                      <div class="input-group">
-                        <input
-                          [type]="emailForm.showCurrentPassword  ? 'text' : 'password'"
-                          id="change-email-form-current-password"
-                          name="change-email-form-current-password"
-                          class="form-control"
-                          [(ngModel)]="emailForm.emailDto.password"
-                          [disabled]="loaders.changePass || emailForm.isDisabledForm"
-                          required
-                          #changeEmailCurrentPassInput="ngModel"
-                          [ngClass]="{
+                      <div [className]="ModalUtils.displayMarginFor(changeEmailCurrentPassInput)">
+                        <div class="text-start">
+                          <label for="change-email-form-current-password">Current password</label>
+                          <span class="text-danger"
+                                [style]="emailForm.isDisabledForm ? 'display: none' : ''">*</span>
+                        </div>
+                        <div class="input-group">
+                          <input
+                            [type]="emailForm.showCurrentPassword  ? 'text' : 'password'"
+                            id="change-email-form-current-password"
+                            name="change-email-form-current-password"
+                            class="form-control"
+                            [(ngModel)]="emailForm.emailDto.password"
+                            [disabled]="loaders.changePass || emailForm.isDisabledForm"
+                            required
+                            #changeEmailCurrentPassInput="ngModel"
+                            [ngClass]="{
                         'is-invalid': changeEmailCurrentPassInput.invalid &&
                         (changeEmailCurrentPassInput.dirty || changeEmailCurrentPassInput.touched),
                         'is-valid': changeEmailCurrentPassInput.valid }"/>
-                        <div class="input-group-append">
-                  <span class="input-group-text"
-                        (click)="emailChangeFormPasswordDisplay()">
-                    <ng-template [ngIf]="emailForm.showCurrentPassword"
-                                 [ngIfElse]="hide">
-                      <i class="bi bi-eye-slash"></i>
-                    </ng-template>
-                    <ng-template #hide>
-                      <i class="bi bi-eye"></i>
-                    </ng-template>
-                  </span>
+                          <div class="input-group-append">
+                          <span class="input-group-text"
+                                (click)="emailChangeFormPasswordDisplay()">
+                            <ng-template [ngIf]="emailForm.showCurrentPassword"
+                                         [ngIfElse]="hide">
+                              <i class="bi bi-eye-slash"></i>
+                            </ng-template>
+                            <ng-template #hide>
+                              <i class="bi bi-eye"></i>
+                            </ng-template>
+                          </span>
+                          </div>
                         </div>
+                        @if (changeEmailCurrentPassInput.invalid &&
+                        (changeEmailCurrentPassInput.dirty || changeEmailCurrentPassInput.touched)) {
+                          <div class="invalid-feedback text-start d-grid">
+                            <label *ngIf="changeEmailCurrentPassInput.errors?.['required']">
+                              {{ formConfig.messages.required }}
+                            </label>
+                            <label *ngIf="changeEmailCurrentPassInput.errors?.['pattern']">
+                              {{ formConfig.messages.passTooWeak }}
+                            </label>
+                            <label *ngIf="changeEmailCurrentPassInput.errors?.['minlength']">
+                              {{ formatString(formConfig.messages.minLength, formConfig.registerForm.password.minLength) }}
+                            </label>
+                            <label *ngIf="changeEmailCurrentPassInput.errors?.['maxlength']">
+                              {{ formatString(formConfig.messages.maxLength, formConfig.registerForm.password.maxLength) }}
+                            </label>
+                          </div>
+                        } @else {
+                          <div class="valid-feedback"></div>
+                        }
                       </div>
-                      @if (changeEmailCurrentPassInput.invalid &&
-                      (changeEmailCurrentPassInput.dirty || changeEmailCurrentPassInput.touched)) {
-                        <div class="invalid-feedback text-start d-grid">
-                          <label *ngIf="changeEmailCurrentPassInput.errors?.['required']">
-                            {{ formConfig.messages.required }}
-                          </label>
-                          <label *ngIf="changeEmailCurrentPassInput.errors?.['pattern']">
-                            {{ formConfig.messages.passTooWeak }}
-                          </label>
-                          <label *ngIf="changeEmailCurrentPassInput.errors?.['minlength']">
-                            {{ formatString(formConfig.messages.minLength, formConfig.registerForm.password.minLength) }}
-                          </label>
-                          <label *ngIf="changeEmailCurrentPassInput.errors?.['maxlength']">
-                            {{ formatString(formConfig.messages.maxLength, formConfig.registerForm.password.maxLength) }}
-                          </label>
+                      <div class="mx-auto text-center mb-2">
+                        <ng-template [ngIf]="emailForm.isDisabledForm"
+                                     [ngIfElse]="enableChangeEmailForm">
+                          <button type="button"
+                                  class="btn btn-outline-secondary px-5"
+                                  (click)="onEmailChangeForm()">
+                            Change
+                          </button>
+                        </ng-template>
+                        <ng-template #enableChangeEmailForm>
+                          <button type="button"
+                                  class="btn btn-outline-danger px-5 mx-2"
+                                  (click)="onEmailChangeForm()">
+                            Cancel
+                          </button>
+                          <button type="button"
+                                  class="btn btn-outline-secondary px-5 mx-2"
+                                  (click)="initEmailChange()"
+                                  [disabled]="!changeEmailForm.valid || loaders.changeEmail">
+                            Save
+                          </button>
+                        </ng-template>
+                      </div>
+                    </form>
+                  </ng-container>
+                  <ng-container *ngSwitchCase="true">
+                    <form #confirmEmailForm="ngForm">
+                      <div [className]="ModalUtils.displayMarginFor(verificationCodeInput)">
+                        <div class="text-start">
+                          <label for="verify-code">Code</label>
+                          <span class="text-danger">*</span>
                         </div>
-                      } @else {
-                        <div class="valid-feedback"></div>
-                      }
-                    </div>
-                    <div class="mx-auto text-center mb-2">
-                      <ng-template [ngIf]="emailForm.isDisabledForm"
-                                   [ngIfElse]="enableChangeEmailForm">
-                        <button type="button"
-                                class="btn btn-outline-secondary px-5"
-                                (click)="onEmailChangeForm()">
-                          Change
-                        </button>
-                      </ng-template>
-                      <ng-template #enableChangeEmailForm>
-                        <button type="button"
-                                class="btn btn-outline-danger px-5 mx-2"
-                                (click)="onEmailChangeForm()">
-                          Cancel
-                        </button>
-                        <button type="button"
-                                class="btn btn-outline-secondary px-5 mx-2"
-                                [disabled]="!changeEmailForm.valid || loaders.changeEmail">
-                          Save
-                        </button>
-                      </ng-template>
-                    </div>
-                  </form>
-                </ng-container>
-                <ng-container *ngSwitchCase="EmailFormType.CONFIRM_EMAIL">
-                  <form #confirmEmailForm="ngForm">
-                    <div [className]="ModalUtils.displayMarginFor(verificationCodeInput)">
-                      <div class="text-start">
-                        <label for="verify-code">Code</label>
-                        <span class="text-danger">*</span>
-                      </div>
-                      <input
-                        type="email"
-                        id="verify-code"
-                        name="verify-code"
-                        class="form-control"
-                        [(ngModel)]="emailForm.code"
-                        [disabled]="loaders.changeEmail"
-                        required
-                        minlength="{{ formConfig.registerForm.code.minLength }}"
-                        maxlength="{{ formConfig.registerForm.code.maxLength }}"
-                        pattern="{{formConfig.regex.codes.emailConfirm}}"
-                        #verificationCodeInput="ngModel"
-                        [ngClass]="{
+                        <input
+                          type="email"
+                          id="verify-code"
+                          name="verify-code"
+                          class="form-control"
+                          [(ngModel)]="emailForm.code"
+                          [disabled]="loaders.changeEmail"
+                          required
+                          minlength="{{ formConfig.registerForm.code.minLength }}"
+                          maxlength="{{ formConfig.registerForm.code.maxLength }}"
+                          pattern="{{formConfig.regex.codes.emailConfirm}}"
+                          #verificationCodeInput="ngModel"
+                          [ngClass]="{
                         'is-invalid': verificationCodeInput.invalid &&
                         (verificationCodeInput.dirty || verificationCodeInput.touched),
                         'is-valid': verificationCodeInput.valid }"/>
-                      @if (verificationCodeInput.invalid &&
-                      (verificationCodeInput.dirty || verificationCodeInput.touched)) {
-                        <div class="invalid-feedback text-start d-grid">
-                          <label *ngIf="verificationCodeInput.errors?.['required']">
-                            {{ formConfig.messages.required }}
-                          </label>
-                          <label *ngIf="verificationCodeInput.errors?.['pattern']">
-                            {{ formatString(formConfig.messages.invalid, "Code") }}
-                          </label>
-                          <label *ngIf="verificationCodeInput.errors?.['minlength']">
-                            {{ formatString(formConfig.messages.minLength, formConfig.registerForm.code.minLength) }}
-                          </label>
-                          <label *ngIf="verificationCodeInput.errors?.['maxlength']">
-                            {{ formatString(formConfig.messages.maxLength, formConfig.registerForm.code.maxLength) }}
-                          </label>
-                        </div>
-                      } @else {
-                        <div class="valid-feedback"></div>
-                      }
-                    </div>
-                    <div class="mx-auto text-center mb-2">
-                      <button type="button"
-                              class="btn btn-outline-secondary px-5 mx-2"
-                              [disabled]="!confirmEmailForm.valid || loaders.changeEmail">
-                        Save
-                      </button>
-                    </div>
-                  </form>
+                        @if (verificationCodeInput.invalid &&
+                        (verificationCodeInput.dirty || verificationCodeInput.touched)) {
+                          <div class="invalid-feedback text-start d-grid">
+                            <label *ngIf="verificationCodeInput.errors?.['required']">
+                              {{ formConfig.messages.required }}
+                            </label>
+                            <label *ngIf="verificationCodeInput.errors?.['pattern']">
+                              {{ formatString(formConfig.messages.invalid, "Code") }}
+                            </label>
+                            <label *ngIf="verificationCodeInput.errors?.['minlength']">
+                              {{ formatString(formConfig.messages.minLength, formConfig.registerForm.code.minLength) }}
+                            </label>
+                            <label *ngIf="verificationCodeInput.errors?.['maxlength']">
+                              {{ formatString(formConfig.messages.maxLength, formConfig.registerForm.code.maxLength) }}
+                            </label>
+                          </div>
+                        } @else {
+                          <div class="valid-feedback"></div>
+                        }
+                      </div>
+                      <div class="mx-auto text-center mb-2">
+                        <button type="button"
+                                class="btn btn-outline-secondary px-5 mx-2"
+                                (click)="completeEmailChange()"
+                                [disabled]="!confirmEmailForm.valid || loaders.changeEmail">
+                          Save
+                        </button>
+                      </div>
+                    </form>
+                  </ng-container>
                 </ng-container>
-              </ng-container>
+              </ng-template>
             </div>
             <label for="two-factor-auth" class="mt-3">Two factor authentication</label>
             <div id="two-factor-auth" class="row my-2 mx-auto">
