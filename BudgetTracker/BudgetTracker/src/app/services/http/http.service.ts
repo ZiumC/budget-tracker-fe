@@ -33,13 +33,10 @@ import {
   GetPlannedPaymentStatsDto,
   GetRegularPaymentStatsDto
 } from "../../models/statistics.model";
-import {
-  RegisterCompleteDto, EnrollOtpDto,
-  LoginDto,
-  OtpDto,
-  RegisterDto,
-} from "../../models/dto/user.model.dto";
-import {CompletePasswordResetDto, InitPasswordResetDto} from "../../models/components/login.component";
+import {OtpDto} from "../../models/dto/user.model.dto";
+import {CompletePassResetDto, InitPassResetDto, LoginDto} from "../../models/components/login.component";
+import {CompleteRegisterDto, InitRegisterDto} from "../../models/components/register.component";
+import {EnrollOtpDto} from "../../models/components/user-panel.component";
 
 @Injectable({
   providedIn: 'root',
@@ -394,14 +391,15 @@ export class HttpService {
     )
   }
 
-  public user(): Observable<any> {
+  public loginStatus(): Observable<any> {
     return this.httpClient.get(
       AuthUrls.loginStatus(),
       {observe: 'response', withCredentials: true}
     )
   }
 
-  public initializePasswordReset(initPasswordResetDto: InitPasswordResetDto): Observable<any> {
+
+  public initializePasswordReset(initPasswordResetDto: InitPassResetDto): Observable<any> {
     return this.httpClient.post(
       UserUrls.resetPassInitialize(),
       initPasswordResetDto,
@@ -409,14 +407,14 @@ export class HttpService {
     )
   }
 
-  public completePasswordReset(completePassResetDto: CompletePasswordResetDto): Observable<any> {
+  public completePasswordReset(completePassResetDto: CompletePassResetDto): Observable<any> {
     return this.httpClient.post(
       UserUrls.resetPassComplete(completePassResetDto),
       {observe: 'response', withCredentials: true}
     )
   }
 
-  public initializeRegister(register: RegisterDto): Observable<any> {
+  public initializeRegister(register: InitRegisterDto): Observable<any> {
     return this.httpClient.post(
       UserUrls.registerInitialize(),
       register,
@@ -424,7 +422,7 @@ export class HttpService {
     )
   }
 
-  public completeRegister(confirm: RegisterCompleteDto): Observable<any> {
+  public completeRegister(confirm: CompleteRegisterDto): Observable<any> {
     return this.httpClient.post(
       UserUrls.registerComplete(),
       confirm,

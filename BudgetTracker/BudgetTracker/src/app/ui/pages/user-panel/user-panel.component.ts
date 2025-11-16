@@ -1,8 +1,10 @@
 import {Component, HostListener, OnDestroy, OnInit} from '@angular/core';
 import {
+  ChangeEmailDto,
   ChangeEmailForm,
+  ChangePasswordDto,
   ChangePasswordForm,
-  EmailFormType,
+  EmailFormType, EnrollOtpDto,
   Loaders,
   UserDto
 } from "../../../models/components/user-panel.component";
@@ -15,7 +17,6 @@ import {AppConfig} from "../../../models/config/config";
 import {SpinnerSize} from "../../components/shared/spinner/spinner.component";
 import {ToastUtil} from "../../../util/tostr.util";
 import {ToastrService} from "ngx-toastr";
-import {ChangeEmailDto, ChangePasswordDto, EnrollOtpDto} from "../../../models/dto/user.model.dto";
 import {format} from "../../../util/number.util";
 import {formatString} from "../../../util/string.utils";
 import {FormConfig} from "../../../models/config/form.model.config";

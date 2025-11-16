@@ -1,5 +1,3 @@
-import {ChangeEmailDto, ChangePasswordDto} from "../dto/user.model.dto";
-
 export enum EmailFormType {
   CHANGE_EMAIL = 0,
   CONFIRM_EMAIL = 1,
@@ -36,4 +34,21 @@ export interface ChangeEmailForm {
   code: string;
   type: EmailFormType;
   emailDto: ChangeEmailDto;
+}
+
+export class ChangePasswordDto {
+  newPassword: string;
+  password: string;
+}
+
+export class ChangeEmailDto {
+  email: string;
+  password: string;
+}
+
+export class EnrollOtpDto {
+  issuer: string;
+  secret: string;
+  otpUri: string;
+  qrCode: string;
 }

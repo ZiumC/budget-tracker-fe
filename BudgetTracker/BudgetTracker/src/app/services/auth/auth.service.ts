@@ -22,7 +22,7 @@ export class AuthService {
     }
 
     initAuthCheck(): Observable<boolean> {
-        return this.httpService.user().pipe(tap({
+        return this.httpService.loginStatus().pipe(tap({
             next: (): Observable<boolean> => {
                 this.isLoggedIn$.next(true);
                 return of(true);

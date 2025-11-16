@@ -2,13 +2,12 @@ import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Params, Router} from "@angular/router";
 import {AuthService} from "../../../services/auth/auth.service";
 import {HttpService} from "../../../services/http/http.service";
-import {LoginDto} from "../../../models/dto/user.model.dto";
 import {Subscription} from "rxjs";
 import {SubscriptionUtils} from "../../../util/subscription.utils";
 import {
-  CompletePasswordResetDto,
-  InitPasswordResetDto,
-  Loaders,
+  CompletePassResetDto,
+  InitPassResetDto,
+  Loaders, LoginDto,
   LoginFormTypes
 } from "../../../models/components/login.component";
 import {formatString} from "../../../util/string.utils";
@@ -38,8 +37,8 @@ export class LoginComponent implements OnInit, OnDestroy {
   protected formType: LoginFormTypes;
   protected subscriptions: Subscription[];
   protected loginForm: LoginDto;
-  protected initPassResetForm: InitPasswordResetDto;
-  protected completePassResetForm: CompletePasswordResetDto;
+  protected initPassResetForm: InitPassResetDto;
+  protected completePassResetForm: CompletePassResetDto;
   protected showPassword: boolean;
   protected appConfig: AppConfig;
   protected formConfig: FormConfig;
@@ -90,8 +89,8 @@ export class LoginComponent implements OnInit, OnDestroy {
 
     this.subscriptions = [];
     this.loginForm = new LoginDto();
-    this.initPassResetForm = new InitPasswordResetDto();
-    this.completePassResetForm = new CompletePasswordResetDto();
+    this.initPassResetForm = new InitPassResetDto();
+    this.completePassResetForm = new CompletePassResetDto();
     this.passwordUtil = new PasswordUtil(this.formConfig);
     this.showPassword = false;
     this.repeatPassword = "";
@@ -134,10 +133,11 @@ export class LoginComponent implements OnInit, OnDestroy {
         next: (): void => {
           ToastUtil.successfullySentTemPass(this.toastr, this.initPassResetForm.email);
           this.formType = LoginFormTypes.CONFIRM_PASSWORD;
+          this.completePassResetForm.challengePassword = "";
           this.markResetAsLoading(false);
         },
         error: (err): void => {
-          this.initPassResetForm = new InitPasswordResetDto();
+          this.initPassResetForm = new InitPassResetDto();
           this.repeatPassword = "";
           ToastUtil.handleErrorResponse(this.toastr, err);
           this.markResetAsLoading(false);
@@ -163,7 +163,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         },
         error: (err): void => {
           if (err.status != 410) {
-            this.completePassResetForm = new CompletePasswordResetDto();
+            this.completePassResetForm = new CompletePassResetDto();
             this.repeatPassword = "";
           } else {
             this.formType = LoginFormTypes.RESET_PASSWORD;

@@ -1,7 +1,6 @@
 import {RequestModel} from "../../models/request.model";
 import {CategoryType} from "../../models/dto/category.model.dto";
-import {LoginDto} from "../../models/dto/user.model.dto";
-import {CompletePasswordResetDto} from "../../models/components/login.component";
+import {CompletePassResetDto} from "../../models/components/login.component";
 
 
 class HostUrl {
@@ -478,7 +477,7 @@ export class UserUrls {
       UserUrls.ACTIONS.PASSWORD + UserUrls.SUB_ACTIONS.RESET + UserUrls.SUB_ACTIONS.INITIALIZE;
   }
 
-  static resetPassComplete(completePassResetDto: CompletePasswordResetDto): string {
+  static resetPassComplete(completePassResetDto: CompletePassResetDto): string {
     return HostUrl.getHostUrl() + UserUrls.CONTROLLER +
       UserUrls.ACTIONS.PASSWORD + UserUrls.SUB_ACTIONS.RESET + UserUrls.SUB_ACTIONS.COMPLETE +
       `?email=${completePassResetDto.email}&challengePassword=${completePassResetDto.challengePassword}`;
