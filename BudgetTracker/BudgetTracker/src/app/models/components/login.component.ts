@@ -1,7 +1,7 @@
 export enum LoginFormTypes {
   LOGIN = 0,
   RESET_PASSWORD = 1,
-  SET_PASSWORD = 2
+  CONFIRM_PASSWORD = 2
 }
 
 export class Loaders {
@@ -10,3 +10,13 @@ export class Loaders {
   setPass: boolean;
 }
 
+export class InitPasswordResetDto {
+  email: string;
+  login: string;
+  newPassword: string;
+}
+
+export class CompletePasswordResetDto {
+  email: string;
+  challengePassword: string;
+}

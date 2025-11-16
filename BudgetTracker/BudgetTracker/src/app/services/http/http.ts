@@ -1,6 +1,7 @@
 import {RequestModel} from "../../models/request.model";
 import {CategoryType} from "../../models/dto/category.model.dto";
 import {LoginDto} from "../../models/dto/user.model.dto";
+import {CompletePasswordResetDto} from "../../models/components/login.component";
 
 
 class HostUrl {
@@ -405,14 +406,12 @@ export class PaymentUrls {
 export class AuthUrls {
   private static CONTROLLER = "/Auth";
   private static ACTIONS = {
-    LOGOUT: "/jwt/revoke",
+    LOGOUT: "/logout",
     LOGIN: "/login",
-    VERIFY_OTP: "/2fa/verify-otp",
-    PASSWORD_RESET: "/password/reset",
-    PASSWORD_SET: "/password/set",
     ENROLL: "/2fa/enroll",
     ENABLE: "/2fa/enable",
     DISABLE: "/2fa/disable",
+    VERIFY_OTP: "/2fa/verify-otp",
     ME: "/me"
   }
 
@@ -432,14 +431,6 @@ export class AuthUrls {
     return HostUrl.getHostUrl() + AuthUrls.CONTROLLER + AuthUrls.ACTIONS.VERIFY_OTP;
   }
 
-  static resetPassword(): string {
-    return HostUrl.getHostUrl() + AuthUrls.CONTROLLER + AuthUrls.ACTIONS.PASSWORD_RESET;
-  }
-
-  static setPassword(): string {
-    return HostUrl.getHostUrl() + AuthUrls.CONTROLLER + AuthUrls.ACTIONS.PASSWORD_SET;
-  }
-
   static enroll2Fa(): string {
     return HostUrl.getHostUrl() + AuthUrls.CONTROLLER + AuthUrls.ACTIONS.ENROLL;
   }
@@ -457,19 +448,39 @@ export class UserUrls {
   private static CONTROLLER = "/Users";
   private static ACTIONS = {
     REGISTER: "/register",
-    CONFIRM: "/confirm",
-    RESEND: "/resend"
+    EMAIL: "/email",
+    PASSWORD: "/password"
+  }
+  private static SUB_ACTIONS = {
+    INITIALIZE: "/initialize",
+    COMPLETE: "/complete",
+    CHANGE: "/change",
+    RESET: "/reset",
   }
 
-  static register(): string {
-    return HostUrl.getHostUrl() + UserUrls.CONTROLLER + UserUrls.ACTIONS.REGISTER;
+  static registerInitialize(): string {
+    return HostUrl.getHostUrl() + UserUrls.CONTROLLER +
+      UserUrls.ACTIONS.REGISTER + UserUrls.SUB_ACTIONS.INITIALIZE;
   }
 
-  static confirm(): string {
-    return HostUrl.getHostUrl() + UserUrls.CONTROLLER + UserUrls.ACTIONS.CONFIRM;
+  static registerComplete(): string {
+    return HostUrl.getHostUrl() + UserUrls.CONTROLLER +
+      UserUrls.ACTIONS.REGISTER + UserUrls.SUB_ACTIONS.COMPLETE;
   }
 
-  static resend(): string {
-    return HostUrl.getHostUrl() + UserUrls.CONTROLLER + UserUrls.ACTIONS.CONFIRM;
+  static changePassword(): string {
+    return HostUrl.getHostUrl() + UserUrls.CONTROLLER +
+      UserUrls.ACTIONS.PASSWORD + UserUrls.SUB_ACTIONS.CHANGE;
+  }
+
+  static resetPassInitialize(): string {
+    return HostUrl.getHostUrl() + UserUrls.CONTROLLER +
+      UserUrls.ACTIONS.PASSWORD + UserUrls.SUB_ACTIONS.RESET + UserUrls.SUB_ACTIONS.INITIALIZE;
+  }
+
+  static resetPassComplete(completePassResetDto: CompletePasswordResetDto): string {
+    return HostUrl.getHostUrl() + UserUrls.CONTROLLER +
+      UserUrls.ACTIONS.PASSWORD + UserUrls.SUB_ACTIONS.RESET + UserUrls.SUB_ACTIONS.COMPLETE +
+      `?email=${completePassResetDto.email}&challengePassword=${completePassResetDto.challengePassword}`;
   }
 }

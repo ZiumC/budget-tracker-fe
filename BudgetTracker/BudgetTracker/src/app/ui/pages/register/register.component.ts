@@ -3,7 +3,7 @@ import {Subscription} from "rxjs";
 import {SubscriptionUtils} from "../../../util/subscription.utils";
 import {Loaders, RegisterFormTypes} from "../../../models/components/register.component";
 import {ModalUtils} from "../../../util/modal.utils";
-import {ConfirmEmailDto, RegisterDto} from "../../../models/dto/user.model.dto";
+import {RegisterCompleteDto, RegisterDto} from "../../../models/dto/user.model.dto";
 import {AppConfig} from "../../../models/config/config";
 import {FormConfig} from "../../../models/config/form.model.config";
 import {ConfigService} from "../../../services/config/config.service";
@@ -98,7 +98,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
   protected register(): void {
     this.markRegisterAsLoading(true);
     this.subscriptions.push(
-      this.httpService.register(this.registerForm).subscribe({
+      this.httpService.initializeRegister(this.registerForm).subscribe({
         next: (): void => {
           this.formType = RegisterFormTypes.CONFIRM_EMAIL;
           ToastUtil.successfullyRegisteredAccount(this.toastr, this.registerForm.email);
@@ -118,13 +118,13 @@ export class RegisterComponent implements OnInit, OnDestroy {
   protected confirm(): void {
     this.markConfirmAsLoading(true);
 
-    const confirmEmail: ConfirmEmailDto = {
+    const confirmEmail: RegisterCompleteDto = {
       email: this.registerForm.email,
       code: this.confirmationCode
     }
 
     this.subscriptions.push(
-      this.httpService.confirm(confirmEmail).subscribe({
+      this.httpService.completeRegister(confirmEmail).subscribe({
         next: (): void => {
           ToastUtil.successfullyEmailConfirmed(this.toastr);
           this.markConfirmAsLoading(false);

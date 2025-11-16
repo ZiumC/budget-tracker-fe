@@ -298,7 +298,7 @@
                         id="change-email-form"
                         name="change-email-form"
                         class="form-control"
-                        [(ngModel)]="emailForm.emailDto.newEmail"
+                        [(ngModel)]="emailForm.emailDto.email"
                         [disabled]="loaders.changeEmail || emailForm.isDisabledForm"
                         required
                         minlength="{{ formConfig.registerForm.email.minLength }}"

@@ -145,7 +145,7 @@
               <form #resetPasswordForm="ngForm">
                 <div class="mb-md-5 mt-md-4 pb-5">
                   <h2 class="fw-bold mb-2 text-uppercase">Reset password</h2>
-                  <p class="mb-5">Please enter email and login</p>
+                  <p class="mb-5">Please enter email, login and new password</p>
                   <div [className]="ModalUtils.displayMarginFor(resetEmailInput)">
                     <div class="text-start">
                       <label for="reset-email">Email</label>
@@ -156,7 +156,7 @@
                       id="reset-email"
                       name="reset-email"
                       class="form-control"
-                      [(ngModel)]="resetPassForm.email"
+                      [(ngModel)]="initPassResetForm.email"
                       [disabled]="loaders.reset"
                       required
                       minlength="{{ formConfig.loginForm.emailOrLogin.minLength }}"
@@ -197,7 +197,7 @@
                       id="reset-login"
                       name="reset-login"
                       class="form-control"
-                      [(ngModel)]="resetPassForm.login"
+                      [(ngModel)]="initPassResetForm.login"
                       [disabled]="loaders.reset"
                       required
                       minlength="{{ formConfig.loginForm.emailOrLogin.minLength }}"
@@ -228,143 +228,9 @@
                       <div class="valid-feedback"></div>
                     }
                   </div>
-                  <ng-template [ngIf]="!loaders.reset"
-                               [ngIfElse]="displayResetLoader">
-                    <button type="button"
-                            class="btn btn-outline-secondary btn-lg px-5"
-                            (click)="resetPassword();"
-                            [disabled]="!resetPasswordForm.valid || loaders.reset">
-                      Reset
-                    </button>
-                  </ng-template>
-                  <ng-template #displayResetLoader>
-                    <button type="button"
-                            class="btn btn-outline-secondary btn-lg px-5"
-                            [disabled]="loaders.reset">
-                      <app-spinner [size]="SpinnerSize.SMALL"></app-spinner>
-                    </button>
-                  </ng-template>
-                </div>
-                <div class="mb-3">
-                  <p class="mb-0">
-                    You have already account?
-                  </p>
-                  <button type="button"
-                          class="btn btn-outline-secondary"
-                          (click)="formType = FormType.LOGIN"
-                          [disabled]="loaders.reset">
-                    Login Page
-                  </button>
-                </div>
-                <p class="mb-0">
-                  You have already requested password change?
-                </p>
-                <button type="button"
-                        class="btn btn-outline-secondary"
-                        (click)="formType = FormType.SET_PASSWORD; setPassParam=true;"
-                        [disabled]="loaders.reset">
-                  Set Password
-                </button>
-              </form>
-            </ng-container>
-            <ng-container *ngSwitchCase="FormType.SET_PASSWORD">
-              <form ngbAutofocus #userSetPassword="ngForm">
-                <div class="mb-md-5 mt-md-4 pb-5">
-                  <h2 class="fw-bold mb-2 text-uppercase">Set password</h2>
-                  <ng-template [ngIf]="setPassParam"
-                               [ngIfElse]="displayWithoutEmailAndLogin">
-                    <p class="mb-5">Please enter your details, new password and confirmation password from email</p>
-                  </ng-template>
-                  <ng-template #displayWithoutEmailAndLogin>
-                    <p class="mb-5">Please enter new password and confirmation password form email</p>
-                  </ng-template>
-                  <div [style]="displayInput() ? '' : 'display:none'">
-                    <div [className]="ModalUtils.displayMarginFor(setPassEmailInput)">
-                      <div class="text-start">
-                        <label for="set-pass-email">Email</label>
-                        <span class="text-danger">*</span>
-                      </div>
-                      <input
-                        type="email"
-                        id="set-pass-email"
-                        name="set-pass-email"
-                        class="form-control"
-                        [(ngModel)]="resetPassForm.email"
-                        [disabled]="loaders.setPass"
-                        [required]="displayInput()"
-                        minlength="{{ formConfig.loginForm.emailOrLogin.minLength }}"
-                        maxlength="{{ formConfig.loginForm.emailOrLogin.maxLength }}"
-                        pattern="{{formConfig.regex.email}}"
-                        #setPassEmailInput="ngModel"
-                        [ngClass]="{
-                        'is-invalid': setPassEmailInput.invalid &&
-                        (setPassEmailInput.dirty || setPassEmailInput.touched),
-                        'is-valid': setPassEmailInput.valid }"/>
-                      @if (setPassEmailInput.invalid &&
-                      (setPassEmailInput.dirty || setPassEmailInput.touched)) {
-                        <div class="invalid-feedback text-start d-grid">
-                          <label *ngIf="setPassEmailInput.errors?.['required']">
-                            {{ formConfig.messages.required }}
-                          </label>
-                          <label *ngIf="setPassEmailInput.errors?.['pattern']">
-                            {{ formatString(formConfig.messages.invalid, "Email") }}
-                          </label>
-                          <label *ngIf="setPassEmailInput.errors?.['minlength']">
-                            {{ formatString(formConfig.messages.minLength, formConfig.loginForm.emailOrLogin.minLength) }}
-                          </label>
-                          <label *ngIf="setPassEmailInput.errors?.['maxlength']">
-                            {{ formatString(formConfig.messages.maxLength, formConfig.loginForm.emailOrLogin.maxLength) }}
-                          </label>
-                        </div>
-                      } @else {
-                        <div class="valid-feedback"></div>
-                      }
-                    </div>
-                    <div [className]="ModalUtils.displayMarginFor(setPassLoginInput)">
-                      <div class="text-start">
-                        <label for="reset-login">Login</label>
-                        <span class="text-danger">*</span>
-                      </div>
-                      <input
-                        type="text"
-                        id="set-pass-login"
-                        name="set-pass-login"
-                        class="form-control"
-                        [(ngModel)]="resetPassForm.login"
-                        [disabled]="loaders.setPass"
-                        [required]="displayInput()"
-                        minlength="{{ formConfig.loginForm.emailOrLogin.minLength }}"
-                        maxlength="{{ formConfig.loginForm.emailOrLogin.maxLength }}"
-                        pattern="{{formConfig.regex.loginOrEmail}}"
-                        #setPassLoginInput="ngModel"
-                        [ngClass]="{
-                        'is-invalid': setPassLoginInput.invalid &&
-                        (setPassLoginInput.dirty || setPassLoginInput.touched),
-                        'is-valid': setPassLoginInput.valid }"/>
-                      @if (setPassLoginInput.invalid &&
-                      (setPassLoginInput.dirty || setPassLoginInput.touched)) {
-                        <div class="invalid-feedback text-start d-grid">
-                          <label *ngIf="setPassLoginInput.errors?.['required']">
-                            {{ formConfig.messages.required }}
-                          </label>
-                          <label *ngIf="setPassLoginInput.errors?.['pattern']">
-                            {{ formatString(formConfig.messages.invalid, "Login") }}
-                          </label>
-                          <label *ngIf="setPassLoginInput.errors?.['minlength']">
-                            {{ formatString(formConfig.messages.minLength, formConfig.loginForm.emailOrLogin.minLength) }}
-                          </label>
-                          <label *ngIf="setPassLoginInput.errors?.['maxlength']">
-                            {{ formatString(formConfig.messages.maxLength, formConfig.loginForm.emailOrLogin.maxLength) }}
-                          </label>
-                        </div>
-                      } @else {
-                        <div class="valid-feedback"></div>
-                      }
-                    </div>
-                  </div>
                   <div [className]="ModalUtils.displayMarginFor(setPasswordInput)">
                     <div class="text-start">
-                      <label for="register-password">Password</label>
+                      <label for="register-password">New password</label>
                       <span class="text-danger">*</span>
                     </div>
                     <div class="input-group">
@@ -373,18 +239,17 @@
                         id="register-password"
                         name="register-password"
                         class="form-control"
-                        [(ngModel)]="setPassForm.newPassword"
+                        [(ngModel)]="initPassResetForm.newPassword"
                         [disabled]="loaders.setPass"
                         (ngModelChange)="passwordUtil.testPasswords(setPasswordInput, setPassRepeatInput)"
                         required
                         #setPasswordInput="ngModel"
                         [ngClass]="{
-                        'is-invalid': setPasswordInput.invalid &&
-                        (setPasswordInput.dirty || setPasswordInput.touched),
-                        'is-valid': setPasswordInput.valid }"/>
+                          'is-invalid': setPasswordInput.invalid &&
+                          (setPasswordInput.dirty || setPasswordInput.touched),
+                          'is-valid': setPasswordInput.valid }"/>
                       <div class="input-group-append">
-                        <span class="input-group-text"
-                              (click)="onPasswordDisplay()">
+                        <span class="input-group-text" (click)="onPasswordDisplay()">
                           <ng-template [ngIf]="showPassword"
                                        [ngIfElse]="hide">
                             <i class="bi bi-eye-slash"></i>
@@ -419,16 +284,17 @@
                     }
                   </div>
                   <ul class="text-start text-danger mb-4">
-                    <li [style]="passwordUtil.hasSpecialCharacter(setPassForm.newPassword) ? 'display: none' : ''">
+                    <li
+                      [style]="passwordUtil.hasSpecialCharacter(initPassResetForm.newPassword) ? 'display: none' : ''">
                       Password should have special character
                     </li>
-                    <li [style]="passwordUtil.hasSmallCharacters(setPassForm.newPassword) ? 'display: none' : ''">
+                    <li [style]="passwordUtil.hasSmallCharacters(initPassResetForm.newPassword) ? 'display: none' : ''">
                       Password should have 3 small characters
                     </li>
-                    <li [style]="passwordUtil.hasBigCharacters(setPassForm.newPassword) ? 'display: none' : ''">
+                    <li [style]="passwordUtil.hasBigCharacters(initPassResetForm.newPassword) ? 'display: none' : ''">
                       Password should have 2 upper characters
                     </li>
-                    <li [style]="passwordUtil.hasNumbers(setPassForm.newPassword) ? 'display: none' : ''">
+                    <li [style]="passwordUtil.hasNumbers(initPassResetForm.newPassword) ? 'display: none' : ''">
                       Password should have 2 numbers
                     </li>
                   </ul>
@@ -449,9 +315,9 @@
                         required
                         #setPassRepeatInput="ngModel"
                         [ngClass]="{
-                        'is-invalid': setPassRepeatInput.invalid &&
-                        (setPassRepeatInput.dirty || setPassRepeatInput.touched),
-                        'is-valid': setPassRepeatInput.valid }"/>
+                          'is-invalid': setPassRepeatInput.invalid &&
+                          (setPassRepeatInput.dirty || setPassRepeatInput.touched),
+                          'is-valid': setPassRepeatInput.valid }"/>
                       <div class="input-group-append">
                         <span class="input-group-text"
                               (click)="onPasswordDisplay()">
@@ -488,9 +354,96 @@
                       <div class="valid-feedback"></div>
                     }
                   </div>
-                  <div [className]="ModalUtils.displayMarginFor(tempPassword)">
+                  <ng-template [ngIf]="!loaders.reset"
+                               [ngIfElse]="displayResetLoader">
+                    <button type="button"
+                            class="btn btn-outline-secondary btn-lg px-5"
+                            (click)="initializePasswordReset();"
+                            [disabled]="!resetPasswordForm.valid || loaders.reset">
+                      Reset
+                    </button>
+                  </ng-template>
+                  <ng-template #displayResetLoader>
+                    <button type="button"
+                            class="btn btn-outline-secondary btn-lg px-5"
+                            [disabled]="loaders.reset">
+                      <app-spinner [size]="SpinnerSize.SMALL"></app-spinner>
+                    </button>
+                  </ng-template>
+                </div>
+                <div class="mb-3">
+                  <p class="mb-0">
+                    You have already account?
+                  </p>
+                  <button type="button"
+                          class="btn btn-outline-secondary"
+                          (click)="formType = FormType.LOGIN"
+                          [disabled]="loaders.reset">
+                    Login Page
+                  </button>
+                </div>
+                <p class="mb-0">
+                  You have already requested for password change?
+                </p>
+                <button type="button"
+                        class="btn btn-outline-secondary"
+                        (click)="formType = FormType.CONFIRM_PASSWORD; setPassParam=true;"
+                        [disabled]="loaders.reset">
+                  Confirm
+                </button>
+              </form>
+            </ng-container>
+            <ng-container *ngSwitchCase="FormType.CONFIRM_PASSWORD">
+              <form ngbAutofocus #userSetPassword="ngForm">
+                <div class="mb-md-5 mt-md-4 pb-5">
+                  <h2 class="fw-bold mb-2 text-uppercase">Confirm new password</h2>
+                  <p class="mb-5">Please enter your email and challenge password from email</p>
+                  <div [style]="displayInput() ? '' : 'display:none'">
+                    <div [className]="ModalUtils.displayMarginFor(setPassEmailInput)">
+                      <div class="text-start">
+                        <label for="set-pass-email">Email</label>
+                        <span class="text-danger">*</span>
+                      </div>
+                      <input
+                        type="email"
+                        id="set-pass-email"
+                        name="set-pass-email"
+                        class="form-control"
+                        [(ngModel)]="completePassResetForm.email"
+                        [disabled]="loaders.setPass"
+                        [required]="displayInput()"
+                        minlength="{{ formConfig.loginForm.emailOrLogin.minLength }}"
+                        maxlength="{{ formConfig.loginForm.emailOrLogin.maxLength }}"
+                        pattern="{{formConfig.regex.email}}"
+                        #setPassEmailInput="ngModel"
+                        [ngClass]="{
+                        'is-invalid': setPassEmailInput.invalid &&
+                        (setPassEmailInput.dirty || setPassEmailInput.touched),
+                        'is-valid': setPassEmailInput.valid }"/>
+                      @if (setPassEmailInput.invalid &&
+                      (setPassEmailInput.dirty || setPassEmailInput.touched)) {
+                        <div class="invalid-feedback text-start d-grid">
+                          <label *ngIf="setPassEmailInput.errors?.['required']">
+                            {{ formConfig.messages.required }}
+                          </label>
+                          <label *ngIf="setPassEmailInput.errors?.['pattern']">
+                            {{ formatString(formConfig.messages.invalid, "Email") }}
+                          </label>
+                          <label *ngIf="setPassEmailInput.errors?.['minlength']">
+                            {{ formatString(formConfig.messages.minLength, formConfig.loginForm.emailOrLogin.minLength) }}
+                          </label>
+                          <label *ngIf="setPassEmailInput.errors?.['maxlength']">
+                            {{ formatString(formConfig.messages.maxLength, formConfig.loginForm.emailOrLogin.maxLength) }}
+                          </label>
+                        </div>
+                      } @else {
+                        <div class="valid-feedback"></div>
+                      }
+                    </div>
+                  </div>
+                  <div [className]="ModalUtils.displayMarginFor(challengePasswordInput)">
                     <div class="text-start">
-                      <label for="temp-password-repeat">Temporary password</label>
+                      <label for="temp-password-repeat">Challenge password</label>
                       <span class="text-danger">*</span>
                     </div>
                     <div class="input-group">
@@ -499,27 +452,27 @@
                         id="temp-password-repeat"
                         name="temp-password-repeat"
                         class="form-control"
-                        [(ngModel)]="setPassForm.challangePassword"
+                        [(ngModel)]="completePassResetForm.challengePassword"
                         [disabled]="loaders.setPass"
                         required
-                        #tempPassword="ngModel"
+                        #challengePasswordInput="ngModel"
                         minlength="{{formConfig.temporaryPassword.minLength}}"
                         maxlength="{{formConfig.temporaryPassword.maxLength}}"
                         [ngClass]="{
-                        'is-invalid': tempPassword.invalid &&
-                        (tempPassword.dirty || tempPassword.touched),
-                        'is-valid': tempPassword.valid }"/>
+                            'is-invalid': challengePasswordInput.invalid &&
+                            (challengePasswordInput.dirty || challengePasswordInput.touched),
+                            'is-valid': challengePasswordInput.valid }"/>
                     </div>
-                    @if (tempPassword.invalid &&
-                    (tempPassword.dirty || tempPassword.touched)) {
+                    @if (challengePasswordInput.invalid &&
+                    (challengePasswordInput.dirty || challengePasswordInput.touched)) {
                       <div class="invalid-feedback text-start d-grid">
-                        <label *ngIf="tempPassword.errors?.['required']">
+                        <label *ngIf="challengePasswordInput.errors?.['required']">
                           {{ formConfig.messages.required }}
                         </label>
-                        <label *ngIf="tempPassword.errors?.['minlength']">
+                        <label *ngIf="challengePasswordInput.errors?.['minlength']">
                           {{ formatString(formConfig.messages.minLength, formConfig.temporaryPassword.minLength) }}
                         </label>
-                        <label *ngIf="tempPassword.errors?.['maxlength']">
+                        <label *ngIf="challengePasswordInput.errors?.['maxlength']">
                           {{ formatString(formConfig.messages.maxLength, formConfig.temporaryPassword.maxLength) }}
                         </label>
                       </div>
@@ -531,9 +484,9 @@
                                [ngIfElse]="displaySetPassLoader">
                     <button type="button"
                             class="btn btn-outline-secondary btn-lg px-5"
-                            (click)="setNewPassword();"
+                            (click)="completePasswordReset()"
                             [disabled]="!userSetPassword.valid || loaders.setPass">
-                      Set
+                      Confirm
                     </button>
                   </ng-template>
                   <ng-template #displaySetPassLoader>
