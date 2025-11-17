@@ -407,6 +407,7 @@ export class AuthUrls {
   private static ACTIONS = {
     LOGOUT: "/logout",
     LOGIN: "/login",
+    REFRESH: "/jwt/refresh",
     ENROLL: "/2fa/enroll",
     ENABLE: "/2fa/enable",
     DISABLE: "/2fa/disable",
@@ -440,6 +441,10 @@ export class AuthUrls {
 
   static disable2Fa(code: string): string {
     return HostUrl.getHostUrl() + AuthUrls.CONTROLLER + AuthUrls.ACTIONS.DISABLE + `?code=${code}`;
+  }
+
+  static refreshToken(): string {
+    return HostUrl.getHostUrl() + AuthUrls.CONTROLLER + AuthUrls.ACTIONS.REFRESH;
   }
 }
 

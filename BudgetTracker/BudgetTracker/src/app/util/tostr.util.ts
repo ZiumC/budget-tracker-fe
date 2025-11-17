@@ -7,6 +7,7 @@ export class ToastUtil {
     if (statusCode >= 200 && statusCode <= 299) {
       throw new Error("Should be error instead of success");
     }
+
     const responseModel = getErrorResponse(err);
     let title: string = responseModel.statusCode.toString();
     let message: string = responseModel.error.message;
