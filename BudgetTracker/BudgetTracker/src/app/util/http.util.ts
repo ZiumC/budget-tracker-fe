@@ -5,11 +5,20 @@ export function getErrorResponse(err: any): ResponseModel {
 
   const traceId: string = err.headers.get('X-Trace-Id') == undefined ? err.headers.get('x-trace-id') : err.headers.get('X-Trace-Id');
   const statusCode: number = err.status;
-  const type: string = err.error["Type"] == undefined ? err.error["type"] : err.error["Type"];
-  const message: string = err.error["Message"] == undefined ? err.error["message"] : err.error["Message"];
-  const title: string = err.error["Title"] == undefined ? err.error["title"] : err.error["Title"];
-  const path: string = err.error["Path"] == undefined ? err.error["path"] : err.error["Path"];
-  const errStatusCode: string = err.error["statusCode"] == undefined ? err.error["statusCode"] : err.error["StatusCode"];
+
+  let type: string = "";
+  let message: string = "";
+  let title: string = "";
+  let path: string = "";
+  let errStatusCode: string = "";
+
+  if (err.error){
+    type = err.error["Type"] == undefined ? err.error["type"] : err.error["Type"];
+    message = err.error["Message"] == undefined ? err.error["message"] : err.error["Message"];
+    title = err.error["Title"] == undefined ? err.error["title"] : err.error["Title"];
+    path = err.error["Path"] == undefined ? err.error["path"] : err.error["Path"];
+    errStatusCode = err.error["statusCode"] == undefined ? err.error["statusCode"] : err.error["StatusCode"];
+  }
 
   const errorModel: ErrorModel = {
     type: type,

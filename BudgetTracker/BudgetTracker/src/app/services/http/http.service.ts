@@ -491,4 +491,12 @@ export class HttpService {
       {observe: 'response', withCredentials: true}
     )
   }
+
+  public refreshToken(): Observable<HttpResponse<any>> {
+    return this.httpClient.post(
+      AuthUrls.refreshToken(),
+      null,
+      {observe: 'response', withCredentials: true}
+    )
+  }
 }

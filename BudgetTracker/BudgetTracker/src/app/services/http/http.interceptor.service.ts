@@ -6,14 +6,18 @@ import {
   HttpRequest,
   HttpErrorResponse
 } from '@angular/common/http';
-import {Observable, throwError, switchMap, catchError, from} from 'rxjs';
+import {Observable, throwError, catchError} from 'rxjs';
 
 import {AuthService} from "../auth/auth.service";
 import {Router} from '@angular/router';
+import {tap} from "rxjs/operators";
 
 @Injectable()
 export class JwtInterceptor implements HttpInterceptor {
-  constructor(private auth: AuthService, private router: Router) {
+
+  constructor(
+    private auth: AuthService,
+    private router: Router) {
   }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -25,7 +29,7 @@ export class JwtInterceptor implements HttpInterceptor {
       catchError((err: HttpErrorResponse) => {
         if (err.status === 401) {
           this.auth.setLoggedOut();
-          this.router.navigate(['/login']);
+          this.router.navigateByUrl("/login");
         }
         return throwError((): HttpErrorResponse => err);
       })
