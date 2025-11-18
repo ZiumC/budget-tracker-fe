@@ -10,7 +10,6 @@ import {Observable, throwError, catchError} from 'rxjs';
 
 import {AuthService} from "../auth/auth.service";
 import {Router} from '@angular/router';
-import {tap} from "rxjs/operators";
 
 @Injectable()
 export class JwtInterceptor implements HttpInterceptor {

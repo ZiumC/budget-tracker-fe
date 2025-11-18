@@ -21,6 +21,7 @@
                       class="form-control"
                       [(ngModel)]="loginForm.emailOrLogin"
                       [disabled]="loaders.login"
+                      (keydown.enter)="userLoginForm.valid ? login() : null"
                       required
                       minlength="{{ formConfig.loginForm.emailOrLogin.minLength }}"
                       maxlength="{{ formConfig.loginForm.emailOrLogin.maxLength }}"
@@ -63,6 +64,7 @@
                         class="form-control"
                         [(ngModel)]="loginForm.password"
                         [disabled]="loaders.login"
+                        (keydown.enter)="userLoginForm.valid ? login() : null"
                         required
                         minlength="{{ formConfig.loginForm.password.minLength }}"
                         maxlength="{{ formConfig.loginForm.password.maxLength }}"
@@ -158,6 +160,7 @@
                       class="form-control"
                       [(ngModel)]="initPassResetForm.email"
                       [disabled]="loaders.reset"
+                      (keydown.enter)="resetPasswordForm.valid ? initializePasswordReset() : null"
                       required
                       minlength="{{ formConfig.loginForm.emailOrLogin.minLength }}"
                       maxlength="{{ formConfig.loginForm.emailOrLogin.maxLength }}"
@@ -199,6 +202,7 @@
                       class="form-control"
                       [(ngModel)]="initPassResetForm.login"
                       [disabled]="loaders.reset"
+                      (keydown.enter)="resetPasswordForm.valid ? initializePasswordReset() : null"
                       required
                       minlength="{{ formConfig.loginForm.emailOrLogin.minLength }}"
                       maxlength="{{ formConfig.loginForm.emailOrLogin.maxLength }}"
@@ -242,6 +246,7 @@
                         [(ngModel)]="initPassResetForm.newPassword"
                         [disabled]="loaders.setPass"
                         (ngModelChange)="passwordUtil.testPasswords(setPasswordInput, setPassRepeatInput)"
+                        (keydown.enter)="resetPasswordForm.valid ? initializePasswordReset() : null"
                         required
                         #setPasswordInput="ngModel"
                         [ngClass]="{
@@ -312,6 +317,7 @@
                         [(ngModel)]="repeatPassword"
                         [disabled]="loaders.setPass"
                         (ngModelChange)="passwordUtil.testPasswords(setPasswordInput, setPassRepeatInput)"
+                        (keydown.enter)="resetPasswordForm.valid ? initializePasswordReset() : null"
                         required
                         #setPassRepeatInput="ngModel"
                         [ngClass]="{
@@ -454,6 +460,7 @@
                         class="form-control"
                         [(ngModel)]="completePassResetForm.challengePassword"
                         [disabled]="loaders.setPass"
+                        (keydown.enter)="userSetPassword.valid ? completePasswordReset() : null"
                         required
                         #challengePasswordInput="ngModel"
                         minlength="{{formConfig.temporaryPassword.minLength}}"
