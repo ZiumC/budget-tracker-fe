@@ -29,13 +29,15 @@
           class="form-control"
           [(ngModel)]="otpCode"
           [disabled]="loaders.otp"
+          (keydown.enter)="otpInput.valid ? verify() : null"
           required
           pattern="{{formConfig.regex.codes.otp}}"
           #otpInput="ngModel"
           [ngClass]="{
-                        'is-invalid': otpInput.invalid &&
-                        (otpInput.dirty || otpInput.touched),
-                        'is-valid': otpInput.valid }"/>
+            'is-invalid': otpInput.invalid &&
+            (otpInput.dirty || otpInput.touched),
+            'is-valid': otpInput.valid }"
+        />
         @if (otpInput.invalid &&
         (otpInput.dirty || otpInput.touched)) {
           <div class="invalid-feedback text-start">
