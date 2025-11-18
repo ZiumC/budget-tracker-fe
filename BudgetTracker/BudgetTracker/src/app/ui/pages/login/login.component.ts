@@ -21,6 +21,8 @@ import {SpinnerSize} from "../../components/shared/spinner/spinner.component";
 import {ToastrService} from "ngx-toastr";
 import {ToastUtil} from "../../../util/tostr.util";
 import {PasswordUtil} from "../../../util/password.util";
+import {setCookie} from "../../../util/cookie.utils";
+import {DatePipe} from "@angular/common";
 
 @Component({
   selector: 'app-login',
@@ -106,12 +108,18 @@ export class LoginComponent implements OnInit, OnDestroy {
       this.httpService.login(this.loginForm).subscribe({
         next: (response): void => {
           this.markLoginAsLoading(false);
+          let expires: number;
           if (response.status == 204) {
             this.otpModal.open(this.loginForm.emailOrLogin);
+            expires = response.body["expires"];
           } else {
+            expires = response.body["expires"];
             this.authService.setLoggedIn();
             this.router.navigateByUrl(this.returnUrl);
           }
+          const now = new Date();
+          const expiresDate = new Date(now.getTime() + expires * 60000);
+          setCookie(this.appConfig.request.cookies.names.jwtExpires, expiresDate.toUTCString(), expiresDate);
         },
         error: (err): void => {
           this.loginForm.password = "";
@@ -151,7 +159,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   protected completePasswordReset(): void {
     this.markSetPassAsLoading(true);
-    if (!this.setPassParam){
+    if (!this.setPassParam) {
       this.completePassResetForm.email = this.initPassResetForm.email;
     }
     this.subscriptions.push(
@@ -178,33 +186,6 @@ export class LoginComponent implements OnInit, OnDestroy {
       })
     )
   }
-
-  // protected setNewPassword(): void {
-  //   this.markSetPassAsLoading(true);
-  //   this.setPassForm.login = this.resetPassForm.login;
-  //   this.setPassForm.email = this.resetPassForm.email;
-  //   this.subscriptions.push(
-  //     this.httpService.setPassword(this.setPassForm).subscribe({
-  //       next: (): void => {
-  //         ToastUtil.successfullySetNewPass(this.toastr);
-  //         this.markSetPassAsLoading(false);
-  //         this.formType = LoginFormTypes.LOGIN;
-  //       },
-  //       error: (err): void => {
-  //         if (err.status != 410){
-  //           this.setPassForm.newPassword = "";
-  //           this.repeatPassword = "";
-  //           this.setPassForm.challangePassword = "";
-  //         }
-  //         ToastUtil.handleErrorResponse(this.toastr, err);
-  //         this.markSetPassAsLoading(false);
-  //       },
-  //       complete: (): void => {
-  //         this.markSetPassAsLoading(false);
-  //       }
-  //     })
-  //   )
-  // }
 
   protected displayInput(): boolean {
     return this.formType == LoginFormTypes.CONFIRM_PASSWORD && this.setPassParam;

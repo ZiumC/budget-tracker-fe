@@ -23,6 +23,7 @@ import {FormConfig} from "../../../models/config/form.model.config";
 import {ModalUtils} from "../../../util/modal.utils";
 import {PasswordUtil} from "../../../util/password.util";
 import {AuthService} from "../../../services/auth/auth.service";
+import {deleteCookie} from "../../../util/cookie.utils";
 
 @Component({
   selector: 'app-user-panel',
@@ -368,4 +369,6 @@ export class UserPanelComponent implements OnInit, OnDestroy {
       this.loaders.changeEmail = value;
     }
   }
+
+  protected readonly deleteCookie = deleteCookie;
 }

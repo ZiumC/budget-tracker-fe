@@ -4,6 +4,8 @@ import {HttpService} from "../http/http.service";
 import {tap} from "rxjs/operators";
 import {Router} from "@angular/router";
 import {HttpResponse} from "@angular/common/http";
+import {deleteCookie} from "../../util/cookie.utils";
+import {ConfigService} from "../config/config.service";
 
 @Injectable({providedIn: 'root'})
 export class AuthService {
@@ -11,12 +13,16 @@ export class AuthService {
 
   constructor(
     private httpService: HttpService,
-    private router: Router) {
+    private router: Router,
+    protected configService: ConfigService) {
   }
 
   logout(): void {
     this.httpService.logout().subscribe({
-      next: (): void => this.isLoggedIn$.next(false),
+      next: (): void => {
+        deleteCookie(this.configService.getAppConfig()?.request.cookies.names.jwtExpires!);
+        this.isLoggedIn$.next(false);
+      },
       error: (): void => this.isLoggedIn$.next(true)
     });
     this.router.navigateByUrl("/login");
