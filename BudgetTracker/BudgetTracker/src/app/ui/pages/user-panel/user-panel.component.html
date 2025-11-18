@@ -96,6 +96,7 @@
                         [(ngModel)]="passwordForm.passwordDto.newPassword"
                         [disabled]="loaders.changePass || passwordForm.isDisabledForm"
                         (ngModelChange)="passwordUtil.testPasswords(changePassInput, repeatPassInput)"
+                        (keydown.enter)="changeUserPassword.valid? changePassword(): null"
                         required
                         #changePassInput="ngModel"
                         [ngClass]="{
@@ -170,6 +171,7 @@
                         [(ngModel)]="passwordForm.repeatPassword"
                         [disabled]="loaders.changePass || passwordForm.isDisabledForm"
                         (ngModelChange)="passwordUtil.testPasswords(changePassInput, repeatPassInput)"
+                        (keydown.enter)="changeUserPassword.valid? changePassword(): null"
                         required
                         #repeatPassInput="ngModel"
                         [ngClass]="{
@@ -226,6 +228,7 @@
                         class="form-control"
                         [(ngModel)]="passwordForm.passwordDto.password"
                         [disabled]="loaders.changePass || passwordForm.isDisabledForm"
+                        (keydown.enter)="changeUserPassword.valid? changePassword(): null"
                         required
                         #currentPasswordInput="ngModel"
                         [ngClass]="{
@@ -323,6 +326,7 @@
                           minlength="{{ formConfig.registerForm.email.minLength }}"
                           maxlength="{{ formConfig.registerForm.email.maxLength }}"
                           pattern="{{formConfig.regex.email}}"
+                          (keydown.enter)="changeEmailForm.valid ? initEmailChange(): null"
                           #changeEmailInput="ngModel"
                           [ngClass]="{
                         'is-invalid': changeEmailInput.invalid &&
@@ -362,6 +366,7 @@
                             class="form-control"
                             [(ngModel)]="emailForm.emailDto.password"
                             [disabled]="loaders.changePass || emailForm.isDisabledForm"
+                            (keydown.enter)="changeEmailForm.valid ? initEmailChange(): null"
                             required
                             #changeEmailCurrentPassInput="ngModel"
                             [ngClass]="{
@@ -440,6 +445,7 @@
                           class="form-control"
                           [(ngModel)]="emailForm.code"
                           [disabled]="loaders.changeEmail"
+                          (keydown.enter)="confirmEmailForm.valid ? completeEmailChange(): null"
                           required
                           minlength="{{ formConfig.registerForm.code.minLength }}"
                           maxlength="{{ formConfig.registerForm.code.maxLength }}"
@@ -519,6 +525,7 @@
                           class="form-control"
                           [(ngModel)]="otpCode"
                           [disabled]="loaders.enable2Fa"
+                          (keydown.enter)="otpEnableInput.valid ? enableOtp() : null"
                           required
                           pattern="{{formConfig.regex.codes.otp}}"
                           #otpEnableInput="ngModel"
@@ -597,6 +604,7 @@
                       class="form-control"
                       [(ngModel)]="otpCode"
                       [disabled]="loaders.disable2Fa"
+                      (keydown.enter)="otpDisableInput.valid ? disableOtp() : null"
                       required
                       pattern="{{formConfig.regex.codes.otp}}"
                       #otpDisableInput="ngModel"
