@@ -27,7 +27,8 @@
   </ng-template>
   <ng-template #loadedBody>
     <div class="modal-body">
-      <form ngbAutofocus #form="ngForm">
+      <form ngbAutofocus #form="ngForm"
+            (keydown.enter)="form.valid ? savePlannedPayment(): null">
         <div class="row">
           <div [className]="ModalUtils.displayMarginFor(paymentNameInput)">
             <label for="payment-name">Name</label>
