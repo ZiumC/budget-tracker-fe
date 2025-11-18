@@ -18,6 +18,7 @@ export interface Cookies {
 export interface Names {
   fromDate: string;
   toDate: string;
+  jwtExpires: string;
 }
 
 export interface Order {

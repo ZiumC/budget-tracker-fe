@@ -273,7 +273,8 @@
       "cookies": {
         "names": {
           "fromDate": "from-date",
-          "toDate": "to-date"
+          "toDate": "to-date",
+          "jwtExpires": "jwt-expires"
         }
       }
     },
