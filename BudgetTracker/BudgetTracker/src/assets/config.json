@@ -31,7 +31,8 @@
         "passNotMatch": "Passwords not equal",
         "passTooWeak": "Password is too weak",
         "typeahead": {
-          "notfound": "Categories not found"
+          "notfound": "Categories not found",
+          "notExist" : "Categories not exist, add them in /categories page"
         }
       },
       "categoryModal": {

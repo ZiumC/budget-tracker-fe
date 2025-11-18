@@ -84,13 +84,16 @@ export class TypeheadComponent implements OnInit {
               result = [{name: this.formConfig.messages.typeahead.notfound} as GetPaymentCategoryDto | GetIncomeCategoryDto];
             }
           }
+        } else {
+          result = [{name: this.formConfig.messages.typeahead.notExist} as GetPaymentCategoryDto | GetIncomeCategoryDto];
         }
         return result;
       }));
   }
 
   protected onTypeaheadNameChange(): void {
-    if (this.selectedCategoryDto?.name == this.formConfig.messages.typeahead.notfound) {
+    if (this.selectedCategoryDto?.name == this.formConfig.messages.typeahead.notfound ||
+      this.selectedCategoryDto?.name == this.formConfig.messages.typeahead.notExist) {
       this.clear();
     }
     this.emitCategoryData();

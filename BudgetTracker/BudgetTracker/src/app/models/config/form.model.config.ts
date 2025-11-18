@@ -31,6 +31,7 @@ export interface Messages {
 
 export interface Typehead {
   notfound: string;
+  notExist: string;
 }
 
 export interface CategoryModal {
