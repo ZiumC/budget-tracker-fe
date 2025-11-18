@@ -114,11 +114,18 @@
         }
       </ng-template>
       <ng-template #errorPaymentsBlock>
+        <div class="mb-3">
+          <button
+            class="btn btn-success"
+            (click)="categoryModal.open(type)">
+            <i class="bi bi-plus-circle"></i> Create
+          </button>
+          <hr class="horizontal">
+        </div>
         <app-error [errorType]="ErrorType.Request"
                    [errorImage]="ErrorImage.NotfoundFile"
                    [response]=" categoryResponseModel"
                    [notFoundErrorText]="formatString(appConfig.form.messages.notFound,'Categories data')">
-
         </app-error>
       </ng-template>
     </ng-template>

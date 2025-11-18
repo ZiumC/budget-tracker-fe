@@ -214,6 +214,7 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
   }
 
   private getCategories(): void {
+    this.categoriesDto = null;
     if (this.selectedPaymentCategoryType) {
       this.subscriptions.push(
         this.httpService.getPaymentCategories(

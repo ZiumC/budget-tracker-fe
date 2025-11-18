@@ -27,7 +27,8 @@
   </ng-template>
   <ng-template #loadedBody>
     <div class="modal-body">
-      <form ngbAutofocus #form="ngForm">
+      <form ngbAutofocus #form="ngForm"
+            (keydown.enter)="form.valid ? save() : null">
         <div class="col-mx">
           <div [className]="ModalUtils.displayMarginFor(categoryNameInput)">
             <label for="income-name">Name</label>
