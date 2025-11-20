@@ -10,11 +10,26 @@
           <ng-template [ngIf]="responseModels.budget.statusCode == appConfig.response.required.budgetStatus"
                        [ngIfElse]="budgetErrorBlock">
             <div class="text-end mt-1 mx-1 options-menu">
-              <button type="button"
-                      class="btn btn-light">
-                <i class="bi bi-three-dots"></i>
+              <button #menuBtn type="button"
+                      class="btn btn-light"
+                      (click)="displayBudgetSubMenu=!displayBudgetSubMenu">
+                <i #menuIcon class="bi bi-three-dots"></i>
               </button>
             </div>
+            <ng-template [ngIf]="displayBudgetSubMenu">
+              <div id="overlay-menu" class="overlay-menu">
+                <div class="d-grid mx-2 my-2">
+                  <button type="button"
+                          class="btn btn-danger my-1"
+                          data-bs-toggle="tooltip"
+                          data-bs-placement="bottom"
+                          title="Delete budget"
+                          (click)="deleteModal.openWithBudget(budgetDto!); displayBudgetSubMenu=false">
+                    <i class="bi bi-trash3-fill"></i> Delete
+                  </button>
+                </div>
+              </div>
+            </ng-template>
             <h5 class="card-title">{{ budgetDto?.name }}</h5>
             <table>
               <tr>
@@ -37,14 +52,6 @@
               </tr>
             </table>
             <div class="mt-2">
-              <!--                <button type="button"-->
-              <!--                        [className]="innerWidth > appConfig.pageMobileWidth ? 'btn btn-danger' : 'btn btn-danger width-ex-20'"-->
-              <!--                        data-bs-toggle="tooltip"-->
-              <!--                        data-bs-placement="bottom"-->
-              <!--                        title="Delete budget"-->
-              <!--                        (click)="deleteModal.openWithBudget(budgetDto!)">-->
-              <!--                  <i class="bi bi-trash3-fill"></i> Delete-->
-              <!--                </button>-->
               <ng-template
                 [ngIf]="responseModels.budgetSummary.statusCode == appConfig.response.required.budgetSummaryStatus">
                 <div class="container">

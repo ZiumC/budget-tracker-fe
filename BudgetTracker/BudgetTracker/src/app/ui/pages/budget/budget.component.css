@@ -36,6 +36,13 @@ label {
   right: 0;
 }
 
+#overlay-menu {
+  background-color: lightgray;
+  right: 0.5ex;
+  width: 20ex;
+  top: 5ex;
+}
+
 @media only screen and (max-width: 475px) {
   .budget-buttons {
     gap: 0;
