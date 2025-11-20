@@ -161,13 +161,13 @@
   <app-income-modal #incomeModal
                     [idBudget]="idBudget"
                     [assignmentStatusCode]="assignmentStatusCode"
-                    (refreshIncomeEvent)="onRefreshIncome()">
+                    (refreshIncomeEvent)="onRefreshIncome(false)">
 
   </app-income-modal>
   <app-error-modal #errorModal>
   </app-error-modal>
   <app-delete-modal #deleteModal
-                    (refreshIncomeEvent)="onRefreshIncome()">
+                    (refreshIncomeEvent)="onRefreshIncome(false)">
 
   </app-delete-modal>
 </div>
