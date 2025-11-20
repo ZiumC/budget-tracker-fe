@@ -1,4 +1,5 @@
-<div class="height-wrapper width-wrapper">
+<div [ngClass]="responseModels.budgets.statusCode == appConfig.response.required.budgetStatus ? 'height-wrapper' : ''"
+  class="width-wrapper">
   <div class="component-wrapper component-bg">
     <div class="card mb-3 position-unset">
       <div class="card-body">
@@ -241,291 +242,294 @@
         </app-error>
       </ng-template>
     </ng-template>
-    <div class="row mt-3">
-      <div class="col">
-        <div class="card text-center mb-3">
-          <div class="card-header">
-            Statistics
-          </div>
-          <div class="card-body">
-            <ng-template [ngIf]="!loaders.budgetCategories"
-                         [ngIfElse]="loadedCategories">
-              <div class="my-5">
-                <app-spinner-grow></app-spinner-grow>
-              </div>
-            </ng-template>
-            <ng-template #loadedCategories>
-              <div class="text-start">
-                <label for="general-categories">Budget categories</label>
-              </div>
-              <div class="mb-2 mx-3">
-                <div id="general-categories" class="mx-auto">
-                  <ng-template [ngIf]="responseModels.budgetCategories.statusCode != 200"
-                               [ngIfElse]="displayCategoriesChart">
-                    <app-error [errorType]="ErrorType.Application"
-                               [errorImage]="ErrorImage.ChartIcon"
-                               [notFoundErrorText]="'Unable to fetch budget categories data'">
-                    </app-error>
-                  </ng-template>
-                  <ng-template #displayCategoriesChart>
-                    <div [className]="isMobileView() ? 'doughnut-height-m' : 'mobile-height-m'">
-                      <ngx-charts-pie-grid
-                        [results]="chartData.budgetCategories"
-                        [animations]="true"
-                        [tooltipDisabled]="true"
-                        [customColors]="[
+    <ng-template [ngIf]="responseModels.budgets.statusCode == appConfig.response.required.budgetStatus">
+
+      <div class="row mt-3">
+        <div class="col">
+          <div class="card text-center mb-3">
+            <div class="card-header">
+              Statistics
+            </div>
+            <div class="card-body">
+              <ng-template [ngIf]="!loaders.budgetCategories"
+                           [ngIfElse]="loadedCategories">
+                <div class="my-5">
+                  <app-spinner-grow></app-spinner-grow>
+                </div>
+              </ng-template>
+              <ng-template #loadedCategories>
+                <div class="text-start">
+                  <label for="general-categories">Budget categories</label>
+                </div>
+                <div class="mb-2 mx-3">
+                  <div id="general-categories" class="mx-auto">
+                    <ng-template [ngIf]="responseModels.budgetCategories.statusCode != 200"
+                                 [ngIfElse]="displayCategoriesChart">
+                      <app-error [errorType]="ErrorType.Application"
+                                 [errorImage]="ErrorImage.ChartIcon"
+                                 [notFoundErrorText]="'Unable to fetch budget categories data'">
+                      </app-error>
+                    </ng-template>
+                    <ng-template #displayCategoriesChart>
+                      <div [className]="isMobileView() ? 'doughnut-height-m' : 'mobile-height-m'">
+                        <ngx-charts-pie-grid
+                          [results]="chartData.budgetCategories"
+                          [animations]="true"
+                          [tooltipDisabled]="true"
+                          [customColors]="[
                          {name: 'Needs',value: '#ff3d00'},
                          {name: 'Wants',value: '#1f7bc6'},
                          {name: 'Savings',value: '#00b862'},
                        ]">
-                      </ngx-charts-pie-grid>
-                    </div>
-                  </ng-template>
+                        </ngx-charts-pie-grid>
+                      </div>
+                    </ng-template>
+                  </div>
                 </div>
-              </div>
-            </ng-template>
-            <ng-template [ngIf]="!loaders.budgetSummary"
-                         [ngIfElse]="loadedSummary">
-              <div class="my-5">
-                <app-spinner-grow></app-spinner-grow>
-              </div>
-            </ng-template>
-            <ng-template #loadedSummary>
-              <ng-template [ngIf]="budgets && budgets.length <= 1"
-                           [ngIfElse]="displayChartSummary">
-                <app-error [errorType]="ErrorType.Application"
-                           [errorImage]="ErrorImage.ChartIcon"
-                           [notFoundErrorText]="''"
-                           [secondaryErrorText]="'To display charts, select at least 2 budgets'">
-                </app-error>
               </ng-template>
-              <ng-template #displayChartSummary>
-                <div class="text-start">
-                  <label for="budget-summary">Budget summary</label>
+              <ng-template [ngIf]="!loaders.budgetSummary"
+                           [ngIfElse]="loadedSummary">
+                <div class="my-5">
+                  <app-spinner-grow></app-spinner-grow>
                 </div>
-                <div id="budget-summary" class="mx-2 my-2"
-                     [className]="responseModels.budgetSummary.statusCode != 200? '' :
+              </ng-template>
+              <ng-template #loadedSummary>
+                <ng-template [ngIf]="budgets && budgets.length <= 1"
+                             [ngIfElse]="displayChartSummary">
+                  <app-error [errorType]="ErrorType.Application"
+                             [errorImage]="ErrorImage.ChartIcon"
+                             [notFoundErrorText]="''"
+                             [secondaryErrorText]="'To display charts, select at least 2 budgets'">
+                  </app-error>
+                </ng-template>
+                <ng-template #displayChartSummary>
+                  <div class="text-start">
+                    <label for="budget-summary">Budget summary</label>
+                  </div>
+                  <div id="budget-summary" class="mx-2 my-2"
+                       [className]="responseModels.budgetSummary.statusCode != 200? '' :
                    getPieChartClassFor(chartData.budgetCategories, isMobileView())">
-                  <ng-template [ngIf]="responseModels.budgetSummary.statusCode != 200"
-                               [ngIfElse]="displaySummaryCharts">
-                    <app-error [errorType]="ErrorType.Application"
-                               [errorImage]="ErrorImage.ChartIcon"
-                               [notFoundErrorText]="'Budget summary data not found'">
-                    </app-error>
-                  </ng-template>
-                  <ng-template #displaySummaryCharts>
-                    <div class="mt-3">
-                      <ul ngbNav class="nav-tabs">
-                        <li ngbNavItem>
-                          <button ngbNavLink (click)="incomeStatisticTab = IncomeStatisticsTab.BudgetTab">
-                            Wage
-                          </button>
-                        </li>
-                        <li ngbNavItem>
-                          <button ngbNavLink (click)="incomeStatisticTab = IncomeStatisticsTab.SurplusTab">
-                            Surplus
-                          </button>
-                        </li>
-                      </ul>
-                      <ng-container [ngSwitch]="incomeStatisticTab">
-                        <ng-container *ngSwitchCase="IncomeStatisticsTab.BudgetTab">
-                          <div [className]="chartData.budgetWage.length > 0 ? 'mobile-height-l' : ''"
-                               class="mt-4 mb-2 mx-auto">
-                            <ng-template [ngIf]="chartData.budgetWage.length <= 0"
-                                         [ngIfElse]="wageChart">
-                              <div class="my-auto">
-                                <app-error [errorType]="ErrorType.Application"
-                                           [errorImage]="ErrorImage.ChartIcon"
-                                           [notFoundErrorText]="'Chart data is empty'"
-                                           [secondaryErrorText]="'you don\'t have any wage in your budgets'">
-                                </app-error>
-                              </div>
-                            </ng-template>
-                            <ng-template #wageChart>
-                              <ngx-charts-line-chart
-                                [results]="chartData.budgetWage"
-                                [scheme]="'picnic'"
-                                [animations]="true"
-                                [xAxis]="true"
-                                [yAxis]="true"
-                                [yAxisTickFormatting]="formatAxisY">
-                                <ng-template #seriesTooltipTemplate let-model="model">
-                                  <div class="my-2 mx-2" *ngFor="let item of model">
-                                    <div class="d-flex">
-                                      <div class="tooltip-square my-auto"
-                                           style="background-color:{{item.color}}">
-                                      </div>
-                                      <div class="my-auto">
-                                        {{ item.series }}: {{ format(BigNumber(item.value)) }} PLN
-                                      </div>
-                                    </div>
-                                  </div>
-                                </ng-template>
-                                <ng-template #tooltipTemplate let-model="model">
-                                  <div class="my-2 mx-2">
-                                    <div class="mb-1">{{ model.series }} - {{ model.name }}</div>
-                                    <h6>{{ format(BigNumber(model.value)) }} PLN</h6>
-                                  </div>
-                                </ng-template>
-                              </ngx-charts-line-chart>
-                            </ng-template>
-                          </div>
-                        </ng-container>
-                        <ng-container *ngSwitchCase="IncomeStatisticsTab.SurplusTab">
-                          <div [className]="chartData.budgetSurplus.length > 0 ? 'mobile-height-l' : ''"
-                               class="mt-4 mb-2 mx-auto">
-                            <ng-template [ngIf]="chartData.budgetSurplus.length <= 0"
-                                         [ngIfElse]="surplusChart">
-                              <div class="my-auto">
-                                <app-error [errorType]="ErrorType.Application"
-                                           [errorImage]="ErrorImage.ChartIcon"
-                                           [notFoundErrorText]="'Chart data is empty'"
-                                           [secondaryErrorText]="'you don\'t have any surplus in your budgets'">
-                                </app-error>
-                              </div>
-                            </ng-template>
-                            <ng-template #surplusChart>
-                              <ngx-charts-line-chart
-                                [results]="chartData.budgetSurplus"
-                                [scheme]="'vivid'"
-                                [animations]="true"
-                                [xAxis]="true"
-                                [yAxis]="true"
-                                [yAxisTickFormatting]="formatAxisY">
-                                <ng-template #seriesTooltipTemplate let-model="model">
-                                  <div class="my-2 mx-2" *ngFor="let item of model">
-                                    <div class="d-flex">
-                                      <div class="tooltip-square my-auto"
-                                           style="background-color:{{item.color}}">
-                                      </div>
-                                      <div class="my-auto">
-                                        {{ item.series }}: {{ format(BigNumber(item.value)) }} PLN
+                    <ng-template [ngIf]="responseModels.budgetSummary.statusCode != 200"
+                                 [ngIfElse]="displaySummaryCharts">
+                      <app-error [errorType]="ErrorType.Application"
+                                 [errorImage]="ErrorImage.ChartIcon"
+                                 [notFoundErrorText]="'Budget summary data not found'">
+                      </app-error>
+                    </ng-template>
+                    <ng-template #displaySummaryCharts>
+                      <div class="mt-3">
+                        <ul ngbNav class="nav-tabs">
+                          <li ngbNavItem>
+                            <button ngbNavLink (click)="incomeStatisticTab = IncomeStatisticsTab.BudgetTab">
+                              Wage
+                            </button>
+                          </li>
+                          <li ngbNavItem>
+                            <button ngbNavLink (click)="incomeStatisticTab = IncomeStatisticsTab.SurplusTab">
+                              Surplus
+                            </button>
+                          </li>
+                        </ul>
+                        <ng-container [ngSwitch]="incomeStatisticTab">
+                          <ng-container *ngSwitchCase="IncomeStatisticsTab.BudgetTab">
+                            <div [className]="chartData.budgetWage.length > 0 ? 'mobile-height-l' : ''"
+                                 class="mt-4 mb-2 mx-auto">
+                              <ng-template [ngIf]="chartData.budgetWage.length <= 0"
+                                           [ngIfElse]="wageChart">
+                                <div class="my-auto">
+                                  <app-error [errorType]="ErrorType.Application"
+                                             [errorImage]="ErrorImage.ChartIcon"
+                                             [notFoundErrorText]="'Chart data is empty'"
+                                             [secondaryErrorText]="'you don\'t have any wage in your budgets'">
+                                  </app-error>
+                                </div>
+                              </ng-template>
+                              <ng-template #wageChart>
+                                <ngx-charts-line-chart
+                                  [results]="chartData.budgetWage"
+                                  [scheme]="'picnic'"
+                                  [animations]="true"
+                                  [xAxis]="true"
+                                  [yAxis]="true"
+                                  [yAxisTickFormatting]="formatAxisY">
+                                  <ng-template #seriesTooltipTemplate let-model="model">
+                                    <div class="my-2 mx-2" *ngFor="let item of model">
+                                      <div class="d-flex">
+                                        <div class="tooltip-square my-auto"
+                                             style="background-color:{{item.color}}">
+                                        </div>
+                                        <div class="my-auto">
+                                          {{ item.series }}: {{ format(BigNumber(item.value)) }} PLN
+                                        </div>
                                       </div>
                                     </div>
-                                  </div>
-                                </ng-template>
-                                <ng-template #tooltipTemplate let-model="model">
-                                  <div class="my-2 mx-2">
-                                    <div class="mb-1">{{ model.series }} - {{ model.name }}</div>
-                                    <h6>{{ format(BigNumber(model.value)) }} PLN</h6>
-                                  </div>
-                                </ng-template>
-                              </ngx-charts-line-chart>
-                            </ng-template>
-                          </div>
-                        </ng-container>
-                      </ng-container>
-                    </div>
-                    <div class="mt-3">
-                      <ul ngbNav class="nav-tabs">
-                        <li ngbNavItem>
-                          <button ngbNavLink (click)="paymentStatisticTab = PaymentStatisticsTab.RegularTab">
-                            Regular payments
-                          </button>
-                        </li>
-                        <li ngbNavItem>
-                          <button ngbNavLink (click)="paymentStatisticTab = PaymentStatisticsTab.PlannedTab">
-                            Planned payments
-                          </button>
-                        </li>
-                      </ul>
-                      <ng-container [ngSwitch]="paymentStatisticTab">
-                        <ng-container *ngSwitchCase="PaymentStatisticsTab.RegularTab">
-                          <div [className]="chartData.regularPayments.length > 0 ? 'mobile-height-l' : ''"
-                               class="mt-4 mb-2 mx-auto">
-                            <ng-template [ngIf]="chartData.regularPayments.length <= 0"
-                                         [ngIfElse]="regularChart">
-                              <div class="my-auto">
-                                <app-error [errorType]="ErrorType.Application"
-                                           [errorImage]="ErrorImage.ChartIcon"
-                                           [notFoundErrorText]="'Chart data is empty'"
-                                           [secondaryErrorText]="'you don\'t have any regular payment in your budgets'">
-                                </app-error>
-                              </div>
-                            </ng-template>
-                            <ng-template #regularChart>
-                              <ngx-charts-line-chart
-                                [results]="chartData.regularPayments"
-                                [scheme]="'vivid'"
-                                [animations]="true"
-                                [xAxis]="true"
-                                [yAxis]="true"
-                                [yAxisTickFormatting]="formatAxisY">
-                                <ng-template #seriesTooltipTemplate let-model="model">
-                                  <div class="my-2 mx-2" *ngFor="let item of model">
-                                    <div class="d-flex">
-                                      <div class="tooltip-square my-auto"
-                                           style="background-color:{{item.color}}">
-                                      </div>
-                                      <div class="my-auto">
-                                        {{ item.series }}: {{ format(BigNumber(item.value)) }} PLN
+                                  </ng-template>
+                                  <ng-template #tooltipTemplate let-model="model">
+                                    <div class="my-2 mx-2">
+                                      <div class="mb-1">{{ model.series }} - {{ model.name }}</div>
+                                      <h6>{{ format(BigNumber(model.value)) }} PLN</h6>
+                                    </div>
+                                  </ng-template>
+                                </ngx-charts-line-chart>
+                              </ng-template>
+                            </div>
+                          </ng-container>
+                          <ng-container *ngSwitchCase="IncomeStatisticsTab.SurplusTab">
+                            <div [className]="chartData.budgetSurplus.length > 0 ? 'mobile-height-l' : ''"
+                                 class="mt-4 mb-2 mx-auto">
+                              <ng-template [ngIf]="chartData.budgetSurplus.length <= 0"
+                                           [ngIfElse]="surplusChart">
+                                <div class="my-auto">
+                                  <app-error [errorType]="ErrorType.Application"
+                                             [errorImage]="ErrorImage.ChartIcon"
+                                             [notFoundErrorText]="'Chart data is empty'"
+                                             [secondaryErrorText]="'you don\'t have any surplus in your budgets'">
+                                  </app-error>
+                                </div>
+                              </ng-template>
+                              <ng-template #surplusChart>
+                                <ngx-charts-line-chart
+                                  [results]="chartData.budgetSurplus"
+                                  [scheme]="'vivid'"
+                                  [animations]="true"
+                                  [xAxis]="true"
+                                  [yAxis]="true"
+                                  [yAxisTickFormatting]="formatAxisY">
+                                  <ng-template #seriesTooltipTemplate let-model="model">
+                                    <div class="my-2 mx-2" *ngFor="let item of model">
+                                      <div class="d-flex">
+                                        <div class="tooltip-square my-auto"
+                                             style="background-color:{{item.color}}">
+                                        </div>
+                                        <div class="my-auto">
+                                          {{ item.series }}: {{ format(BigNumber(item.value)) }} PLN
+                                        </div>
                                       </div>
                                     </div>
-                                  </div>
-                                </ng-template>
-                                <ng-template #tooltipTemplate let-model="model">
-                                  <div class="my-2 mx-2">
-                                    <div class="mb-1">{{ model.series }} - {{ model.name }}</div>
-                                    <h6>{{ format(BigNumber(model.value)) }} PLN</h6>
-                                  </div>
-                                </ng-template>
-                              </ngx-charts-line-chart>
-                            </ng-template>
-                          </div>
+                                  </ng-template>
+                                  <ng-template #tooltipTemplate let-model="model">
+                                    <div class="my-2 mx-2">
+                                      <div class="mb-1">{{ model.series }} - {{ model.name }}</div>
+                                      <h6>{{ format(BigNumber(model.value)) }} PLN</h6>
+                                    </div>
+                                  </ng-template>
+                                </ngx-charts-line-chart>
+                              </ng-template>
+                            </div>
+                          </ng-container>
                         </ng-container>
-                        <ng-container *ngSwitchCase="PaymentStatisticsTab.PlannedTab">
-                          <div [className]="chartData.plannedPayments.length > 0 ? 'mobile-height-l' : ''"
-                               class="mt-4 mb-2 mx-auto">
-                            <ng-template [ngIf]="chartData.plannedPayments.length <= 0"
-                                         [ngIfElse]="plannedChart">
-                              <div class="my-auto">
-                                <app-error [errorType]="ErrorType.Application"
-                                           [errorImage]="ErrorImage.ChartIcon"
-                                           [notFoundErrorText]="'Chart data is empty'"
-                                           [secondaryErrorText]="'you don\'t have any planned payment in your budgets'">
-                                </app-error>
-                              </div>
-                            </ng-template>
-                            <ng-template #plannedChart>
-                              <ngx-charts-line-chart
-                                [results]="chartData.plannedPayments"
-                                [scheme]="'vivid'"
-                                [animations]="true"
-                                [xAxis]="true"
-                                [yAxis]="true"
-                                [yAxisTickFormatting]="formatAxisY">
-                                <ng-template #seriesTooltipTemplate let-model="model">
-                                  <div class="my-2 mx-2" *ngFor="let item of model">
-                                    <div class="d-flex">
-                                      <div class="tooltip-square my-auto"
-                                           style="background-color:{{item.color}}">
-                                      </div>
-                                      <div class="my-auto">
-                                        {{ item.series }}: {{ format(BigNumber(item.value)) }} PLN
+                      </div>
+                      <div class="mt-3">
+                        <ul ngbNav class="nav-tabs">
+                          <li ngbNavItem>
+                            <button ngbNavLink (click)="paymentStatisticTab = PaymentStatisticsTab.RegularTab">
+                              {{ isMobileView() ? 'Regular' : 'Regular payments' }}
+                            </button>
+                          </li>
+                          <li ngbNavItem>
+                            <button ngbNavLink (click)="paymentStatisticTab = PaymentStatisticsTab.PlannedTab">
+                              {{ isMobileView() ? 'Planned' : 'Planned payments' }}
+                            </button>
+                          </li>
+                        </ul>
+                        <ng-container [ngSwitch]="paymentStatisticTab">
+                          <ng-container *ngSwitchCase="PaymentStatisticsTab.RegularTab">
+                            <div [className]="chartData.regularPayments.length > 0 ? 'mobile-height-l' : ''"
+                                 class="mt-4 mb-2 mx-auto">
+                              <ng-template [ngIf]="chartData.regularPayments.length <= 0"
+                                           [ngIfElse]="regularChart">
+                                <div class="my-auto">
+                                  <app-error [errorType]="ErrorType.Application"
+                                             [errorImage]="ErrorImage.ChartIcon"
+                                             [notFoundErrorText]="'Chart data is empty'"
+                                             [secondaryErrorText]="'you don\'t have any regular payment in your budgets'">
+                                  </app-error>
+                                </div>
+                              </ng-template>
+                              <ng-template #regularChart>
+                                <ngx-charts-line-chart
+                                  [results]="chartData.regularPayments"
+                                  [scheme]="'vivid'"
+                                  [animations]="true"
+                                  [xAxis]="true"
+                                  [yAxis]="true"
+                                  [yAxisTickFormatting]="formatAxisY">
+                                  <ng-template #seriesTooltipTemplate let-model="model">
+                                    <div class="my-2 mx-2" *ngFor="let item of model">
+                                      <div class="d-flex">
+                                        <div class="tooltip-square my-auto"
+                                             style="background-color:{{item.color}}">
+                                        </div>
+                                        <div class="my-auto">
+                                          {{ item.series }}: {{ format(BigNumber(item.value)) }} PLN
+                                        </div>
                                       </div>
                                     </div>
-                                  </div>
-                                </ng-template>
-                                <ng-template #tooltipTemplate let-model="model">
-                                  <div class="my-2 mx-2">
-                                    <div class="mb-1">{{ model.series }} - {{ model.name }}</div>
-                                    <h6>{{ format(BigNumber(model.value)) }} PLN</h6>
-                                  </div>
-                                </ng-template>
-                              </ngx-charts-line-chart>
-                            </ng-template>
-                          </div>
+                                  </ng-template>
+                                  <ng-template #tooltipTemplate let-model="model">
+                                    <div class="my-2 mx-2">
+                                      <div class="mb-1">{{ model.series }} - {{ model.name }}</div>
+                                      <h6>{{ format(BigNumber(model.value)) }} PLN</h6>
+                                    </div>
+                                  </ng-template>
+                                </ngx-charts-line-chart>
+                              </ng-template>
+                            </div>
+                          </ng-container>
+                          <ng-container *ngSwitchCase="PaymentStatisticsTab.PlannedTab">
+                            <div [className]="chartData.plannedPayments.length > 0 ? 'mobile-height-l' : ''"
+                                 class="mt-4 mb-2 mx-auto">
+                              <ng-template [ngIf]="chartData.plannedPayments.length <= 0"
+                                           [ngIfElse]="plannedChart">
+                                <div class="my-auto">
+                                  <app-error [errorType]="ErrorType.Application"
+                                             [errorImage]="ErrorImage.ChartIcon"
+                                             [notFoundErrorText]="'Chart data is empty'"
+                                             [secondaryErrorText]="'you don\'t have any planned payment in your budgets'">
+                                  </app-error>
+                                </div>
+                              </ng-template>
+                              <ng-template #plannedChart>
+                                <ngx-charts-line-chart
+                                  [results]="chartData.plannedPayments"
+                                  [scheme]="'vivid'"
+                                  [animations]="true"
+                                  [xAxis]="true"
+                                  [yAxis]="true"
+                                  [yAxisTickFormatting]="formatAxisY">
+                                  <ng-template #seriesTooltipTemplate let-model="model">
+                                    <div class="my-2 mx-2" *ngFor="let item of model">
+                                      <div class="d-flex">
+                                        <div class="tooltip-square my-auto"
+                                             style="background-color:{{item.color}}">
+                                        </div>
+                                        <div class="my-auto">
+                                          {{ item.series }}: {{ format(BigNumber(item.value)) }} PLN
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </ng-template>
+                                  <ng-template #tooltipTemplate let-model="model">
+                                    <div class="my-2 mx-2">
+                                      <div class="mb-1">{{ model.series }} - {{ model.name }}</div>
+                                      <h6>{{ format(BigNumber(model.value)) }} PLN</h6>
+                                    </div>
+                                  </ng-template>
+                                </ngx-charts-line-chart>
+                              </ng-template>
+                            </div>
+                          </ng-container>
                         </ng-container>
-                      </ng-container>
-                    </div>
-                  </ng-template>
-                </div>
+                      </div>
+                    </ng-template>
+                  </div>
+                </ng-template>
               </ng-template>
-            </ng-template>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </ng-template>
   </div>
   <app-budget-modal #budgetModal
                     (refreshPageEvent)="reloadPage()"
