@@ -4,18 +4,34 @@
     <app-spinner-grow></app-spinner-grow>
   </ng-template>
   <ng-template #loadedPlannedPaymentsBlock>
+    <div class="mb-3 row">
+      <div [className]="paymentResponseModel.statusCode == requiredStatusCode ? 'col-md-6' : 'col'">
+        <button type="button"
+                class="btn btn-success mb-3"
+                data-bs-toggle="tooltip"
+                data-bs-placement="bottom"
+                title="Add planned payment"
+                (click)="openModal()">
+          <i class="bi bi-plus-circle"></i> Create
+        </button>
+      </div>
+      <ng-template [ngIf]="paymentResponseModel.statusCode == requiredStatusCode">
+        <div class="col-md-6">
+          <app-order [name]="'planned-payment-order'"
+                     [orderTypes]="appConfig.request.order.plannedPaymentTypes"
+                     [excludedOrderTypes]="appConfig.request.order.excludedTypes"
+                     [orderDirections]="appConfig.request.order.orderDirections"
+                     (orderByEvent)="onOrderEvent($event)"
+                     (orderDirectionEvent)="onOrderEvent($event)">
+          </app-order>
+        </div>
+      </ng-template>
+      <hr class="horizontal">
+    </div>
     <ng-template [ngIf]="paymentResponseModel.statusCode == requiredStatusCode"
                  [ngIfElse]="errorPlannedPaymentsBlock">
       <div class="mb-3">
-        <app-order [name]="'planned-payment-order'"
-                   [orderTypes]="appConfig.request.order.plannedPaymentTypes"
-                   [excludedOrderTypes]="appConfig.request.order.excludedTypes"
-                   [orderDirections]="appConfig.request.order.orderDirections"
-                   (orderByEvent)="onOrderEvent($event)"
-                   (orderDirectionEvent)="onOrderEvent($event)">
-        </app-order>
       </div>
-      <hr class="horizontal">
       @for (plannedPayment of plannedPaymentsDto; track plannedPayment) {
         <div ngbAccordion>
           <div ngbAccordionItem

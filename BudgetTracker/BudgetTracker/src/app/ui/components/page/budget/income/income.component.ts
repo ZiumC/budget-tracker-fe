@@ -55,6 +55,7 @@ export class IncomeComponent implements OnInit, OnDestroy, AfterViewInit {
   protected incomeTotalPages: number | undefined;
   protected incomeRequestModel: RequestModel;
   protected incomeResponseModel: ResponseModel;
+  protected requiredStatusCode: number;
   protected assignmentStatusCode: number = 0;
   protected incomeLoader: boolean;
 
@@ -76,7 +77,7 @@ export class IncomeComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     this.incomeResponseModel = new ResponseModel();
-
+    this.requiredStatusCode = this.appConfig.response.required.incomeStatus;
     this.pageWidth = window.innerWidth;
     this.subscriptions = [];
 

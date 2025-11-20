@@ -4,18 +4,32 @@
     <app-spinner-grow></app-spinner-grow>
   </ng-template>
   <ng-template #loadedPaymentsBlock>
-    <ng-template [ngIf]="paymentResponseModel.statusCode == appConfig.response.required.paymentStatus"
-                 [ngIfElse]="errorPaymentsBlock">
-      <div class="mb-3">
-        <app-order [name]="'payment-order'"
-                   [orderTypes]="appConfig.request.order.paymentTypes"
-                   [excludedOrderTypes]="appConfig.request.order.excludedTypes"
-                   [orderDirections]="appConfig.request.order.orderDirections"
-                   (orderByEvent)="onOrderEvent($event)"
-                   (orderDirectionEvent)="onOrderEvent($event)">
-        </app-order>
+    <div class="mb-3 row">
+      <div [className]="paymentResponseModel.statusCode == requiredStatusCode ? 'col-md-6' : 'col'">
+        <button type="button"
+                class="btn btn-success mb-3"
+                data-bs-toggle="tooltip"
+                data-bs-placement="bottom"
+                title="Add payment"
+                (click)="openModal()">
+          <i class="bi bi-plus-circle"></i> Create
+        </button>
       </div>
+      <ng-template [ngIf]="paymentResponseModel.statusCode == requiredStatusCode">
+        <div class="col-md-6">
+          <app-order [name]="'payment-order'"
+                     [orderTypes]="appConfig.request.order.paymentTypes"
+                     [excludedOrderTypes]="appConfig.request.order.excludedTypes"
+                     [orderDirections]="appConfig.request.order.orderDirections"
+                     (orderByEvent)="onOrderEvent($event)"
+                     (orderDirectionEvent)="onOrderEvent($event)">
+          </app-order>
+        </div>
+      </ng-template>
       <hr class="horizontal">
+    </div>
+    <ng-template [ngIf]="paymentResponseModel.statusCode == requiredStatusCode"
+                 [ngIfElse]="errorPaymentsBlock">
       @for (payment of paymentsDto; track payment) {
         <div ngbAccordion>
           <div ngbAccordionItem
