@@ -229,13 +229,13 @@
   <app-planned-payments-modal #plannedPaymentModal
                               [idBudget]="idBudget"
                               [assignmentStatusCode]="assignmentStatusCode"
-                              (refreshEvent)=onRefreshPlannedPayment()>
+                              (refreshEvent)=onRefreshPlannedPayment(false)>
   </app-planned-payments-modal>
   <app-copy-payment-modal #copyPaymentModal>
 
   </app-copy-payment-modal>
   <app-delete-modal #deleteModal
-                    (refreshPlannedPaymentEvent)="onRefreshPlannedPayment()">
+                    (refreshPlannedPaymentEvent)="onRefreshPlannedPayment(false)">
 
   </app-delete-modal>
   <app-error-modal #errorModal>
