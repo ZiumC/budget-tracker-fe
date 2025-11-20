@@ -60,6 +60,7 @@ export class PaymentComponent implements OnInit, OnDestroy, AfterViewInit {
   protected paymentTotalPages: number | undefined;
   protected paymentLoader: boolean;
   protected paymentStatusLoader: boolean;
+  protected requiredStatusCode: number;
   protected assignmentStatusCode: number;
 
   constructor(
@@ -80,6 +81,7 @@ export class PaymentComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     this.pageWidth = window.innerWidth;
+    this.requiredStatusCode = this.appConfig.response.required.paymentStatus;
     this.paymentResponseModel = new ResponseModel();
     this.subscriptions = [];
 

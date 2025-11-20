@@ -247,13 +247,11 @@
                        [errorImage]="ErrorImage.NotfoundFile"
                        [response]="responseModels.budget"
                        [notFoundErrorText]="formatString(appConfig.form.messages.notFound,'Budget data')">
-
             </app-error>
           </ng-template>
         </ng-template>
       </div>
     </div>
-
     <div class="row">
       <div class="col">
         <div class="card text-center mb-3">
@@ -275,18 +273,14 @@
             </ul>
             <ng-container [ngSwitch]="budgetCurrentTab">
               <ng-container *ngSwitchCase="BudgetTabs.IncomeTab">
-                <app-income #appIncome
-                            [idBudget]="idBudget"
+                <app-income [idBudget]="idBudget"
                             (refreshEvent)="onRefreshStatisticsEvent($event, true)">
-
                 </app-income>
               </ng-container>
               <ng-container *ngSwitchCase="BudgetTabs.PlannedPaymentTab">
-                <app-planned-payment #appPlannedPayment
-                                     [idBudget]="idBudget"
+                <app-planned-payment [idBudget]="idBudget"
                                      (refreshAllStatisticsEvent)="onRefreshStatisticsEvent($event, true)"
                                      (refreshSummaryEvent)="onRefreshStatisticsEvent($event, false)">
-
                 </app-planned-payment>
               </ng-container>
               <ng-container *ngSwitchCase="BudgetTabs.RegularPaymentTab">

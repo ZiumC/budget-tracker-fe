@@ -4,18 +4,32 @@
     <app-spinner-grow></app-spinner-grow>
   </ng-template>
   <ng-template #loadedIncomesBlock>
+    <div class="mb-3 row">
+      <div [className]="incomeResponseModel.statusCode == requiredStatusCode ? 'col-md-6' : 'col'">
+        <button type="button"
+                class="btn btn-success mb-3"
+                data-bs-toggle="tooltip"
+                data-bs-placement="bottom"
+                title="Add income"
+                (click)="openModal()">
+          <i class="bi bi-plus-circle"></i> Create
+        </button>
+      </div>
+      <ng-template [ngIf]="incomeResponseModel.statusCode == requiredStatusCode">
+        <div class="col-md-6">
+          <app-order [name]="'income-order'"
+                     [orderTypes]="appConfig.request.order.incomeTypes"
+                     [excludedOrderTypes]="appConfig.request.order.excludedTypes"
+                     [orderDirections]="appConfig.request.order.orderDirections"
+                     (orderByEvent)="onOrderEvent($event)"
+                     (orderDirectionEvent)="onOrderEvent($event)">
+          </app-order>
+        </div>
+      </ng-template>
+      <hr class="horizontal">
+    </div>
     <ng-template [ngIf]="incomeResponseModel.statusCode == appConfig.response.required.incomeStatus"
                  [ngIfElse]="errorIncomesBlock">
-      <div class="mb-3">
-        <app-order [name]="'income-order'"
-                   [orderTypes]="appConfig.request.order.incomeTypes"
-                   [excludedOrderTypes]="appConfig.request.order.excludedTypes"
-                   [orderDirections]="appConfig.request.order.orderDirections"
-                   (orderByEvent)="onOrderEvent($event)"
-                   (orderDirectionEvent)="onOrderEvent($event)">
-        </app-order>
-      </div>
-      <hr class="horizontal">
       @for (income of incomesDto; track income) {
         <div ngbAccordion>
           <div ngbAccordionItem
