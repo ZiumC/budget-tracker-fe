@@ -83,8 +83,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
   protected budgetCurrentTab: BudgetTab;
   protected displayBudgetSubMenu: boolean;
   public innerWidth: any;
-  @ViewChild('menuBtn') menuBtn: ElementRef;
-  @ViewChild('menuIcon') menuIcon: ElementRef;
+  @ViewChild('budgetMenu') menuBtn: ElementRef;
 
   constructor(
     private httpService: HttpService,
@@ -93,8 +92,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
     private router: Router,
     private renderer: Renderer2) {
     this.renderer.listen('window', 'click', (e: Event): void => {
-      if (e.target !== this.menuBtn.nativeElement && e.target !== this.menuBtn.nativeElement &&
-          e.target !== this.menuIcon.nativeElement && e.target !== this.menuIcon.nativeElement) {
+      if (e.target !== this.menuBtn.nativeElement && e.target !== this.menuBtn.nativeElement.firstChild) {
         this.displayBudgetSubMenu = false;
       }
     });

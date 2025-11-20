@@ -36,7 +36,7 @@
             </li>
           </ng-template>
           <ng-template #desktopView>
-            <li class="btn btn-outline-light mx-2 my-2"
+            <li #userMenu class="btn btn-outline-light mx-2 my-2"
                 (click)="displayUserSubMenu = !displayUserSubMenu">
               <i class="bi bi-person-circle"></i>
               <ng-template [ngIf]="displayUserSubMenu"

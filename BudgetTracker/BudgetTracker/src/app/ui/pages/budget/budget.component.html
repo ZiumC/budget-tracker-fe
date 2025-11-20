@@ -10,10 +10,10 @@
           <ng-template [ngIf]="responseModels.budget.statusCode == appConfig.response.required.budgetStatus"
                        [ngIfElse]="budgetErrorBlock">
             <div class="text-end mt-1 mx-1 options-menu">
-              <button #menuBtn type="button"
+              <button #budgetMenu type="button"
                       class="btn btn-light"
                       (click)="displayBudgetSubMenu=!displayBudgetSubMenu">
-                <i #menuIcon class="bi bi-three-dots"></i>
+                <i class="bi bi-three-dots"></i>
               </button>
             </div>
             <ng-template [ngIf]="displayBudgetSubMenu">

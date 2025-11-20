@@ -1,4 +1,4 @@
-import {Component, HostListener, OnDestroy, OnInit} from '@angular/core';
+import {Component, ElementRef, HostListener, OnDestroy, OnInit, Renderer2, ViewChild} from '@angular/core';
 import {Router} from '@angular/router';
 import {AuthService} from "../../../../services/auth/auth.service";
 import {ConfigService} from "../../../../services/config/config.service";
@@ -14,10 +14,18 @@ export class HeaderComponent implements OnInit {
   protected displayUserSubMenu: boolean = false;
   private appConfig: AppConfig;
   public innerWidth: any;
+  @ViewChild('userMenu') menu: ElementRef;
 
   constructor(
     protected authService: AuthService,
-    private configService: ConfigService) {
+    private configService: ConfigService,
+    private renderer: Renderer2) {
+    this.renderer.listen('window', 'click', (e: Event): void => {
+      let personIcon = this.menu.nativeElement.firstChild;
+      if (e.target !== this.menu.nativeElement && e.target !== personIcon) {
+        this.displayUserSubMenu = false;
+      }
+    });
   }
 
   ngOnInit(): void {
