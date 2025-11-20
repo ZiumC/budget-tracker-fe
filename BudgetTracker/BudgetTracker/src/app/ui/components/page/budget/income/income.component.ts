@@ -113,12 +113,12 @@ export class IncomeComponent implements OnInit, OnDestroy, AfterViewInit {
   protected onPageSizeEvent(pageSize: number): void {
     this.incomeRequestModel.page = this.appConfig.request.pagination.defaultPage;
     this.incomeRequestModel.pageSize = pageSize;
-    this.onRefreshIncome();
+    this.onRefreshIncome(true);
   }
 
   protected onPageEvent(page: number): void {
     this.incomeRequestModel.page = page;
-    this.onRefreshIncome();
+    this.onRefreshIncome(true);
   }
 
   protected onOrderEvent(orderOptions: OrderOptions): void {
@@ -129,13 +129,15 @@ export class IncomeComponent implements OnInit, OnDestroy, AfterViewInit {
       } else {
         this.incomeRequestModel.order = null;
       }
-      this.onRefreshIncome();
+      this.onRefreshIncome(true);
     }
   }
 
-  protected onRefreshIncome(): void {
+  protected onRefreshIncome(isRefreshByOrder: boolean): void {
     this.markIncomesAsLoaded(false);
-    this.refreshEvent.next(true);
+    if (!isRefreshByOrder){
+      this.refreshEvent.next(true);
+    }
     this.getIncomes();
   }
 
