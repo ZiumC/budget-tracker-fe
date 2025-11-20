@@ -33,8 +33,7 @@ import {
   GetPlannedPaymentStatsDto,
   GetRegularPaymentStatsDto
 } from "../../models/statistics.model";
-import {OtpDto} from "../../models/dto/user.model.dto";
-import {CompletePassResetDto, InitPassResetDto, LoginDto} from "../../models/components/login.component";
+import {CompletePassResetDto, InitPassResetDto, LoginDto, OtpDto} from "../../models/components/login.component";
 import {CompleteRegisterDto, InitRegisterDto} from "../../models/components/register.component";
 import {
   ChangeEmailDto,

@@ -25,7 +25,7 @@ import {
   GetRegularPaymentStatsDto
 } from "../../../models/statistics.model";
 import {ErrorImage, ErrorType} from "../../../models/error.model";
-import {DataResult, Loaders, StatisticsTab} from "../../../models/components/budget.component";
+import {BudgetTab, DataResult, Loaders} from "../../../models/components/budget.component";
 import {
   computePercent,
   formatPercent,
@@ -50,7 +50,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
   protected readonly LegendPosition = LegendPosition;
   protected readonly ErrorType = ErrorType;
   protected readonly ErrorImage = ErrorImage;
-  protected readonly BudgetTabs = StatisticsTab;
+  protected readonly BudgetTabs = BudgetTab;
   protected readonly BudgetPlannedPayment = BudgetPlannedPayment;
   protected readonly BudgetRegularPayment = BudgetRegularPayment;
   protected readonly format = format;
@@ -69,7 +69,8 @@ export class BudgetComponent implements OnInit, OnDestroy {
   protected loaders: Loaders;
   protected budgetSummary: GetBudgetStatisticsSummaryDto | null;
   protected chartData: DataResult = new DataResult();
-  protected currentTab: StatisticsTab;
+  protected statisticCurrentTab: BudgetTab;
+  protected budgetCurrentTab: BudgetTab;
   public innerWidth: any;
 
   constructor(
@@ -98,7 +99,8 @@ export class BudgetComponent implements OnInit, OnDestroy {
       this.idBudget = params['id'];
     });
 
-    this.currentTab = StatisticsTab.IncomeTab;
+    this.statisticCurrentTab = BudgetTab.IncomeTab;
+    this.budgetCurrentTab = BudgetTab.IncomeTab;
     this.chartData.pieChart = {
       income: [],
       planned: [],
