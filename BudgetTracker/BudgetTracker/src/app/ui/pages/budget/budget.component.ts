@@ -1,4 +1,13 @@
-import {AfterViewInit, Component, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  HostListener,
+  OnDestroy,
+  OnInit,
+  Renderer2,
+  ViewChild
+} from '@angular/core';
 import {SpinnerSize} from "../../components/shared/spinner/spinner.component";
 import BigNumber from "bignumber.js";
 import {Subscription} from "rxjs";
@@ -45,6 +54,7 @@ import {BudgetSummary} from "../../../util/chart/budget/budget.chart.util";
 })
 export class BudgetComponent implements OnInit, OnDestroy {
   @ViewChild('errorModal') errorModal: any;
+  @ViewChild('budgetMenu') budgetMenu: any;
   protected readonly DateUtils = DateUtil;
   protected readonly SpinnerSize = SpinnerSize;
   protected readonly LegendPosition = LegendPosition;
@@ -71,13 +81,23 @@ export class BudgetComponent implements OnInit, OnDestroy {
   protected chartData: DataResult = new DataResult();
   protected statisticCurrentTab: BudgetTab;
   protected budgetCurrentTab: BudgetTab;
+  protected displayBudgetSubMenu: boolean;
   public innerWidth: any;
+  @ViewChild('menuBtn') menuBtn: ElementRef;
+  @ViewChild('menuIcon') menuIcon: ElementRef;
 
   constructor(
     private httpService: HttpService,
     private activatedRoute: ActivatedRoute,
     private configService: ConfigService,
-    private router: Router) {
+    private router: Router,
+    private renderer: Renderer2) {
+    this.renderer.listen('window', 'click', (e: Event): void => {
+      if (e.target !== this.menuBtn.nativeElement && e.target !== this.menuBtn.nativeElement &&
+          e.target !== this.menuIcon.nativeElement && e.target !== this.menuIcon.nativeElement) {
+        this.displayBudgetSubMenu = false;
+      }
+    });
   }
 
   ngOnDestroy(): void {
@@ -101,6 +121,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
 
     this.statisticCurrentTab = BudgetTab.IncomeTab;
     this.budgetCurrentTab = BudgetTab.IncomeTab;
+    this.displayBudgetSubMenu = false;
     this.chartData.pieChart = {
       income: [],
       planned: [],
