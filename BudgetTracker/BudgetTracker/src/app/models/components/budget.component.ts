@@ -3,7 +3,7 @@ import {
   HorizontalBarDataResult,
 } from "../charts.model";
 
-export enum StatisticsTab {
+export enum BudgetTab {
   IncomeTab = "incomeTab",
   PlannedPaymentTab = "plannedPaymentTab",
   RegularPaymentTab = "regularPaymentTab"

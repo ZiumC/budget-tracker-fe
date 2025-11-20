@@ -26,3 +26,8 @@ export class CompletePassResetDto {
   email: string;
   challengePassword: string;
 }
+
+export class OtpDto {
+  emailOrLogin: string;
+  code: string;
+}
