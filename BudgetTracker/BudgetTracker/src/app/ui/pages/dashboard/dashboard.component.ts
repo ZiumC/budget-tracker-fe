@@ -137,8 +137,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.paymentStatisticTab = PaymentStatisticsTab.RegularTab;
 
     this.getBudgets(this.requestModel);
-    this.getBudgetCategories(this.requestModel);
-    this.getBudgetSummary(this.requestModel);
     this.onResize();
   }
 
@@ -160,8 +158,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.responseModels.budgets = new ResponseModel();
     this.responseModels.budgetCategories = new ResponseModel();
     this.getBudgets(this.requestModel);
-    this.getBudgetCategories(this.requestModel);
-    this.getBudgetSummary(this.requestModel);
   }
 
   protected updateBudget(idBudget: string): void {
@@ -309,7 +305,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.httpService.getBudgets(requestParamModel).subscribe({
         next: (response: HttpResponse<GetBudgetDto[]>): void => {
           this.budgets = response.body;
-          this.responseModels.budgets.statusCode = response.status
+          this.responseModels.budgets.statusCode = response.status;
+          this.getBudgetCategories(this.requestModel);
+          this.getBudgetSummary(this.requestModel);
         },
         error: (err): void => {
           this.responseModels.budgets = getErrorResponse(err);
