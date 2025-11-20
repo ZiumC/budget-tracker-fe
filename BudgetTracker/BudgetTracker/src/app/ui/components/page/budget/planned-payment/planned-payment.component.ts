@@ -1,7 +1,8 @@
 import {
   AfterViewInit,
   Component,
-  ElementRef, EventEmitter,
+  ElementRef,
+  EventEmitter,
   HostListener,
   Input,
   OnDestroy,
@@ -30,6 +31,7 @@ import {PaymentStatusDto} from "../../../../../models/dto/payment.model.dto";
 import {GetPaymentAssignmentDto} from "../../../../../models/dto/assignment.model.dto";
 import {getPaymentType} from "../../../../../util/category.utils";
 import {ErrorImage, ErrorType} from "../../../../../models/error.model";
+import {BudgetTab} from "../../../../../models/components/budget.component";
 
 @Component({
   selector: 'app-planned-payment',
@@ -41,6 +43,7 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy, AfterViewInit
   @ViewChild('plannedPaymentModal') plannedPaymentModal: any;
   @ViewChild('errorModal') errorModal: any;
   @Input() idBudget: string;
+  @Input() selectedTab: BudgetTab;
   @Output() refreshAllStatisticsEvent = new EventEmitter<boolean>();
   @Output() refreshSummaryEvent = new EventEmitter<boolean>();
   private componentDimension = {width: 0, height: 0};
@@ -92,7 +95,10 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy, AfterViewInit
       pageSize: this.appConfig.request.pagination.defaultPageSizeOptions[0],
     })
 
-    this.getPlannedPayments();
+    if (this.selectedTab == BudgetTab.PlannedPaymentTab){
+      this.getPlannedPayments();
+    }
+
     this.defaultOrderParams();
   }
 

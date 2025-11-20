@@ -1,7 +1,8 @@
 import {
   AfterViewInit,
   Component,
-  ElementRef, EventEmitter,
+  ElementRef,
+  EventEmitter,
   HostListener,
   Input,
   OnDestroy,
@@ -28,6 +29,7 @@ import {OrderOptions} from "../../../shared/order/order.component";
 import {PageDto} from "../../../../../models/dto/page.model.dto";
 import {GetIncomeAssignmentDto} from "../../../../../models/dto/assignment.model.dto";
 import {ErrorImage, ErrorType} from "../../../../../models/error.model";
+import {BudgetTab} from "../../../../../models/components/budget.component";
 
 @Component({
   selector: 'app-income',
@@ -39,6 +41,7 @@ export class IncomeComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('errorModal') errorModal: any;
   @ViewChild('incomeModal') incomeModal: any;
   @Input() idBudget: string;
+  @Input() selectedTab: BudgetTab;
   @Output() refreshEvent = new EventEmitter<boolean>();
   private componentDimension = {width: 0, height: 0};
   private pageWidth: number;
@@ -86,7 +89,10 @@ export class IncomeComponent implements OnInit, OnDestroy, AfterViewInit {
       pageSize: this.appConfig.request.pagination.defaultPageSizeOptions[0],
     })
 
-    this.getIncomes();
+    if (this.selectedTab == BudgetTab.IncomeTab){
+      this.getIncomes();
+    }
+
     this.defaultOrderParams();
   }
 

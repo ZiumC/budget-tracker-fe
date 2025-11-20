@@ -9,6 +9,12 @@
         <ng-template #loadedBudgetBlock>
           <ng-template [ngIf]="responseModels.budget.statusCode == appConfig.response.required.budgetStatus"
                        [ngIfElse]="budgetErrorBlock">
+            <div class="text-end mt-1 mx-1 options-menu">
+              <button type="button"
+                      class="btn btn-light">
+                <i class="bi bi-three-dots"></i>
+              </button>
+            </div>
             <h5 class="card-title">{{ budgetDto?.name }}</h5>
             <table>
               <tr>
@@ -31,32 +37,6 @@
               </tr>
             </table>
             <div class="mt-2">
-              <!--              <div class="mb-1 text-center"-->
-              <!--                   [className]="isMobileView() ? 'budget-button-options-rows' : 'budget-button-options-4-cols'">-->
-              <!--                <button type="button"-->
-              <!--                        [className]="innerWidth > appConfig.pageMobileWidth ? 'btn btn-success' : 'btn btn-success width-ex-20'"-->
-              <!--                        data-bs-toggle="tooltip"-->
-              <!--                        data-bs-placement="bottom"-->
-              <!--                        title="Add income"-->
-              <!--                        (click)="appIncome.openModal()">-->
-              <!--                  <i class="bi bi-cash-coin"></i> Income-->
-              <!--                </button>-->
-              <!--                <button type="button"-->
-              <!--                        [className]="innerWidth > appConfig.pageMobileWidth ? 'btn btn-success' : 'btn btn-success width-ex-20'"-->
-              <!--                        data-bs-toggle="tooltip"-->
-              <!--                        data-bs-placement="bottom"-->
-              <!--                        title="Add planned payment"-->
-              <!--                        (click)="appPlannedPayment.openModal()">-->
-              <!--                  <i class="bi bi-file-spreadsheet-fill"></i> Planned-->
-              <!--                </button>-->
-              <!--                <button type="button"-->
-              <!--                        [className]="innerWidth > appConfig.pageMobileWidth ? 'btn btn-success' : 'btn btn-success width-ex-20'"-->
-              <!--                        data-bs-toggle="tooltip"-->
-              <!--                        data-bs-placement="bottom"-->
-              <!--                        title="Add payment"-->
-              <!--                        (click)="appPayment.openModal()">-->
-              <!--                  <i class="bi bi-coin"></i> Regular-->
-              <!--                </button>-->
               <!--                <button type="button"-->
               <!--                        [className]="innerWidth > appConfig.pageMobileWidth ? 'btn btn-danger' : 'btn btn-danger width-ex-20'"-->
               <!--                        data-bs-toggle="tooltip"-->
@@ -65,7 +45,6 @@
               <!--                        (click)="deleteModal.openWithBudget(budgetDto!)">-->
               <!--                  <i class="bi bi-trash3-fill"></i> Delete-->
               <!--                </button>-->
-              <!--              </div>-->
               <ng-template
                 [ngIf]="responseModels.budgetSummary.statusCode == appConfig.response.required.budgetSummaryStatus">
                 <div class="container">
@@ -274,18 +253,20 @@
             <ng-container [ngSwitch]="budgetCurrentTab">
               <ng-container *ngSwitchCase="BudgetTabs.IncomeTab">
                 <app-income [idBudget]="idBudget"
+                            [selectedTab]="budgetCurrentTab"
                             (refreshEvent)="onRefreshStatisticsEvent($event, true)">
                 </app-income>
               </ng-container>
               <ng-container *ngSwitchCase="BudgetTabs.PlannedPaymentTab">
                 <app-planned-payment [idBudget]="idBudget"
+                                     [selectedTab]="budgetCurrentTab"
                                      (refreshAllStatisticsEvent)="onRefreshStatisticsEvent($event, true)"
                                      (refreshSummaryEvent)="onRefreshStatisticsEvent($event, false)">
                 </app-planned-payment>
               </ng-container>
               <ng-container *ngSwitchCase="BudgetTabs.RegularPaymentTab">
-                <app-payment #appPayment
-                             [idBudget]="idBudget"
+                <app-payment [idBudget]="idBudget"
+                             [selectedTab]="budgetCurrentTab"
                              (refreshEvent)="onRefreshStatisticsEvent($event, true)"
                              (refreshSummaryEvent)="onRefreshStatisticsEvent($event, false)">
                 </app-payment>
@@ -295,63 +276,6 @@
         </div>
       </div>
     </div>
-    <!--    <ng-container [ngSwitch]="budgetCurrentTab">-->
-    <!--      <ng-container *ngSwitchCase="BudgetTabs.IncomeTab">-->
-    <!--        <div class="row">-->
-    <!--          <div class="col-md-6">-->
-    <!--            <div class="card text-center mb-3">-->
-    <!--              <div class="card-header">-->
-    <!--                Incomes-->
-    <!--              </div>-->
-    <!--              <div id="incomes-card" class="card-body">-->
-    <!--                <app-income #appIncome-->
-    <!--                            [idBudget]="idBudget"-->
-    <!--                            (refreshEvent)="onRefreshStatisticsEvent($event, true)">-->
-
-    <!--                </app-income>-->
-    <!--              </div>-->
-    <!--            </div>-->
-    <!--          </div>-->
-    <!--        </div>-->
-    <!--      </ng-container>-->
-    <!--      <ng-container *ngSwitchCase="BudgetTabs.PlannedPaymentTab">-->
-    <!--        <div class="row">-->
-    <!--          <div class="col-md-6">-->
-    <!--            <div class="card text-center mb-3">-->
-    <!--              <div class="card-header">-->
-    <!--                Planned payments-->
-    <!--              </div>-->
-    <!--              <div id="planned-payments-card" class="card-body">-->
-    <!--                <app-planned-payment #appPlannedPayment-->
-    <!--                                     [idBudget]="idBudget"-->
-    <!--                                     (refreshAllStatisticsEvent)="onRefreshStatisticsEvent($event, true)"-->
-    <!--                                     (refreshSummaryEvent)="onRefreshStatisticsEvent($event, false)">-->
-
-    <!--                </app-planned-payment>-->
-    <!--              </div>-->
-    <!--            </div>-->
-    <!--          </div>-->
-    <!--        </div>-->
-    <!--      </ng-container>-->
-    <!--      <ng-container *ngSwitchCase="BudgetTabs.RegularPaymentTab">-->
-    <!--        <div class="row">-->
-    <!--          <div class="col">-->
-    <!--            <div class="card text-center mb-3">-->
-    <!--              <div class="card-header">-->
-    <!--                Regular payments-->
-    <!--              </div>-->
-    <!--              <div id="payments-card" class="card-body">-->
-    <!--                <app-payment #appPayment-->
-    <!--                             [idBudget]="idBudget"-->
-    <!--                             (refreshEvent)="onRefreshStatisticsEvent($event, true)"-->
-    <!--                             (refreshSummaryEvent)="onRefreshStatisticsEvent($event, false)">-->
-    <!--                </app-payment>-->
-    <!--              </div>-->
-    <!--            </div>-->
-    <!--          </div>-->
-    <!--        </div>-->
-    <!--      </ng-container>-->
-    <!--    </ng-container>-->
     <div class="row">
       <div class="col">
         <div class="card text-center mb-3">

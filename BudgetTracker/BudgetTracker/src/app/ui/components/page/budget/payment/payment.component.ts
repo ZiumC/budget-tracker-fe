@@ -6,7 +6,8 @@ import {
   HostListener,
   Input,
   OnDestroy,
-  OnInit, Output,
+  OnInit,
+  Output,
   ViewChild
 } from '@angular/core';
 import {format, subtract} from "../../../../../util/number.util";
@@ -29,6 +30,7 @@ import {SortPayment} from "../../../../../util/arrays.utils";
 import {getPaymentType} from "../../../../../util/category.utils";
 import {GetPaymentAssignmentDto} from "../../../../../models/dto/assignment.model.dto";
 import {ErrorImage, ErrorType} from "../../../../../models/error.model";
+import {BudgetTab} from "../../../../../models/components/budget.component";
 
 @Component({
   selector: 'app-payment',
@@ -40,6 +42,7 @@ export class PaymentComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('errorModal') errorModal: any;
   @ViewChild('paymentModal') paymentModal: any;
   @Input() idBudget: string;
+  @Input() selectedTab: BudgetTab;
   @Output() refreshEvent = new EventEmitter<boolean>();
   @Output() refreshSummaryEvent = new EventEmitter<boolean>();
   private pageWidth: any;
@@ -90,7 +93,9 @@ export class PaymentComponent implements OnInit, OnDestroy, AfterViewInit {
       pageSize: this.appConfig.request.pagination.defaultPageSizeOptions[0],
     });
 
-    this.getPayments();
+    if (this.selectedTab == BudgetTab.RegularPaymentTab){
+      this.getPayments();
+    }
     this.defaultOrderParams();
   }
 
