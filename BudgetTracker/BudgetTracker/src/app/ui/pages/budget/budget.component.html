@@ -517,7 +517,27 @@
                 </div>
               </ng-template>
               <ng-template #loadedBudgetSummary>
-                <label for="budget-usage">Budget usage</label>
+                <label for="budget-usage">
+                  Budget usage
+                  <a #tooltipBudgetUsage="ngbTooltip"
+                     class="info-tooltip"
+                     [ngbTooltip]="tipBudgetUsageContent"
+                     (click)="tooltipBudgetUsage.open()">
+                    <i class="bi bi-info-circle"></i>
+                  </a>
+                  <ng-template #tipBudgetUsageContent>
+                    <p class="text-start mb-1">
+                      Formula for <strong>budget usage</strong> calculation:<br>
+                    </p>
+                    <ul class="text-start mb-1">
+                      <li>
+                        Total payments = <strong>Total regular</strong> payments +
+                        <strong>Total planned</strong> payments
+                      </li>
+                      <li>Usage = <strong>Total</strong> incomes - <strong>Total payments</strong></li>
+                    </ul>
+                  </ng-template>
+                </label>
                 <div id="budget-usage" class="horizontal-bar-chart mx-3">
                   <ng-template [ngIf]="responseModels.budgetSummary.statusCode != 200"
                                [ngIfElse]="displayBudgetSummary">
