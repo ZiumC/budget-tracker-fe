@@ -126,12 +126,12 @@ export class PaymentComponent implements OnInit, OnDestroy, AfterViewInit {
   protected onPageSizeEvent(pageSize: number): void {
     this.requestParams.page = this.appConfig.request.pagination.defaultPage;
     this.requestParams.pageSize = pageSize;
-    this.onRefreshPayment();
+    this.onRefreshPayment(true);
   }
 
   protected onPageEvent(page: number): void {
     this.requestParams.page = page;
-    this.onRefreshPayment();
+    this.onRefreshPayment(true);
   }
 
   protected onOrderEvent(orderOptions: OrderOptions): void {
@@ -142,7 +142,7 @@ export class PaymentComponent implements OnInit, OnDestroy, AfterViewInit {
       } else {
         this.requestParams.order = null;
       }
-      this.onRefreshPayment();
+      this.onRefreshPayment(true);
     } else {
       const isAscending = orderOptions.orderDirection.value ==
         this.appConfig.request.order.orderDirections[0].value;
@@ -151,9 +151,11 @@ export class PaymentComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  protected onRefreshPayment(): void {
+  protected onRefreshPayment(isRefreshByOrder: boolean): void {
     this.markPaymentsAsLoaded(false);
-    this.refreshEvent.next(true);
+    if (!isRefreshByOrder){
+      this.refreshEvent.next(true);
+    }
     this.getPayments();
   }
 

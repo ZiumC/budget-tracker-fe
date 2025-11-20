@@ -119,12 +119,12 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy, AfterViewInit
   protected onPageSizeEvent(pageSize: number): void {
     this.requestParams.page = this.appConfig.request.pagination.defaultPage;
     this.requestParams.pageSize = pageSize;
-    this.onRefreshPlannedPayment();
+    this.onRefreshPlannedPayment(true);
   }
 
   protected onPageEvent(page: number): void {
     this.requestParams.page = page;
-    this.onRefreshPlannedPayment();
+    this.onRefreshPlannedPayment(true);
   }
 
   protected paidBtnDisabled(plannedPayment: GetPlannedPaymentDto): boolean {
@@ -146,13 +146,15 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy, AfterViewInit
       } else {
         this.requestParams.order = null;
       }
-      this.onRefreshPlannedPayment();
+      this.onRefreshPlannedPayment(true);
     }
   }
 
-  protected onRefreshPlannedPayment(): void {
+  protected onRefreshPlannedPayment(isRefreshByOrder: boolean): void {
     this.markPlannedPaymentsAsLoaded(false);
-    this.refreshAllStatisticsEvent.next(true);
+    if (!isRefreshByOrder){
+      this.refreshAllStatisticsEvent.next(true);
+    }
     this.getPlannedPayments();
   }
 

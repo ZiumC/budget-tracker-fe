@@ -218,11 +218,11 @@
   <app-payment-modal #paymentModal
                      [idBudget]="idBudget"
                      [assignmentStatusCode]="assignmentStatusCode"
-                     (refreshPaymentEvent)="onRefreshPayment()">
+                     (refreshPaymentEvent)="onRefreshPayment(false)">
 
   </app-payment-modal>
   <app-delete-modal #deleteModal
-                    (refreshPaymentEvent)="onRefreshPayment()">
+                    (refreshPaymentEvent)="onRefreshPayment(false)">
 
   </app-delete-modal>
   <app-error-modal #errorModal>
