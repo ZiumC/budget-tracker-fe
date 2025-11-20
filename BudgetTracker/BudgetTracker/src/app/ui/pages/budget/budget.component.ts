@@ -1,4 +1,4 @@
-import {Component, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {SpinnerSize} from "../../components/shared/spinner/spinner.component";
 import BigNumber from "bignumber.js";
 import {Subscription} from "rxjs";
