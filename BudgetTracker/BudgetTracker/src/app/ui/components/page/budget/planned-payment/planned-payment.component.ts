@@ -95,7 +95,7 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy, AfterViewInit
       pageSize: this.appConfig.request.pagination.defaultPageSizeOptions[0],
     })
 
-    if (this.selectedTab == BudgetTab.PlannedPaymentTab){
+    if (this.selectedTab == BudgetTab.PlannedPaymentTab) {
       this.getPlannedPayments();
     }
 
@@ -208,6 +208,9 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy, AfterViewInit
         next: (response: HttpResponse<GetPlannedPaymentDto[]>): void => {
           this.plannedPaymentsDto = response.body;
           this.paymentResponseModel.statusCode = response.status;
+          if (this.plannedPaymentsDto && this.plannedPaymentsDto.length >= this.requestParams.pageSize) {
+            this.getPlannedPaymentTotalPages();
+          }
         }, error: (err): void => {
           const response = getErrorResponse(err);
           this.paymentResponseModel = response;
@@ -219,7 +222,6 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy, AfterViewInit
         },
         complete: (): void => {
           this.markPlannedPaymentsAsLoaded(true);
-          this.getPlannedPaymentTotalPages();
         }
       })
     )

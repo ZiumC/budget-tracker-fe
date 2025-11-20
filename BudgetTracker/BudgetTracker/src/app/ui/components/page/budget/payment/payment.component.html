@@ -5,9 +5,10 @@
   </ng-template>
   <ng-template #loadedPaymentsBlock>
     <div class="mb-3 row">
-      <div [className]="paymentResponseModel.statusCode == requiredStatusCode ? 'col-md-6' : 'col'">
+      <div class="mb-3"
+           [ngClass]="paymentResponseModel.statusCode == requiredStatusCode ? 'col-md-6' : 'col'">
         <button type="button"
-                class="btn btn-success mb-3"
+                class="btn btn-success"
                 data-bs-toggle="tooltip"
                 data-bs-placement="bottom"
                 title="Add payment"
@@ -16,7 +17,7 @@
         </button>
       </div>
       <ng-template [ngIf]="paymentResponseModel.statusCode == requiredStatusCode">
-        <div class="col-md-6">
+        <div class="col-md-6 mb-3">
           <app-order [name]="'payment-order'"
                      [orderTypes]="appConfig.request.order.paymentTypes"
                      [excludedOrderTypes]="appConfig.request.order.excludedTypes"
@@ -194,7 +195,7 @@
           </div>
         </div>
       }
-      @if (paymentTotalPages! > 0) {
+      @if (paymentTotalPages! > 1) {
         <app-pagination [name]="'payment-paginate'"
                         [pageCount]="paymentTotalPages!"
                         [displayPageSize]="true"

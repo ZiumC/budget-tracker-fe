@@ -89,7 +89,7 @@ export class IncomeComponent implements OnInit, OnDestroy, AfterViewInit {
       pageSize: this.appConfig.request.pagination.defaultPageSizeOptions[0],
     })
 
-    if (this.selectedTab == BudgetTab.IncomeTab){
+    if (this.selectedTab == BudgetTab.IncomeTab) {
       this.getIncomes();
     }
 
@@ -135,7 +135,7 @@ export class IncomeComponent implements OnInit, OnDestroy, AfterViewInit {
 
   protected onRefreshIncome(isRefreshByOrder: boolean): void {
     this.markIncomesAsLoaded(false);
-    if (!isRefreshByOrder){
+    if (!isRefreshByOrder) {
       this.refreshEvent.next(true);
     }
     this.getIncomes();
@@ -161,6 +161,9 @@ export class IncomeComponent implements OnInit, OnDestroy, AfterViewInit {
         next: (response: HttpResponse<GetIncomeDto[]>): void => {
           this.incomesDto = response.body;
           this.incomeResponseModel.statusCode = response.status;
+          if (this.incomesDto && this.incomesDto.length >= this.incomeRequestModel.pageSize) {
+            this.getIncomeTotalPages();
+          }
         },
         error: (err): void => {
           const response = getErrorResponse(err);
@@ -172,7 +175,6 @@ export class IncomeComponent implements OnInit, OnDestroy, AfterViewInit {
           this.refreshEvent.next(false);
         },
         complete: (): void => {
-          this.getIncomeTotalPages();
           this.markIncomesAsLoaded(true);
         }
       })
