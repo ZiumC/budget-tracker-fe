@@ -5,9 +5,10 @@
   </ng-template>
   <ng-template #loadedIncomesBlock>
     <div class="mb-3 row">
-      <div [className]="incomeResponseModel.statusCode == requiredStatusCode ? 'col-md-6' : 'col'">
+      <div class="mb-3"
+        [ngClass]="incomeResponseModel.statusCode == requiredStatusCode ? 'col-md-6' : 'col'">
         <button type="button"
-                class="btn btn-success mb-3"
+                class="btn btn-success"
                 data-bs-toggle="tooltip"
                 data-bs-placement="bottom"
                 title="Add income"
@@ -16,7 +17,7 @@
         </button>
       </div>
       <ng-template [ngIf]="incomeResponseModel.statusCode == requiredStatusCode">
-        <div class="col-md-6">
+        <div class="col-md-6 mb-3">
           <app-order [name]="'income-order'"
                      [orderTypes]="appConfig.request.order.incomeTypes"
                      [excludedOrderTypes]="appConfig.request.order.excludedTypes"
@@ -138,7 +139,7 @@
           </div>
         </div>
       }
-      @if (incomeTotalPages! > 0) {
+      @if (incomeTotalPages! > 1) {
         <app-pagination [name]="'income-paginate'"
                         [pageCount]="incomeTotalPages!"
                         [displayPageSize]="true"

@@ -93,7 +93,7 @@ export class PaymentComponent implements OnInit, OnDestroy, AfterViewInit {
       pageSize: this.appConfig.request.pagination.defaultPageSizeOptions[0],
     });
 
-    if (this.selectedTab == BudgetTab.RegularPaymentTab){
+    if (this.selectedTab == BudgetTab.RegularPaymentTab) {
       this.getPayments();
     }
     this.defaultOrderParams();
@@ -230,6 +230,9 @@ export class PaymentComponent implements OnInit, OnDestroy, AfterViewInit {
         next: (response: HttpResponse<GetPaymentDto[]>): void => {
           this.paymentsDto = response.body;
           this.paymentResponseModel.statusCode = response.status;
+          if (this.paymentsDto && this.paymentsDto.length >= this.requestParams.pageSize) {
+            this.getPaymentTotalPages();
+          }
         },
         error: (err): void => {
           const response = getErrorResponse(err);
@@ -241,7 +244,6 @@ export class PaymentComponent implements OnInit, OnDestroy, AfterViewInit {
           this.refreshEvent.next(false);
         },
         complete: (): void => {
-          this.getPaymentTotalPages();
           this.markPaymentsAsLoaded(true);
         }
       })
