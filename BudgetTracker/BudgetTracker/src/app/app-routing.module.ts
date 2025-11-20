@@ -18,14 +18,9 @@ const routes: Routes = [
     component: RegisterComponent
   },
   {
-    path: '',
-    component: DashboardComponent,
-    canActivate: [AuthGuard]
-  },
-  {
     path: 'profile',
     component: UserPanelComponent,
-    canActivate: [AuthGuard]
+    canActivate: [AuthGuard],
   },
   {
     path: 'dashboard',
@@ -42,6 +37,11 @@ const routes: Routes = [
     component: CategoryPageComponent,
     canActivate: [AuthGuard]
   },
+  {
+    path: '**',
+    redirectTo: 'dashboard',
+    pathMatch: 'full'
+  }
 ];
 
 @NgModule({
