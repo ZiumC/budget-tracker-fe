@@ -14,8 +14,8 @@ export class GetPlannedPaymentDto {
 
 export class PlannedPaymentDto {
   name: string;
-  estimated: BigNumber;
-  realPrice: BigNumber;
+  estimated: BigNumber | null;
+  realPrice: BigNumber | null;
   isPaid: boolean;
   comment: string;
   idPaymentCategory: string;

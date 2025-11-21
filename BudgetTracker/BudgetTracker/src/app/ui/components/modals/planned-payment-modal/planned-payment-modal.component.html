@@ -109,6 +109,10 @@
                   maxlength="{{ formConfig.paymentModal.price.maxLength }}"
                   placeholder="{{ formConfig.paymentModal.placeholder }}"
                   pattern="{{ formConfig.regex.money }}"
+                  (focus)="plannedPaymentEstimatedInput.value && plannedPaymentEstimatedInput.value[0] === '0' && plannedPaymentEstimatedInput.value[1] !== '.'?
+                      plannedPaymentDto.estimated = plannedPaymentEstimatedInput.value.substring(1) : !plannedPaymentEstimatedInput.value ? plannedPaymentDto.estimated = null : null;"
+                  (focusout)="plannedPaymentEstimatedInput.value && plannedPaymentEstimatedInput.value[0] === '0' && plannedPaymentEstimatedInput.value[1] !== '.' ?
+                      plannedPaymentDto.estimated = plannedPaymentEstimatedInput.value.substring(1) : null"
                   #plannedPaymentEstimatedInput="ngModel"
                   [ngClass]="{
                   'is-invalid': plannedPaymentEstimatedInput.invalid &&
@@ -146,6 +150,10 @@
                   maxlength="{{ formConfig.paymentModal.refund.maxLength }}"
                   placeholder="{{formConfig.paymentModal.placeholder}}"
                   pattern="{{formConfig.regex.money}}"
+                  (focus)="plannedPaymentRealPriceInput.value && plannedPaymentRealPriceInput.value[0] === '0' && plannedPaymentRealPriceInput.value[1] !== '.'?
+                      plannedPaymentDto.realPrice = plannedPaymentRealPriceInput.value.substring(1) : !plannedPaymentRealPriceInput.value ? plannedPaymentDto.realPrice = null : null;"
+                  (focusout)="plannedPaymentRealPriceInput.value && plannedPaymentRealPriceInput.value[0] === '0' && plannedPaymentRealPriceInput.value[1] !== '.' ?
+                      plannedPaymentDto.realPrice = plannedPaymentRealPriceInput.value.substring(1) : null"
                   [disabled]="plannedPaymentDto.isPaid"
                   #plannedPaymentRealPriceInput="ngModel"
                   [ngClass]="{

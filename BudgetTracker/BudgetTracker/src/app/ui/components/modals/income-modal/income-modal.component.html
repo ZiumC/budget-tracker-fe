@@ -82,6 +82,10 @@
                   min="{{ formConfig.incomeModal.wage.minValue }}"
                   maxlength="{{ formConfig.incomeModal.wage.maxLength }}"
                   placeholder="{{ formConfig.incomeModal.placeholder }}"
+                  (focus)="incomeWageInput.value && incomeWageInput.value[0] === '0' && incomeWageInput.value[1] !== '.'?
+                      incomeDto.wage = incomeWageInput.value.substring(1) : !incomeWageInput.value ? incomeDto.wage = null : null;"
+                  (focusout)="incomeWageInput.value && incomeWageInput.value[0] === '0' && incomeWageInput.value[1] !== '.' ?
+                      incomeDto.wage = incomeWageInput.value.substring(1) : null"
                   pattern="{{ formConfig.regex.money }}"
                   (ngModelChange)="validateSavings(incomeWageInput, incomeSavingsInput)"
                   #incomeWageInput="ngModel"
@@ -98,11 +102,11 @@
                     <label *ngIf="incomeWageInput.errors?.['min']">
                       {{ formatString(formConfig.messages.minValue, formConfig.incomeModal.wage.minValue) }}
                     </label>
-                    <label *ngIf="incomeWageInput.errors?.['pattern']">
-                      {{ formatString(formConfig.messages.invalidFormat, "number") }}
-                    </label>
                     <label *ngIf="incomeWageInput.errors?.['wageTooLow']">
                       {{ formConfig.messages.wageTooLow }}
+                    </label>
+                    <label *ngIf="incomeWageInput.errors?.['pattern']">
+                      {{ formatString(formConfig.messages.invalidFormat, "number") }}
                     </label>
                   </div>
                 }
@@ -124,6 +128,10 @@
                   placeholder="{{ formConfig.incomeModal.placeholder }}"
                   pattern="{{ formConfig.regex.money }}"
                   [required]="incomeDto.forSavings"
+                  (focus)="incomeSavingsInput.value && incomeSavingsInput.value[0] === '0' && incomeSavingsInput.value[1] !== '.'?
+                      incomeDto.savings = incomeSavingsInput.value.substring(1) : !incomeSavingsInput.value ? incomeDto.savings = null : null;"
+                  (focusout)="incomeSavingsInput.value && incomeSavingsInput.value[0] === '0' && incomeSavingsInput.value[1] !== '.' ?
+                      incomeDto.savings = incomeSavingsInput.value.substring(1) : null"
                   (ngModelChange)="validateSavings(incomeWageInput, incomeSavingsInput)"
                   #incomeSavingsInput="ngModel"
                   [ngClass]="{
