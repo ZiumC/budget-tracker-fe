@@ -1,6 +1,6 @@
-import {Component, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
-import {finalize, Subscription} from "rxjs";
+import {Subscription} from "rxjs";
 import {HttpService} from "../../../../services/http/http.service";
 import {SubscriptionUtils} from "../../../../util/subscription.utils";
 import {SpinnerSize} from "../../shared/spinner/spinner.component";
@@ -48,10 +48,6 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
     private modalService: NgbModal,
     private httpService: HttpService,
     private configService: ConfigService) {
-  }
-
-  test(ngModel: NgModel) {
-    console.log(ngModel.value)
   }
 
   ngOnDestroy(): void {
@@ -103,7 +99,7 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
 
     wageModel.control.markAsTouched();
     savingsModel.control.markAsTouched();
-    
+
     if (wage < savings) {
       wageModel.control.setErrors({wageTooLow: true});
       savingsModel.control.setErrors({savingsTooBig: true});
