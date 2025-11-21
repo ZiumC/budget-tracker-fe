@@ -484,7 +484,22 @@
                 </div>
               </ng-template>
               <ng-template #loadedBudgetCategories>
-                <label for="budget-summary">Budget categories</label>
+                <label for="budget-summary">
+                  Budget categories
+                  <a #tooltipBudgeCategories="ngbTooltip"
+                     class="info-tooltip"
+                     [ngbTooltip]="tipBudgetCategories"
+                     (click)="tooltipBudgeCategories.open()">
+                    <i class="bi bi-info-circle"></i>
+                  </a>
+                  <ng-template #tipBudgetCategories>
+                    <p class="text-start mb-1">
+                      The chart presents payments made, <strong>savings from incomes</strong>,
+                      and income in <strong>surplus status - goes to savings</strong>
+                      in {{ budgetDto?.name }} budget.
+                    </p>
+                  </ng-template>
+                </label>
                 <div class="mb-2 mx-3">
                   <div id="budget-summary" class="mx-auto"
                        [className]="chartData.pieChartGrid.generalCategories.length > 0 ? getPieChartGridClassFor(isMobileView()) : ''">
@@ -531,10 +546,10 @@
                     </p>
                     <ul class="text-start mb-1">
                       <li>
-                        Total payments = <strong>Total regular</strong> payments +
-                        <strong>Total planned</strong> payments
+                        Payments made = <strong>Regular payments</strong> made +
+                        <strong>Planned payments</strong> made
                       </li>
-                      <li>Usage = <strong>Total</strong> incomes - <strong>Total payments</strong></li>
+                      <li>Usage = <strong>Total incomes</strong> - Payments made</li>
                     </ul>
                   </ng-template>
                 </label>

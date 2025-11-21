@@ -1,5 +1,5 @@
 <div [ngClass]="responseModels.budgets.statusCode == appConfig.response.required.budgetStatus ? 'height-wrapper' : ''"
-  class="width-wrapper">
+     class="width-wrapper">
   <div class="component-wrapper component-bg">
     <div class="card mb-3 position-unset">
       <div class="card-body">
@@ -259,7 +259,22 @@
               </ng-template>
               <ng-template #loadedCategories>
                 <div class="text-start">
-                  <label for="general-categories">Budget categories</label>
+                  <label for="general-categories">
+                    Budget categories
+                    <a #tooltipBudgeCategories="ngbTooltip"
+                       class="info-tooltip"
+                       [ngbTooltip]="tipBudgetCategories"
+                       (click)="tooltipBudgeCategories.open()">
+                      <i class="bi bi-info-circle"></i>
+                    </a>
+                    <ng-template #tipBudgetCategories>
+                      <p class="text-start mb-1">
+                        The chart presents payments made, <strong>savings from incomes</strong>,
+                        and income in <strong>surplus status - goes to savings</strong>
+                        in budgets between {{requestModel.fromDate}} and {{requestModel.toDate}}.
+                      </p>
+                    </ng-template>
+                  </label>
                 </div>
                 <div class="mb-2 mx-3">
                   <div id="general-categories" class="mx-auto">
