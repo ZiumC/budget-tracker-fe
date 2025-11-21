@@ -1,7 +1,6 @@
 export enum CategoryType {
   NEEDS = "needs",
   WANTS = "wants",
-  SAVINGS = "savings",
   INCOMES = "incomes"
 }
 

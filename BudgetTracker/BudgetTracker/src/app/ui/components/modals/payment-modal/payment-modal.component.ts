@@ -100,9 +100,6 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
           case this.formConfig.categoryModal.wantsName:
             this.selectedPaymentCategoryType = CategoryType.WANTS;
             break;
-          case this.formConfig.categoryModal.savingsName:
-            this.selectedPaymentCategoryType = CategoryType.SAVINGS;
-            break;
           default:
             this.selectedPaymentCategoryType = null;
         }
