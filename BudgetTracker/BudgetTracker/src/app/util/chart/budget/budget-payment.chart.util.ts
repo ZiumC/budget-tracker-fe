@@ -3,6 +3,7 @@ import {ChartDataResult, HorizontalBarDataResult, LineChartResult} from "../../.
 import {GetPlannedPaymentStatsDto, GetRegularPaymentStatsDto,} from "../../../models/statistics.model";
 import BigNumber from "bignumber.js";
 import {add, subtract} from "../../number.util";
+import {subset} from "d3";
 
 enum SeriesType {
   PRICE = 'Price',
@@ -65,10 +66,16 @@ export class BudgetPaymentSummary {
       Object.entries(payments).forEach(([key, value]): void => {
         //regular payment
         if ('PriceSum' in value && 'RefundSum' in value) {
-          totalRefund = add(new BigNumber(totalRefund), new BigNumber(value.RefundSum));
+          const refund = new BigNumber(value.RefundSum);
+          const price = new BigNumber(value.PriceSum);
+          totalRefund = add(new BigNumber(totalRefund), refund);
+          let paymentResult = subtract(price, refund);
+          if (paymentResult.toNumber() < 0) {
+            paymentResult = price;
+          }
           result.push({
             name: key,
-            value: subtract(new BigNumber(value.PriceSum), new BigNumber(value.RefundSum)).toNumber()
+            value: paymentResult.toNumber()
           } as ChartDataResult);
 
           //planned payment
@@ -98,7 +105,13 @@ export class BudgetPaymentSummary {
     if (data) {
       const moneySpend = add(new BigNumber(data.regularPayment.paid), new BigNumber(data.plannedPayment.paid));
       const onlyIncomes = subtract(new BigNumber(data.income.wage), new BigNumber(data.income.savings));
-      const incomeLeft = add(subtract(onlyIncomes, moneySpend), new BigNumber(data.income.budgetSurplus));
+      let incomeLeft = add(subtract(onlyIncomes, moneySpend), new BigNumber(data.income.budgetSurplus));
+
+      const paidRefundSurplus = new BigNumber(data.regularPayment.paidRefundSurplus);
+      if (paidRefundSurplus.toNumber() > 0) {
+        incomeLeft = add(incomeLeft, add(paidRefundSurplus, new BigNumber(data.regularPayment.paid)));
+      }
+
       result.push({
         name: 'Budget',
         series: [

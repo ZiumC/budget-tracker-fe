@@ -64,36 +64,38 @@
           </div>
         </div>
         <div class="row">
-          <div [className]="innerWidth > appConfig.pageMobileWidth ? 'col-md-6': 'col-md-6  mb-4 pb-2'">
-            <div [className]="ModalUtils.displayMarginFor(paymentPaidSelect)">
-              <label for="payment-paid">Status</label>
-              @if (paidStatusEnabled()) {
-                <span class="text-danger">*</span>
-              }
-              <select
-                id="payment-paid"
-                name="payment-paid"
-                class="form-control"
-                [(ngModel)]="plannedPaymentDto.isPaid"
-                [disabled]="!paidStatusEnabled()"
-                required
-                #paymentPaidSelect="ngModel"
-                [ngClass]="{
+          <div [className]="ModalUtils.displayMarginFor(paymentPaidSelect)">
+            <label for="payment-paid">Status</label>
+            @if (paidStatusEnabled()) {
+              <span class="text-danger">*</span>
+            }
+            <select
+              id="payment-paid"
+              name="payment-paid"
+              class="form-control"
+              [(ngModel)]="plannedPaymentDto.isPaid"
+              [disabled]="!paidStatusEnabled()"
+              required
+              #paymentPaidSelect="ngModel"
+              [ngClass]="{
                 'is-invalid': paymentPaidSelect.invalid &&
                   (paymentPaidSelect.dirty || paymentPaidSelect.touched),
                 'is-valid': paymentPaidSelect.valid }">
-                <option value=false>Payment not paid</option>
-                <option value=true>Payment paid</option>
-              </select>
-              @if (paymentPaidSelect.invalid &&
-              (paymentPaidSelect.dirty || paymentPaidSelect.touched)) {
-                <div class="invalid-feedback">
-                  <label *ngIf="paymentPaidSelect.errors?.['required']">
-                    {{ formConfig.messages.required }}
-                  </label>
-                </div>
-              }
-            </div>
+              <option value=false>Payment not paid</option>
+              <option value=true>Payment paid</option>
+            </select>
+            @if (paymentPaidSelect.invalid &&
+            (paymentPaidSelect.dirty || paymentPaidSelect.touched)) {
+              <div class="invalid-feedback">
+                <label *ngIf="paymentPaidSelect.errors?.['required']">
+                  {{ formConfig.messages.required }}
+                </label>
+              </div>
+            }
+          </div>
+        </div>
+        <div class="row">
+          <div [className]="innerWidth > appConfig.pageMobileWidth ? 'col-md-6': 'col-md-6  mb-4 pb-2'">
             <div [className]="ModalUtils.displayMarginFor(plannedPaymentEstimatedInput)">
               <label for="planned-payment-estimated">Estimated</label>
               <span class="text-danger">*</span>
@@ -137,6 +139,8 @@
                 }
               </div>
             </div>
+          </div>
+          <div class="col-md-6">
             <div [className]="ModalUtils.displayMarginFor(plannedPaymentRealPriceInput)">
               <label for="planned-payment-real-price">Real price</label>
               <div class="input-group">
@@ -175,36 +179,6 @@
                   </div>
                 }
               </div>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div [className]="ModalUtils.displayMarginFor(paymentCommentInput)">
-              <label for="planned-payment-comment">Comment</label>
-              <textarea
-                id="planned-payment-comment"
-                name="planned-payment-comment"
-                class="form-control"
-                rows="{{ innerWidth <= appConfig.pageMobileWidth ? 4 : 9 }}"
-                minlength="{{ formConfig.paymentModal.comment.minLength }}"
-                maxlength="{{ formConfig.paymentModal.comment.maxLength }}"
-                #paymentCommentInput="ngModel"
-                [(ngModel)]="plannedPaymentDto.comment"
-                [ngClass]="{
-                'is-invalid': paymentCommentInput.invalid &&
-                  (paymentCommentInput.dirty || paymentCommentInput.touched),
-                'is-valid': paymentCommentInput.valid }">
-              </textarea>
-              @if (paymentCommentInput.invalid &&
-              (paymentCommentInput.dirty || paymentCommentInput.touched)) {
-                <div class="invalid-feedback">
-                  <label *ngIf="paymentCommentInput.errors?.['minlength']">
-                    {{ formatString(formConfig.messages.minLength, formConfig.paymentModal.comment.minLength) }}
-                  </label>
-                  <label *ngIf="paymentCommentInput.errors?.['maxlength']">
-                    {{ formatString(formConfig.messages.maxLength, formConfig.paymentModal.comment.maxLength) }}
-                  </label>
-                </div>
-              }
             </div>
           </div>
         </div>

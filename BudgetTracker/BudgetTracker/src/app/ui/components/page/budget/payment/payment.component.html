@@ -59,7 +59,7 @@
                     <td [style.display]="displayMobileView() ? 'none' : ''">
                       {{ format(payment.refund) }}
                     </td>
-                    <td>{{ format(subtract(payment.price, payment.refund)) }}</td>
+                    <td>{{ format(subtract(payment.price, payment.refund).abs()) }}</td>
                   </tr>
                 </table>
               </button>
