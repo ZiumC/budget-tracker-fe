@@ -240,4 +240,6 @@ export class PlannedPaymentModalComponent implements OnInit, OnDestroy {
       order: categoriesOrder.orderDirections[0].value
     } as RequestModel;
   }
+
+  protected readonly BigNumber = BigNumber;
 }

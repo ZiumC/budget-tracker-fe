@@ -67,6 +67,22 @@
           <div [className]="ModalUtils.displayMarginFor(paymentPaidSelect)">
             <label for="payment-paid">Status</label>
             <span class="text-danger">*</span>
+            <a #tooltipStatus="ngbTooltip"
+               class="info-tooltip"
+               [ngbTooltip]="tipStatusContent"
+               (click)="tooltipStatus.open()">
+              <i class="bi bi-info-circle"></i>
+            </a>
+            <ng-template #tipStatusContent>
+              <ul class="text-start mb-0">
+                <li>
+                  <strong>Paid</strong> - payment has been made.
+                </li>
+                <li>
+                  <strong>Unpaid</strong> - payment was not made.
+                </li>
+              </ul>
+            </ng-template>
             <select
               id="payment-paid"
               name="payment-paid"

@@ -65,10 +65,36 @@
         </div>
         <div class="row">
           <div [className]="ModalUtils.displayMarginFor(paymentPaidSelect)">
-            <label for="payment-paid">Status</label>
+            <label for="payment-paid">
+              Status
+            </label>
             @if (paidStatusEnabled()) {
               <span class="text-danger">*</span>
             }
+            <a #tooltipStatus="ngbTooltip"
+               class="info-tooltip"
+               [ngbTooltip]="tipStatusContent"
+               (click)="tooltipStatus.open()">
+              <i class="bi bi-info-circle"></i>
+            </a>
+            <ng-template #tipStatusContent>
+              <ng-template [ngIf]="BigNumber(plannedPaymentDto.realPrice!).toNumber() > 0"
+                           [ngIfElse]="explainStatus">
+                <ul class="text-start mb-0">
+                  <li>
+                    <strong>Paid</strong> - payment has been made.
+                  </li>
+                  <li>
+                    <strong>Unpaid</strong> - payment was not made.
+                  </li>
+                </ul>
+              </ng-template>
+              <ng-template #explainStatus>
+                <p class="text-start mb-0">
+                  Status is available when <strong>actual > 0.00 PLN</strong>.
+                </p>
+              </ng-template>
+            </ng-template>
             <select
               id="payment-paid"
               name="payment-paid"
@@ -81,8 +107,8 @@
                 'is-invalid': paymentPaidSelect.invalid &&
                   (paymentPaidSelect.dirty || paymentPaidSelect.touched),
                 'is-valid': paymentPaidSelect.valid }">
-              <option value=false>Payment not paid</option>
-              <option value=true>Payment paid</option>
+              <option value=false>Paid</option>
+              <option value=true>Unpaid</option>
             </select>
             @if (paymentPaidSelect.invalid &&
             (paymentPaidSelect.dirty || paymentPaidSelect.touched)) {
@@ -99,6 +125,22 @@
             <div [className]="ModalUtils.displayMarginFor(plannedPaymentEstimatedInput)">
               <label for="planned-payment-estimated">Estimated</label>
               <span class="text-danger">*</span>
+              <a #tooltipEstimated="ngbTooltip"
+                 class="info-tooltip"
+                 [ngbTooltip]="tipEstimatedContent"
+                 (click)="tooltipEstimated.open()">
+                <i class="bi bi-info-circle"></i>
+              </a>
+              <ng-template #tipEstimatedContent>
+                <p class="text-start mb-1">
+                  The estimated field means: <i>how much money you will spend in near feature</i>. Examples:
+                </p>
+                <ul class="text-start mb-1">
+                  <li>Tooth treatment</li>
+                  <li>Car service</li>
+                  <li>Civil liability insurance policy</li>
+                </ul>
+              </ng-template>
               <div class="input-group">
                 <input
                   type="text"
@@ -142,7 +184,18 @@
           </div>
           <div class="col-md-6">
             <div [className]="ModalUtils.displayMarginFor(plannedPaymentRealPriceInput)">
-              <label for="planned-payment-real-price">Real price</label>
+              <label for="planned-payment-real-price">Actual</label>
+              <a #tooltipActual="ngbTooltip"
+                 class="info-tooltip"
+                 [ngbTooltip]="tipActualContent"
+                 (click)="tooltipActual.open()">
+                <i class="bi bi-info-circle"></i>
+              </a>
+              <ng-template #tipActualContent>
+                <p class="text-start mb-1">
+                  The actual field means: <i>how much money have you actually spend in planned payment</i>.
+                </p>
+              </ng-template>
               <div class="input-group">
                 <input
                   type="text"
