@@ -80,6 +80,10 @@
                   maxlength="{{ formConfig.paymentModal.price.maxLength }}"
                   placeholder="{{ formConfig.paymentModal.placeholder }}"
                   pattern="{{ formConfig.regex.money }}"
+                  (focus)="paymentPriceInput.value && paymentPriceInput.value[0] === '0' && paymentPriceInput.value[1] !== '.'?
+                      paymentDto.price = paymentPriceInput.value.substring(1) : !paymentPriceInput.value ? paymentDto.price = null : null;"
+                  (focusout)="paymentPriceInput.value && paymentPriceInput.value[0] === '0' && paymentPriceInput.value[1] !== '.' ?
+                      paymentDto.price = paymentPriceInput.value.substring(1) : null"
                   #paymentPriceInput="ngModel"
                   [ngClass]="{
                   'is-invalid': paymentPriceInput.invalid &&
@@ -117,6 +121,10 @@
                   maxlength="{{ formConfig.paymentModal.refund.maxLength }}"
                   placeholder="{{formConfig.paymentModal.placeholder}}"
                   pattern="{{formConfig.regex.money}}"
+                  (focus)="paymentRefundInput.value && paymentRefundInput.value[0] === '0' && paymentRefundInput.value[1] !== '.'?
+                      paymentDto.refund = paymentRefundInput.value.substring(1) : !paymentRefundInput.value ? paymentDto.refund = null : null;"
+                  (focusout)="paymentRefundInput.value && paymentRefundInput.value[0] === '0' && paymentRefundInput.value[1] !== '.' ?
+                      paymentDto.refund = paymentRefundInput.value.substring(1) : null"
                   #paymentRefundInput="ngModel"
                   [ngClass]="{
                   'is-invalid': paymentRefundInput.invalid &&
@@ -144,7 +152,7 @@
                 type="number"
                 class="form-control"
                 disabled
-                value="{{ subtract(this.paymentDto.price, this.paymentDto.refund) }}"/>
+                value="{{ subtract(this.paymentDto.price!, this.paymentDto.refund!) }}"/>
               <div class="input-group-append">
                 <span class="input-group-text">PLN</span>
               </div>

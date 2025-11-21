@@ -3,8 +3,8 @@ import {GetPaymentAssignmentDto} from "./assignment.model.dto";
 
 export class PaymentDto {
   name: string;
-  price: BigNumber;
-  refund: BigNumber;
+  price: BigNumber | null;
+  refund: BigNumber | null;
   isPaid: boolean;
   comment?: string;
   idPaymentCategory: string;

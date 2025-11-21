@@ -127,7 +127,10 @@ export class PlannedPaymentModalComponent implements OnInit, OnDestroy {
   }
 
   protected paidStatusEnabled(): boolean {
-    return new BigNumber(this.plannedPaymentDto.realPrice).gt(0);
+    if (this.plannedPaymentDto.realPrice) {
+      return new BigNumber(this.plannedPaymentDto.realPrice).gt(0);
+    }
+    return false;
   }
 
   protected onClickedCategory(type?: CategoryType): void {
@@ -144,7 +147,7 @@ export class PlannedPaymentModalComponent implements OnInit, OnDestroy {
     this.plannedPaymentDto.isPaid = JSON.parse(isPaid);
     this.plannedPaymentDto.idPaymentCategory = this.assignedCategoryDto.id;
 
-    if (!this.plannedPaymentDto.realPrice){
+    if (!this.plannedPaymentDto.realPrice) {
       this.plannedPaymentDto.realPrice = new BigNumber(0);
     }
 

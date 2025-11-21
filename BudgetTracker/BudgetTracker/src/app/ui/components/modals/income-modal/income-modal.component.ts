@@ -50,6 +50,10 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
     private configService: ConfigService) {
   }
 
+  test(ngModel :NgModel){
+    console.log(ngModel.value)
+  }
+
   ngOnDestroy(): void {
     SubscriptionUtils.unsubscribeAll(this.subscriptions);
   }
@@ -68,7 +72,6 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
 
     this.isChildValid = false;
   }
-
   open(incomeData?: GetIncomeDto): void {
     this.getCategories();
     this.setDefaultIncomeForm();
@@ -95,7 +98,7 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
 
   protected validateSavings(wageModel: NgModel, savingsModel: NgModel): void {
     const wage = new BigNumber(this.incomeDto.wage!).toNumber();
-    const savings = new BigNumber(this.incomeDto.savings).toNumber();
+    const savings = new BigNumber(this.incomeDto.savings!).toNumber();
 
     wageModel.control.markAsTouched();
     savingsModel.control.markAsTouched();
@@ -104,8 +107,8 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
       wageModel.control.setErrors({wageTooLow: true});
       savingsModel.control.setErrors({savingsTooBig: true});
     } else if (wage >= savings) {
-      wageModel.control.setErrors(null);
-      savingsModel.control.setErrors(null);
+      wageModel.control.setErrors({wageTooLow: false});
+      savingsModel.control.setErrors({wageTooLow: false});
     }
   }
 
@@ -222,4 +225,6 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
       order: categoriesOrder.orderDirections[0].value
     } as RequestModel;
   }
+
+  protected readonly console = console;
 }

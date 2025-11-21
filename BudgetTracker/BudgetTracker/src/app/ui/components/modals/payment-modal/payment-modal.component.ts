@@ -19,6 +19,7 @@ import {CategoryType, GetPaymentCategoryDto} from "../../../../models/dto/catego
 import {getPaymentType} from "../../../../util/category.utils";
 import {RequestModel} from "../../../../models/request.model";
 import BigNumber from "bignumber.js";
+import {NgModel} from "@angular/forms";
 
 @Component({
   selector: 'app-payment-modal',
@@ -238,4 +239,6 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
       order: categoriesOrder.orderDirections[0].value
     } as RequestModel;
   }
+
+  protected readonly BigNumber = BigNumber;
 }
