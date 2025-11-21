@@ -112,6 +112,11 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
       wageModel.control.setErrors({wageTooLow: null});
       wageModel.control.updateValueAndValidity();
     }
+
+    if (this.incomeDto.forSavings){
+      savingsModel.control.setErrors({savingsTooBig: null});
+      savingsModel.control.updateValueAndValidity();
+    }
   }
 
   protected onSurplusTypeChange(wageModel: NgModel): void {
