@@ -371,7 +371,20 @@
                     </div>
                   </ng-template>
                   <ng-template #loadedPlanned>
-                    <label for="planned-payment-categories">Planned payment categories</label>
+                    <label for="planned-payment-categories">
+                      Planned payment categories
+                      <a #tooltipPlannedCategories="ngbTooltip"
+                         class="info-tooltip"
+                         [ngbTooltip]="tipPlannedContent"
+                         (click)="tooltipPlannedCategories.open()">
+                        <i class="bi bi-info-circle"></i>
+                      </a>
+                      <ng-template #tipPlannedContent>
+                        <p class="text-start mb-1">
+                          The chart presents categories of planned payment <strong>where real price > 0 PLN</strong>.
+                        </p>
+                      </ng-template>
+                    </label>
                     <ng-template [ngIf]="responseModels.plannedStats.statusCode != 200"
                                  [ngIfElse]="displayPlannedPaymentChart">
                       <app-error [errorType]="ErrorType.Application"
