@@ -1,6 +1,6 @@
 import {Component, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
-import {Subscription} from "rxjs";
+import {finalize, Subscription} from "rxjs";
 import {HttpService} from "../../../../services/http/http.service";
 import {SubscriptionUtils} from "../../../../util/subscription.utils";
 import {SpinnerSize} from "../../shared/spinner/spinner.component";
@@ -50,7 +50,7 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
     private configService: ConfigService) {
   }
 
-  test(ngModel :NgModel){
+  test(ngModel: NgModel) {
     console.log(ngModel.value)
   }
 
@@ -72,6 +72,7 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
 
     this.isChildValid = false;
   }
+
   open(incomeData?: GetIncomeDto): void {
     this.getCategories();
     this.setDefaultIncomeForm();
@@ -102,13 +103,18 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
 
     wageModel.control.markAsTouched();
     savingsModel.control.markAsTouched();
-
+    
     if (wage < savings) {
       wageModel.control.setErrors({wageTooLow: true});
       savingsModel.control.setErrors({savingsTooBig: true});
     } else if (wage >= savings) {
-      wageModel.control.setErrors({wageTooLow: false});
-      savingsModel.control.setErrors({wageTooLow: false});
+      wageModel.control.setErrors({wageTooLow: null});
+      wageModel.control.updateValueAndValidity();
+      savingsModel.control.setErrors({savingsTooBig: null});
+      savingsModel.control.updateValueAndValidity();
+    } else if (!savings){
+      wageModel.control.setErrors({wageTooLow: null});
+      wageModel.control.updateValueAndValidity();
     }
   }
 

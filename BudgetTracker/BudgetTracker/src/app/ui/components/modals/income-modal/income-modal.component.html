@@ -79,8 +79,7 @@
                   [(ngModel)]="incomeDto.wage"
                   [disabled]="incomeDto.forSavings"
                   [required]="!incomeDto.forSavings"
-                  min="{{ formConfig.incomeModal.wage.minValue }}"
-                  maxlength="{{ formConfig.incomeModal.wage.maxLength }}"
+                  maxlength="{{ formConfig.incomeModal.number.maxLength }}"
                   placeholder="{{ formConfig.incomeModal.placeholder }}"
                   (focus)="incomeWageInput.value && incomeWageInput.value[0] === '0' && incomeWageInput.value[1] !== '.'?
                       incomeDto.wage = incomeWageInput.value.substring(1) : !incomeWageInput.value ? incomeDto.wage = null : null;"
@@ -100,7 +99,7 @@
                       {{ formConfig.messages.required }}
                     </label>
                     <label *ngIf="incomeWageInput.errors?.['min']">
-                      {{ formatString(formConfig.messages.minValue, formConfig.incomeModal.wage.minValue) }}
+                      {{ formatString(formConfig.messages.minValue, formConfig.incomeModal.number.minValue) }}
                     </label>
                     <label *ngIf="incomeWageInput.errors?.['wageTooLow']">
                       {{ formConfig.messages.wageTooLow }}
@@ -124,7 +123,7 @@
                   name="income-savings"
                   class="form-control"
                   [(ngModel)]="incomeDto.savings"
-                  maxlength="{{ formConfig.incomeModal.wage.maxLength }}"
+                  maxlength="{{ formConfig.incomeModal.number.maxLength }}"
                   placeholder="{{ formConfig.incomeModal.placeholder }}"
                   pattern="{{ formConfig.regex.money }}"
                   [required]="incomeDto.forSavings"
@@ -149,6 +148,9 @@
                     </label>
                     <label *ngIf="incomeSavingsInput.errors?.['savingsTooBig']">
                       {{ formConfig.messages.savingsTooBig }}
+                    </label>
+                    <label *ngIf="incomeSavingsInput.errors?.['maxlength']">
+                      {{ formatString(formConfig.messages.maxLength, formConfig.incomeModal.number.maxLength) }}
                     </label>
                   </div>
                 }
