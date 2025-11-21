@@ -213,19 +213,6 @@
                 Wants
               </label>
             </div>
-            <div class="col text-center">
-              <input id="savings"
-                     type="radio"
-                     class="btn-check"
-                     name="category"
-                     required
-                     (click)="onClickedCategory(CategoryType.SAVINGS); typehead.clear()"
-                     [value]="formConfig.categoryModal.savingsName"
-                     [(ngModel)]="selectedPaymentCategoryType">
-              <label class="btn btn-outline-primary" for="savings">
-                Savings
-              </label>
-            </div>
           </div>
           <app-typehead #typehead
                         [style]="!selectedPaymentCategoryType ? 'display:none' : ''"

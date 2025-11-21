@@ -65,16 +65,6 @@
 
             </app-category>
           </div>
-          <div id="savings-column" class="col mb-3">
-            <app-category [displayName]="'Savings category'"
-                          [type]="CategoryType.SAVINGS"
-                          [searchEvent]="searchSubject"
-                          [clearEvent]="clearSubject"
-                          [refreshCategoryEvent]="refreshCategoriesSubject"
-                          (categoryChangeTypeEvent)="onCategoryChange($event)">
-
-            </app-category>
-          </div>
         </div>
       </ng-container>
       <ng-container *ngSwitchCase="2">
