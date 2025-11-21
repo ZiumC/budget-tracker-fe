@@ -64,6 +64,34 @@
           </div>
         </div>
         <div class="row">
+          <div [className]="ModalUtils.displayMarginFor(paymentPaidSelect)">
+            <label for="payment-paid">Status</label>
+            <span class="text-danger">*</span>
+            <select
+              id="payment-paid"
+              name="payment-paid"
+              class="form-control"
+              [(ngModel)]="paymentDto.isPaid"
+              required
+              #paymentPaidSelect="ngModel"
+              [ngClass]="{
+                'is-invalid': paymentPaidSelect.invalid &&
+                  (paymentPaidSelect.dirty || paymentPaidSelect.touched),
+                'is-valid': paymentPaidSelect.valid }">
+              <option value=false>Payment not paid</option>
+              <option value=true>Payment paid</option>
+            </select>
+            @if (paymentPaidSelect.invalid &&
+            (paymentPaidSelect.dirty || paymentPaidSelect.touched)) {
+              <div class="invalid-feedback">
+                <label *ngIf="paymentPaidSelect.errors?.['required']">
+                  {{ formConfig.messages.required }}
+                </label>
+              </div>
+            }
+          </div>
+        </div>
+        <div class="row">
           <div [className]="innerWidth > appConfig.pageMobileWidth ? 'col-md-6': 'col-md-6  mb-4 pb-2'">
             <div [className]="ModalUtils.displayMarginFor(paymentPriceInput)">
               <label for="payment-price">Price</label>
@@ -108,6 +136,8 @@
                 }
               </div>
             </div>
+          </div>
+          <div [className]="innerWidth > appConfig.pageMobileWidth ? 'col-md-6': 'col-md-6  mb-4 pb-2'">
             <div [className]="ModalUtils.displayMarginFor(paymentRefundInput)">
               <label for="payment-refund">Refund</label>
               <div class="input-group">
@@ -146,72 +176,19 @@
                 }
               </div>
             </div>
-            <label for="payment-refund">Real</label>
-            <div class="input-group">
-              <input
-                type="number"
-                class="form-control"
-                disabled
-                value="{{ subtract(this.paymentDto.price!, this.paymentDto.refund!) }}"/>
-              <div class="input-group-append">
-                <span class="input-group-text">PLN</span>
-              </div>
-            </div>
           </div>
-          <div class="col-md-6">
-            <div [className]="ModalUtils.displayMarginFor(paymentPaidSelect)">
-              <label for="payment-paid">Status</label>
-              <span class="text-danger">*</span>
-              <select
-                id="payment-paid"
-                name="payment-paid"
-                class="form-control"
-                [(ngModel)]="paymentDto.isPaid"
-                required
-                #paymentPaidSelect="ngModel"
-                [ngClass]="{
-                'is-invalid': paymentPaidSelect.invalid &&
-                  (paymentPaidSelect.dirty || paymentPaidSelect.touched),
-                'is-valid': paymentPaidSelect.valid }">
-                <option value=false>Payment not paid</option>
-                <option value=true>Payment paid</option>
-              </select>
-              @if (paymentPaidSelect.invalid &&
-              (paymentPaidSelect.dirty || paymentPaidSelect.touched)) {
-                <div class="invalid-feedback">
-                  <label *ngIf="paymentPaidSelect.errors?.['required']">
-                    {{ formConfig.messages.required }}
-                  </label>
-                </div>
-              }
-            </div>
-            <div [className]="ModalUtils.displayMarginFor(paymentCommentInput)">
-              <label for="payment-comment">Comment</label>
-              <textarea
-                id="payment-comment"
-                class="form-control"
-                name="payment-comment"
-                rows="5"
-                minlength="{{ formConfig.paymentModal.comment.minLength }}"
-                maxlength="{{ formConfig.paymentModal.comment.maxLength }}"
-                #paymentCommentInput="ngModel"
-                [(ngModel)]="paymentDto.comment"
-                [ngClass]="{
-                'is-invalid': paymentCommentInput.invalid &&
-                  (paymentCommentInput.dirty || paymentCommentInput.touched),
-                'is-valid': paymentCommentInput.valid }">
-              </textarea>
-              @if (paymentCommentInput.invalid &&
-              (paymentCommentInput.dirty || paymentCommentInput.touched)) {
-                <div class="invalid-feedback">
-                  <label *ngIf="paymentCommentInput.errors?.['minlength']">
-                    {{ formatString(formConfig.messages.minLength, formConfig.paymentModal.comment.minLength) }}
-                  </label>
-                  <label *ngIf="paymentCommentInput.errors?.['maxlength']">
-                    {{ formatString(formConfig.messages.maxLength, formConfig.paymentModal.comment.maxLength) }}
-                  </label>
-                </div>
-              }
+        </div>
+        <div class="row mb-5">
+          <label for="real-price">Real</label>
+          <div class="input-group">
+            <input
+              type="text"
+              class="form-control"
+              id="real-price"
+              disabled
+              value="{{ subtract(this.paymentDto.price!, this.paymentDto.refund!).abs() }}"/>
+            <div class="input-group-append">
+              <span class="input-group-text">PLN</span>
             </div>
           </div>
         </div>

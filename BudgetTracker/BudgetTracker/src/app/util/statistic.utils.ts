@@ -115,7 +115,7 @@ export class BudgetRegularPayment {
     const regularPrice = BudgetRegularPayment.computePrice(budgetSummaryDto);
     const regularRefund = BudgetRegularPayment.computeRefund(budgetSummaryDto);
 
-    return subtract(regularPrice, regularRefund);
+    return subtract(regularPrice, regularRefund).abs();
   }
 }
 

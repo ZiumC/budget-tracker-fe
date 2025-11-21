@@ -41,6 +41,7 @@ class BudgetSummaryRegularPayment {
   price: BigNumber;
   refund: BigNumber;
   paid: BigNumber;
+  paidRefundSurplus: BigNumber;
 }
 
 class BudgetSummaryIncome {
