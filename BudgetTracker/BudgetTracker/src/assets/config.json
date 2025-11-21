@@ -77,7 +77,7 @@
           "minLength": "3",
           "maxLength": "150"
         },
-        "wage": {
+        "number": {
           "minValue": "0",
           "maxLength": "8"
         }

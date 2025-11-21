@@ -54,7 +54,7 @@ export interface PaymentModal {
 export interface IncomeModal {
   placeholder: string;
   name: MinMaxLength;
-  wage: MinValueMaxLength;
+  number: MinValueMaxLength;
 }
 
 export interface BudgetModal {
