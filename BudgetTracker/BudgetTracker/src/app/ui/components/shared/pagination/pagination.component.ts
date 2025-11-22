@@ -88,6 +88,7 @@ export class PaginationComponent implements OnInit {
   }
 
   protected onPageSizeChange(): void {
+    localStorage.setItem(this.pageName, '1');
     localStorage.setItem(this.pageSizeName, this.pageSize.toString());
     this.pageSizeEvent.emit(this.pageSize);
   }
