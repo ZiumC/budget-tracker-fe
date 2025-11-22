@@ -17,7 +17,7 @@
                (click)="clickSubject.next($any($event).target.value)"
                (ngModelChange)="onTypeaheadNameChange()"
                placeholder="Search for a category..."
-               [ngModelOptions]="{standalone: true}"/>
+               [ngModelOptions]="{standalone: false}"/>
         <div class="input-group-append">
           <button class="btn btn-outline-danger"
                   type="button"

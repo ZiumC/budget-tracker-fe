@@ -15,15 +15,21 @@ export class HeaderComponent implements OnInit {
   private appConfig: AppConfig;
   public innerWidth: any;
   @ViewChild('userMenu') menu: ElementRef;
+  @ViewChild('arrowIconDown') arrowIconDown: ElementRef;
 
   constructor(
     protected authService: AuthService,
     private configService: ConfigService,
     private renderer: Renderer2) {
     this.renderer.listen('window', 'click', (e: Event): void => {
-      let personIcon = this.menu.nativeElement.firstChild;
-      if (e.target !== this.menu.nativeElement && e.target !== personIcon) {
-        this.displayUserSubMenu = false;
+      if (this.menu) {
+        let personIcon = this.menu.nativeElement.firstChild;
+        let arrowIconUp = this.menu.nativeElement.lastChild;
+        if (e.target !== this.menu.nativeElement &&
+          e.target !== personIcon &&
+          e.target != arrowIconUp) {
+          this.displayUserSubMenu = false;
+        }
       }
     });
   }
