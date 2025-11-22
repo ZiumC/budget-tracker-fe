@@ -61,6 +61,7 @@ export class IncomeComponent implements OnInit, OnDestroy, AfterViewInit {
   protected requiredStatusCode: number;
   protected assignmentStatusCode: number = 0;
   protected incomeLoader: boolean;
+  protected name: string;
 
   constructor(
     private httpService: HttpService,
@@ -79,6 +80,8 @@ export class IncomeComponent implements OnInit, OnDestroy, AfterViewInit {
       throw Error("Config not provided")
     }
 
+    this.name = this.selectedTab + '-paginate';
+
     this.incomeResponseModel = new ResponseModel();
     this.requiredStatusCode = this.appConfig.response.required.incomeStatus;
     this.pageWidth = window.innerWidth;
@@ -89,11 +92,22 @@ export class IncomeComponent implements OnInit, OnDestroy, AfterViewInit {
       pageSize: this.appConfig.request.pagination.defaultPageSizeOptions[0],
     })
 
+    this.defaultOrderParams();
     if (this.selectedTab == BudgetTab.IncomeTab) {
+
+      const page = localStorage.getItem(this.name + '-page');
+      if (page) {
+        this.incomeRequestModel.page = Number(page);
+        this.incomeTotalPages = Number(page);
+      }
+
+      const pageSize = localStorage.getItem(this.name + '-pageSize');
+      if (pageSize) {
+        this.incomeRequestModel.pageSize = Number(pageSize);
+      }
+
       this.getIncomes();
     }
-
-    this.defaultOrderParams();
   }
 
   openModal(): void {
@@ -161,7 +175,7 @@ export class IncomeComponent implements OnInit, OnDestroy, AfterViewInit {
         next: (response: HttpResponse<GetIncomeDto[]>): void => {
           this.incomesDto = response.body;
           this.incomeResponseModel.statusCode = response.status;
-          if (this.incomesDto && this.incomesDto.length >= this.incomeRequestModel.pageSize) {
+          if (this.incomesDto!.length >= this.incomeRequestModel.pageSize || this.incomeTotalPages! > 1) {
             this.getIncomeTotalPages();
           }
         },

@@ -140,7 +140,7 @@
         </div>
       }
       @if (incomeTotalPages! > 1) {
-        <app-pagination [name]="'income-paginate'"
+        <app-pagination [name]="name"
                         [pageCount]="incomeTotalPages!"
                         [displayPageSize]="true"
                         [pageSizeOptions]="appConfig.request.pagination.defaultPageSizeOptions"

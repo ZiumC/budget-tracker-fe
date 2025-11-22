@@ -63,7 +63,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
       throw Error("Category type is required");
     }
 
-    this.name = this.type + 'category-paginate';
+    this.name = this.type + '-category-paginate';
 
     this.categoryResponseModel = new ResponseModel();
     this.subscriptions = [];
@@ -73,6 +73,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
     const page = localStorage.getItem(this.name + '-page');
     if (page) {
       this.categoryRequestParams.page = Number(page);
+      this.categoriesTotalPages = Number(page);
     }
 
     const pageSize = localStorage.getItem(this.name + '-pageSize');
@@ -159,7 +160,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
         next: (response: HttpResponse<GetCategoryDto[]>): void => {
           this.categoriesDto = response.body;
           this.categoryResponseModel.statusCode = response.status;
-          if (this.categoriesDto!.length >= this.categoryRequestParams.pageSize || this.categoryRequestParams.page > 1) {
+          if (this.categoriesDto!.length >= this.categoryRequestParams.pageSize || this.categoriesTotalPages > 1) {
             this.getCategoriesTotalPages();
           }
         },
