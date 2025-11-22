@@ -285,6 +285,13 @@ li button.nav-link:hover {
   text-align: center;
 }
 
+ngb-typeahead-window {
+  max-height: 200px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  width: 100%;
+}
+
 @media only screen and (max-width: 770px) {
   .width-wrapper {
     width: 92%;
