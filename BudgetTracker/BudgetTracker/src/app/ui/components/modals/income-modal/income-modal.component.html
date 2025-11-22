@@ -67,7 +67,7 @@
           <div class="row">
             <div class="col-md-6">
               <div [className]="ModalUtils.displayMarginFor(incomeWageInput)">
-                <label for="income-wage">Wage</label>
+                <label for="income-wage">Income</label>
                 @if (!incomeDto.forSavings) {
                   <span class="text-danger">*</span>
                 }
@@ -117,6 +117,17 @@
                 @if (incomeDto.forSavings) {
                   <span class="text-danger">*</span>
                 }
+                <a #tooltipSavings="ngbTooltip"
+                   class="info-tooltip"
+                   [ngbTooltip]="tipSavingsContent"
+                   (click)="tooltipSavings.open()">
+                  <i class="bi bi-info-circle"></i>
+                </a>
+                <ng-template #tipSavingsContent>
+                  <p class="text-start mb-1">
+                    The savings field means: <i>amount of money you want to move to savings from income</i>.
+                  </p>
+                </ng-template>
                 <input
                   type="text"
                   id="income-savings"
@@ -157,6 +168,19 @@
               </div>
             </div>
           </div>
+          <ng-template [ngIf]="BigNumber(incomeDto.wage!).toNumber() > 0
+                                && BigNumber(incomeDto.savings!).toNumber() > 0
+                                && BigNumber(incomeDto.wage!).toNumber() > BigNumber(incomeDto.savings!).toNumber()">
+            <div class="row text-center">
+              <div class="col">
+                <p>
+                  <strong>{{ format(subtract(BigNumber(incomeDto.wage!), BigNumber(incomeDto.savings!))) }} PLN</strong>
+                  will go to budget and
+                  <strong>{{ BigNumber(incomeDto.savings!) }} PLN</strong> will go to savings.
+                </p>
+              </div>
+            </div>
+          </ng-template>
           <div [className]="ModalUtils.displayMarginFor(incomeSurplusSelect)">
             <label for="income-surplus">Status</label>
             <span class="text-danger">*</span>
@@ -170,8 +194,8 @@
                     'is-invalid': incomeSurplusSelect.invalid &&
                       (incomeSurplusSelect.dirty || incomeSurplusSelect.touched),
                     'is-valid': incomeSurplusSelect.valid }">
-              <option [ngValue]="false">Income isn't surplus</option>
-              <option [ngValue]="true">Income is surplus</option>
+              <option [ngValue]="false">Is not surplus</option>
+              <option [ngValue]="true">Is surplus</option>
             </select>
             @if (incomeSurplusSelect.invalid &&
             (incomeSurplusSelect.dirty || incomeSurplusSelect.touched)) {

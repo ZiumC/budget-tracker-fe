@@ -12,7 +12,7 @@ import {AppConfig} from "../../../../models/config/config";
 import {ModalOptions, ModalSize, ModalUtils} from "../../../../util/modal.utils";
 import {FormConfig} from "../../../../models/config/form.model.config";
 import {formatString} from "../../../../util/string.utils";
-import {subtract} from "../../../../util/number.util";
+import {format, subtract} from "../../../../util/number.util";
 import {GetPaymentDto, PaymentDto} from "../../../../models/dto/payment.model.dto";
 import {getErrorResponse} from "../../../../util/http.util";
 import {CategoryType, GetPaymentCategoryDto} from "../../../../models/dto/category.model.dto";
@@ -238,4 +238,5 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
   }
 
   protected readonly BigNumber = BigNumber;
+  protected readonly format = format;
 }

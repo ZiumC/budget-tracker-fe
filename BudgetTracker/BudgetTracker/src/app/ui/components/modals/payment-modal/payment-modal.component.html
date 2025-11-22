@@ -155,7 +155,18 @@
           </div>
           <div [className]="innerWidth > appConfig.pageMobileWidth ? 'col-md-6': 'col-md-6  mb-4 pb-2'">
             <div [className]="ModalUtils.displayMarginFor(paymentRefundInput)">
-              <label for="payment-refund">Refund</label>
+              <label for="payment-refund">Split</label>
+              <a #tooltipSplit="ngbTooltip"
+                 class="info-tooltip"
+                 [ngbTooltip]="tipSplitContent"
+                 (click)="tooltipSplit.open()">
+                <i class="bi bi-info-circle"></i>
+              </a>
+              <ng-template #tipSplitContent>
+                <p class="text-start mb-1">
+                  The split field means: <i>amount of money from payment you want to share with someone</i>.
+                </p>
+              </ng-template>
               <div class="input-group">
                 <input
                   type="text"
@@ -194,8 +205,48 @@
             </div>
           </div>
         </div>
+        <ng-template [ngIf]="BigNumber(paymentDto.price!).toNumber() < BigNumber(paymentDto.refund!).toNumber()">
+          <div class="row text-center">
+            <div class="col">
+              <p>
+                <strong>{{ format(subtract(BigNumber(paymentDto.refund!), BigNumber(paymentDto.price!))) }} PLN</strong>
+                will go to budget.
+                <a #tooltipSurplus="ngbTooltip"
+                   class="info-tooltip"
+                   [ngbTooltip]="tipSurplusContent"
+                   (click)="tooltipSurplus.open()">
+                  <i class="bi bi-info-circle"></i>
+                </a>
+                <ng-template #tipSurplusContent>
+                  <p class="text-start mb-1">
+                    If you want move this money to savings, add new income and mark as <strong>surplus - goes to
+                    savings.</strong>
+                  </p>
+                </ng-template>
+              </p>
+            </div>
+          </div>
+        </ng-template>
         <div class="row mb-5">
-          <label for="real-price">Real</label>
+          <label for="real-price">
+            Actual
+            <a #tooltipActual="ngbTooltip"
+               class="info-tooltip"
+               [ngbTooltip]="tipActualContent"
+               (click)="tooltipActual.open()">
+              <i class="bi bi-info-circle"></i>
+            </a>
+            <ng-template #tipActualContent>
+              <p class="text-start mb-1">
+                Formula for <strong>actual</strong>:
+              </p>
+              <ul class="text-start mb-0">
+                <li>
+                  Actual = Price - Split
+                </li>
+              </ul>
+            </ng-template>
+          </label>
           <div class="input-group">
             <input
               type="text"
