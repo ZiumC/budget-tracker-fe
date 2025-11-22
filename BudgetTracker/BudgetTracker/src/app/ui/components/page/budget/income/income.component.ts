@@ -94,7 +94,6 @@ export class IncomeComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.defaultOrderParams();
     if (this.selectedTab == BudgetTab.IncomeTab) {
-
       const page = localStorage.getItem(this.name + '-page');
       if (page) {
         this.incomeRequestModel.page = Number(page);

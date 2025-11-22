@@ -67,6 +67,7 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy, AfterViewInit
   protected plannedPaymentStatusLoader: boolean;
   protected totalPages: number;
   protected assignmentStatusCode: number;
+  protected name: string;
 
   constructor(
     private httpService: HttpService,
@@ -86,6 +87,7 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy, AfterViewInit
       throw Error("Config not provided")
     }
 
+    this.name = this.selectedTab + '-pagination'
     this.pageWidth = window.innerWidth;
     this.paymentResponseModel = new ResponseModel();
     this.subscriptions = [];
@@ -95,11 +97,22 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy, AfterViewInit
       pageSize: this.appConfig.request.pagination.defaultPageSizeOptions[0],
     })
 
+    this.defaultOrderParams();
+
     if (this.selectedTab == BudgetTab.PlannedPaymentTab) {
+      const page = localStorage.getItem(this.name + '-page');
+      if (page) {
+        this.requestParams.page = Number(page);
+        this.totalPages = Number(page);
+      }
+
+      const pageSize = localStorage.getItem(this.name + '-pageSize');
+      if (pageSize) {
+        this.requestParams.pageSize = Number(pageSize);
+      }
+
       this.getPlannedPayments();
     }
-
-    this.defaultOrderParams();
   }
 
   @HostListener('window:resize', ['$event'])
@@ -210,7 +223,7 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy, AfterViewInit
         next: (response: HttpResponse<GetPlannedPaymentDto[]>): void => {
           this.plannedPaymentsDto = response.body;
           this.paymentResponseModel.statusCode = response.status;
-          if (this.plannedPaymentsDto && this.plannedPaymentsDto.length >= this.requestParams.pageSize) {
+          if (this.plannedPaymentsDto!.length >= this.requestParams.pageSize || this.totalPages > 1) {
             this.getPlannedPaymentTotalPages();
           }
         }, error: (err): void => {
