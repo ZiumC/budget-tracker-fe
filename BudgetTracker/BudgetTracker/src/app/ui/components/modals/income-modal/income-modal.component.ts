@@ -17,6 +17,7 @@ import {RequestModel} from "../../../../models/request.model";
 import {GetIncomeCategoryDto} from "../../../../models/dto/category.model.dto";
 import {NgModel} from "@angular/forms";
 import BigNumber from "bignumber.js";
+import {format, subtract} from "../../../../util/number.util";
 
 @Component({
   selector: 'app-income-modal',
@@ -234,4 +235,7 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
   }
 
   protected readonly console = console;
+  protected readonly BigNumber = BigNumber;
+  protected readonly format = format;
+  protected readonly subtract = subtract;
 }
