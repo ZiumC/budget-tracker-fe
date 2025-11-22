@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {SubscriptionUtils} from "../../../../../util/subscription.utils";
 import {AppConfig} from "../../../../../models/config/config";
 import {Observable, Subscription} from "rxjs";
@@ -23,6 +23,7 @@ import {ErrorImage, ErrorType} from "../../../../../models/error.model";
 })
 export class CategoryComponent implements OnInit, OnDestroy {
   @ViewChild('errorModal') errorModal: any;
+  @ViewChild('pagination') pagination: any;
   @Input() type: CategoryType;
   @Input() displayName: string;
   @Input() searchEvent: Observable<string>;
@@ -33,6 +34,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
   protected readonly DateUtil = DateUtil;
   protected readonly ErrorImage = ErrorImage;
   protected readonly ErrorType = ErrorType;
+  protected name: string;
   protected appConfig: AppConfig;
   protected subscriptions: Subscription[];
   protected categoryResponseModel: ResponseModel;
@@ -61,10 +63,23 @@ export class CategoryComponent implements OnInit, OnDestroy {
       throw Error("Category type is required");
     }
 
+    this.name = this.type + 'category-paginate';
+
     this.categoryResponseModel = new ResponseModel();
     this.subscriptions = [];
 
     this.defaultOrderParams();
+
+    const page = localStorage.getItem(this.name + '-page');
+    if (page) {
+      this.categoryRequestParams.page = Number(page);
+    }
+
+    const pageSize = localStorage.getItem(this.name + '-pageSize');
+    if (pageSize) {
+      this.categoryRequestParams.pageSize = Number(pageSize);
+    }
+
     this.getCategories();
 
     this.subscriptions.push(
@@ -144,6 +159,9 @@ export class CategoryComponent implements OnInit, OnDestroy {
         next: (response: HttpResponse<GetCategoryDto[]>): void => {
           this.categoriesDto = response.body;
           this.categoryResponseModel.statusCode = response.status;
+          if (this.categoriesDto!.length >= this.categoryRequestParams.pageSize || this.categoryRequestParams.page > 1) {
+            this.getCategoriesTotalPages();
+          }
         },
         error: (err): void => {
           const response = getErrorResponse(err);
@@ -157,7 +175,6 @@ export class CategoryComponent implements OnInit, OnDestroy {
           if (this.lastSearchedPhrase) {
             this.searchInCategories(this.lastSearchedPhrase);
           }
-          this.getCategoriesTotalPages();
           this.markCategoriesAsLoaded(true);
           this.copiedCategoriesDto?.push(...this.categoriesDto!);
         }

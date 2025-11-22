@@ -13,6 +13,8 @@ export class PaginationComponent implements OnInit {
   @Input() disableFully: boolean;
   @Output() pageSizeEvent = new EventEmitter<number>();
   @Output() pageEvent = new EventEmitter<number>();
+  @Output() initPageSizeEvent = new EventEmitter<number>;
+  @Output() initPageEvent = new EventEmitter<number>;
   protected page: number;
   protected pageSize: number;
   protected disablePrevious: boolean;
@@ -92,14 +94,12 @@ export class PaginationComponent implements OnInit {
 
   private getPageSizeIndex(): number {
     const loadedPageSize = localStorage.getItem(this.pageSizeName);
-    localStorage.removeItem(this.pageSizeName);
     return loadedPageSize ? this.pageSizeOptions
       .findIndex(x => x === +loadedPageSize) : 0;
   }
 
   private getPage(): number {
     const loadedPage = localStorage.getItem(this.pageName);
-    localStorage.removeItem(this.pageName);
     return loadedPage ? +loadedPage : 1;
   }
 }

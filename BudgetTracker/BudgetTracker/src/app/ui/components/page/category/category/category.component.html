@@ -92,17 +92,17 @@
               </div>
             </div>
           }
-          @if (categoriesTotalPages! > 0) {
+          @if (categoriesTotalPages! > 1) {
             <div class="w-100 pb-5"></div>
             <div class="w-100 pb-5"></div>
             <div class="display-bottom mb-3 mx-2">
-              <app-pagination [name]="'category-paginate'"
+              <app-pagination #pagination
+                              [name]="name"
                               [pageCount]="categoriesTotalPages!"
                               [displayPageSize]="true"
                               [pageSizeOptions]="appConfig.request.pagination.categoriesPageSizeOptions"
                               (pageSizeEvent)="onPageSizeEvent($event)"
                               (pageEvent)="onPageEvent($event)">
-
               </app-pagination>
             </div>
           }
