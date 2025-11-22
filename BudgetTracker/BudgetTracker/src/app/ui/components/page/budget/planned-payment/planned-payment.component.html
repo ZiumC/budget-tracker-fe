@@ -207,7 +207,7 @@
         </div>
       }
       @if (totalPages! > 1) {
-        <app-pagination [name]="'planned-payment-paginate'"
+        <app-pagination [name]="name"
                         [pageCount]="totalPages!"
                         [displayPageSize]="true"
                         [pageSizeOptions]="appConfig.request.pagination.defaultPageSizeOptions"

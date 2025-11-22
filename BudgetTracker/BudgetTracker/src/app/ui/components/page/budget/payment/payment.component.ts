@@ -65,6 +65,7 @@ export class PaymentComponent implements OnInit, OnDestroy, AfterViewInit {
   protected paymentStatusLoader: boolean;
   protected requiredStatusCode: number;
   protected assignmentStatusCode: number;
+  protected name: string;
 
   constructor(
     private httpService: HttpService,
@@ -83,6 +84,8 @@ export class PaymentComponent implements OnInit, OnDestroy, AfterViewInit {
       throw Error("Config not provided")
     }
 
+    this.name = this.selectedTab + '-paginate'
+
     this.pageWidth = window.innerWidth;
     this.requiredStatusCode = this.appConfig.response.required.paymentStatus;
     this.paymentResponseModel = new ResponseModel();
@@ -93,10 +96,21 @@ export class PaymentComponent implements OnInit, OnDestroy, AfterViewInit {
       pageSize: this.appConfig.request.pagination.defaultPageSizeOptions[0],
     });
 
+    this.defaultOrderParams();
+
     if (this.selectedTab == BudgetTab.RegularPaymentTab) {
+      const page = localStorage.getItem(this.name + '-page');
+      if (page) {
+        this.requestParams.page = Number(page);
+        this.paymentTotalPages = Number(page);
+      }
+
+      const pageSize = localStorage.getItem(this.name + '-pageSize');
+      if (pageSize) {
+        this.requestParams.pageSize = Number(pageSize);
+      }
       this.getPayments();
     }
-    this.defaultOrderParams();
   }
 
   openModal(): void {
@@ -232,7 +246,7 @@ export class PaymentComponent implements OnInit, OnDestroy, AfterViewInit {
         next: (response: HttpResponse<GetPaymentDto[]>): void => {
           this.paymentsDto = response.body;
           this.paymentResponseModel.statusCode = response.status;
-          if (this.paymentsDto && this.paymentsDto.length >= this.requestParams.pageSize) {
+          if (this.paymentsDto!.length >= this.requestParams.pageSize || this.paymentTotalPages! > 1) {
             this.getPaymentTotalPages();
           }
         },
