@@ -108,6 +108,7 @@ export class PlannedPaymentModalComponent implements OnInit, OnDestroy {
         this.selectedPaymentCategoryType = this.categoryType;
         this.assignedCategoryDto = plannedPaymentAssignment.category;
         this.plannedPaymentDto.assignmentComment = plannedPaymentAssignment.comment;
+        this.getCategories();
       }
     }
 

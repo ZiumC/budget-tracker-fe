@@ -18,6 +18,7 @@ import {GetIncomeCategoryDto} from "../../../../models/dto/category.model.dto";
 import {NgModel} from "@angular/forms";
 import BigNumber from "bignumber.js";
 import {format, subtract} from "../../../../util/number.util";
+import {GetIncomeAssignmentDto} from "../../../../models/dto/assignment.model.dto";
 
 @Component({
   selector: 'app-income-modal',
@@ -82,7 +83,6 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
       this.incomeDto.savings = incomeData.savings;
       this.incomeDto.isSurplus = incomeData.isSurplus;
       this.incomeDto.forSavings = incomeData.forSavings;
-
 
       const incomeAssignment = incomeData.assignment;
       if (incomeAssignment) {
