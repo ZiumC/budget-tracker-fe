@@ -33,7 +33,7 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
   @Input() idBudget: string;
   @Input() assignmentStatusCode: number;
   @Output() refreshPaymentEvent = new EventEmitter<boolean>();
-  private readonly paymentName: string = "regular-payment-draft"
+  private readonly name: string = "regular-payment-draft"
   protected readonly formatString = formatString;
   protected readonly subtract = subtract;
   protected readonly BigNumber = BigNumber;
@@ -85,7 +85,7 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
   open(paymentData?: GetPaymentDto): void {
     this.setDefaultPaymentForm();
     this.isEditing = paymentData != null;
-    const paymentDraft = sessionStorage.getItem(this.paymentName);
+    const paymentDraft = sessionStorage.getItem(this.name);
 
     if (paymentData) {
       this.idPayment = paymentData.id;
@@ -134,7 +134,7 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
   }
 
   protected savePaymentDraft():void {
-    sessionStorage.setItem(this.paymentName, JSON.stringify(this.paymentDto));
+    sessionStorage.setItem(this.name, JSON.stringify(this.paymentDto));
     this.modalService.dismissAll();
   }
 
@@ -200,8 +200,8 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
   }
 
   private onRequestSuccess(response: HttpResponse<any>): void {
-    if (sessionStorage.getItem(this.paymentName)) {
-      sessionStorage.removeItem(this.paymentName);
+    if (sessionStorage.getItem(this.name)) {
+      sessionStorage.removeItem(this.name);
     }
     this.refreshPaymentEvent.emit(true);
     this.responseModel.statusCode = response.status;

@@ -31,7 +31,7 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
   @Input() idBudget: string;
   @Input() assignmentStatusCode: number;
   @Output() refreshIncomeEvent = new EventEmitter<boolean>();
-  private readonly incomeName = "income-draft";
+  private readonly name = "income-draft";
   protected readonly SpinnerSize = SpinnerSize;
   protected readonly ModalUtils = ModalUtils;
   protected readonly formatString = formatString;
@@ -76,7 +76,7 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
     this.getCategories();
     this.setDefaultIncomeForm();
     this.isEditing = incomeData != null;
-    const sessionItem = sessionStorage.getItem(this.incomeName);
+    const sessionItem = sessionStorage.getItem(this.name);
 
     if (incomeData) {
       this.idIncome = incomeData.id;
@@ -130,7 +130,7 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
   }
 
   protected saveIncomeDraft(): void {
-    sessionStorage.setItem(this.incomeName, JSON.stringify(this.incomeDto));
+    sessionStorage.setItem(this.name, JSON.stringify(this.incomeDto));
     this.modalService.dismissAll();
   }
 
@@ -201,8 +201,8 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
   }
 
   private onRequestSuccess(): void {
-    if (sessionStorage.getItem(this.incomeName)) {
-      sessionStorage.removeItem(this.incomeName);
+    if (sessionStorage.getItem(this.name)) {
+      sessionStorage.removeItem(this.name);
     }
     this.refreshIncomeEvent.emit(true);
     this.modalService.dismissAll();
