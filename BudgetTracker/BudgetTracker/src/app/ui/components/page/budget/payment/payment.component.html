@@ -47,12 +47,12 @@
                       Price (PLN)
                     </th>
                     <th [style.display]="displayMobileView() ? 'none' : ''">
-                      Refund (PLN)
+                      Split (PLN)
                     </th>
-                    <th>Real (PLN)</th>
+                    <th>Actual (PLN)</th>
                   </tr>
                   <tr>
-                    <td>{{ payment.name }}</td>
+                    <td class="text-break">{{ payment.name }}</td>
                     <td [style.display]="displayMobileView() ? 'none' : ''">
                       {{ format(payment.price) }}
                     </td>
@@ -130,14 +130,19 @@
                               id="basic-addon2">{{ getPaymentType(payment.assignment, true, appConfig) }}</span>
                         </div>
                       </div>
-                      <label for="planned-payment-description-assignment">Assignment comment</label>
-                      <textarea type="text"
-                                id="planned-payment-description-assignment"
-                                class="form-control"
-                                placeholder="{{payment.assignment ? '' : 'Not assigned'}}"
-                                value="{{ payment.assignment?.comment }}"
-                                disabled></textarea>
                     </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col">
+                    <label for="planned-payment-description-assignment">Comment</label>
+                    <textarea type="text"
+                              id="planned-payment-description-assignment"
+                              class="form-control"
+                              placeholder="{{payment.assignment ? '' : 'Not assigned'}}"
+                              value="{{ payment.assignment?.comment }}"
+                              disabled>
+                      </textarea>
                   </div>
                 </div>
                 <div class="row mx-auto mt-3">

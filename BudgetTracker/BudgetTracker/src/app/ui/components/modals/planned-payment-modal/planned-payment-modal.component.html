@@ -197,6 +197,9 @@
           <div class="col-md-6">
             <div [className]="ModalUtils.displayMarginFor(plannedPaymentRealPriceInput)">
               <label for="planned-payment-real-price">Actual</label>
+              <ng-template [ngIf]="plannedPaymentDto.isPaid">
+                <span class="text-danger">*</span>
+              </ng-template>
               <a #tooltipActual="ngbTooltip"
                  class="info-tooltip"
                  [ngbTooltip]="tipActualContent"
@@ -214,6 +217,7 @@
                   id="planned-payment-real-price"
                   name="planned-payment-real-price"
                   class="form-control"
+                  [required]="plannedPaymentDto.isPaid"
                   [(ngModel)]="plannedPaymentDto.actual"
                   min="{{ formConfig.paymentModal.refund.minValue }}"
                   maxlength="{{ formConfig.paymentModal.refund.maxLength }}"
@@ -234,6 +238,9 @@
                 @if (plannedPaymentRealPriceInput.invalid &&
                 (plannedPaymentRealPriceInput.dirty || plannedPaymentRealPriceInput.touched)) {
                   <div class="invalid-feedback">
+                    <label *ngIf="plannedPaymentRealPriceInput.errors?.['required']">
+                      {{ formConfig.messages.required }}
+                    </label>
                     <label *ngIf="plannedPaymentRealPriceInput.errors?.['min']">
                       {{ formatString(formConfig.messages.minValue, appConfig.form.paymentModal.refund.minValue) }}
                     </label>
