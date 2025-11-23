@@ -33,8 +33,11 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
   @Input() idBudget: string;
   @Input() assignmentStatusCode: number;
   @Output() refreshPaymentEvent = new EventEmitter<boolean>();
+  private readonly paymentName: string = "regular-payment-draft"
   protected readonly formatString = formatString;
   protected readonly subtract = subtract;
+  protected readonly BigNumber = BigNumber;
+  protected readonly format = format;
   protected readonly ModalUtils = ModalUtils;
   protected readonly SpinnerSize = SpinnerSize;
   protected readonly CategoryType = CategoryType;
@@ -63,8 +66,6 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
     this.responseModel = new ResponseModel();
     ModalUtils.defaultSettings(this.displayLoader, this.isEditing);
 
-    this.innerWidth = window.innerWidth;
-
     const appCfg = this.configService.getAppConfig();
     if (appCfg) {
       this.appConfig = appCfg;
@@ -72,6 +73,9 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
     } else {
       throw Error("Config not provided")
     }
+
+    this.innerWidth = window.innerWidth;
+    this.isChildValid = false;
   }
 
   ngOnDestroy(): void {
@@ -81,6 +85,7 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
   open(paymentData?: GetPaymentDto): void {
     this.setDefaultPaymentForm();
     this.isEditing = paymentData != null;
+    const paymentDraft = sessionStorage.getItem(this.paymentName);
 
     if (paymentData) {
       this.idPayment = paymentData.id;
@@ -107,6 +112,8 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
         this.paymentDto.assignmentComment = paymentAssignment.comment;
         this.getCategories();
       }
+    } else if (paymentDraft) {
+      this.paymentDto = JSON.parse(paymentDraft) as PaymentDto;
     }
 
     this.modalService.open(this.paymentModal, ModalOptions.default(ModalSize.BIG));
@@ -124,6 +131,11 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
   protected onCategoryChanged(result: { category: GetPaymentCategoryDto, assignmentComment: string }): void {
     this.assignedCategoryDto = result.category;
     this.paymentDto.assignmentComment = result.assignmentComment;
+  }
+
+  protected savePaymentDraft():void {
+    sessionStorage.setItem(this.paymentName, JSON.stringify(this.paymentDto));
+    this.modalService.dismissAll();
   }
 
   protected savePayment(): void {
@@ -188,6 +200,9 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
   }
 
   private onRequestSuccess(response: HttpResponse<any>): void {
+    if (sessionStorage.getItem(this.paymentName)) {
+      sessionStorage.removeItem(this.paymentName);
+    }
     this.refreshPaymentEvent.emit(true);
     this.responseModel.statusCode = response.status;
     this.modalService.dismissAll();
@@ -235,7 +250,4 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
       order: categoriesOrder.orderDirections[0].value
     } as RequestModel;
   }
-
-  protected readonly BigNumber = BigNumber;
-  protected readonly format = format;
 }
