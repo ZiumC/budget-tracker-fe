@@ -239,12 +239,10 @@
                        [collapsed]="selectedBudget !== budgetId"
                        [class.error-border]="setPlannedPaymentError(
                          paymentNameInput,
-                         plannedPaymentEstimatedInput,
-                         plannedPaymentRealPriceInput,
-                         paymentCommentInput,
+                         paymentEstimatedInput,
+                         paymentActualInput,
                          paymentAssignmentCommentInput,
-                         budgetId)"
-                  >
+                         budgetId)">
                     <h2 ngbAccordionHeader>
                       <button ngbAccordionButton
                               (click)="selectedBudget = budgetId"
@@ -254,7 +252,7 @@
                             <th>Name</th>
                             <th>Estimated (PLN)</th>
                             <th [style.display]="displayMobileView() ? 'none' : ''">
-                              Real Price (PLN)
+                              Actual (PLN)
                             </th>
                             <th [style.display]="displayMobileView() ? 'none' : ''">
                               Deviation (PLN)
@@ -262,17 +260,17 @@
                           </tr>
                           <tr>
                             <td>{{ getPlannedPaymentData(budgetId).name }}</td>
-                            <td>{{ getPlannedPaymentData(budgetId).estimated }}</td>
+                            <td>{{ format(getPlannedPaymentData(budgetId).estimated) }}</td>
                             <td [style.display]="displayMobileView() ? 'none' : ''">
-                              @if (BigNumber(getPlannedPaymentData(budgetId).realPrice).gt(0)) {
-                                {{ getPlannedPaymentData(budgetId).realPrice }}
+                              @if (BigNumber(getPlannedPaymentData(budgetId).actual!).gt(0)) {
+                                {{ format(getPlannedPaymentData(budgetId).actual) }}
                               } @else {
                                 0.00
                               }
                             </td>
                             <td [style.display]="displayMobileView() ? 'none' : ''">
-                              @if (BigNumber(getPlannedPaymentData(budgetId).realPrice).gt(0)) {
-                                {{ format(subtract(getPlannedPaymentData(budgetId).estimated, getPlannedPaymentData(budgetId).realPrice)) }}
+                              @if (BigNumber(getPlannedPaymentData(budgetId).actual!).gt(0)) {
+                                {{ format(subtract(getPlannedPaymentData(budgetId).estimated!, getPlannedPaymentData(budgetId).actual!)) }}
                               } @else {
                                 -
                               }
@@ -319,23 +317,41 @@
                           </div>
                         </div>
                         <div class="row">
-                          <div [className]="displayMobileView() ? 'col-md-6': 'col-md-6  mb-4 pb-2'">
-                            <div [className]="ModalUtils.displayMarginFor(paymentPaidSelect)">
-                              <label for="{{budgetId}}-payment-paid">Status</label>
-                              <select
-                                id="{{budgetId}}-payment-paid"
-                                name="{{budgetId}}-payment-paid"
-                                class="form-control"
-                                [(ngModel)]="getPlannedPaymentData(budgetId).isPaid"
-                                required
-                                disabled
-                                #paymentPaidSelect="ngModel">
-                                <option value=false>Payment not paid</option>
-                              </select>
-                            </div>
-                            <div [className]="ModalUtils.displayMarginFor(plannedPaymentEstimatedInput)">
+                          <div [className]="ModalUtils.displayMarginFor(paymentPaidSelect)">
+                            <label for="{{budgetId}}-payment-paid">Status</label>
+                            <select
+                              id="{{budgetId}}-payment-paid"
+                              name="{{budgetId}}-payment-paid"
+                              class="form-control"
+                              [(ngModel)]="getPlannedPaymentData(budgetId).isPaid"
+                              required
+                              disabled
+                              #paymentPaidSelect="ngModel">
+                              <option value=false>Payment not paid</option>
+                            </select>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-md-6">
+                            <div [className]="ModalUtils.displayMarginFor(paymentEstimatedInput)">
                               <label for="{{budgetId}}-planned-payment-estimated">Estimated</label>
                               <span class="text-danger">*</span>
+                              <a #tooltipEstimated="ngbTooltip"
+                                 class="info-tooltip"
+                                 [ngbTooltip]="tipEstimatedContent"
+                                 (click)="tooltipEstimated.open()">
+                                <i class="bi bi-info-circle"></i>
+                              </a>
+                              <ng-template #tipEstimatedContent>
+                                <p class="text-start mb-1">
+                                  The estimated field means: <i>how much money you will spend in near feature</i>. Examples:
+                                </p>
+                                <ul class="text-start mb-1">
+                                  <li>Tooth treatment</li>
+                                  <li>Car service</li>
+                                  <li>Civil liability insurance policy</li>
+                                </ul>
+                              </ng-template>
                               <div class="input-group">
                                 <input
                                   type="text"
@@ -347,34 +363,53 @@
                                   maxlength="{{ formConfig.paymentModal.price.maxLength }}"
                                   placeholder="{{ formConfig.paymentModal.placeholder }}"
                                   pattern="{{ formConfig.regex.money }}"
-                                  #plannedPaymentEstimatedInput="ngModel"
+                                  (focus)="paymentEstimatedInput.value && paymentEstimatedInput.value[0] === '0' && paymentEstimatedInput.value[1] !== '.'?
+                                      getPlannedPaymentData(budgetId).estimated = paymentEstimatedInput.value.substring(1) : !paymentEstimatedInput.value ?getPlannedPaymentData(budgetId).estimated = null : null;"
+                                  (focusout)="paymentEstimatedInput.value && paymentEstimatedInput.value[0] === '0' && paymentEstimatedInput.value[1] !== '.' ?
+                                      getPlannedPaymentData(budgetId).estimated = paymentEstimatedInput.value.substring(1) : null"
+                                  #paymentEstimatedInput="ngModel"
                                   [(ngModel)]="getPlannedPaymentData(budgetId).estimated"
                                   [disabled]="disableForm(budgetId)"
                                   [ngClass]="{
-                                    'is-invalid': plannedPaymentEstimatedInput.invalid &&
-                                      (plannedPaymentEstimatedInput.dirty || plannedPaymentEstimatedInput.touched),
-                                    'is-valid': plannedPaymentEstimatedInput.valid }"/>
+                                    'is-invalid': paymentEstimatedInput.invalid &&
+                                      (paymentEstimatedInput.dirty || paymentEstimatedInput.touched),
+                                    'is-valid': paymentEstimatedInput.valid }"/>
                                 <div class="input-group-append">
                                   <span class="input-group-text">PLN</span>
                                 </div>
-                                @if (plannedPaymentEstimatedInput.invalid &&
-                                (plannedPaymentEstimatedInput.dirty || plannedPaymentEstimatedInput.touched)) {
+                                @if (paymentEstimatedInput.invalid &&
+                                (paymentEstimatedInput.dirty || paymentEstimatedInput.touched)) {
                                   <div class="invalid-feedback">
-                                    <label *ngIf="plannedPaymentEstimatedInput.errors?.['required']">
+                                    <label *ngIf="paymentEstimatedInput.errors?.['required']">
                                       {{ formConfig.messages.required }}
                                     </label>
-                                    <label *ngIf="plannedPaymentEstimatedInput.errors?.['min']">
+                                    <label *ngIf="paymentEstimatedInput.errors?.['min']">
                                       {{ formatString(formConfig.messages.minValue, formConfig.paymentModal.price.minValue) }}
                                     </label>
-                                    <label *ngIf="plannedPaymentEstimatedInput.errors?.['pattern']">
+                                    <label *ngIf="paymentEstimatedInput.errors?.['pattern']">
                                       {{ formatString(formConfig.messages.invalidFormat, "number") }}
                                     </label>
                                   </div>
                                 }
                               </div>
                             </div>
-                            <div [className]="ModalUtils.displayMarginFor(plannedPaymentRealPriceInput)">
-                              <label for="{{budgetId}}-planned-payment-real-price">Real price</label>
+                          </div>
+                          <div class="col-md-6">
+                            <div [className]="ModalUtils.displayMarginFor(paymentActualInput)">
+                              <label for="{{budgetId}}-planned-payment-real-price">
+                                Actual
+                                <a #tooltipActual="ngbTooltip"
+                                   class="info-tooltip"
+                                   [ngbTooltip]="tipActualContent"
+                                   (click)="tooltipActual.open()">
+                                  <i class="bi bi-info-circle"></i>
+                                </a>
+                                <ng-template #tipActualContent>
+                                  <p class="text-start mb-1">
+                                    The actual field means: <i>how much money have you actually spend in planned payment</i>.
+                                  </p>
+                                </ng-template>
+                              </label>
                               <div class="input-group">
                                 <input
                                   type="text"
@@ -385,59 +420,32 @@
                                   maxlength="{{ formConfig.paymentModal.refund.maxLength }}"
                                   placeholder="{{formConfig.paymentModal.placeholder}}"
                                   pattern="{{formConfig.regex.money}}"
-                                  #plannedPaymentRealPriceInput="ngModel"
-                                  [(ngModel)]="getPlannedPaymentData(budgetId).realPrice"
+                                  (focus)="paymentActualInput.value && paymentActualInput.value[0] === '0' && paymentActualInput.value[1] !== '.'?
+                                      getPlannedPaymentData(budgetId).actual = paymentActualInput.value.substring(1) : !paymentActualInput.value ?getPlannedPaymentData(budgetId).actual = null : null;"
+                                  (focusout)="paymentActualInput.value && paymentActualInput.value[0] === '0' && paymentActualInput.value[1] !== '.' ?
+                                      getPlannedPaymentData(budgetId).actual = paymentActualInput.value.substring(1) : null"
+                                  #paymentActualInput="ngModel"
+                                  [(ngModel)]="getPlannedPaymentData(budgetId).actual"
                                   [disabled]="disableForm(budgetId)"
                                   [ngClass]="{
-                                    'is-invalid': plannedPaymentRealPriceInput.invalid &&
-                                      (plannedPaymentRealPriceInput.dirty || plannedPaymentRealPriceInput.touched),
-                                    'is-valid': plannedPaymentRealPriceInput.valid }"/>
+                                    'is-invalid': paymentActualInput.invalid &&
+                                      (paymentActualInput.dirty || paymentActualInput.touched),
+                                    'is-valid': paymentActualInput.valid }"/>
                                 <div class="input-group-append">
                                   <span class="input-group-text">PLN</span>
                                 </div>
-                                @if (plannedPaymentRealPriceInput.invalid &&
-                                (plannedPaymentRealPriceInput.dirty || plannedPaymentRealPriceInput.touched)) {
+                                @if (paymentActualInput.invalid &&
+                                (paymentActualInput.dirty || paymentActualInput.touched)) {
                                   <div class="invalid-feedback">
-                                    <label *ngIf="plannedPaymentRealPriceInput.errors?.['min']">
+                                    <label *ngIf="paymentActualInput.errors?.['min']">
                                       {{ formatString(formConfig.messages.minValue, appConfig.form.paymentModal.refund.minValue) }}
                                     </label>
-                                    <label *ngIf="plannedPaymentRealPriceInput.errors?.['pattern']">
+                                    <label *ngIf="paymentActualInput.errors?.['pattern']">
                                       {{ formatString(formConfig.messages.invalidFormat, "number") }}
                                     </label>
                                   </div>
                                 }
                               </div>
-                            </div>
-                          </div>
-                          <div class="col-md-6">
-                            <div [className]="ModalUtils.displayMarginFor(paymentCommentInput)">
-                              <label for="{{budgetId}}-planned-payment-comment">Comment</label>
-                              <textarea
-                                id="{{budgetId}}-planned-payment-comment"
-                                name="{{budgetId}}-planned-payment-comment"
-                                class="form-control"
-                                rows="{{ displayMobileView() ? 4 : 9 }}"
-                                minlength="{{ formConfig.paymentModal.comment.minLength }}"
-                                maxlength="{{ formConfig.paymentModal.comment.maxLength }}"
-                                #paymentCommentInput="ngModel"
-                                [disabled]="disableForm(budgetId)"
-                                [(ngModel)]="getPlannedPaymentData(budgetId).comment"
-                                [ngClass]="{
-                                  'is-invalid': paymentCommentInput.invalid &&
-                                    (paymentCommentInput.dirty || paymentCommentInput.touched),
-                                  'is-valid': paymentCommentInput.valid }">
-                                </textarea>
-                              @if (paymentCommentInput.invalid &&
-                              (paymentCommentInput.dirty || paymentCommentInput.touched)) {
-                                <div class="invalid-feedback">
-                                  <label *ngIf="paymentCommentInput.errors?.['minlength']">
-                                    {{ formatString(formConfig.messages.minLength, formConfig.paymentModal.comment.minLength) }}
-                                  </label>
-                                  <label *ngIf="paymentCommentInput.errors?.['maxlength']">
-                                    {{ formatString(formConfig.messages.maxLength, formConfig.paymentModal.comment.maxLength) }}
-                                  </label>
-                                </div>
-                              }
                             </div>
                           </div>
                         </div>
@@ -518,15 +526,16 @@
                   </div>
                 }
               }
-              <ng-template [ngIf]="displayTimer">
-                <div class="my-4">
-                  <div class="pt-3"></div>
-                  <app-timer [duration]="appConfig.timer.duration.default"
-                             (timerFinishedEvent)="onTimerFinishedEvent(modal)">
-
-                  </app-timer>
-                </div>
-              </ng-template>
+              <div #timer>
+                <ng-template [ngIf]="displayTimer">
+                  <div class="my-4">
+                    <div class="pt-3"></div>
+                    <app-timer [duration]="appConfig.timer.duration.default"
+                               (timerFinishedEvent)="onTimerFinishedEvent(modal)">
+                    </app-timer>
+                  </div>
+                </ng-template>
+              </div>
             </div>
           </div>
         </div>
@@ -543,7 +552,7 @@
             [disabled]="step2Form.invalid || displayTimer"
             type="button"
             class="btn btn-outline-primary"
-            (click)="save()">
+            (click)="save();">
             Save
           </button>
         </div>

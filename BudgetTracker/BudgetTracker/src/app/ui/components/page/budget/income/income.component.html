@@ -50,7 +50,7 @@
                   </tr>
                   <tr>
                     <td>{{ income.name }}</td>
-                    <td>{{ income.isSurplus && income.forSavings ? format(income.savings) : format(income.wage) }}</td>
+                    <td>{{ income.isSurplus && income.forSavings ? format(income.savings) : format(income.earnings) }}</td>
                     <td [style.display]="displayMobileView() ? 'none' : ''">
                       {{ DateUtils.format(income.dateUpdated) }}
                     </td>

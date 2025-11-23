@@ -78,7 +78,7 @@
               <i class="bi bi-info-circle"></i>
             </a>
             <ng-template #tipStatusContent>
-              <ng-template [ngIf]="BigNumber(plannedPaymentDto.realPrice!).toNumber() > 0"
+              <ng-template [ngIf]="BigNumber(plannedPaymentDto.actual!).toNumber() > 0"
                            [ngIfElse]="explainStatus">
                 <ul class="text-start mb-0">
                   <li>
@@ -107,8 +107,8 @@
                 'is-invalid': paymentPaidSelect.invalid &&
                   (paymentPaidSelect.dirty || paymentPaidSelect.touched),
                 'is-valid': paymentPaidSelect.valid }">
-              <option value=false>Paid</option>
-              <option value=true>Unpaid</option>
+              <option [ngValue]=true>Paid</option>
+              <option [ngValue]=false>Unpaid</option>
             </select>
             @if (paymentPaidSelect.invalid &&
             (paymentPaidSelect.dirty || paymentPaidSelect.touched)) {
@@ -124,7 +124,9 @@
           <div [className]="innerWidth > appConfig.pageMobileWidth ? 'col-md-6': 'col-md-6  mb-4 pb-2'">
             <div [className]="ModalUtils.displayMarginFor(plannedPaymentEstimatedInput)">
               <label for="planned-payment-estimated">Estimated</label>
-              <span class="text-danger">*</span>
+              <ng-template [ngIf]="!plannedPaymentDto.isPaid">
+                <span class="text-danger">*</span>
+              </ng-template>
               <a #tooltipEstimated="ngbTooltip"
                  class="info-tooltip"
                  [ngbTooltip]="tipEstimatedContent"
@@ -132,14 +134,23 @@
                 <i class="bi bi-info-circle"></i>
               </a>
               <ng-template #tipEstimatedContent>
-                <p class="text-start mb-1">
-                  The estimated field means: <i>how much money you will spend in near feature</i>. Examples:
-                </p>
-                <ul class="text-start mb-1">
-                  <li>Tooth treatment</li>
-                  <li>Car service</li>
-                  <li>Civil liability insurance policy</li>
-                </ul>
+                <ng-template [ngIf]="plannedPaymentDto.isPaid"
+                             [ngIfElse]="notPaidYet">
+                  <p class="text-start mb-1">
+                    Payment has been marked as made. If you want to edit <strong>estimated</strong> value, change
+                    status to <strong>unpaid</strong> then modify it.
+                  </p>
+                </ng-template>
+                <ng-template #notPaidYet>
+                  <p class="text-start mb-1">
+                    The estimated field means: <i>how much money you will spend in near feature</i>. Examples:
+                  </p>
+                  <ul class="text-start mb-1">
+                    <li>Tooth treatment</li>
+                    <li>Car service</li>
+                    <li>Civil liability insurance policy</li>
+                  </ul>
+                </ng-template>
               </ng-template>
               <div class="input-group">
                 <input
@@ -152,6 +163,7 @@
                   min="{{ formConfig.paymentModal.price.minValue }}"
                   maxlength="{{ formConfig.paymentModal.price.maxLength }}"
                   placeholder="{{ formConfig.paymentModal.placeholder }}"
+                  [disabled]="plannedPaymentDto.isPaid"
                   pattern="{{ formConfig.regex.money }}"
                   (focus)="plannedPaymentEstimatedInput.value && plannedPaymentEstimatedInput.value[0] === '0' && plannedPaymentEstimatedInput.value[1] !== '.'?
                       plannedPaymentDto.estimated = plannedPaymentEstimatedInput.value.substring(1) : !plannedPaymentEstimatedInput.value ? plannedPaymentDto.estimated = null : null;"
@@ -202,16 +214,15 @@
                   id="planned-payment-real-price"
                   name="planned-payment-real-price"
                   class="form-control"
-                  [(ngModel)]="plannedPaymentDto.realPrice"
+                  [(ngModel)]="plannedPaymentDto.actual"
                   min="{{ formConfig.paymentModal.refund.minValue }}"
                   maxlength="{{ formConfig.paymentModal.refund.maxLength }}"
                   placeholder="{{formConfig.paymentModal.placeholder}}"
                   pattern="{{formConfig.regex.money}}"
                   (focus)="plannedPaymentRealPriceInput.value && plannedPaymentRealPriceInput.value[0] === '0' && plannedPaymentRealPriceInput.value[1] !== '.'?
-                      plannedPaymentDto.realPrice = plannedPaymentRealPriceInput.value.substring(1) : !plannedPaymentRealPriceInput.value ? plannedPaymentDto.realPrice = null : null;"
+                      plannedPaymentDto.actual = plannedPaymentRealPriceInput.value.substring(1) : !plannedPaymentRealPriceInput.value ? plannedPaymentDto.actual = null : null;"
                   (focusout)="plannedPaymentRealPriceInput.value && plannedPaymentRealPriceInput.value[0] === '0' && plannedPaymentRealPriceInput.value[1] !== '.' ?
-                      plannedPaymentDto.realPrice = plannedPaymentRealPriceInput.value.substring(1) : null"
-                  [disabled]="plannedPaymentDto.isPaid"
+                      plannedPaymentDto.actual = plannedPaymentRealPriceInput.value.substring(1) : null"
                   #plannedPaymentRealPriceInput="ngModel"
                   [ngClass]="{
                   'is-invalid': plannedPaymentRealPriceInput.invalid &&

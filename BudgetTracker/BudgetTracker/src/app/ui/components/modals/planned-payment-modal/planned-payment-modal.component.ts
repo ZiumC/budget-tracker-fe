@@ -87,9 +87,8 @@ export class PlannedPaymentModalComponent implements OnInit, OnDestroy {
       this.idPlannedPayment = plannedPaymentData.id;
       this.plannedPaymentDto.name = plannedPaymentData.name;
       this.plannedPaymentDto.estimated = plannedPaymentData.estimated;
-      this.plannedPaymentDto.realPrice = plannedPaymentData.realPrice;
+      this.plannedPaymentDto.actual = plannedPaymentData.actual;
       this.plannedPaymentDto.isPaid = plannedPaymentData.isPaid;
-      this.plannedPaymentDto.comment = plannedPaymentData.comment;
 
       const plannedPaymentAssignment = plannedPaymentData.assignment;
       if (plannedPaymentAssignment) {
@@ -125,8 +124,8 @@ export class PlannedPaymentModalComponent implements OnInit, OnDestroy {
   }
 
   protected paidStatusEnabled(): boolean {
-    if (this.plannedPaymentDto.realPrice) {
-      return new BigNumber(this.plannedPaymentDto.realPrice).gt(0);
+    if (this.plannedPaymentDto.actual) {
+      return new BigNumber(this.plannedPaymentDto.actual).gt(0);
     }
     return false;
   }
@@ -145,8 +144,8 @@ export class PlannedPaymentModalComponent implements OnInit, OnDestroy {
     this.plannedPaymentDto.isPaid = JSON.parse(isPaid);
     this.plannedPaymentDto.idPaymentCategory = this.assignedCategoryDto.id;
 
-    if (!this.plannedPaymentDto.realPrice) {
-      this.plannedPaymentDto.realPrice = new BigNumber(0);
+    if (!this.plannedPaymentDto.actual) {
+      this.plannedPaymentDto.actual = new BigNumber(0);
     }
 
     new TimerUtils(this.appConfig.animation.duration.default).start()
@@ -211,7 +210,6 @@ export class PlannedPaymentModalComponent implements OnInit, OnDestroy {
     this.plannedPaymentDto = {
       name: "",
       isPaid: false,
-      comment: "",
       idPaymentCategory: "",
       assignmentComment: ""
     } as PlannedPaymentDto;

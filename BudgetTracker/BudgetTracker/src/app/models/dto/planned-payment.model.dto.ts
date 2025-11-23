@@ -4,10 +4,9 @@ import {GetPaymentAssignmentDto} from "./assignment.model.dto";
 export class GetPlannedPaymentDto {
   id: string;
   name: string;
-  estimated: BigNumber;
-  realPrice: BigNumber;
+  estimated: BigNumber | null;
+  actual: BigNumber | null;
   isPaid: boolean;
-  comment: string;
   dateUpdated: Date;
   assignment: GetPaymentAssignmentDto | null;
 }
@@ -15,9 +14,8 @@ export class GetPlannedPaymentDto {
 export class PlannedPaymentDto {
   name: string;
   estimated: BigNumber | null;
-  realPrice: BigNumber | null;
+  actual: BigNumber | null;
   isPaid: boolean;
-  comment: string;
   idPaymentCategory: string;
   assignmentComment: string;
 }

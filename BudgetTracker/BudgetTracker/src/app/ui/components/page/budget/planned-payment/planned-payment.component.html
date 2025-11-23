@@ -58,10 +58,10 @@
                     <td [style.display]="displayMobileView() ? 'none' : ''">
                       {{ format(plannedPayment.estimated) }}
                     </td>
-                    <td> {{ format(plannedPayment.realPrice) }}</td>
+                    <td> {{ format(plannedPayment.actual) }}</td>
                     <td [style.display]="displayMobileView() ? 'none' : ''">
-                      @if (BigNumber(plannedPayment.realPrice).gt(0)) {
-                        {{ format(subtract(plannedPayment.estimated, plannedPayment.realPrice)) }}
+                      @if (BigNumber(plannedPayment.actual!).gt(0)) {
+                        {{ format(subtract(plannedPayment.estimated!, plannedPayment.actual!)) }}
                       } @else {
                         -
                       }
@@ -91,8 +91,8 @@
                     <input type="text"
                            id="planned-payment-real"
                            class="form-control mb-2"
-                           [value]="BigNumber(plannedPayment.realPrice).gt(0) ?
-                                 format(subtract(plannedPayment.estimated, plannedPayment.realPrice)) :
+                           [value]="BigNumber(plannedPayment.actual!).gt(0) ?
+                                 format(subtract(plannedPayment.estimated!, plannedPayment.actual!)) :
                                  '-'"
                            disabled>
                   </div>
@@ -108,13 +108,6 @@
                                class="form-control mb-2"
                                value="{{DateUtils.formatWithTime(plannedPayment.dateUpdated)}}"
                                disabled>
-                        <label for="planned-payment-comment">Payment comment</label>
-                        <textarea type="text"
-                                  id="planned-payment-comment"
-                                  class="form-control"
-                                  value="{{ plannedPayment.comment }}"
-                                  disabled>
-                                </textarea>
                       </div>
                     </div>
                   </div>

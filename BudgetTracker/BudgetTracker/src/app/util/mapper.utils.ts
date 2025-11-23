@@ -7,8 +7,7 @@ export function toPlannedPaymentDto(value: GetPlannedPaymentDto): PlannedPayment
   return {
     name: value.name,
     estimated: value.estimated,
-    realPrice: value.realPrice,
-    comment: value.comment,
+    actual: value.actual,
     isPaid: value.isPaid,
     idPaymentCategory: assignmentId ? assignmentId : '',
     assignmentComment: assignmentComment ? assignmentComment : ''
