@@ -94,8 +94,8 @@
                 'is-invalid': paymentPaidSelect.invalid &&
                   (paymentPaidSelect.dirty || paymentPaidSelect.touched),
                 'is-valid': paymentPaidSelect.valid }">
-              <option value=false>Payment not paid</option>
-              <option value=true>Payment paid</option>
+              <option [ngValue]=true>Paid</option>
+              <option [ngValue]=false>Unpaid</option>
             </select>
             @if (paymentPaidSelect.invalid &&
             (paymentPaidSelect.dirty || paymentPaidSelect.touched)) {
@@ -111,7 +111,24 @@
           <div [className]="innerWidth > appConfig.pageMobileWidth ? 'col-md-6': 'col-md-6  mb-4 pb-2'">
             <div [className]="ModalUtils.displayMarginFor(paymentPriceInput)">
               <label for="payment-price">Price</label>
-              <span class="text-danger">*</span>
+              <ng-template [ngIf]="!paymentDto.isPaid"
+                           [ngIfElse]="paidInfo">
+                <span class="text-danger">*</span>
+              </ng-template>
+              <ng-template #paidInfo>
+                <a #tooltipPrice="ngbTooltip"
+                   class="info-tooltip"
+                   [ngbTooltip]="tipPriceContent"
+                   (click)="tooltipPrice.open()">
+                  <i class="bi bi-info-circle"></i>
+                </a>
+                <ng-template #tipPriceContent>
+                  <p class="text-start mb-1">
+                    Payment has been marked as made. If you want to edit <strong>price</strong> value, change
+                    status to <strong>unpaid</strong> then modify it.
+                  </p>
+                </ng-template>
+              </ng-template>
               <div class="input-group">
                 <input
                   type="text"
@@ -124,6 +141,7 @@
                   maxlength="{{ formConfig.paymentModal.price.maxLength }}"
                   placeholder="{{ formConfig.paymentModal.placeholder }}"
                   pattern="{{ formConfig.regex.money }}"
+                  [disabled]="paymentDto.isPaid"
                   (focus)="paymentPriceInput.value && paymentPriceInput.value[0] === '0' && paymentPriceInput.value[1] !== '.'?
                       paymentDto.price = paymentPriceInput.value.substring(1) : !paymentPriceInput.value ? paymentDto.price = null : null;"
                   (focusout)="paymentPriceInput.value && paymentPriceInput.value[0] === '0' && paymentPriceInput.value[1] !== '.' ?
@@ -173,15 +191,15 @@
                   id="payment-refund"
                   name="payment-refund"
                   class="form-control"
-                  [(ngModel)]="paymentDto.refund"
+                  [(ngModel)]="paymentDto.split"
                   min="{{ formConfig.paymentModal.refund.minValue }}"
                   maxlength="{{ formConfig.paymentModal.refund.maxLength }}"
                   placeholder="{{formConfig.paymentModal.placeholder}}"
                   pattern="{{formConfig.regex.money}}"
                   (focus)="paymentRefundInput.value && paymentRefundInput.value[0] === '0' && paymentRefundInput.value[1] !== '.'?
-                      paymentDto.refund = paymentRefundInput.value.substring(1) : !paymentRefundInput.value ? paymentDto.refund = null : null;"
+                      paymentDto.split = paymentRefundInput.value.substring(1) : !paymentRefundInput.value ? paymentDto.split = null : null;"
                   (focusout)="paymentRefundInput.value && paymentRefundInput.value[0] === '0' && paymentRefundInput.value[1] !== '.' ?
-                      paymentDto.refund = paymentRefundInput.value.substring(1) : null"
+                      paymentDto.split = paymentRefundInput.value.substring(1) : null"
                   #paymentRefundInput="ngModel"
                   [ngClass]="{
                   'is-invalid': paymentRefundInput.invalid &&
@@ -205,11 +223,11 @@
             </div>
           </div>
         </div>
-        <ng-template [ngIf]="BigNumber(paymentDto.price!).toNumber() < BigNumber(paymentDto.refund!).toNumber()">
+        <ng-template [ngIf]="BigNumber(paymentDto.price!).toNumber() < BigNumber(paymentDto.split!).toNumber()">
           <div class="row text-center">
             <div class="col">
               <p>
-                <strong>{{ format(subtract(BigNumber(paymentDto.refund!), BigNumber(paymentDto.price!))) }} PLN</strong>
+                <strong>{{ format(subtract(BigNumber(paymentDto.split!), BigNumber(paymentDto.price!))) }} PLN</strong>
                 will go to budget.
                 <a #tooltipSurplus="ngbTooltip"
                    class="info-tooltip"
@@ -253,7 +271,7 @@
               class="form-control"
               id="real-price"
               disabled
-              value="{{ subtract(this.paymentDto.price!, this.paymentDto.refund!).abs() }}"/>
+              value="{{ subtract(this.paymentDto.price!, this.paymentDto.split!).abs() }}"/>
             <div class="input-group-append">
               <span class="input-group-text">PLN</span>
             </div>

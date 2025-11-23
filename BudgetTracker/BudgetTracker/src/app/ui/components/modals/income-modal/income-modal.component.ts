@@ -79,7 +79,7 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
     if (incomeData) {
       this.idIncome = incomeData.id;
       this.incomeDto.name = incomeData.name;
-      this.incomeDto.wage = incomeData.wage;
+      this.incomeDto.earnings = incomeData.earnings;
       this.incomeDto.savings = incomeData.savings;
       this.incomeDto.isSurplus = incomeData.isSurplus;
       this.incomeDto.forSavings = incomeData.forSavings;
@@ -95,7 +95,7 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
   }
 
   protected validateSavings(wageModel: NgModel, savingsModel: NgModel): void {
-    const wage = new BigNumber(this.incomeDto.wage!).toNumber();
+    const wage = new BigNumber(this.incomeDto.earnings!).toNumber();
     const savings = new BigNumber(this.incomeDto.savings!).toNumber();
 
     wageModel.control.markAsTouched();
@@ -121,7 +121,7 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
   }
 
   protected onSurplusTypeChange(wageModel: NgModel): void {
-    this.incomeDto.wage = null;
+    this.incomeDto.earnings = null;
     wageModel.control.markAsTouched();
   }
 
@@ -136,8 +136,8 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
       this.incomeDto.savings = new BigNumber(0);
     }
 
-    if (!this.incomeDto.wage) {
-      this.incomeDto.wage = new BigNumber(0);
+    if (!this.incomeDto.earnings) {
+      this.incomeDto.earnings = new BigNumber(0);
     }
 
     new TimerUtils(this.appConfig.animation.duration.default).start()

@@ -86,9 +86,8 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
       this.idPayment = paymentData.id;
       this.paymentDto.name = paymentData.name;
       this.paymentDto.price = paymentData.price;
-      this.paymentDto.refund = paymentData.refund;
+      this.paymentDto.split = paymentData.split;
       this.paymentDto.isPaid = paymentData.isPaid;
-      this.paymentDto.comment = paymentData.comment;
 
       const paymentAssignment = paymentData.assignment;
       if (paymentAssignment) {
@@ -134,8 +133,8 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
     this.paymentDto.isPaid = JSON.parse(isPaid);
     this.paymentDto.idPaymentCategory = this.assignedCategoryDto.id;
 
-    if (!this.paymentDto.refund) {
-      this.paymentDto.refund = new BigNumber(0);
+    if (!this.paymentDto.split) {
+      this.paymentDto.split = new BigNumber(0);
     }
 
     new TimerUtils(this.appConfig.animation.duration.default).start()
@@ -206,7 +205,6 @@ export class PaymentModalComponent implements OnInit, OnDestroy {
     this.paymentDto = {
       name: "",
       isPaid: false,
-      comment: "",
       idPaymentCategory: "",
       assignmentComment: ""
     } as PaymentDto;

@@ -6,11 +6,11 @@ export class SortPayment {
     if (items) {
       return items.sort((prev, next): number => {
         if (ascending) {
-          return subtract(prev.price, prev.refund).toNumber() -
-            subtract(next.price, next.refund).toNumber()
+          return subtract(prev.price, prev.split).toNumber() -
+            subtract(next.price, next.split).toNumber()
         } else {
-          return subtract(next.price, next.refund).toNumber() -
-            subtract(prev.price, prev.refund).toNumber()
+          return subtract(next.price, next.split).toNumber() -
+            subtract(prev.price, prev.split).toNumber()
         }
       })
     } else {

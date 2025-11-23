@@ -57,9 +57,9 @@
                       {{ format(payment.price) }}
                     </td>
                     <td [style.display]="displayMobileView() ? 'none' : ''">
-                      {{ format(payment.refund) }}
+                      {{ format(payment.split) }}
                     </td>
-                    <td>{{ format(subtract(payment.price, payment.refund).abs()) }}</td>
+                    <td>{{ format(subtract(payment.price, payment.split).abs()) }}</td>
                   </tr>
                 </table>
               </button>
@@ -92,7 +92,7 @@
                       <input type="text"
                              id="payment-refund"
                              class="form-control mb-2"
-                             value="{{ format(payment.refund) }}"
+                             value="{{ format(payment.split) }}"
                              disabled>
                     </div>
                   </div>
@@ -108,13 +108,6 @@
                                class="form-control mb-2"
                                value="{{DateUtils.formatWithTime(payment.dateUpdated)}}"
                                disabled>
-                        <label for="payment-comment">Comment</label>
-                        <textarea type="text"
-                                  id="payment-comment"
-                                  class="form-control"
-                                  value="{{ payment.comment }}"
-                                  disabled>
-                                </textarea>
                       </div>
                     </div>
                   </div>

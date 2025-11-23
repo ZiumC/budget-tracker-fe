@@ -67,7 +67,7 @@
           <div class="row">
             <div class="col-md-6">
               <div [className]="ModalUtils.displayMarginFor(incomeWageInput)">
-                <label for="income-wage">Income</label>
+                <label for="income-wage">Earnings</label>
                 @if (!incomeDto.forSavings) {
                   <span class="text-danger">*</span>
                 }
@@ -76,15 +76,15 @@
                   id="income-wage"
                   name="income-wage"
                   class="form-control"
-                  [(ngModel)]="incomeDto.wage"
+                  [(ngModel)]="incomeDto.earnings"
                   [disabled]="incomeDto.forSavings"
                   [required]="!incomeDto.forSavings"
                   maxlength="{{ formConfig.incomeModal.number.maxLength }}"
                   placeholder="{{ formConfig.incomeModal.placeholder }}"
                   (focus)="incomeWageInput.value && incomeWageInput.value[0] === '0' && incomeWageInput.value[1] !== '.'?
-                      incomeDto.wage = incomeWageInput.value.substring(1) : !incomeWageInput.value ? incomeDto.wage = null : null;"
+                      incomeDto.earnings = incomeWageInput.value.substring(1) : !incomeWageInput.value ? incomeDto.earnings = null : null;"
                   (focusout)="incomeWageInput.value && incomeWageInput.value[0] === '0' && incomeWageInput.value[1] !== '.' ?
-                      incomeDto.wage = incomeWageInput.value.substring(1) : null"
+                      incomeDto.earnings = incomeWageInput.value.substring(1) : null"
                   pattern="{{ formConfig.regex.money }}"
                   (ngModelChange)="validateSavings(incomeWageInput, incomeSavingsInput)"
                   #incomeWageInput="ngModel"
@@ -168,13 +168,13 @@
               </div>
             </div>
           </div>
-          <ng-template [ngIf]="BigNumber(incomeDto.wage!).toNumber() > 0
+          <ng-template [ngIf]="BigNumber(incomeDto.earnings!).toNumber() > 0
                                 && BigNumber(incomeDto.savings!).toNumber() > 0
-                                && BigNumber(incomeDto.wage!).toNumber() > BigNumber(incomeDto.savings!).toNumber()">
+                                && BigNumber(incomeDto.earnings!).toNumber() > BigNumber(incomeDto.savings!).toNumber()">
             <div class="row text-center">
               <div class="col">
                 <p>
-                  <strong>{{ format(subtract(BigNumber(incomeDto.wage!), BigNumber(incomeDto.savings!))) }} PLN</strong>
+                  <strong>{{ format(subtract(BigNumber(incomeDto.earnings!), BigNumber(incomeDto.savings!))) }} PLN</strong>
                   will go to budget and
                   <strong>{{ BigNumber(incomeDto.savings!) }} PLN</strong> will go to savings.
                 </p>
@@ -194,8 +194,8 @@
                     'is-invalid': incomeSurplusSelect.invalid &&
                       (incomeSurplusSelect.dirty || incomeSurplusSelect.touched),
                     'is-valid': incomeSurplusSelect.valid }">
-              <option [ngValue]="false">Is not surplus</option>
-              <option [ngValue]="true">Is surplus</option>
+              <option [ngValue]=false>Is not surplus</option>
+              <option [ngValue]=true>Is surplus</option>
             </select>
             @if (incomeSurplusSelect.invalid &&
             (incomeSurplusSelect.dirty || incomeSurplusSelect.touched)) {

@@ -141,7 +141,7 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   protected paidBtnDisabled(plannedPayment: GetPlannedPaymentDto): boolean {
-    let hasRealPrice = new BigNumber(plannedPayment.realPrice).toNumber() > 0;
+    let hasRealPrice = new BigNumber(plannedPayment.actual!).toNumber() > 0;
     let hasAssignment = false;
 
     if (plannedPayment.assignment) {

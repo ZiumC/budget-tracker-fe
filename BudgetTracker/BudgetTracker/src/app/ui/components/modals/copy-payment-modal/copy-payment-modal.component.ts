@@ -1,4 +1,4 @@
-import {Component, HostListener, OnDestroy, OnInit, TemplateRef, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, HostListener, OnDestroy, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {ModalOptions, ModalSize, ModalUtils} from "../../../../util/modal.utils";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {HttpService} from "../../../../services/http/http.service";
@@ -136,7 +136,7 @@ export class CopyPaymentModalComponent implements OnInit, OnDestroy {
           this.budgetsResponseModel.statusCode = response.status;
         },
         error: (err): void => {
-          if (err.status != 404){
+          if (err.status != 404) {
             this.errorModal.open(this.budgetsResponseModel);
           }
           this.budgetsResponseModel = getErrorResponse(err);
@@ -203,13 +203,12 @@ export class CopyPaymentModalComponent implements OnInit, OnDestroy {
 
   protected setPlannedPaymentError(
     inputName: NgModel, inputEstimated: NgModel,
-    inputReal: NgModel, textareaComment: NgModel,
+    inputReal: NgModel,
     inputCategoryAssignment: NgModel, budgetId: string): boolean {
     const isFormInvalid = this.isFormInvalid(
       inputName,
       inputEstimated,
       inputReal,
-      textareaComment,
       inputCategoryAssignment);
 
     const plannedPaymentStatus = this.plannedPaymentsToCopy.get(budgetId)!.status;
@@ -308,13 +307,12 @@ export class CopyPaymentModalComponent implements OnInit, OnDestroy {
 
   private isFormInvalid(
     inputName: NgModel, inputEstimated: NgModel,
-    inputReal: NgModel, textareaComment: NgModel,
+    inputReal: NgModel,
     categoryAssignment: NgModel): boolean {
     const formErrors = [
       inputName.control.errors,
       inputEstimated.control.errors,
       inputReal.control.errors,
-      textareaComment.control.errors,
       categoryAssignment.control.errors
     ];
 
