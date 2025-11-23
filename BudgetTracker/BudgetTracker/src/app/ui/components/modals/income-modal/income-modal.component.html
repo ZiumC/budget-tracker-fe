@@ -174,7 +174,8 @@
             <div class="row text-center">
               <div class="col">
                 <p>
-                  <strong>{{ format(subtract(BigNumber(incomeDto.earnings!), BigNumber(incomeDto.savings!))) }} PLN</strong>
+                  <strong>{{ format(subtract(BigNumber(incomeDto.earnings!), BigNumber(incomeDto.savings!))) }}
+                    PLN</strong>
                   will go to budget and
                   <strong>{{ BigNumber(incomeDto.savings!) }} PLN</strong> will go to savings.
                 </p>
@@ -279,6 +280,13 @@
       </form>
     </div>
     <div class="modal-footer">
+      <button
+        [disabled]="!(form.valid && !isChildValid)"
+        type="button"
+        class="btn btn-outline-secondary mx-3"
+        (click)="saveDraftIncome()">
+        Save as draft
+      </button>
       <button
         [disabled]="!(form.valid && isChildValid)"
         type="button"

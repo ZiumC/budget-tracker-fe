@@ -31,6 +31,7 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
   @Input() idBudget: string;
   @Input() assignmentStatusCode: number;
   @Output() refreshIncomeEvent = new EventEmitter<boolean>();
+  private readonly incomeName = "income-draft";
   protected readonly SpinnerSize = SpinnerSize;
   protected readonly ModalUtils = ModalUtils;
   protected readonly formatString = formatString;
@@ -75,6 +76,7 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
     this.getCategories();
     this.setDefaultIncomeForm();
     this.isEditing = incomeData != null;
+    const sessionItem = sessionStorage.getItem(this.incomeName);
 
     if (incomeData) {
       this.idIncome = incomeData.id;
@@ -89,6 +91,8 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
         this.assignedCategoryDto = incomeAssignment.category;
         this.incomeDto.assignmentComment = incomeAssignment.comment;
       }
+    } else if (sessionItem) {
+      this.incomeDto = JSON.parse(sessionItem) as IncomeDto;
     }
 
     this.modalService.open(this.incomeModal, ModalOptions.default(ModalSize.BIG));
@@ -109,12 +113,12 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
       wageModel.control.updateValueAndValidity();
       savingsModel.control.setErrors({savingsTooBig: null});
       savingsModel.control.updateValueAndValidity();
-    } else if (!savings){
+    } else if (!savings) {
       wageModel.control.setErrors({wageTooLow: null});
       wageModel.control.updateValueAndValidity();
     }
 
-    if (this.incomeDto.forSavings){
+    if (this.incomeDto.forSavings) {
       savingsModel.control.setErrors({savingsTooBig: null});
       savingsModel.control.updateValueAndValidity();
     }
@@ -123,6 +127,11 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
   protected onSurplusTypeChange(wageModel: NgModel): void {
     this.incomeDto.earnings = null;
     wageModel.control.markAsTouched();
+  }
+
+  protected saveDraftIncome(): void {
+    sessionStorage.setItem(this.incomeName, JSON.stringify(this.incomeDto));
+    this.modalService.dismissAll();
   }
 
   protected saveIncome(): void {
@@ -192,6 +201,9 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
   }
 
   private onRequestSuccess(): void {
+    if (sessionStorage.getItem(this.incomeName)) {
+      sessionStorage.removeItem(this.incomeName);
+    }
     this.refreshIncomeEvent.emit(true);
     this.modalService.dismissAll();
     this.displayLoader = false;
