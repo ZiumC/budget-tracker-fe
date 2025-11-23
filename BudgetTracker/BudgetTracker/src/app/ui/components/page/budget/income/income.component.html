@@ -43,13 +43,13 @@
                 <table>
                   <tr class="table-header">
                     <th>Name</th>
-                    <th>{{ income.isSurplus && income.forSavings ? 'Savings' : 'Wage' }} (PLN)</th>
+                    <th>{{ income.isSurplus && income.forSavings ? 'Savings' : 'Earnings' }} (PLN)</th>
                     <th [style.display]="displayMobileView() ? 'none' : ''">
                       Date updated
                     </th>
                   </tr>
                   <tr>
-                    <td>{{ income.name }}</td>
+                    <td class="text-break">{{ income.name }}</td>
                     <td>{{ income.isSurplus && income.forSavings ? format(income.savings) : format(income.earnings) }}</td>
                     <td [style.display]="displayMobileView() ? 'none' : ''">
                       {{ DateUtils.format(income.dateUpdated) }}
@@ -102,7 +102,7 @@
                 </div>
                 <div class="row mb-3">
                   <div class="form-group">
-                    <label for="category-assignment-comment">Assignment Comment
+                    <label for="category-assignment-comment">Comment
                     </label>
                     <textarea type="text"
                               id="category-assignment-comment"

@@ -67,7 +67,7 @@
                         <tr class="text-start">
                           <td>
                             <ul class="mb-0">
-                              <li>Wage: {{
+                              <li>Earnings: {{
                                   format(
                                     BudgetIncome.computeWage(budgetSummary)
                                   )
@@ -110,7 +110,7 @@
                                 Formula for <strong>total income</strong> calculation:<br>
                               </p>
                               <ul class="text-start mb-1">
-                                <li>Total = (Wage + Budget surplus) - Budget savings</li>
+                                <li>Total = (Earnings + Budget surplus) - Budget savings</li>
                               </ul>
                             </ng-template>
                           </td>
@@ -135,7 +135,7 @@
                                   )
                                 }} PLN
                               </li>
-                              <li>Real price: {{
+                              <li>Actual: {{
                                   format(
                                     BudgetPlannedPayment.computeRealPrice(budgetSummary)
                                   )
@@ -188,7 +188,7 @@
                                   )
                                 }} PLN
                               </li>
-                              <li>Refund: {{
+                              <li>Split: {{
                                   format(
                                     BudgetRegularPayment.computeRefund(budgetSummary)
                                   )
@@ -215,7 +215,7 @@
                                 Formula for <strong>total regular</strong> payments calculation:<br>
                               </p>
                               <ul class="mb-1">
-                                <li>Total = Price - Refund</li>
+                                <li>Total = Price - Split</li>
                               </ul>
                             </ng-template>
                           </td>
