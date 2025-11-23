@@ -23,6 +23,7 @@ import {ToastUtil} from "../../../util/tostr.util";
 import {PasswordUtil} from "../../../util/password.util";
 import {setCookie} from "../../../util/cookie.utils";
 import {DatePipe} from "@angular/common";
+import {Title} from "@angular/platform-browser";
 
 @Component({
   selector: 'app-login',
@@ -57,11 +58,13 @@ export class LoginComponent implements OnInit, OnDestroy {
     private router: Router,
     private configService: ConfigService,
     private activatedRoute: ActivatedRoute,
-    private toastr: ToastrService) {
+    private toastr: ToastrService,
+    private titleService: Title) {
     const urlSnapshot = this.route.snapshot.queryParamMap.get('returnUrl');
     if (urlSnapshot) {
       this.returnUrl = urlSnapshot;
     }
+    this.titleService.setTitle("BudgetTracker - login");
   }
 
   ngOnInit(): void {

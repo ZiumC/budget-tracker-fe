@@ -24,6 +24,7 @@ import {ModalUtils} from "../../../util/modal.utils";
 import {PasswordUtil} from "../../../util/password.util";
 import {AuthService} from "../../../services/auth/auth.service";
 import {deleteCookie} from "../../../util/cookie.utils";
+import {Title} from "@angular/platform-browser";
 
 @Component({
   selector: 'app-user-panel',
@@ -50,7 +51,9 @@ export class UserPanelComponent implements OnInit, OnDestroy {
   constructor(private httpService: HttpService,
               private configService: ConfigService,
               private authService: AuthService,
-              private toastr: ToastrService) {
+              private toastr: ToastrService,
+              private titleService: Title) {
+    this.titleService.setTitle("BudgetTracker - user panel");
   }
 
   ngOnInit(): void {

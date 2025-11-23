@@ -5,6 +5,7 @@ import {FormConfig} from "../../../models/config/form.model.config";
 import {formatString} from "../../../util/string.utils";
 import {Subject} from "rxjs";
 import {Arrays} from "../../../util/arrays.utils";
+import {Title} from "@angular/platform-browser";
 
 @Component({
   selector: 'app-category-page',
@@ -23,7 +24,9 @@ export class CategoryPageComponent implements OnInit {
   protected currentTabId: number;
 
   constructor(
-    private configService: ConfigService) {
+    private configService: ConfigService,
+    private titleService: Title) {
+    this.titleService.setTitle("BudgetTracker - categories");
   }
 
   ngOnInit(): void {
