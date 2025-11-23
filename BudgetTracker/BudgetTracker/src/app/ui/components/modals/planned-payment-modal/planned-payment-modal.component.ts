@@ -18,6 +18,7 @@ import {CategoryType, GetPaymentCategoryDto} from "../../../../models/dto/catego
 import {getPaymentType} from "../../../../util/category.utils";
 import BigNumber from "bignumber.js";
 import {RequestModel} from "../../../../models/request.model";
+import {local} from "d3";
 
 @Component({
   selector: 'app-planned-payments-modal',
@@ -31,6 +32,7 @@ export class PlannedPaymentModalComponent implements OnInit, OnDestroy {
   @Input() idBudget: string;
   @Input() assignmentStatusCode: number;
   @Output() refreshEvent = new EventEmitter<boolean>();
+  private readonly name: string = "planned-payment-draft"
   protected readonly SpinnerSize = SpinnerSize;
   protected readonly ModalUtils = ModalUtils;
   protected readonly formatString = formatString;
@@ -82,6 +84,7 @@ export class PlannedPaymentModalComponent implements OnInit, OnDestroy {
   open(plannedPaymentData?: GetPlannedPaymentDto): void {
     this.setDefaultPlannedPaymentForm();
     this.isEditing = plannedPaymentData != null;
+    const paymentDraft = sessionStorage.getItem(this.name);
 
     if (plannedPaymentData) {
       this.idPlannedPayment = plannedPaymentData.id;
@@ -109,6 +112,8 @@ export class PlannedPaymentModalComponent implements OnInit, OnDestroy {
         this.plannedPaymentDto.assignmentComment = plannedPaymentAssignment.comment;
         this.getCategories();
       }
+    } else if (paymentDraft) {
+      this.plannedPaymentDto = JSON.parse(paymentDraft);
     }
 
     this.modalService.open(this.plannedPaymentModal, ModalOptions.default(ModalSize.BIG));
@@ -135,6 +140,11 @@ export class PlannedPaymentModalComponent implements OnInit, OnDestroy {
       this.selectedPaymentCategoryType = type;
     }
     this.getCategories();
+  }
+
+  protected savePlannedPaymentAsDraft(): void {
+    sessionStorage.setItem(this.name, JSON.stringify(this.plannedPaymentDto));
+    this.modalService.dismissAll();
   }
 
   protected savePlannedPayment(): void {
@@ -192,6 +202,9 @@ export class PlannedPaymentModalComponent implements OnInit, OnDestroy {
   }
 
   private onRequestSuccess(response: HttpResponse<any>): void {
+    if (localStorage.getItem(this.name)) {
+      localStorage.removeItem(this.name);
+    }
     this.refreshEvent.emit(true);
     this.responseModel.statusCode = response.status;
     this.modalService.dismissAll();

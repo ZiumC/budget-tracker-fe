@@ -122,11 +122,9 @@
         </div>
         <div class="row">
           <div [className]="innerWidth > appConfig.pageMobileWidth ? 'col-md-6': 'col-md-6  mb-4 pb-2'">
-            <div [className]="ModalUtils.displayMarginFor(plannedPaymentEstimatedInput)">
+            <div [className]="ModalUtils.displayMarginFor(paymentEstimatedInput)">
               <label for="planned-payment-estimated">Estimated</label>
-              <ng-template [ngIf]="!plannedPaymentDto.isPaid">
                 <span class="text-danger">*</span>
-              </ng-template>
               <a #tooltipEstimated="ngbTooltip"
                  class="info-tooltip"
                  [ngbTooltip]="tipEstimatedContent"
@@ -134,14 +132,6 @@
                 <i class="bi bi-info-circle"></i>
               </a>
               <ng-template #tipEstimatedContent>
-                <ng-template [ngIf]="plannedPaymentDto.isPaid"
-                             [ngIfElse]="notPaidYet">
-                  <p class="text-start mb-1">
-                    Payment has been marked as made. If you want to edit <strong>estimated</strong> value, change
-                    status to <strong>unpaid</strong> then modify it.
-                  </p>
-                </ng-template>
-                <ng-template #notPaidYet>
                   <p class="text-start mb-1">
                     The estimated field means: <i>how much money you will spend in near feature</i>. Examples:
                   </p>
@@ -150,7 +140,6 @@
                     <li>Car service</li>
                     <li>Civil liability insurance policy</li>
                   </ul>
-                </ng-template>
               </ng-template>
               <div class="input-group">
                 <input
@@ -165,28 +154,28 @@
                   placeholder="{{ formConfig.paymentModal.placeholder }}"
                   [disabled]="plannedPaymentDto.isPaid"
                   pattern="{{ formConfig.regex.money }}"
-                  (focus)="plannedPaymentEstimatedInput.value && plannedPaymentEstimatedInput.value[0] === '0' && plannedPaymentEstimatedInput.value[1] !== '.'?
-                      plannedPaymentDto.estimated = plannedPaymentEstimatedInput.value.substring(1) : !plannedPaymentEstimatedInput.value ? plannedPaymentDto.estimated = null : null;"
-                  (focusout)="plannedPaymentEstimatedInput.value && plannedPaymentEstimatedInput.value[0] === '0' && plannedPaymentEstimatedInput.value[1] !== '.' ?
-                      plannedPaymentDto.estimated = plannedPaymentEstimatedInput.value.substring(1) : null"
-                  #plannedPaymentEstimatedInput="ngModel"
+                  (focus)="paymentEstimatedInput.value && paymentEstimatedInput.value[0] === '0' && paymentEstimatedInput.value[1] !== '.'?
+                      plannedPaymentDto.estimated = paymentEstimatedInput.value.substring(1) : !paymentEstimatedInput.value ? plannedPaymentDto.estimated = null : null;"
+                  (focusout)="paymentEstimatedInput.value && paymentEstimatedInput.value[0] === '0' && paymentEstimatedInput.value[1] !== '.' ?
+                      plannedPaymentDto.estimated = paymentEstimatedInput.value.substring(1) : null"
+                  #paymentEstimatedInput="ngModel"
                   [ngClass]="{
-                  'is-invalid': plannedPaymentEstimatedInput.invalid &&
-                    (plannedPaymentEstimatedInput.dirty || plannedPaymentEstimatedInput.touched),
-                  'is-valid': plannedPaymentEstimatedInput.valid }"/>
+                  'is-invalid': paymentEstimatedInput.invalid &&
+                    (paymentEstimatedInput.dirty || paymentEstimatedInput.touched),
+                  'is-valid': paymentEstimatedInput.valid }"/>
                 <div class="input-group-append">
                   <span class="input-group-text">PLN</span>
                 </div>
-                @if (plannedPaymentEstimatedInput.invalid &&
-                (plannedPaymentEstimatedInput.dirty || plannedPaymentEstimatedInput.touched)) {
+                @if (paymentEstimatedInput.invalid &&
+                (paymentEstimatedInput.dirty || paymentEstimatedInput.touched)) {
                   <div class="invalid-feedback">
-                    <label *ngIf="plannedPaymentEstimatedInput.errors?.['required']">
+                    <label *ngIf="paymentEstimatedInput.errors?.['required']">
                       {{ formConfig.messages.required }}
                     </label>
-                    <label *ngIf="plannedPaymentEstimatedInput.errors?.['min']">
+                    <label *ngIf="paymentEstimatedInput.errors?.['min']">
                       {{ formatString(formConfig.messages.minValue, formConfig.paymentModal.price.minValue) }}
                     </label>
-                    <label *ngIf="plannedPaymentEstimatedInput.errors?.['pattern']">
+                    <label *ngIf="paymentEstimatedInput.errors?.['pattern']">
                       {{ formatString(formConfig.messages.invalidFormat, "number") }}
                     </label>
                   </div>
@@ -195,11 +184,8 @@
             </div>
           </div>
           <div class="col-md-6">
-            <div [className]="ModalUtils.displayMarginFor(plannedPaymentRealPriceInput)">
+            <div [className]="ModalUtils.displayMarginFor(paymentActualInput)">
               <label for="planned-payment-real-price">Actual</label>
-              <ng-template [ngIf]="plannedPaymentDto.isPaid">
-                <span class="text-danger">*</span>
-              </ng-template>
               <a #tooltipActual="ngbTooltip"
                  class="info-tooltip"
                  [ngbTooltip]="tipActualContent"
@@ -217,34 +203,30 @@
                   id="planned-payment-real-price"
                   name="planned-payment-real-price"
                   class="form-control"
-                  [required]="plannedPaymentDto.isPaid"
                   [(ngModel)]="plannedPaymentDto.actual"
                   min="{{ formConfig.paymentModal.refund.minValue }}"
                   maxlength="{{ formConfig.paymentModal.refund.maxLength }}"
                   placeholder="{{formConfig.paymentModal.placeholder}}"
                   pattern="{{formConfig.regex.money}}"
-                  (focus)="plannedPaymentRealPriceInput.value && plannedPaymentRealPriceInput.value[0] === '0' && plannedPaymentRealPriceInput.value[1] !== '.'?
-                      plannedPaymentDto.actual = plannedPaymentRealPriceInput.value.substring(1) : !plannedPaymentRealPriceInput.value ? plannedPaymentDto.actual = null : null;"
-                  (focusout)="plannedPaymentRealPriceInput.value && plannedPaymentRealPriceInput.value[0] === '0' && plannedPaymentRealPriceInput.value[1] !== '.' ?
-                      plannedPaymentDto.actual = plannedPaymentRealPriceInput.value.substring(1) : null"
-                  #plannedPaymentRealPriceInput="ngModel"
+                  (focus)="paymentActualInput.value && paymentActualInput.value[0] === '0' && paymentActualInput.value[1] !== '.'?
+                      plannedPaymentDto.actual = paymentActualInput.value.substring(1) : !paymentActualInput.value ? plannedPaymentDto.actual = null : null;"
+                  (focusout)="paymentActualInput.value && paymentActualInput.value[0] === '0' && paymentActualInput.value[1] !== '.' ?
+                      plannedPaymentDto.actual = paymentActualInput.value.substring(1) : null"
+                  #paymentActualInput="ngModel"
                   [ngClass]="{
-                  'is-invalid': plannedPaymentRealPriceInput.invalid &&
-                    (plannedPaymentRealPriceInput.dirty || plannedPaymentRealPriceInput.touched),
-                  'is-valid': plannedPaymentRealPriceInput.valid }"/>
+                  'is-invalid': paymentActualInput.invalid &&
+                    (paymentActualInput.dirty || paymentActualInput.touched),
+                  'is-valid': paymentActualInput.valid }"/>
                 <div class="input-group-append">
                   <span class="input-group-text">PLN</span>
                 </div>
-                @if (plannedPaymentRealPriceInput.invalid &&
-                (plannedPaymentRealPriceInput.dirty || plannedPaymentRealPriceInput.touched)) {
+                @if (paymentActualInput.invalid &&
+                (paymentActualInput.dirty || paymentActualInput.touched)) {
                   <div class="invalid-feedback">
-                    <label *ngIf="plannedPaymentRealPriceInput.errors?.['required']">
-                      {{ formConfig.messages.required }}
-                    </label>
-                    <label *ngIf="plannedPaymentRealPriceInput.errors?.['min']">
+                    <label *ngIf="paymentActualInput.errors?.['min']">
                       {{ formatString(formConfig.messages.minValue, appConfig.form.paymentModal.refund.minValue) }}
                     </label>
-                    <label *ngIf="plannedPaymentRealPriceInput.errors?.['pattern']">
+                    <label *ngIf="paymentActualInput.errors?.['pattern']">
                       {{ formatString(formConfig.messages.invalidFormat, "number") }}
                     </label>
                   </div>
@@ -301,6 +283,16 @@
       </form>
     </div>
     <div class="modal-footer">
+      <button
+        [disabled]="!(paymentActualInput.valid &&
+                      paymentNameInput.valid &&
+                      paymentEstimatedInput.valid &&
+                      !isChildValid)"
+        type="button"
+        class="btn btn-outline-secondary mx-3"
+        (click)="savePlannedPaymentAsDraft()">
+        Save as draft
+      </button>
       <button
         [disabled]="!(form.valid && isChildValid)"
         type="button"
