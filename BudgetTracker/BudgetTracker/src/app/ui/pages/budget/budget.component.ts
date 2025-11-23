@@ -46,6 +46,7 @@ import {BudgetIncome, BudgetPlannedPayment, BudgetRegularPayment} from "../../..
 import {BudgetPaymentSummary} from "../../../util/chart/budget/budget-payment.chart.util";
 import {BudgetIncomeSummary} from "../../../util/chart/budget/budget-income.chart.util";
 import {BudgetSummary} from "../../../util/chart/budget/budget.chart.util";
+import {Title} from "@angular/platform-browser";
 
 @Component({
   selector: 'app-budget',
@@ -90,12 +91,14 @@ export class BudgetComponent implements OnInit, OnDestroy {
     private activatedRoute: ActivatedRoute,
     private configService: ConfigService,
     private router: Router,
-    private renderer: Renderer2) {
+    private renderer: Renderer2,
+    private titleService: Title) {
     this.renderer.listen('window', 'click', (e: Event): void => {
       if (e.target !== this.menuBtn.nativeElement && e.target !== this.menuBtn.nativeElement.firstChild) {
         this.displayBudgetSubMenu = false;
       }
     });
+    this.titleService.setTitle("BudgetTracker - budget details");
   }
 
   ngOnDestroy(): void {

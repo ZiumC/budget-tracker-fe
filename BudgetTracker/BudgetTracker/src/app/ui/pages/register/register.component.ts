@@ -19,6 +19,7 @@ import {ToastUtil} from "../../../util/tostr.util";
 import {ToastrService} from "ngx-toastr";
 import {SpinnerSize} from "../../components/shared/spinner/spinner.component";
 import {PasswordUtil} from "../../../util/password.util";
+import {Title} from "@angular/platform-browser";
 
 @Component({
   selector: 'app-register',
@@ -48,7 +49,9 @@ export class RegisterComponent implements OnInit, OnDestroy {
     private httpService: HttpService,
     private router: Router,
     private toastr: ToastrService,
-    private activatedRoute: ActivatedRoute) {
+    private activatedRoute: ActivatedRoute,
+    private titleService: Title) {
+    this.titleService.setTitle("BudgetTracker - register");
   }
 
   ngOnInit(): void {

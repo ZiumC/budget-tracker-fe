@@ -32,6 +32,7 @@ import {format} from "../../../util/number.util";
 import {BudgetIncomeSummary, IncomeChartType} from "../../../util/chart/budget/budget-income.chart.util";
 import {BudgetPaymentSummary, PaymentChartType} from "../../../util/chart/budget/budget-payment.chart.util";
 import {BudgetSummary} from "../../../util/chart/budget/budget.chart.util";
+import {Title} from "@angular/platform-browser";
 
 @Component({
   selector: 'app-dashboard',
@@ -71,7 +72,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
   public innerWidth: any;
 
   constructor(private httpService: HttpService,
-              private configService: ConfigService) {
+              private configService: ConfigService,
+              private titleService: Title) {
+    this.titleService.setTitle("BudgetTracker - dashboard");
   }
 
   ngOnInit(): void {
