@@ -129,7 +129,7 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
     wageModel.control.markAsTouched();
   }
 
-  protected saveDraftIncome(): void {
+  protected saveIncomeDraft(): void {
     sessionStorage.setItem(this.incomeName, JSON.stringify(this.incomeDto));
     this.modalService.dismissAll();
   }

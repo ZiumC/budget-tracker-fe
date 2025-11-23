@@ -111,24 +111,7 @@
           <div [className]="innerWidth > appConfig.pageMobileWidth ? 'col-md-6': 'col-md-6  mb-4 pb-2'">
             <div [className]="ModalUtils.displayMarginFor(paymentPriceInput)">
               <label for="payment-price">Price</label>
-              <ng-template [ngIf]="!paymentDto.isPaid"
-                           [ngIfElse]="paidInfo">
                 <span class="text-danger">*</span>
-              </ng-template>
-              <ng-template #paidInfo>
-                <a #tooltipPrice="ngbTooltip"
-                   class="info-tooltip"
-                   [ngbTooltip]="tipPriceContent"
-                   (click)="tooltipPrice.open()">
-                  <i class="bi bi-info-circle"></i>
-                </a>
-                <ng-template #tipPriceContent>
-                  <p class="text-start mb-1">
-                    Payment has been marked as made. If you want to edit <strong>price</strong> value, change
-                    status to <strong>unpaid</strong> then modify it.
-                  </p>
-                </ng-template>
-              </ng-template>
               <div class="input-group">
                 <input
                   type="text"
@@ -141,7 +124,6 @@
                   maxlength="{{ formConfig.paymentModal.price.maxLength }}"
                   placeholder="{{ formConfig.paymentModal.placeholder }}"
                   pattern="{{ formConfig.regex.money }}"
-                  [disabled]="paymentDto.isPaid"
                   (focus)="paymentPriceInput.value && paymentPriceInput.value[0] === '0' && paymentPriceInput.value[1] !== '.'?
                       paymentDto.price = paymentPriceInput.value.substring(1) : !paymentPriceInput.value ? paymentDto.price = null : null;"
                   (focusout)="paymentPriceInput.value && paymentPriceInput.value[0] === '0' && paymentPriceInput.value[1] !== '.' ?
@@ -172,7 +154,7 @@
             </div>
           </div>
           <div [className]="innerWidth > appConfig.pageMobileWidth ? 'col-md-6': 'col-md-6  mb-4 pb-2'">
-            <div [className]="ModalUtils.displayMarginFor(paymentRefundInput)">
+            <div [className]="ModalUtils.displayMarginFor(paymentSplitInput)">
               <label for="payment-refund">Split</label>
               <a #tooltipSplit="ngbTooltip"
                  class="info-tooltip"
@@ -196,25 +178,25 @@
                   maxlength="{{ formConfig.paymentModal.refund.maxLength }}"
                   placeholder="{{formConfig.paymentModal.placeholder}}"
                   pattern="{{formConfig.regex.money}}"
-                  (focus)="paymentRefundInput.value && paymentRefundInput.value[0] === '0' && paymentRefundInput.value[1] !== '.'?
-                      paymentDto.split = paymentRefundInput.value.substring(1) : !paymentRefundInput.value ? paymentDto.split = null : null;"
-                  (focusout)="paymentRefundInput.value && paymentRefundInput.value[0] === '0' && paymentRefundInput.value[1] !== '.' ?
-                      paymentDto.split = paymentRefundInput.value.substring(1) : null"
-                  #paymentRefundInput="ngModel"
+                  (focus)="paymentSplitInput.value && paymentSplitInput.value[0] === '0' && paymentSplitInput.value[1] !== '.'?
+                      paymentDto.split = paymentSplitInput.value.substring(1) : !paymentSplitInput.value ? paymentDto.split = null : null;"
+                  (focusout)="paymentSplitInput.value && paymentSplitInput.value[0] === '0' && paymentSplitInput.value[1] !== '.' ?
+                      paymentDto.split = paymentSplitInput.value.substring(1) : null"
+                  #paymentSplitInput="ngModel"
                   [ngClass]="{
-                  'is-invalid': paymentRefundInput.invalid &&
-                    (paymentRefundInput.dirty || paymentRefundInput.touched),
-                  'is-valid': paymentRefundInput.valid }"/>
+                  'is-invalid': paymentSplitInput.invalid &&
+                    (paymentSplitInput.dirty || paymentSplitInput.touched),
+                  'is-valid': paymentSplitInput.valid }"/>
                 <div class="input-group-append">
                   <span class="input-group-text">PLN</span>
                 </div>
-                @if (paymentRefundInput.invalid &&
-                (paymentRefundInput.dirty || paymentRefundInput.touched)) {
+                @if (paymentSplitInput.invalid &&
+                (paymentSplitInput.dirty || paymentSplitInput.touched)) {
                   <div class="invalid-feedback">
-                    <label *ngIf="paymentRefundInput.errors?.['min']">
+                    <label *ngIf="paymentSplitInput.errors?.['min']">
                       {{ formatString(formConfig.messages.minValue, appConfig.form.paymentModal.refund.minValue) }}
                     </label>
-                    <label *ngIf="paymentRefundInput.errors?.['pattern']">
+                    <label *ngIf="paymentSplitInput.errors?.['pattern']">
                       {{ formatString(formConfig.messages.invalidFormat, "number") }}
                     </label>
                   </div>
@@ -325,6 +307,17 @@
       </form>
     </div>
     <div class="modal-footer">
+      <button
+        [disabled]="!(paymentNameInput.valid &&
+                    paymentPaidSelect.valid &&
+                    paymentPriceInput.valid &&
+                    paymentSplitInput.valid &&
+                    !isChildValid)"
+        type="button"
+        class="btn btn-outline-secondary mx-3"
+        (click)="savePaymentDraft()">
+        Save as draft
+      </button>
       <button
         [disabled]="!(form.valid && isChildValid)"
         type="button"
