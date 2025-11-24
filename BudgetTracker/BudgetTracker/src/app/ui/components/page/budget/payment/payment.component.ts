@@ -65,7 +65,6 @@ export class PaymentComponent implements OnInit, OnDestroy, AfterViewInit {
   protected paymentStatusLoader: boolean;
   protected requiredStatusCode: number;
   protected assignmentStatusCode: number;
-  protected name: string;
 
   constructor(
     private httpService: HttpService,
@@ -84,8 +83,6 @@ export class PaymentComponent implements OnInit, OnDestroy, AfterViewInit {
       throw Error("Config not provided")
     }
 
-    this.name = this.selectedTab + '-paginate'
-
     this.pageWidth = window.innerWidth;
     this.requiredStatusCode = this.appConfig.response.required.paymentStatus;
     this.paymentResponseModel = new ResponseModel();
@@ -99,16 +96,27 @@ export class PaymentComponent implements OnInit, OnDestroy, AfterViewInit {
     this.defaultOrderParams();
 
     if (this.selectedTab == BudgetTab.RegularPaymentTab) {
-      const page = localStorage.getItem(this.name + '-page');
+      const page = localStorage.getItem(this.selectedTab + '-page');
       if (page) {
         this.requestParams.page = Number(page);
         this.paymentTotalPages = Number(page);
       }
 
-      const pageSize = localStorage.getItem(this.name + '-pageSize');
+      const pageSize = localStorage.getItem(this.selectedTab + '-pageSize');
       if (pageSize) {
         this.requestParams.pageSize = Number(pageSize);
       }
+
+      const orderByVal = localStorage.getItem(this.selectedTab + '-by-val');
+      if (orderByVal) {
+        this.requestParams.orderBy = orderByVal;
+      }
+
+      const orderVal = localStorage.getItem(this.selectedTab + '-direction-val');
+      if (orderVal) {
+        this.requestParams.order = orderVal;
+      }
+
       this.getPayments();
     }
   }

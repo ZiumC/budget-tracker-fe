@@ -191,7 +191,7 @@
             "applyForApi": true
           },
           {
-            "name": "refund",
+            "name": "split",
             "value": "refund",
             "displayDirections": true,
             "applyForApi": true
@@ -203,7 +203,7 @@
             "applyForApi": true
           },
           {
-            "name": "real cost",
+            "name": "actual",
             "value": "realCost",
             "displayDirections": true,
             "applyForApi": false
@@ -223,7 +223,7 @@
             "applyForApi": true
           },
           {
-            "name": "real price",
+            "name": "actual",
             "value": "realPrice",
             "displayDirections": true,
             "applyForApi": true

@@ -53,13 +53,33 @@ export class OrderComponent implements OnInit {
 
   protected onOrderByChanged(): void {
     this.orderByEvent.emit(this.createOrderOption());
-    this.saveToLocalStorage(this.orderByName, this.selectedOrderBy);
+    this.saveLocalStorage();
   }
 
   protected onOrderDirectionChanged(): void {
     this.orderDirectionEvent.emit(this.createOrderOption());
+    this.saveLocalStorage();
+  }
+
+  private saveLocalStorage() {
+    this.saveToLocalStorage(this.orderByName, this.selectedOrderBy);
     this.saveToLocalStorage(this.orderDirectionName, this.selectedOrderDirection);
-    this.saveToLocalStorage(this.orderDirectionName +'-raw', this.selectedOrderDirection === 'descending' ? 'DESC' : 'ASC');
+
+    const orderTypes = this.orderTypes[this.orderTypeIndex(this.selectedOrderBy)];
+
+    if (orderTypes.applyForApi) {
+      this.saveToLocalStorage(
+        this.orderDirectionName + "-val",
+        this.orderDirections[this.orderDirectionIndex(this.selectedOrderDirection)].value);
+
+      this.saveToLocalStorage(
+        this.orderByName + '-val',
+        this.orderTypes[this.orderTypeIndex(this.selectedOrderBy)].value);
+
+    } else {
+      localStorage.removeItem(this.orderByName + '-val');
+      localStorage.removeItem(this.orderDirectionName + "-val");
+    }
   }
 
   private createOrderOption(): OrderOptions {
