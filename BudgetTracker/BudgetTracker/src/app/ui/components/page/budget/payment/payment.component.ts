@@ -94,7 +94,6 @@ export class PaymentComponent implements OnInit, OnDestroy, AfterViewInit {
     });
 
     this.defaultOrderParams();
-
     if (this.selectedTab == BudgetTab.RegularPaymentTab) {
       const page = localStorage.getItem(this.selectedTab + '-page');
       if (page) {
@@ -107,14 +106,14 @@ export class PaymentComponent implements OnInit, OnDestroy, AfterViewInit {
         this.requestParams.pageSize = Number(pageSize);
       }
 
-      const orderByVal = localStorage.getItem(this.selectedTab + '-by-val');
-      if (orderByVal) {
-        this.requestParams.orderBy = orderByVal;
-      }
-
       const orderVal = localStorage.getItem(this.selectedTab + '-direction-val');
       if (orderVal) {
         this.requestParams.order = orderVal;
+      }
+
+      const orderByVal = localStorage.getItem(this.selectedTab + '-by-val');
+      if (orderByVal) {
+        this.requestParams.orderBy = orderByVal;
       }
 
       this.getPayments();
