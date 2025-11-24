@@ -1,14 +1,20 @@
 import {RequestModel} from "../../models/request.model";
 import {CategoryType} from "../../models/dto/category.model.dto";
 import {CompletePassResetDto} from "../../models/components/login.component";
+import {isDevMode} from "@angular/core";
 
 
 class HostUrl {
-  private static host = 'https://localhost:7139'
   private static api = '/api'
 
   static getHostUrl(): string {
-    return HostUrl.host + HostUrl.api;
+    let host: string;
+    if (isDevMode()) {
+      host = 'https://localhost:7139'
+    } else {
+      host = 'https://budget.ddns.net'
+    }
+    return host + HostUrl.api;
   }
 }
 
