@@ -58,9 +58,6 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.setDefaultIncomeForm();
-    ModalUtils.defaultSettings(this.displayLoader, this.isEditing);
-
     const appCfg = this.configService.getAppConfig();
     if (appCfg) {
       this.appConfig = appCfg;
@@ -68,6 +65,9 @@ export class IncomeModalComponent implements OnInit, OnDestroy {
     } else {
       throw Error("Config not provided")
     }
+
+    this.setDefaultIncomeForm();
+    ModalUtils.defaultSettings(this.displayLoader, this.isEditing);
 
     this.isChildValid = false;
   }
