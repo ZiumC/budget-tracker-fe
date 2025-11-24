@@ -80,7 +80,7 @@ export class IncomeComponent implements OnInit, OnDestroy, AfterViewInit {
       throw Error("Config not provided")
     }
 
-    this.name = this.selectedTab + '-paginate';
+    this.name = this.selectedTab;
 
     this.incomeResponseModel = new ResponseModel();
     this.requiredStatusCode = this.appConfig.response.required.incomeStatus;
@@ -103,6 +103,16 @@ export class IncomeComponent implements OnInit, OnDestroy, AfterViewInit {
       const pageSize = localStorage.getItem(this.name + '-pageSize');
       if (pageSize) {
         this.incomeRequestModel.pageSize = Number(pageSize);
+      }
+
+      const orderBy = localStorage.getItem(this.name + '-by');
+      if (orderBy) {
+        this.incomeRequestModel.orderBy = orderBy;
+      }
+
+      const order = localStorage.getItem(this.name + '-direction-raw');
+      if (order) {
+        this.incomeRequestModel.order = order;
       }
 
       this.getIncomes();
