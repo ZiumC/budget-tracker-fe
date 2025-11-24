@@ -160,9 +160,6 @@
                     <label *ngIf="incomeSavingsInput.errors?.['savingsTooBig']">
                       {{ formConfig.messages.savingsTooBig }}
                     </label>
-                    <label *ngIf="incomeSavingsInput.errors?.['maxlength']">
-                      {{ formatString(formConfig.messages.maxLength, formConfig.incomeModal.number.maxLength) }}
-                    </label>
                   </div>
                 }
               </div>

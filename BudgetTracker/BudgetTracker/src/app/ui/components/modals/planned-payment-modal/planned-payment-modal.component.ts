@@ -18,7 +18,6 @@ import {CategoryType, GetPaymentCategoryDto} from "../../../../models/dto/catego
 import {getPaymentType} from "../../../../util/category.utils";
 import BigNumber from "bignumber.js";
 import {RequestModel} from "../../../../models/request.model";
-import {local} from "d3";
 
 @Component({
   selector: 'app-planned-payments-modal',
@@ -202,8 +201,8 @@ export class PlannedPaymentModalComponent implements OnInit, OnDestroy {
   }
 
   private onRequestSuccess(response: HttpResponse<any>): void {
-    if (localStorage.getItem(this.name)) {
-      localStorage.removeItem(this.name);
+    if (sessionStorage.getItem(this.name)) {
+      sessionStorage.removeItem(this.name);
     }
     this.refreshEvent.emit(true);
     this.responseModel.statusCode = response.status;

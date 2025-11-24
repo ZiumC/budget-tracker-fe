@@ -94,7 +94,7 @@ export class BudgetComponent implements OnInit, OnDestroy {
     private renderer: Renderer2,
     private titleService: Title) {
     this.renderer.listen('window', 'click', (e: Event): void => {
-      if (e.target !== this.menuBtn.nativeElement && e.target !== this.menuBtn.nativeElement.firstChild) {
+      if (this.menuBtn && (e.target !== this.menuBtn.nativeElement && e.target !== this.menuBtn.nativeElement.firstChild)) {
         this.displayBudgetSubMenu = false;
       }
     });
