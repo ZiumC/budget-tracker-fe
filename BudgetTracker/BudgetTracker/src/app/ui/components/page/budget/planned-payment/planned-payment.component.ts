@@ -67,7 +67,6 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy, AfterViewInit
   protected plannedPaymentStatusLoader: boolean;
   protected totalPages: number;
   protected assignmentStatusCode: number;
-  protected name: string;
 
   constructor(
     private httpService: HttpService,
@@ -87,7 +86,6 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy, AfterViewInit
       throw Error("Config not provided")
     }
 
-    this.name = this.selectedTab + '-pagination'
     this.pageWidth = window.innerWidth;
     this.paymentResponseModel = new ResponseModel();
     this.subscriptions = [];
@@ -100,15 +98,25 @@ export class PlannedPaymentComponent implements OnInit, OnDestroy, AfterViewInit
     this.defaultOrderParams();
 
     if (this.selectedTab == BudgetTab.PlannedPaymentTab) {
-      const page = localStorage.getItem(this.name + '-page');
+      const page = localStorage.getItem(this.selectedTab + '-page');
       if (page) {
         this.requestParams.page = Number(page);
         this.totalPages = Number(page);
       }
 
-      const pageSize = localStorage.getItem(this.name + '-pageSize');
+      const pageSize = localStorage.getItem(this.selectedTab + '-pageSize');
       if (pageSize) {
         this.requestParams.pageSize = Number(pageSize);
+      }
+
+      const orderByVal = localStorage.getItem(this.selectedTab + '-by-val');
+      if (orderByVal) {
+        this.requestParams.orderBy = orderByVal;
+      }
+
+      const orderVal = localStorage.getItem(this.selectedTab + '-direction-val');
+      if (orderVal) {
+        this.requestParams.order = orderVal;
       }
 
       this.getPlannedPayments();
