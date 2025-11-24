@@ -18,7 +18,7 @@
       </div>
       <ng-template [ngIf]="incomeResponseModel.statusCode == requiredStatusCode">
         <div class="col-md-6 mb-3">
-          <app-order [name]="name"
+          <app-order [name]="selectedTab"
                      [orderTypes]="appConfig.request.order.incomeTypes"
                      [excludedOrderTypes]="appConfig.request.order.excludedTypes"
                      [orderDirections]="appConfig.request.order.orderDirections"
@@ -140,7 +140,7 @@
         </div>
       }
       @if (incomeTotalPages! > 1) {
-        <app-pagination [name]="name"
+        <app-pagination [name]="selectedTab"
                         [pageCount]="incomeTotalPages!"
                         [displayPageSize]="true"
                         [pageSizeOptions]="appConfig.request.pagination.defaultPageSizeOptions"

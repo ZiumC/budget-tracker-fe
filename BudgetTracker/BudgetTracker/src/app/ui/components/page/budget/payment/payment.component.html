@@ -18,7 +18,7 @@
       </div>
       <ng-template [ngIf]="paymentResponseModel.statusCode == requiredStatusCode">
         <div class="col-md-6 mb-3">
-          <app-order [name]="'payment-order'"
+          <app-order [name]="selectedTab"
                      [orderTypes]="appConfig.request.order.paymentTypes"
                      [excludedOrderTypes]="appConfig.request.order.excludedTypes"
                      [orderDirections]="appConfig.request.order.orderDirections"
@@ -194,7 +194,7 @@
         </div>
       }
       @if (paymentTotalPages! > 1) {
-        <app-pagination [name]="name"
+        <app-pagination [name]="selectedTab"
                         [pageCount]="paymentTotalPages!"
                         [displayPageSize]="true"
                         [pageSizeOptions]="appConfig.request.pagination.defaultPageSizeOptions"

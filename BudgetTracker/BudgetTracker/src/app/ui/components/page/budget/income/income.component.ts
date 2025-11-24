@@ -61,7 +61,6 @@ export class IncomeComponent implements OnInit, OnDestroy, AfterViewInit {
   protected requiredStatusCode: number;
   protected assignmentStatusCode: number = 0;
   protected incomeLoader: boolean;
-  protected name: string;
 
   constructor(
     private httpService: HttpService,
@@ -80,8 +79,6 @@ export class IncomeComponent implements OnInit, OnDestroy, AfterViewInit {
       throw Error("Config not provided")
     }
 
-    this.name = this.selectedTab;
-
     this.incomeResponseModel = new ResponseModel();
     this.requiredStatusCode = this.appConfig.response.required.incomeStatus;
     this.pageWidth = window.innerWidth;
@@ -94,23 +91,23 @@ export class IncomeComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.defaultOrderParams();
     if (this.selectedTab == BudgetTab.IncomeTab) {
-      const page = localStorage.getItem(this.name + '-page');
+      const page = localStorage.getItem(this.selectedTab + '-page');
       if (page) {
         this.incomeRequestModel.page = Number(page);
         this.incomeTotalPages = Number(page);
       }
 
-      const pageSize = localStorage.getItem(this.name + '-pageSize');
+      const pageSize = localStorage.getItem(this.selectedTab + '-pageSize');
       if (pageSize) {
         this.incomeRequestModel.pageSize = Number(pageSize);
       }
 
-      const orderBy = localStorage.getItem(this.name + '-by');
+      const orderBy = localStorage.getItem(this.selectedTab + '-by-val');
       if (orderBy) {
         this.incomeRequestModel.orderBy = orderBy;
       }
 
-      const order = localStorage.getItem(this.name + '-direction-raw');
+      const order = localStorage.getItem(this.selectedTab + '-direction-val');
       if (order) {
         this.incomeRequestModel.order = order;
       }
