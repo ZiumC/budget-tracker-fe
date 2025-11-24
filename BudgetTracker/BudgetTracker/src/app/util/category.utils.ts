@@ -14,8 +14,6 @@ export function getPaymentType(
     result = appCfg.form.categoryModal.needsName;
   } else if (category?.isWants) {
     result = appCfg.form.categoryModal.wantsName;
-  } else if (category?.isSavings) {
-    result = appCfg.form.categoryModal.savingsName;
   } else {
     result = "NA";
   }

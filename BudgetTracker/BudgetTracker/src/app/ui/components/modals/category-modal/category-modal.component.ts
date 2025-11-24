@@ -103,7 +103,6 @@ export class CategoryModalComponent implements OnInit, OnDestroy {
       const categoryForm = this.formConfig.categoryModal;
       this.categoryDto.isNeeds = this.selectedCategoryName == categoryForm.needsName;
       this.categoryDto.isWants = this.selectedCategoryName == categoryForm.wantsName;
-      this.categoryDto.isSavings = this.selectedCategoryName == categoryForm.savingsName;
 
       categoryToSave = {
         name: this.categoryDto.name,

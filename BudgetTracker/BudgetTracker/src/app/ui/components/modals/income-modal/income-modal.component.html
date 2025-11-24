@@ -79,7 +79,7 @@
                   [(ngModel)]="incomeDto.earnings"
                   [disabled]="incomeDto.forSavings"
                   [required]="!incomeDto.forSavings"
-                  maxlength="{{ formConfig.incomeModal.number.maxLength }}"
+                  maxlength="{{formConfig.incomeModal.number.maxLength}}"
                   placeholder="{{ formConfig.incomeModal.placeholder }}"
                   (focus)="incomeWageInput.value && incomeWageInput.value[0] === '0' && incomeWageInput.value[1] !== '.'?
                       incomeDto.earnings = incomeWageInput.value.substring(1) : !incomeWageInput.value ? incomeDto.earnings = null : null;"
@@ -97,9 +97,6 @@
                   <div class="invalid-feedback">
                     <label *ngIf="incomeWageInput.errors?.['required']">
                       {{ formConfig.messages.required }}
-                    </label>
-                    <label *ngIf="incomeWageInput.errors?.['min']">
-                      {{ formatString(formConfig.messages.minValue, formConfig.incomeModal.number.minValue) }}
                     </label>
                     <label *ngIf="incomeWageInput.errors?.['wageTooLow']">
                       {{ formConfig.messages.wageTooLow }}
@@ -134,7 +131,7 @@
                   name="income-savings"
                   class="form-control"
                   [(ngModel)]="incomeDto.savings"
-                  maxlength="{{ formConfig.incomeModal.number.maxLength }}"
+                  maxlength="{{formConfig.incomeModal.number.maxLength}}"
                   placeholder="{{ formConfig.incomeModal.placeholder }}"
                   pattern="{{ formConfig.regex.money }}"
                   [required]="incomeDto.forSavings"

@@ -45,8 +45,7 @@
           "maxLength": "100"
         },
         "needsName": "needs",
-        "wantsName": "wants",
-        "savingsName": "savings"
+        "wantsName": "wants"
       },
       "paymentModal": {
         "placeholder": "0.00",
@@ -56,11 +55,11 @@
         },
         "price": {
           "minValue": "0",
-          "maxLength": "8"
+          "maxLength": "10"
         },
         "refund": {
           "minValue": "0",
-          "maxLength": "8"
+          "maxLength": "10"
         },
         "comment": {
           "minLength": "3",
@@ -78,8 +77,8 @@
           "maxLength": "150"
         },
         "number": {
-          "minValue": "0",
-          "maxLength": "8"
+          "minLength": "0",
+          "maxLength": "10"
         }
       },
       "budgetModal": {
