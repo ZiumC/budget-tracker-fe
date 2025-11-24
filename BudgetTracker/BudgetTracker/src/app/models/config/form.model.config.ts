@@ -39,7 +39,6 @@ export interface CategoryModal {
   description: MinMaxLength;
   needsName: string;
   wantsName: string;
-  savingsName: string;
 }
 
 export interface PaymentModal {
@@ -54,7 +53,7 @@ export interface PaymentModal {
 export interface IncomeModal {
   placeholder: string;
   name: MinMaxLength;
-  number: MinValueMaxLength;
+  number: MinMaxLength;
 }
 
 export interface BudgetModal {
