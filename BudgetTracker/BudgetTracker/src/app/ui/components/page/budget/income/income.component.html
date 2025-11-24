@@ -18,7 +18,7 @@
       </div>
       <ng-template [ngIf]="incomeResponseModel.statusCode == requiredStatusCode">
         <div class="col-md-6 mb-3">
-          <app-order [name]="'income-order'"
+          <app-order [name]="name"
                      [orderTypes]="appConfig.request.order.incomeTypes"
                      [excludedOrderTypes]="appConfig.request.order.excludedTypes"
                      [orderDirections]="appConfig.request.order.orderDirections"

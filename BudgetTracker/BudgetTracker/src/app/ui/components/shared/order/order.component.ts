@@ -59,6 +59,7 @@ export class OrderComponent implements OnInit {
   protected onOrderDirectionChanged(): void {
     this.orderDirectionEvent.emit(this.createOrderOption());
     this.saveToLocalStorage(this.orderDirectionName, this.selectedOrderDirection);
+    this.saveToLocalStorage(this.orderDirectionName +'-raw', this.selectedOrderDirection === 'descending' ? 'DESC' : 'ASC');
   }
 
   private createOrderOption(): OrderOptions {
