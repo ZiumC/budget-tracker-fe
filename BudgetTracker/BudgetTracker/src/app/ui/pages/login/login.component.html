@@ -115,6 +115,7 @@
                                [ngIfElse]="displayLoginLoader">
                     <button class="btn btn-outline-secondary btn-lg px-5"
                             type="button"
+                            name="login"
                             [disabled]="!userLoginForm.valid"
                             (click)="login()">
                       Login
@@ -132,6 +133,7 @@
                   Don't have an account?
                 </p>
                 <button type="button"
+                        name="register-page"
                         class="btn btn-outline-secondary"
                         routerLink="/register"
                         [disabled]="loaders.login">
@@ -363,6 +365,7 @@
                   <ng-template [ngIf]="!loaders.reset"
                                [ngIfElse]="displayResetLoader">
                     <button type="button"
+                            name="reset-password"
                             class="btn btn-outline-secondary btn-lg px-5"
                             (click)="initializePasswordReset();"
                             [disabled]="!resetPasswordForm.valid || loaders.reset">
@@ -371,6 +374,7 @@
                   </ng-template>
                   <ng-template #displayResetLoader>
                     <button type="button"
+                            name="reset-password"
                             class="btn btn-outline-secondary btn-lg px-5"
                             [disabled]="loaders.reset">
                       <app-spinner [size]="SpinnerSize.SMALL"></app-spinner>
@@ -382,6 +386,7 @@
                     You have already account?
                   </p>
                   <button type="button"
+                          name="login-page"
                           class="btn btn-outline-secondary"
                           (click)="formType = FormType.LOGIN"
                           [disabled]="loaders.reset">
@@ -392,6 +397,7 @@
                   You have already requested for password change?
                 </p>
                 <button type="button"
+                        name="confirm-code"
                         class="btn btn-outline-secondary"
                         (click)="formType = FormType.CONFIRM_PASSWORD; setPassParam=true;"
                         [disabled]="loaders.reset">
@@ -490,6 +496,7 @@
                   <ng-template [ngIf]="!loaders.setPass"
                                [ngIfElse]="displaySetPassLoader">
                     <button type="button"
+                            name="confirm-code"
                             class="btn btn-outline-secondary btn-lg px-5"
                             (click)="completePasswordReset()"
                             [disabled]="!userSetPassword.valid || loaders.setPass">
@@ -498,6 +505,7 @@
                   </ng-template>
                   <ng-template #displaySetPassLoader>
                     <button type="button"
+                            name="confirm-code"
                             class="btn btn-outline-secondary btn-lg px-5"
                             [disabled]="loaders.setPass">
                       <app-spinner [size]="SpinnerSize.SMALL"></app-spinner>
@@ -508,6 +516,7 @@
                   You have already account?
                 </p>
                 <button type="button"
+                        name="login-page"
                         class="btn btn-outline-secondary"
                         (click)="formType = FormType.LOGIN"
                         [disabled]="loaders.setPass">
