@@ -81,7 +81,6 @@ export class CategoryModalComponent implements OnInit, OnDestroy {
       this.categoryDto.description = categoryData.description;
 
       if (categoryType != CategoryType.INCOMES) {
-        this.categoryDto.isSavings = (categoryData as GetPaymentCategoryDto).isSavings;
         this.categoryDto.isNeeds = (categoryData as GetPaymentCategoryDto).isNeeds;
         this.categoryDto.isWants = (categoryData as GetPaymentCategoryDto).isWants;
       }
