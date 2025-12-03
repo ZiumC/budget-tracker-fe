@@ -220,6 +220,7 @@
                   <ng-template [ngIf]="!loaders.register"
                                [ngIfElse]="displayRegisterLoader">
                     <button type="button"
+                            name="sign-in"
                             class="btn btn-outline-secondary btn-lg px-5"
                             (click)="register();"
                             [disabled]="!userRegisterForm.valid">
@@ -228,6 +229,7 @@
                   </ng-template>
                   <ng-template #displayRegisterLoader>
                     <button type="button"
+                            name="sign-in"
                             class="btn btn-outline-secondary btn-lg px-5"
                             [disabled]="loaders.register">
                       <app-spinner [size]="SpinnerSize.SMALL"></app-spinner>
@@ -238,6 +240,7 @@
                   You have already account?
                 </p>
                 <button type="button"
+                        name="login-page"
                         class="btn btn-outline-secondary"
                         routerLink="/login"
                         [disabled]="loaders.register">
@@ -301,7 +304,7 @@
                       type="email"
                       id="verify-code"
                       name="verify-code"
-                      class="form-control"
+                      class="form-control text-center"
                       [(ngModel)]="confirmationCode"
                       [disabled]="loaders.confirm"
                       required
@@ -336,6 +339,7 @@
                   <ng-template [ngIf]="!loaders.confirm"
                                [ngIfElse]="displayConfirmLoader">
                     <button type="button"
+                            name="confirm-register"
                             class="btn btn-outline-secondary btn-lg px-5"
                             (click)="confirm();"
                             [disabled]="!userConfirmForm.valid">
@@ -344,6 +348,7 @@
                   </ng-template>
                   <ng-template #displayConfirmLoader>
                     <button type="button"
+                            name="confirm-register"
                             class="btn btn-outline-secondary btn-lg px-5"
                             [disabled]="loaders.confirm">
                       <app-spinner [size]="SpinnerSize.SMALL"></app-spinner>
@@ -355,6 +360,7 @@
                 </p>
                 <button type="button"
                         class="btn btn-outline-secondary"
+                        name="login-page"
                         routerLink="/login"
                         [disabled]="loaders.confirm">
                   Login Page

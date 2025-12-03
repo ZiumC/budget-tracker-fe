@@ -109,7 +109,6 @@ export class CategoryModalComponent implements OnInit, OnDestroy {
         description: this.categoryDto.description,
         isNeeds: JSON.parse(String(this.categoryDto.isNeeds)),
         isWants: JSON.parse(String(this.categoryDto.isWants)),
-        isSavings: JSON.parse(String(this.categoryDto.isSavings))
       } as PaymentCategoryDto;
     }
 
