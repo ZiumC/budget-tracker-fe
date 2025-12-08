@@ -236,14 +236,14 @@
                   </div>
                   <div [className]="ModalUtils.displayMarginFor(setPasswordInput)">
                     <div class="text-start">
-                      <label for="register-password">New password</label>
+                      <label for="reset-password">New password</label>
                       <span class="text-danger">*</span>
                     </div>
                     <div class="input-group">
                       <input
                         [type]="showPassword ? 'text' : 'password'"
-                        id="register-password"
-                        name="register-password"
+                        id="reset-password"
+                        name="reset-password"
                         class="form-control"
                         [(ngModel)]="initPassResetForm.newPassword"
                         [disabled]="loaders.setPass"
@@ -307,14 +307,14 @@
                   </ul>
                   <div [className]="ModalUtils.displayMarginFor(setPassRepeatInput)">
                     <div class="text-start">
-                      <label for="register-password-repeat">Repeat password</label>
+                      <label for="reset-password-repeat">Repeat password</label>
                       <span class="text-danger">*</span>
                     </div>
                     <div class="input-group">
                       <input
                         [type]="showPassword ? 'text' : 'password'"
-                        id="register-password-repeat"
-                        name="register-password-repeat"
+                        id="reset-password-repeat"
+                        name="reset-password-repeat"
                         class="form-control"
                         [(ngModel)]="repeatPassword"
                         [disabled]="loaders.setPass"
