@@ -6,7 +6,7 @@
           <ng-container [ngSwitch]="formType">
             <ng-container *ngSwitchCase="FormType.LOGIN">
               <form ngbAutofocus #userLoginForm="ngForm">
-                <div class="mb-md-5 mt-md-4 pb-5">
+                <div class="mb-5 mt-5">
                   <h2 class="fw-bold mb-2 text-uppercase">Login</h2>
                   <p class="mb-5">Please enter your credentials</p>
                   <div [className]="ModalUtils.displayMarginFor(loginEmailInput)">
@@ -111,6 +111,8 @@
                       </a>
                     </ng-template>
                   </p>
+                </div>
+                <div class="mb-5 pb-2">
                   <ng-template [ngIf]="!loaders.login"
                                [ngIfElse]="displayLoginLoader">
                     <button class="btn btn-outline-secondary btn-lg px-5"
@@ -147,7 +149,7 @@
             </ng-container>
             <ng-container *ngSwitchCase="FormType.RESET_PASSWORD">
               <form #resetPasswordForm="ngForm">
-                <div class="mb-md-5 mt-md-4 pb-5">
+                <div class="mb-5 mt-5 pb-4">
                   <h2 class="fw-bold mb-2 text-uppercase">Reset password</h2>
                   <p class="mb-5">Please enter email, login and new password</p>
                   <div [className]="ModalUtils.displayMarginFor(resetEmailInput)">
@@ -362,10 +364,12 @@
                       <div class="valid-feedback"></div>
                     }
                   </div>
+                </div>
+                <div class="mb-5 pb-2">
                   <ng-template [ngIf]="!loaders.reset"
                                [ngIfElse]="displayResetLoader">
                     <button type="button"
-                            name="reset-password"
+                            name="reset-password-init"
                             class="btn btn-outline-secondary btn-lg px-5"
                             (click)="initializePasswordReset();"
                             [disabled]="!resetPasswordForm.valid || loaders.reset">
@@ -374,7 +378,7 @@
                   </ng-template>
                   <ng-template #displayResetLoader>
                     <button type="button"
-                            name="reset-password"
+                            name="reset-password-init"
                             class="btn btn-outline-secondary btn-lg px-5"
                             [disabled]="loaders.reset">
                       <app-spinner [size]="SpinnerSize.SMALL"></app-spinner>
@@ -407,7 +411,7 @@
             </ng-container>
             <ng-container *ngSwitchCase="FormType.CONFIRM_PASSWORD">
               <form ngbAutofocus #userSetPassword="ngForm">
-                <div class="mb-md-5 mt-md-4 pb-5">
+                <div class="mb-5 mt-5 pb-4">
                   <h2 class="fw-bold mb-2 text-uppercase">Confirm new password</h2>
                   <p class="mb-5">Please enter your email and challenge password from email</p>
                   <div [style]="displayInput() ? '' : 'display:none'">
@@ -455,14 +459,14 @@
                   </div>
                   <div [className]="ModalUtils.displayMarginFor(challengePasswordInput)">
                     <div class="text-start">
-                      <label for="temp-password-repeat">Challenge password</label>
+                      <label for="challenge-password">Challenge password</label>
                       <span class="text-danger">*</span>
                     </div>
                     <div class="input-group">
                       <input
                         type="text"
-                        id="temp-password-repeat"
-                        name="temp-password-repeat"
+                        id="challenge-password"
+                        name="challenge-password"
                         class="form-control"
                         [(ngModel)]="completePassResetForm.challengePassword"
                         [disabled]="loaders.setPass"
@@ -493,6 +497,8 @@
                       <div class="valid-feedback"></div>
                     }
                   </div>
+                </div>
+                <div class="mb-5 pb-2">
                   <ng-template [ngIf]="!loaders.setPass"
                                [ngIfElse]="displaySetPassLoader">
                     <button type="button"
