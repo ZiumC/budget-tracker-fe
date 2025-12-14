@@ -123,6 +123,7 @@
              [className]="buttonOptionsClass()">
           <div class="px-5">
             <button type="button"
+                    id="create-single-budget"
                     [className]="innerWidth > appConfig.pageMobileWidth ? 'btn btn-success' : 'btn btn-success width-ex-20'"
                     data-bs-toggle="tooltip"
                     data-bs-placement="bottom"
@@ -133,6 +134,7 @@
           </div>
           <div class="px-5">
             <button type="button"
+                    id="create-multiple-budgets"
                     [className]="innerWidth > appConfig.pageMobileWidth ? 'btn btn-success' : 'btn btn-success width-ex-20'"
                     data-bs-toggle="tooltip"
                     data-bs-placement="bottom"
@@ -203,6 +205,7 @@
                   </table>
                   <div class="budget-buttons mt-3 mb-1">
                     <button type="button"
+                            name="budget-details"
                             class="btn btn-outline-secondary"
                             data-bs-toggle="tooltip"
                             data-bs-placement="bottom"
@@ -212,6 +215,7 @@
                       <i class="bi bi-clipboard-data-fill"></i>
                     </button>
                     <button type="button"
+                            name="edit-budget"
                             class="btn btn-outline-warning"
                             data-bs-toggle="tooltip"
                             data-bs-placement="bottom"
@@ -220,6 +224,7 @@
                       <i class="bi bi-pencil-square"></i>
                     </button>
                     <button type="button"
+                            name="delete-budget"
                             class="btn btn-outline-danger"
                             data-bs-toggle="tooltip"
                             data-bs-placement="bottom"
